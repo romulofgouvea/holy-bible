@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { SectionList, StyleSheet, Text, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Animated, StyleSheet, Text, View } from 'react-native';
 import { SelectModal } from '../components/select-modal';
 import { TopBar } from '../components/top-bar';
 import { VerseReader } from '../components/verse-reader';
@@ -51,31 +51,58 @@ export default function HomeScreen() {
   const [blinkingVerse, setBlinkingVerse] = useState<string | null>(null);
   const [highlights, setHighlights] = useState<Record<string, boolean>>({});
 
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+
   useEffect(() => {
     const loadState = async () => {
+      let parsed: any = null;
       try {
         const savedPos = await AsyncStorage.getItem('bible-last-read');
         if (savedPos) {
-          const { book, chapter, verse, version } = JSON.parse(savedPos);
-          if (version) setVersion(version);
-          if (book) setBook(book);
-          if (chapter) setChapter(chapter);
-          if (verse) setVerse(verse);
+          parsed = JSON.parse(savedPos);
+          if (parsed.version) setVersion(parsed.version);
+          if (parsed.book) setBook(parsed.book);
+          if (parsed.chapter) setChapter(parsed.chapter);
+          if (parsed.verse) setVerse(parsed.verse);
         }
         const savedHighlights = await AsyncStorage.getItem('bible-highlights');
         if (savedHighlights) {
           setHighlights(JSON.parse(savedHighlights));
         }
-      } catch (e) {}
+      } catch (e) { }
+
+      // Give the list a moment to mount the new chapter and verse
+      setTimeout(() => {
+        if (parsed?.chapter && parsed?.verse && sectionListRef.current) {
+          targetScrollIndex.current = {
+            sectionIndex: 0,
+            itemIndex: Math.max(0, parsed.verse - 1),
+          };
+          try {
+            sectionListRef.current.scrollToLocation({
+              ...targetScrollIndex.current,
+              animated: true,
+              viewPosition: 0,
+            });
+          } catch (err) {}
+        }
+
+        // Fade in smoothly after scroll
+        Animated.timing(fadeAnim, {
+          toValue: 1,
+          duration: 600,
+          useNativeDriver: true,
+        }).start();
+      }, 300);
     };
     loadState();
-  }, []);
+  }, [fadeAnim]);
 
   useEffect(() => {
     const saveState = async () => {
       try {
         await AsyncStorage.setItem('bible-last-read', JSON.stringify({ book, chapter, verse, version }));
-      } catch (e) {}
+      } catch (e) { }
     };
     saveState();
   }, [book, chapter, verse, version]);
@@ -138,23 +165,35 @@ export default function HomeScreen() {
 
   const currentTitle = `${currentBook.name} ${visibleChapter}:${visibleVerse}`;
   const sectionListRef = useRef<any>(null);
+  const isAutoScrolling = useRef(false);
+  const targetScrollIndex = useRef({ sectionIndex: 0, itemIndex: 0 });
 
   const sectionData = useMemo(() => {
-    return currentBook.chapters?.map((chapterData, chapterIndex) => ({
-      title: `Capítulo ${chapterIndex + 1}`,
+    const chapterIndex = chapter - 1;
+    const chapterData = currentBook.chapters?.[chapterIndex];
+    if (!chapterData) return [];
+
+    return [{
+      title: `Capítulo ${chapter}`,
       data: chapterData.map((verseText, verseIndex) => ({
-        chapter: chapterIndex + 1,
+        chapter: chapter,
         verse: verseIndex + 1,
         text: verseText,
       })),
-    })) || [];
-  }, [currentBook]);
+    }];
+  }, [currentBook, chapter]);
 
-  const viewabilityConfig = useRef({ itemVisiblePercentThreshold: 30 });
+  const viewabilityConfig = useRef({
+    itemVisiblePercentThreshold: 50,
+    minimumViewTime: 150,
+  });
+
   const onViewableItemsChanged = useRef(({ viewableItems }: { viewableItems: any[] }) => {
-    const firstVisible = viewableItems.find((v) => v.item && v.item.chapter && v.item.verse)?.item;
+    if (isAutoScrolling.current) return;
+
+    // Pick the most prominently visible verse at the top
+    const firstVisible = viewableItems.find((v) => v.item && v.item.chapter && v.item.verse && v.isViewable)?.item;
     if (firstVisible) {
-      // Apenas atualiza o índice visível, não o selecioando.
       setVisibleChapter(firstVisible.chapter);
       setVisibleVerse(firstVisible.verse);
     }
@@ -191,22 +230,24 @@ export default function HomeScreen() {
     setVerse(item.verse);
     setVisibleChapter(item.chapter);
     setVisibleVerse(item.verse);
-  }, []);
 
-  const onVerseLongPress = useCallback((item: { chapter: number; verse: number }) => {
     setHighlights((prev) => {
       const key = `${currentBook.abbrev}-${item.chapter}-${item.verse}`;
       const clone = { ...prev };
       if (clone[key]) delete clone[key];
       else clone[key] = true;
-      AsyncStorage.setItem('bible-highlights', JSON.stringify(clone)).catch(() => {});
+      AsyncStorage.setItem('bible-highlights', JSON.stringify(clone)).catch(() => { });
       return clone;
     });
   }, [currentBook.abbrev]);
 
   const scrollToVerse = useCallback((verseNumber: number, chapterNumber = chapter) => {
-    const sectionIndex = Math.max(0, chapterNumber - 1);
+    const sectionIndex = 0;
     const itemIndex = Math.max(0, verseNumber - 1);
+    
+    isAutoScrolling.current = true;
+    targetScrollIndex.current = { sectionIndex, itemIndex };
+    
     try {
       sectionListRef.current?.scrollToLocation({ sectionIndex, itemIndex, animated: true, viewPosition: 0 });
       setBlinkingVerse(`${chapterNumber}-${verseNumber}`);
@@ -214,14 +255,14 @@ export default function HomeScreen() {
     } catch (error) {
       // Ignore error, onScrollToIndexFailed will retry
     }
+    setTimeout(() => { isAutoScrolling.current = false; }, 800);
   }, [chapter]);
 
-  const onScrollToIndexFailed = useCallback((info: { index: number; highestMeasuredFrameIndex: number; averageItemLength: number }) => {
+  const onScrollToIndexFailed = useCallback(() => {
     setTimeout(() => {
       try {
         sectionListRef.current?.scrollToLocation({
-          sectionIndex: Math.max(0, chapter - 1),
-          itemIndex: Math.max(0, verse - 1),
+          ...targetScrollIndex.current,
           animated: true,
           viewPosition: 0,
         });
@@ -229,12 +270,12 @@ export default function HomeScreen() {
         // Stop retrying if double failure
       }
     }, 500);
-  }, [chapter, verse]);
+  }, []);
 
   // useEffect and autoScroll removed in favor of explicit scrolling
 
   return (
-    <View style={styles.page}>
+    <Animated.View style={[styles.page, { opacity: fadeAnim }]}>
       <TopBar
         version={version}
         bookName={currentBook.name}
@@ -254,7 +295,6 @@ export default function HomeScreen() {
           highlights={highlights}
           bookAbbrev={currentBook.abbrev}
           onVersePress={onVersePress}
-          onVerseLongPress={onVerseLongPress}
           onViewableItemsChanged={onViewableItemsChanged.current}
           viewabilityConfig={viewabilityConfig.current}
           onScrollToIndexFailed={onScrollToIndexFailed}
@@ -349,7 +389,7 @@ export default function HomeScreen() {
         }}
       />
 
-    </View>
+    </Animated.View>
   );
 }
 

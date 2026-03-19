@@ -18,7 +18,6 @@ type VerseReaderProps = {
     highlights: Record<string, boolean>;
     bookAbbrev: string;
     onVersePress: (item: VerseItem) => void;
-    onVerseLongPress: (item: VerseItem) => void;
     onViewableItemsChanged: ({ viewableItems }: { viewableItems: any[] }) => void;
     viewabilityConfig: any;
     listRef?: React.RefObject<SectionList<VerseItem>>;
@@ -32,7 +31,7 @@ type VerseReaderProps = {
 export const VerseReader = React.memo((props: VerseReaderProps) => {
     const { 
         sections, blinkingVerse, highlights, bookAbbrev, 
-        onVersePress, onVerseLongPress, onViewableItemsChanged, viewabilityConfig, listRef, onScrollToIndexFailed 
+        onVersePress, onViewableItemsChanged, viewabilityConfig, listRef, onScrollToIndexFailed 
     } = props;
 
     return (
@@ -55,7 +54,6 @@ export const VerseReader = React.memo((props: VerseReaderProps) => {
                 return (
                     <TouchableOpacity 
                         onPress={() => onVersePress(item)} 
-                        onLongPress={() => onVerseLongPress(item)}
                         activeOpacity={0.7}
                     >
                         <View style={[
