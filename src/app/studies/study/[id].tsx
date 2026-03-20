@@ -1,7 +1,6 @@
 import { BibleText } from '@/components/BibleText';
 import { Feather } from '@expo/vector-icons';
 import * as FileSystem from 'expo-file-system';
-import * as ImagePicker from 'expo-image-picker';
 import * as Print from 'expo-print';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import * as Sharing from 'expo-sharing';
@@ -11,7 +10,6 @@ import {
   Image,
   Keyboard,
   KeyboardAvoidingView,
-  Linking,
   Modal,
   Platform,
   ScrollView,
@@ -23,11 +21,12 @@ import {
 import { BibleBookModal } from '../../../components/BibleBookModal';
 import { BibleNumberModal } from '../../../components/BibleNumberModal';
 import { BibleVersionModal } from '../../../components/BibleVersionModal';
-import { StudyBlock, pickImageAction } from '../../../components/study/StudyBlock';
+import { pickImageAction, StudyBlock } from '../../../components/study/StudyBlock';
 import { useBlockActions } from '../../../components/study/StudyBlockToolbar';
 import { StudySlashMenu } from '../../../components/study/StudySlashMenu';
 import { StudyTopMenu } from '../../../components/study/StudyTopMenu';
 import { StudyVerseSelectModal } from '../../../components/study/StudyVerseSelectModal';
+import { ROUTES } from '../../../constants/routes';
 import { availableVersions, Book, getBibleData } from '../../../data';
 import { useResponsive } from '../../../hooks/use-responsive';
 import { Block, makeBlock, Study, useStudies } from '../../../hooks/use-studies';
@@ -237,7 +236,7 @@ export default function StudyEditorScreen() {
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <View style={styles.topBar}>
-        <TouchableOpacity style={styles.iconBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/studies' as any)}>
+        <TouchableOpacity style={styles.iconBtn} onPress={() => router.canGoBack() ? router.back() : router.replace(ROUTES.STUDIES as any)}>
           <Feather name="arrow-left" size={ms(22)} color="#fff" />
         </TouchableOpacity>
         <TextInput
@@ -398,7 +397,7 @@ const styles = StyleSheet.create({
   topBar: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#008080', paddingHorizontal: 8, paddingVertical: 8, gap: 8 },
   iconBtn: { padding: 8, borderRadius: 10, backgroundColor: 'rgba(255,255,255,0.15)' },
   titleInput: { flex: 1, color: '#fff', fontWeight: '700' },
-  editorContent: { padding: 16, paddingBottom: 160, flexGrow: 1 },
+  editorContent: { padding: 8, paddingBottom: 160, flexGrow: 1 },
   blockInput: { color: '#1a1a1a', paddingVertical: 6, paddingHorizontal: 0, lineHeight: 24, minHeight: 40 },
   headerText: { fontWeight: '800', color: '#008080', paddingTop: 14, letterSpacing: 0.2 },
   h1Text: { fontWeight: '700', color: '#222', paddingTop: 10 },

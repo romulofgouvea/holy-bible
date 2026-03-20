@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
   searchContainer: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#f9f9f9', borderWidth: 1, borderColor: '#e0e0e0', borderRadius: 12, marginHorizontal: 8, paddingHorizontal: 12, marginTop: 8, height: 44 },
   searchIcon: { marginRight: 8 },
   searchInput: { flex: 1, height: '100%', color: '#333', ...({ outlineStyle: 'none' } as any) },
-  list: { paddingHorizontal: 16, flexGrow: 1, gap: 8 },
+  list: { padding: 8, flexGrow: 1, gap: 8 },
   divider: { height: 1, backgroundColor: '#f0f0f0', marginVertical: 8 },
   footer: { paddingTop: 4 },
   countPill: { flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start', backgroundColor: '#fff', borderWidth: 1, borderColor: '#0080806e', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 16 },

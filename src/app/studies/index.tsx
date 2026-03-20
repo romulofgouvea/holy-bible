@@ -18,6 +18,7 @@ import {
 } from 'react-native';
 import { BibleDrawerMenu } from '../../components/BibleDrawerMenu';
 import { BibleText } from '../../components/BibleText';
+import { ROUTES } from '../../constants/routes';
 import { useResponsive } from '../../hooks/use-responsive';
 import { Study, useStudies } from '../../hooks/use-studies';
 
@@ -38,7 +39,7 @@ export default function EstudosScreen() {
     setNewTitle('');
     setNewDescription('');
     setModalVisible(false);
-    router.push(`/study/${id}` as any);
+    router.push(ROUTES.STUDY_EDITOR(id) as any);
   };
 
   const handleBackup = async () => {
@@ -114,7 +115,7 @@ export default function EstudosScreen() {
     const firstParaObj = item.blocks?.find(b => b.type === 'paragraph');
     const firstPara = firstParaObj && 'content' in firstParaObj ? firstParaObj.content : null;
     return (
-      <TouchableOpacity style={styles.card} onPress={() => router.push(`/study/${item.id}` as any)} activeOpacity={0.75}>
+      <TouchableOpacity style={styles.card} onPress={() => router.push(ROUTES.STUDY_EDITOR(item.id) as any)} activeOpacity={0.75}>
         <View style={styles.cardContent}>
           <View style={styles.cardIcon}>
             <Feather name="book-open" size={ms(20)} color="#008080" />
@@ -252,7 +253,7 @@ const styles = StyleSheet.create({
   },
   menuBtn: { padding: 8, borderRadius: 10, backgroundColor: 'rgba(255,255,255,0.15)', marginLeft: 4 },
   headerTitle: { color: '#fff', fontWeight: '700', marginHorizontal: 8 },
-  listContent: { padding: 10, paddingTop: 8, flexGrow: 1 },
+  listContent: { padding: 8, paddingTop: 8, flexGrow: 1 },
   emptyContainer: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingTop: 80, gap: 12 },
   emptyTitle: { fontWeight: '700', color: '#555' },
   emptySubtitle: { color: '#aaa', textAlign: 'center', paddingHorizontal: 32 },

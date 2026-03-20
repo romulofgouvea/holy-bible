@@ -185,7 +185,7 @@ const styles = StyleSheet.create({
     color: '#333',
     ...({ outlineStyle: 'none' } as any),
   },
-  list: { paddingHorizontal: 16, flexGrow: 1, gap: 8 },
+  list: { padding: 8, flexGrow: 1, gap: 8 },
   divider: { height: 1, backgroundColor: '#f0f0f0', marginVertical: 8 },
   footer: {
     paddingTop: 4,

@@ -2,6 +2,7 @@ import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useRef } from 'react';
 import { Animated, Dimensions, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { ROUTES } from '../constants/routes';
 import { useResponsive } from '../hooks/use-responsive';
 import { BibleText } from './BibleText';
 
@@ -13,8 +14,8 @@ type MenuItem = {
 };
 
 const MENU_ITEMS: MenuItem[] = [
-  { key: 'bible', label: 'Bíblia', icon: 'book-open', route: '/' },
-  { key: 'studies', label: 'Estudos', icon: 'edit-3', route: '/studies' },
+  { key: 'bible', label: 'Bíblia', icon: 'book-open', route: ROUTES.BIBLE },
+  { key: 'studies', label: 'Estudos', icon: 'edit-3', route: ROUTES.STUDIES },
 ];
 
 type DrawerMenuProps = {
@@ -65,7 +66,7 @@ export function BibleDrawerMenu(props: DrawerMenuProps) {
           <View style={styles.drawerLogo}>
             <Feather name="book" size={ms(19)} color="#fff" />
           </View>
-          <BibleText style={[styles.drawerTitle, { fontSize: ms(17) }]}>Holy Bible</BibleText>
+          <BibleText style={[styles.drawerTitle, { fontSize: ms(17) }]}>Bíblia Sagrada</BibleText>
         </View>
 
         <View style={styles.menuList}>
