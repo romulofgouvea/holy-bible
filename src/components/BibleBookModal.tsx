@@ -45,8 +45,16 @@ export function BibleBookModal({ visible, onClose, books, versionSigla, onVersio
                   <Feather name="chevron-down" size={ms(14)} color="#008080" style={{ marginLeft: 2 }} />
                 </TouchableOpacity>
               )}
+              <View style={styles.viewToggles}>
+                <TouchableOpacity onPress={() => setViewMode('grid')} style={[styles.toggleBtn, viewMode === 'grid' && styles.toggleBtnActive]}>
+                  <Feather name="grid" size={ms(16)} color={viewMode === 'grid' ? '#008080' : '#888'} />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => setViewMode('list')} style={[styles.toggleBtn, viewMode === 'list' && styles.toggleBtnActive]}>
+                  <Feather name="list" size={ms(16)} color={viewMode === 'list' ? '#008080' : '#888'} />
+                </TouchableOpacity>
+              </View>
               <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
-                <Feather name="x" size={ms(22)} color="#666" />
+                <Feather name="x" size={ms(18)} color="#e74c3c" />
               </TouchableOpacity>
             </View>
 
@@ -101,14 +109,6 @@ export function BibleBookModal({ visible, onClose, books, versionSigla, onVersio
                 <BibleText style={styles.countNumber}>{filteredBooks.length}</BibleText>
                 <BibleText style={styles.countText}> {filteredBooks.length === 1 ? 'livro' : 'livros'}</BibleText>
               </View>
-              <View style={styles.viewToggles}>
-                <TouchableOpacity onPress={() => setViewMode('grid')} style={[styles.toggleBtn, viewMode === 'grid' && styles.toggleBtnActive]}>
-                  <Feather name="grid" size={ms(18)} color={viewMode === 'grid' ? '#008080' : '#888'} />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => setViewMode('list')} style={[styles.toggleBtn, viewMode === 'list' && styles.toggleBtnActive]}>
-                  <Feather name="list" size={ms(18)} color={viewMode === 'list' ? '#008080' : '#888'} />
-                </TouchableOpacity>
-              </View>
             </View>
           </View>
         </TouchableWithoutFeedback>
@@ -128,112 +128,29 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
-    paddingTop: 16,
-    paddingBottom: 24,
+    padding: 8,
     elevation: 24,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.15,
     shadowRadius: 16,
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    marginBottom: 16,
-  },
-  headerIconWrap: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
-    backgroundColor: '#e6f3f3',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
-  },
-  title: {
-    flex: 1,
-    fontWeight: '700',
-    color: '#008080',
-  },
-  versionPill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#e6f3f3',
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 12,
-    marginRight: 12,
-  },
-  versionPillText: {
-    color: '#008080',
-    fontWeight: '800',
-  },
-  closeBtn: {
-    padding: 4,
-  },
-  searchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#f9f9f9',
-    borderWidth: 1,
-    borderColor: '#e0e0e0',
-    borderRadius: 12,
-    marginHorizontal: 16,
-    paddingHorizontal: 12,
-    marginBottom: 12,
-    height: 44,
-  },
-  searchIcon: {
-    marginRight: 8,
-  },
-  searchInput: {
-    flex: 1,
-    height: '100%',
-    color: '#333',
-    ...({ outlineStyle: 'none' } as any),
-  },
-  list: {
-    paddingHorizontal: 16,
-    paddingBottom: 16,
-    gap: 8,
-  },
-  footer: {
-    paddingHorizontal: 16,
-    paddingTop: 12,
-    borderTopWidth: 1,
-    borderTopColor: '#f0f0f0',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  countPill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    borderWidth: 1,
-    borderColor: '#0080806e',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 16,
-  },
-  countNumber: {
-    fontWeight: '800',
-    color: '#666',
-    fontSize: 13,
-  },
-  countText: {
-    color: '#666',
-    fontWeight: '600',
-    fontSize: 13,
-  },
-  viewToggles: { flexDirection: 'row', backgroundColor: '#f5f5f5', borderRadius: 8, padding: 6, gap: 4 },
-  toggleBtn: { padding: 6, borderRadius: 6 },
+  header: { flexDirection: 'row', alignItems: 'center', padding: 8, marginBottom: 8 },
+  headerIconWrap: { width: 42, height: 42, borderRadius: 12, backgroundColor: '#e6f3f3', justifyContent: 'center', alignItems: 'center', marginRight: 12 },
+  title: { flex: 1, fontWeight: '700', color: '#008080' },
+  versionPill: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#e6f3f3', paddingHorizontal: 10, height: 42, borderRadius: 12, marginRight: 12 },
+  versionPillText: { color: '#008080', fontWeight: '800' },
+  closeBtn: { width: 42, height: 42, justifyContent: 'center', alignItems: 'center', backgroundColor: '#fdeded', borderRadius: 8, marginLeft: 12 },
+  searchContainer: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#f9f9f9', borderWidth: 1, borderColor: '#e0e0e0', borderRadius: 12, marginHorizontal: 16, paddingHorizontal: 12, marginBottom: 12, height: 44 },
+  searchIcon: { marginRight: 8 },
+  searchInput: { flex: 1, height: '100%', color: '#333', ...({ outlineStyle: 'none' } as any) },
+  list: { paddingHorizontal: 16, paddingBottom: 24, flexGrow: 1, gap: 8 },
+  footer: { paddingTop: 12, borderTopWidth: 1, borderTopColor: '#f0f0f0' },
+  countPill: { flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start', backgroundColor: '#fff', borderWidth: 1, borderColor: '#0080806e', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 16 },
+  countNumber: { fontWeight: '800', color: '#666', fontSize: 13 },
+  countText: { color: '#666', fontWeight: '600', fontSize: 13 },
+  viewToggles: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#f5f5f5', borderRadius: 8, padding: 4, gap: 4, marginLeft: 12, height: 42 },
+  toggleBtn: { width: 34, height: 34, justifyContent: 'center', alignItems: 'center', borderRadius: 6 },
   toggleBtnActive: { backgroundColor: '#fff', elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.1, shadowRadius: 2 },
-  gridContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-    justifyContent: 'flex-start',
-  }
+  gridContainer: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, justifyContent: 'flex-start' },
 });

@@ -28,7 +28,7 @@ export function BibleNumberModal({ visible, onClose, items, title, iconName, onS
               </View>
               <BibleText style={[styles.title, { fontSize: ms(18) }]}>{title}</BibleText>
               <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
-                <Feather name="x" size={ms(22)} color="#666" />
+                <Feather name="x" size={ms(18)} color="#e74c3c" />
               </TouchableOpacity>
             </View>
 
@@ -75,72 +75,21 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
-    paddingTop: 16,
-    paddingBottom: 24,
+    padding: 8,
     elevation: 24,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.15,
     shadowRadius: 16,
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    marginBottom: 16,
-  },
-  headerIconWrap: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
-    backgroundColor: '#e6f3f3',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
-  },
-  title: {
-    flex: 1,
-    fontWeight: '700',
-    color: '#008080',
-  },
-  closeBtn: {
-    padding: 4,
-  },
-  list: {
-    paddingHorizontal: 16,
-    paddingBottom: 16,
-  },
-  gridContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-    justifyContent: 'flex-start',
-  },
-  footer: {
-    paddingHorizontal: 16,
-    paddingTop: 12,
-    borderTopWidth: 1,
-    borderTopColor: '#f0f0f0',
-  },
-  countPill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    alignSelf: 'flex-start',
-    backgroundColor: '#fff',
-    borderWidth: 1,
-    borderColor: '#0080806e',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 16,
-  },
-  countNumber: {
-    fontWeight: '800',
-    color: '#666',
-    fontSize: 13,
-  },
-  countText: {
-    color: '#666',
-    fontWeight: '600',
-    fontSize: 13,
-  }
+  header: { flexDirection: 'row', alignItems: 'center', padding: 8, marginBottom: 8 },
+  headerIconWrap: { width: 42, height: 42, borderRadius: 12, backgroundColor: '#e6f3f3', justifyContent: 'center', alignItems: 'center', marginRight: 12 },
+  title: { flex: 1, fontWeight: '700', color: '#008080' },
+  closeBtn: { width: 42, height: 42, justifyContent: 'center', alignItems: 'center', backgroundColor: '#fdeded', borderRadius: 8, marginLeft: 12 },
+  list: { paddingHorizontal: 16, paddingBottom: 24, flexGrow: 1, gap: 8 },
+  footer: { paddingTop: 8, borderTopWidth: 1, borderTopColor: '#f0f0f0' },
+  countPill: { flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start', backgroundColor: '#fff', borderWidth: 1, borderColor: '#0080806e', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 16 },
+  countNumber: { fontWeight: '800', color: '#666', fontSize: 13 },
+  countText: { color: '#666', fontWeight: '600', fontSize: 13 },
+  gridContainer: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, justifyContent: 'flex-start' },
 });

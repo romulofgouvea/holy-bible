@@ -41,8 +41,16 @@ export function BibleVersionModal({ visible, onClose, onSelect }: BibleVersionMo
                 <Feather name="book-open" size={ms(18)} color="#008080" />
               </View>
               <BibleText style={[styles.title, { fontSize: ms(18) }]}>Versões</BibleText>
+              <View style={styles.viewToggles}>
+                <TouchableOpacity onPress={() => setViewMode('grid')} style={[styles.toggleBtn, viewMode === 'grid' && styles.toggleBtnActive]}>
+                  <Feather name="grid" size={ms(18)} color={viewMode === 'grid' ? '#008080' : '#888'} />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => setViewMode('list')} style={[styles.toggleBtn, viewMode === 'list' && styles.toggleBtnActive]}>
+                  <Feather name="list" size={ms(18)} color={viewMode === 'list' ? '#008080' : '#888'} />
+                </TouchableOpacity>
+              </View>
               <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
-                <Feather name="x" size={ms(22)} color="#666" />
+                <Feather name="x" size={ms(18)} color="#e74c3c" />
               </TouchableOpacity>
             </View>
 
@@ -91,14 +99,6 @@ export function BibleVersionModal({ visible, onClose, onSelect }: BibleVersionMo
                 <BibleText style={styles.countNumber}>{filteredVersions.length}</BibleText>
                 <BibleText style={styles.countText}> {filteredVersions.length === 1 ? 'versão' : 'versões'}</BibleText>
               </View>
-              <View style={styles.viewToggles}>
-                <TouchableOpacity onPress={() => setViewMode('grid')} style={[styles.toggleBtn, viewMode === 'grid' && styles.toggleBtnActive]}>
-                  <Feather name="grid" size={ms(18)} color={viewMode === 'grid' ? '#008080' : '#888'} />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => setViewMode('list')} style={[styles.toggleBtn, viewMode === 'list' && styles.toggleBtnActive]}>
-                  <Feather name="list" size={ms(18)} color={viewMode === 'list' ? '#008080' : '#888'} />
-                </TouchableOpacity>
-              </View>
             </View>
           </View>
         </TouchableWithoutFeedback>
@@ -118,8 +118,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
-    paddingTop: 16,
-    paddingBottom: 24,
+    padding: 8,
     elevation: 24,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: -4 },
@@ -129,12 +128,12 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 16,
+    padding: 8,
     marginBottom: 16,
   },
   headerIconWrap: {
-    width: 40,
-    height: 40,
+    width: 42,
+    height: 42,
     borderRadius: 12,
     backgroundColor: '#e6f3f3',
     justifyContent: 'center',
@@ -147,7 +146,13 @@ const styles = StyleSheet.create({
     color: '#008080',
   },
   closeBtn: {
-    padding: 4,
+    width: 42,
+    height: 42,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fdeded',
+    borderRadius: 8,
+    marginLeft: 12,
   },
   searchContainer: {
     flexDirection: 'row',
@@ -171,12 +176,34 @@ const styles = StyleSheet.create({
     ...({ outlineStyle: 'none' } as any),
   },
   list: { paddingHorizontal: 16, paddingBottom: 24, flexGrow: 1, gap: 8 },
-  footer: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 12, borderTopWidth: 1, borderTopColor: '#f0f0f0' },
-  countPill: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#e6f3f3', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 12 },
-  countNumber: { fontWeight: '800', color: '#008080', marginRight: 4 },
-  countText: { color: '#008080', fontWeight: '500' },
-  viewToggles: { flexDirection: 'row', backgroundColor: '#f5f5f5', borderRadius: 8, padding: 6, gap: 4 },
-  toggleBtn: { padding: 6, borderRadius: 6 },
+  footer: {
+    paddingTop: 8,
+    borderTopWidth: 1,
+    borderTopColor: '#f0f0f0',
+  },
+  countPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#0080806e',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+  },
+  countNumber: {
+    fontWeight: '800',
+    color: '#666',
+    fontSize: 13,
+  },
+  countText: {
+    color: '#666',
+    fontWeight: '600',
+    fontSize: 13,
+  },
+  viewToggles: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#f5f5f5', borderRadius: 8, padding: 4, gap: 4, marginLeft: 12, height: 42 },
+  toggleBtn: { width: 34, height: 34, justifyContent: 'center', alignItems: 'center', borderRadius: 6 },
   toggleBtnActive: { backgroundColor: '#fff', elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.1, shadowRadius: 2 },
   gridContainer: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, justifyContent: 'flex-start' },
 });

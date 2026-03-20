@@ -43,8 +43,8 @@ export function StudyVerseSelectModal({ visible, onClose, bookName, chapter, ver
               <Feather name="arrow-left" size={ms(20)} color="#008080" />
             </TouchableOpacity>
             <BibleText style={[styles.title, { fontSize: ms(16) }]}>{bookName} {chapter}</BibleText>
-            <TouchableOpacity onPress={onClose} style={styles.iconBtn}>
-              <Feather name="x" size={ms(20)} color="#999" />
+            <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
+              <Feather name="x" size={ms(18)} color="#e74c3c" />
             </TouchableOpacity>
           </View>
           <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
@@ -74,8 +74,9 @@ const styles = StyleSheet.create({
   backdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
   sheet: { backgroundColor: '#fff', borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 16, flex: 1 },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
-  iconBtn: { padding: 4 },
-  title: { fontWeight: '700', color: '#222' },
+  iconBtn: { width: 42, height: 42, justifyContent: 'center', alignItems: 'center' },
+  closeBtn: { width: 42, height: 42, justifyContent: 'center', alignItems: 'center', backgroundColor: '#fdeded', borderRadius: 8, marginLeft: 12 },
+  title: { flex: 1, textAlign: 'center', fontWeight: '700', color: '#222' },
   verseRow: { flexDirection: 'row', alignItems: 'flex-start', paddingVertical: 12, paddingHorizontal: 8, borderBottomWidth: 1, borderBottomColor: '#f5f5f5', gap: 10 },
   verseRowSelected: { backgroundColor: '#e0f2f1', borderLeftWidth: 3, borderLeftColor: '#008080', paddingLeft: 6 },
   verseNumLabel: { fontWeight: '700', color: '#008080', minWidth: 24, paddingTop: 2 },
