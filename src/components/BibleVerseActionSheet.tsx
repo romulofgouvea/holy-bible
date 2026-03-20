@@ -44,9 +44,37 @@ export function BibleVerseActionSheet(props: VerseActionSheetProps) {
   const buildText = () => {
     if (count === 0) return '';
     const sorted = [...selectedVerses].sort((a, b) => a.chapter !== b.chapter ? a.chapter - b.chapter : a.verse - b.verse);
-    const header = count === 1
-      ? `${sorted[0].bookName} ${sorted[0].chapter}:${sorted[0].verse}`
-      : `${sorted[0].bookName} ${sorted[0].chapter}:${sorted[0].verse}–${sorted[sorted.length - 1].verse}`;
+
+    // Check if everything is in the same chapter
+    const sameChapter = sorted.every((v) => v.chapter === sorted[0].chapter);
+
+    let formattedRanges = '';
+    if (sameChapter) {
+      const groups: string[] = [];
+      let start = sorted[0].verse;
+      let end = sorted[0].verse;
+      for (let i = 1; i < sorted.length; i++) {
+        if (sorted[i].verse === end + 1) {
+          end = sorted[i].verse;
+        } else {
+          groups.push(start === end ? `${start}` : `${start}-${end}`);
+          start = sorted[i].verse;
+          end = sorted[i].verse;
+        }
+      }
+      groups.push(start === end ? `${start}` : `${start}-${end}`);
+      formattedRanges = groups.join(', ');
+    } else {
+      // Fallback for multiple chapters, simple start-end
+      formattedRanges = count === 1
+        ? `${sorted[0].verse}`
+        : `${sorted[0].chapter}:${sorted[0].verse}–${sorted[sorted.length - 1].chapter}:${sorted[sorted.length - 1].verse}`;
+    }
+
+    const header = sameChapter
+      ? `${sorted[0].bookName} ${sorted[0].chapter}:${formattedRanges}`
+      : `${sorted[0].bookName} ${formattedRanges}`;
+
     const body = sorted.map((v) => `${v.verse} ${v.text}`).join('\n');
     return `${header}\n\n${body}`;
   };
@@ -64,7 +92,9 @@ export function BibleVerseActionSheet(props: VerseActionSheetProps) {
   const onHighlight = () => {
     const newState = !allHighlighted;
     onBulkHighlight(selectedVerses, newState);
-    props.onShowToast?.(newState ? 'Versículos destacados' : 'Destaque removido', 'success');
+    const isPlural = selectedVerses.length > 1;
+    const action = newState ? 'marcado' : 'desmarcado';
+    props.onShowToast?.(`Versículo${isPlural ? 's' : ''} ${action}${isPlural ? 's' : ''}`, 'success');
     onClose();
   };
 
@@ -72,7 +102,7 @@ export function BibleVerseActionSheet(props: VerseActionSheetProps) {
   const iconColor = '#008080';
 
   return (
-    <Animated.View style={[styles.bar, { transform: [{ translateY }] }]}>
+    <Animated.View style={[styles.bar, { transform: [{ translateY }] }]} id="bible-verse-action-sheet">
       <View style={styles.actions}>
         <TouchableOpacity style={styles.iconBtn} onPress={onShare} disabled={count === 0}>
           <Feather name="share-2" size={iconSize} color={count === 0 ? '#ccc' : iconColor} />

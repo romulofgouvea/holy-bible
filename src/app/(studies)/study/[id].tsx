@@ -23,7 +23,8 @@ import {
 import { BibleBookModal } from '../../../components/BibleBookModal';
 import { BibleNumberModal } from '../../../components/BibleNumberModal';
 import { BibleVersionModal } from '../../../components/BibleVersionModal';
-import { StudyBlockToolbar } from '../../../components/study/StudyBlockToolbar';
+import { StudyBlock, pickImageAction } from '../../../components/study/StudyBlock';
+import { useBlockActions } from '../../../components/study/StudyBlockToolbar';
 import { StudySlashMenu } from '../../../components/study/StudySlashMenu';
 import { StudyTopMenu } from '../../../components/study/StudyTopMenu';
 import { StudyVerseSelectModal } from '../../../components/study/StudyVerseSelectModal';
@@ -103,48 +104,9 @@ export default function StudyEditorScreen() {
     return () => { kDidShow.remove(); kDidHide.remove(); };
   }, []);
 
-  const updateBlock = useCallback((blockId: string, content: string) => {
-    if (content === '/') {
-      setActiveBlockId(blockId);
-      setSlashVisible(true);
-      Keyboard.dismiss();
-    } else {
-      setSlashVisible(false);
-    }
-    setBlocks(prev => prev.map(b => b.id === blockId ? { ...b, content } as Block : b));
-  }, []);
 
-  const moveBlock = useCallback((blockId: string, dir: 'up' | 'down') => {
-    Keyboard.dismiss();
-    setBlocks(prev => {
-      const idx = prev.findIndex(b => b.id === blockId);
-      if (dir === 'up' && idx === 0) return prev;
-      if (dir === 'down' && idx === prev.length - 1) return prev;
-      const next = [...prev];
-      const swap = dir === 'up' ? idx - 1 : idx + 1;
-      [next[idx], next[swap]] = [next[swap], next[idx]];
-      return next;
-    });
-  }, []);
 
-  const deleteBlock = useCallback((blockId: string) => {
-    Keyboard.dismiss();
-    setBlocks(prev => {
-      if (prev.length <= 1) return [makeBlock('paragraph')];
-      return prev.filter(b => b.id !== blockId);
-    });
-  }, []);
-
-  const addBlockAfter = useCallback((blockId: string) => {
-    setBlocks(prev => {
-      const idx = prev.findIndex(b => b.id === blockId);
-      const nb = makeBlock('paragraph');
-      const next = [...prev];
-      next.splice(idx + 1, 0, nb);
-      setTimeout(() => blockRefs.current[nb.id]?.focus(), 80);
-      return next;
-    });
-  }, []);
+  const { moveBlock, deleteBlock, addBlockAfter } = useBlockActions(setBlocks, blockRefs as any);
 
   const applySlashCommand = useCallback((type: Block['type']) => {
     setSlashVisible(false);
@@ -161,7 +123,7 @@ export default function StudyEditorScreen() {
     }
     if (type === 'image') {
       setBlocks(prev => prev.map(b => b.id === activeBlockId ? { ...b, content: clean((b as any).content) } as Block : b));
-      pickImage(activeBlockId);
+      pickImageAction(activeBlockId, setBlocks);
       return;
     }
     if (type === 'video') {
@@ -177,20 +139,7 @@ export default function StudyEditorScreen() {
     setTimeout(() => blockRefs.current[activeBlockId]?.focus(), 150);
   }, [activeBlockId]);
 
-  const pickImage = useCallback(async (blockId: string) => {
-    const result = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ImagePicker.MediaTypeOptions.Images, quality: 0.8 });
-    if (result.canceled || !result.assets[0]) return;
-    const uri = result.assets[0].uri;
-    setBlocks(prev => {
-      const idx = prev.findIndex(b => b.id === blockId);
-      const imgBlock: Block = { id: blockId, type: 'image', uri, caption: '' };
-      const newPara = makeBlock('paragraph');
-      const next = [...prev];
-      next[idx] = imgBlock;
-      next.splice(idx + 1, 0, newPara);
-      return next;
-    });
-  }, []);
+
 
   const confirmVideo = useCallback(() => {
     if (!pendingVideoBlockId || !videoUrl.trim()) return;
@@ -285,97 +234,6 @@ export default function StudyEditorScreen() {
     } catch (e) { Alert.alert('Erro', 'Não foi possível gerar o PDF'); }
   }, [id, getStudy, buildHTML]);
 
-  const renderBlock = (item: Block) => {
-    const isFocused = focusedId === item.id;
-
-    if (item.type === 'image') {
-      return (
-        <View key={item.id} style={styles.imageBlock}>
-          {item.uri ? (
-            <TouchableOpacity activeOpacity={0.9} onPress={() => setFullScreenImage(item.uri)} onPressIn={() => { setFocusedId(item.id); setActiveBlockId(item.id); }}>
-              <Image source={{ uri: item.uri }} style={styles.imagePreview} resizeMode="cover" />
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity style={styles.imagePlaceholder} onPress={() => pickImage(item.id)}>
-              <Feather name="image" size={ms(32)} color="#ccc" />
-              <BibleText style={{ color: '#ccc', marginTop: 8 }}>Toque para selecionar imagem</BibleText>
-            </TouchableOpacity>
-          )}
-          <TextInput
-            style={[styles.captionInput, noOutline]}
-            value={item.caption}
-            onChangeText={cap => setBlocks(prev => prev.map(b => b.id === item.id ? { ...b, caption: cap } as Block : b))}
-            placeholder="Legenda (opcional)"
-            placeholderTextColor="#ccc"
-            onFocus={() => { setFocusedId(item.id); setActiveBlockId(item.id); }}
-            {...({ outlineStyle: 'none' } as any)}
-            underlineColorAndroid="transparent"
-          />
-        </View>
-      );
-    }
-
-    if (item.type === 'video') {
-      return (
-        <TouchableOpacity key={item.id} style={styles.videoBlock} activeOpacity={0.8} onPressIn={() => { setFocusedId(item.id); setActiveBlockId(item.id); }}>
-          <View style={styles.videoIcon}><Feather name="video" size={ms(20)} color="#008080" /></View>
-          <BibleText style={[styles.videoTitle, { fontSize: ms(14) }]} numberOfLines={1}>{item.title || item.url}</BibleText>
-          <TouchableOpacity onPress={() => Linking.openURL(item.url)} style={{ padding: 8 }}>
-            <Feather name="external-link" size={ms(16)} color="#008080" />
-          </TouchableOpacity>
-        </TouchableOpacity>
-      );
-    }
-
-    if (item.type === 'verse') {
-      return (
-        <TouchableOpacity key={item.id} style={styles.verseBlock} activeOpacity={0.8} onPressIn={() => { setFocusedId(item.id); setActiveBlockId(item.id); }}>
-          <BibleText style={[styles.verseRef, { fontSize: ms(18), marginBottom: 16 }]}>{item.verseRef}</BibleText>
-          <BibleText style={[styles.verseText, { fontSize: ms(16) }]}>
-            {item.content.split('\n').map((line, i, arr) => {
-              const sp = line.indexOf(' ');
-              const num = line.slice(0, sp); const text = line.slice(sp + 1);
-              return <BibleText key={i}><BibleText style={{ color: '#008080', fontWeight: '700' }}>{num} </BibleText><BibleText style={{ fontStyle: 'italic', lineHeight: 20 }}>{text}</BibleText>{i < arr.length - 1 ? '\n\n' : ''}</BibleText>;
-            })}
-          </BibleText>
-        </TouchableOpacity>
-      );
-    }
-
-    const fsMap: Record<string, number> = { header: ms(22), h1: ms(19), h2: ms(16), paragraph: ms(15) };
-    const textStyle = [
-      styles.blockInput,
-      item.type === 'header' && styles.headerText,
-      item.type === 'h1' && styles.h1Text,
-      item.type === 'h2' && styles.h2Text,
-      { fontSize: fsMap[item.type] ?? ms(15) },
-      noOutline,
-    ];
-    const placeholder = item.type === 'header' ? 'Cabeçalho...' : item.type === 'h1' ? 'Título 1...' : item.type === 'h2' ? 'Título 2...' : "Escreva algo ou '/' para opções...";
-
-    return (
-      <TextInput
-        key={item.id}
-        ref={r => { blockRefs.current[item.id] = r; }}
-        style={textStyle as any}
-        value={(item as any).content}
-        onChangeText={text => updateBlock(item.id, text)}
-        placeholder={placeholder}
-        placeholderTextColor="#ccc"
-        multiline
-        blurOnSubmit={false}
-        onFocus={() => { setFocusedId(item.id); setActiveBlockId(item.id); }}
-        onSubmitEditing={() => addBlockAfter(item.id)}
-        onKeyPress={({ nativeEvent }) => { if (nativeEvent.key === 'Backspace' && !(item as any).content) deleteBlock(item.id); }}
-        {...({ outlineStyle: 'none' } as any)}
-        underlineColorAndroid="transparent"
-      />
-    );
-  };
-
-  const focused = focusedId ? blocks.find(b => b.id === focusedId) : null;
-  const focusedIdx = focusedId ? blocks.findIndex(b => b.id === focusedId) : -1;
-
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <View style={styles.topBar}>
@@ -397,26 +255,23 @@ export default function StudyEditorScreen() {
       </View>
 
       <ScrollView style={{ flex: 1, backgroundColor: '#fff' }} contentContainerStyle={styles.editorContent} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
-        {blocks.map(item => (
-          <View key={item.id} style={[
-            { zIndex: focusedId === item.id ? 20 : 1, paddingLeft: 12, paddingRight: focusedId === item.id ? 56 : 12, paddingVertical: 4, marginVertical: 2 },
-            focusedId === item.id && { backgroundColor: '#f9fcfc', borderRadius: 12, borderWidth: 1, borderColor: '#d3ebe8' }
-          ]}>
-            {renderBlock(item)}
-
-            {focusedId === item.id && (
-              <StudyBlockToolbar
-                isFirst={focusedIdx === 0}
-                isLast={focusedIdx === blocks.length - 1}
-                onAddAfter={() => focusedId && addBlockAfter(focusedId)}
-                onMoveUp={() => focusedId && moveBlock(focusedId, 'up')}
-                onMoveDown={() => focusedId && moveBlock(focusedId, 'down')}
-                onDelete={() => focusedId && deleteBlock(focusedId)}
-                onOpenCommands={() => { focusedId && setActiveBlockId(focusedId); setSlashVisible(true); Keyboard.dismiss(); }}
-                onClose={() => { Keyboard.dismiss(); setFocusedId(null); setActiveBlockId(null); setSlashVisible(false); }}
-              />
-            )}
-          </View>
+        {blocks.map((item, index) => (
+          <StudyBlock
+            key={item.id}
+            item={item}
+            focusedId={focusedId}
+            blocksLength={blocks.length}
+            blockIdx={index}
+            setFocusedId={setFocusedId}
+            setActiveBlockId={setActiveBlockId}
+            setSlashVisible={setSlashVisible}
+            setBlocks={setBlocks}
+            blockRefs={blockRefs}
+            setFullScreenImage={setFullScreenImage}
+            addBlockAfter={addBlockAfter}
+            deleteBlock={deleteBlock}
+            moveBlock={moveBlock}
+          />
         ))}
         <TouchableOpacity style={styles.addBlockBtn} onPress={() => { const last = blocks[blocks.length - 1]; addBlockAfter(last?.id ?? ''); }}>
           <Feather name="plus" size={ms(16)} color="#ccc" />
@@ -469,7 +324,7 @@ export default function StudyEditorScreen() {
       <BibleNumberModal
         visible={versePickerVisible && vpStep === 'chapter'}
         onClose={() => setVersePickerVisible(false)}
-        title={vpBook?.name ? `Capítulos — ${vpBook.name}` : 'Capítulos'}
+        title={vpBook?.name ? `Capítulos - ${vpBook.name}` : 'Capítulos'}
         iconName="list"
         items={vpChapters}
         onSelect={n => { setVpChapter(n); setVpStep('verses'); }}
@@ -499,7 +354,8 @@ export default function StudyEditorScreen() {
           groups.push(start === end ? `${start}` : `${start}-${end}`);
           const formattedRanges = groups.join(', ');
 
-          const ref = `${vpBook.name} ${vpChapter}:${formattedRanges} (${vpVersion.toUpperCase()})`;
+          const bookDisplayName = vpBook.abbrev || vpBook.name;
+          const ref = `${bookDisplayName} ${vpChapter}: ${formattedRanges} (${vpVersion.toUpperCase()})`;
           const content = sortedNums.map(n => { const v = vpVerses.find(v => v.verse === n); return `${n} ${v?.text ?? ''}`; }).join('\n');
 
           setBlocks(prev => {

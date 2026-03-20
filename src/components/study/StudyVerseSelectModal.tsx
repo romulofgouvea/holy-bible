@@ -36,8 +36,8 @@ export function StudyVerseSelectModal({ visible, onClose, bookName, chapter, ver
 
   return (
     <Modal visible={visible} transparent animationType="slide">
-      <View style={styles.backdrop}>
-        <View style={[styles.sheet, { maxHeight: height * 0.85 }]}>
+      <View style={styles.backdrop} id="study-verse-backdrop">
+        <View style={[styles.sheet, { maxHeight: height * 0.85 }]} id="study-verse-sheet">
           <View style={styles.header}>
             <TouchableOpacity onPress={onClose} style={styles.iconBtn}>
               <Feather name="arrow-left" size={ms(20)} color="#008080" />
@@ -47,6 +47,7 @@ export function StudyVerseSelectModal({ visible, onClose, bookName, chapter, ver
               <Feather name="x" size={ms(18)} color="#e74c3c" />
             </TouchableOpacity>
           </View>
+          <View style={styles.divider} />
           <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
             {verses.map(({ verse, text }) => {
               const selected = selectedNums.has(verse);
@@ -58,6 +59,7 @@ export function StudyVerseSelectModal({ visible, onClose, bookName, chapter, ver
               );
             })}
           </ScrollView>
+          <View style={styles.divider} />
           <TouchableOpacity style={[styles.confirmBtn, selectedNums.size === 0 && styles.confirmBtnDisabled]} onPress={handleConfirm} disabled={selectedNums.size === 0}>
             <Feather name="check" size={ms(16)} color={selectedNums.size === 0 ? '#aaa' : '#fff'} />
             <BibleText style={[styles.confirmText, { fontSize: ms(14) }, selectedNums.size === 0 && styles.confirmTextDisabled]}>
@@ -73,7 +75,7 @@ export function StudyVerseSelectModal({ visible, onClose, bookName, chapter, ver
 const styles = StyleSheet.create({
   backdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
   sheet: { backgroundColor: '#fff', borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 16, flex: 1 },
-  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   iconBtn: { width: 42, height: 42, justifyContent: 'center', alignItems: 'center' },
   closeBtn: { width: 42, height: 42, justifyContent: 'center', alignItems: 'center', backgroundColor: '#fdeded', borderRadius: 8, marginLeft: 12 },
   title: { flex: 1, textAlign: 'center', fontWeight: '700', color: '#222' },
@@ -82,7 +84,8 @@ const styles = StyleSheet.create({
   verseNumLabel: { fontWeight: '700', color: '#008080', minWidth: 24, paddingTop: 2 },
   verseNumLabelSelected: { color: '#005f5f' },
   verseRowText: { flex: 1, color: '#333', lineHeight: 20 },
-  confirmBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, backgroundColor: '#008080', borderRadius: 14, paddingVertical: 13, marginTop: 12 },
+  divider: { height: 1, backgroundColor: '#f0f0f0', marginVertical: 8 },
+  confirmBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, backgroundColor: '#008080', borderRadius: 14, paddingVertical: 13, marginTop: 4 },
   confirmBtnDisabled: { backgroundColor: '#f0f0f0' },
   confirmText: { color: '#fff', fontWeight: '700' },
   confirmTextDisabled: { color: '#aaa' }

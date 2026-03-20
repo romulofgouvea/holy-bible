@@ -1,6 +1,7 @@
 import { Feather } from '@expo/vector-icons';
 import React from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Keyboard, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
+import { Block, makeBlock } from '../../hooks/use-studies';
 import { useResponsive } from '../../hooks/use-responsive';
 
 type StudyBlockToolbarProps = {
@@ -13,6 +14,45 @@ type StudyBlockToolbarProps = {
   onClose: () => void;
   onOpenCommands: () => void;
 };
+
+export function useBlockActions(
+  setBlocks: React.Dispatch<React.SetStateAction<Block[]>>,
+  blockRefs: React.MutableRefObject<Record<string, TextInput | null>>
+) {
+  const moveBlock = (blockId: string, dir: 'up' | 'down') => {
+    Keyboard.dismiss();
+    setBlocks(prev => {
+      const idx = prev.findIndex(b => b.id === blockId);
+      if (dir === 'up' && idx === 0) return prev;
+      if (dir === 'down' && idx === prev.length - 1) return prev;
+      const next = [...prev];
+      const swap = dir === 'up' ? idx - 1 : idx + 1;
+      [next[idx], next[swap]] = [next[swap], next[idx]];
+      return next;
+    });
+  };
+
+  const deleteBlock = (blockId: string) => {
+    Keyboard.dismiss();
+    setBlocks(prev => {
+      if (prev.length <= 1) return [makeBlock('paragraph')];
+      return prev.filter(b => b.id !== blockId);
+    });
+  };
+
+  const addBlockAfter = (blockId: string) => {
+    setBlocks(prev => {
+      const idx = prev.findIndex(b => b.id === blockId);
+      const nb = makeBlock('paragraph');
+      const next = [...prev];
+      next.splice(idx + 1, 0, nb);
+      setTimeout(() => blockRefs.current[nb.id]?.focus(), 80);
+      return next;
+    });
+  };
+
+  return { moveBlock, deleteBlock, addBlockAfter };
+}
 
 export function StudyBlockToolbar({
   isFirst, isLast, onAddAfter, onMoveUp, onMoveDown, onDelete, onClose, onOpenCommands

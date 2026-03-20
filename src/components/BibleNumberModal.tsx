@@ -19,9 +19,9 @@ export function BibleNumberModal({ visible, onClose, items, title, iconName, onS
 
   return (
     <Modal visible={visible} animationType="slide" transparent>
-      <TouchableOpacity activeOpacity={1} style={styles.modalBackdrop} onPress={onClose}>
+      <TouchableOpacity activeOpacity={1} style={styles.modalBackdrop} onPress={onClose} id="bible-number-backdrop">
         <TouchableWithoutFeedback>
-          <View style={[styles.bottomSheet, { height: height * 0.85 }]}>
+          <View style={[styles.bottomSheet, { height: height * 0.85 }]} id="bible-number-sheet">
             <View style={styles.header}>
               <View style={styles.headerIconWrap}>
                 <Feather name={iconName} size={ms(18)} color="#008080" />
@@ -32,10 +32,12 @@ export function BibleNumberModal({ visible, onClose, items, title, iconName, onS
               </TouchableOpacity>
             </View>
 
+            <View style={styles.divider} />
+
             <ScrollView contentContainerStyle={styles.list} showsVerticalScrollIndicator={false}>
               <View style={styles.gridContainer}>
                 {items.map((item) => {
-                  const numCols = width > 600 ? 7 : 5;
+                  const numCols = width > 600 ? 6 : 4;
                   const itemWidthPercentage = (100 / numCols) - 2;
                   return (
                     <BibleGridBlock
@@ -50,6 +52,8 @@ export function BibleNumberModal({ visible, onClose, items, title, iconName, onS
                 })}
               </View>
             </ScrollView>
+
+            <View style={styles.divider} />
 
             <View style={styles.footer}>
               <View style={styles.countPill}>
@@ -86,8 +90,9 @@ const styles = StyleSheet.create({
   headerIconWrap: { width: 42, height: 42, borderRadius: 12, backgroundColor: '#e6f3f3', justifyContent: 'center', alignItems: 'center', marginRight: 12 },
   title: { flex: 1, fontWeight: '700', color: '#008080' },
   closeBtn: { width: 42, height: 42, justifyContent: 'center', alignItems: 'center', backgroundColor: '#fdeded', borderRadius: 8, marginLeft: 12 },
-  list: { paddingHorizontal: 16, paddingBottom: 24, flexGrow: 1, gap: 8 },
-  footer: { paddingTop: 8, borderTopWidth: 1, borderTopColor: '#f0f0f0' },
+  list: { paddingHorizontal: 16, flexGrow: 1, gap: 8 },
+  divider: { height: 1, backgroundColor: '#f0f0f0', marginVertical: 8 },
+  footer: { paddingTop: 4 },
   countPill: { flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start', backgroundColor: '#fff', borderWidth: 1, borderColor: '#0080806e', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 16 },
   countNumber: { fontWeight: '800', color: '#666', fontSize: 13 },
   countText: { color: '#666', fontWeight: '600', fontSize: 13 },
