@@ -2,6 +2,7 @@ import { Feather } from '@expo/vector-icons';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Animated, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { BibleModals } from '../components/bible-modals';
+import { DrawerMenu } from '../components/drawer-menu';
 import { TopBar } from '../components/top-bar';
 import { VerseActionSheet, SelectedVerse } from '../components/verse-action-sheet';
 import { VerseReader } from '../components/verse-reader';
@@ -26,6 +27,9 @@ export default function HomeScreen() {
 
   const [actionSheetVisible, setActionSheetVisible] = useState(false);
   const [selectedVerses, setSelectedVerses] = useState<SelectedVerse[]>([]);
+
+  const [drawerVisible, setDrawerVisible] = useState(false);
+  const [activeSection, setActiveSection] = useState('biblia');
 
   const [versionModalVisible, setVersionModalVisible] = useState(false);
   const [bookModalVisible, setBookModalVisible] = useState(false);
@@ -170,6 +174,7 @@ export default function HomeScreen() {
         onOpenChapter={() => setChapterModalVisible(true)}
         onPrevChapter={() => navigateChapter(-1)}
         onNextChapter={() => navigateChapter(1)}
+        onOpenMenu={() => setDrawerVisible(true)}
       />
 
       <View style={styles.content}>
@@ -226,6 +231,13 @@ export default function HomeScreen() {
         highlights={highlights}
         onClose={onActionSheetClose}
         onToggleHighlight={toggleHighlight}
+      />
+
+      <DrawerMenu
+        visible={drawerVisible}
+        activeItem={activeSection}
+        onClose={() => setDrawerVisible(false)}
+        onSelectItem={(key: string) => setActiveSection(key)}
       />
     </Animated.View>
   );
