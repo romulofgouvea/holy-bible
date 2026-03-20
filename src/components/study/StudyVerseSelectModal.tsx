@@ -61,7 +61,7 @@ export function StudyVerseSelectModal({ visible, onClose, bookName, chapter, ver
           <TouchableOpacity style={[styles.confirmBtn, selectedNums.size === 0 && styles.confirmBtnDisabled]} onPress={handleConfirm} disabled={selectedNums.size === 0}>
             <Feather name="check" size={ms(16)} color={selectedNums.size === 0 ? '#aaa' : '#fff'} />
             <BibleText style={[styles.confirmText, { fontSize: ms(14) }, selectedNums.size === 0 && styles.confirmTextDisabled]}>
-              {selectedNums.size === 0 ? 'Selecione versículos' : `Inserir ${selectedNums.size} ${selectedNums.size === 1 ? 'versículo' : 'versículos'}`}
+              {selectedNums.size === 0 ? 'Versículos' : `Inserir ${selectedNums.size} ${selectedNums.size === 1 ? 'versículo' : 'versículos'}`}
             </BibleText>
           </TouchableOpacity>
         </View>

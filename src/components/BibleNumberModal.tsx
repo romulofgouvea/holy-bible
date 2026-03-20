@@ -50,11 +50,11 @@ export function BibleNumberModal({ visible, onClose, items, title, iconName, onS
                 })}
               </View>
             </ScrollView>
-            
+
             <View style={styles.footer}>
               <View style={styles.countPill}>
                 <BibleText style={styles.countNumber}>{items.length}</BibleText>
-                <BibleText style={styles.countText}> {items.length === 1 ? 'resultado encontrado' : 'resultados encontrados'}</BibleText>
+                <BibleText style={styles.countText}> {`${title.toLowerCase()}`}</BibleText>
               </View>
             </View>
           </View>

@@ -99,15 +99,16 @@ export function BibleBookModal({ visible, onClose, books, versionSigla, onVersio
             <View style={styles.footer}>
               <View style={styles.countPill}>
                 <BibleText style={styles.countNumber}>{filteredBooks.length}</BibleText>
-                <BibleText style={styles.countText}> {filteredBooks.length === 1 ? 'livro encontrado' : 'livros encontrados'}</BibleText>
+                <BibleText style={styles.countText}> {filteredBooks.length === 1 ? 'livro' : 'livros'}</BibleText>
               </View>
-
-              <TouchableOpacity
-                style={styles.modeToggle}
-                onPress={() => setViewMode(v => v === 'list' ? 'grid' : 'list')}
-              >
-                <Feather name={viewMode === 'list' ? 'grid' : 'list'} size={ms(20)} color="#008080" />
-              </TouchableOpacity>
+              <View style={styles.viewToggles}>
+                <TouchableOpacity onPress={() => setViewMode('grid')} style={[styles.toggleBtn, viewMode === 'grid' && styles.toggleBtnActive]}>
+                  <Feather name="grid" size={ms(18)} color={viewMode === 'grid' ? '#008080' : '#888'} />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => setViewMode('list')} style={[styles.toggleBtn, viewMode === 'list' && styles.toggleBtnActive]}>
+                  <Feather name="list" size={ms(18)} color={viewMode === 'list' ? '#008080' : '#888'} />
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
         </TouchableWithoutFeedback>
@@ -226,14 +227,9 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontSize: 13,
   },
-  modeToggle: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#e6f3f3',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+  viewToggles: { flexDirection: 'row', backgroundColor: '#f5f5f5', borderRadius: 8, padding: 6, gap: 4 },
+  toggleBtn: { padding: 6, borderRadius: 6 },
+  toggleBtnActive: { backgroundColor: '#fff', elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.1, shadowRadius: 2 },
   gridContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',

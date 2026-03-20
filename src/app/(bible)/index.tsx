@@ -2,10 +2,11 @@ import { BibleModals } from '@/components/BibleModals';
 import { BibleVerseActionSheet, SelectedVerse } from '@/components/BibleVerseActionSheet';
 import { Feather } from '@expo/vector-icons';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Animated, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Animated, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { BibleDrawerMenu } from '../../components/BibleDrawerMenu';
 import { BibleTopBar } from '../../components/BibleTopBar';
 import { BibleVerseReader } from '../../components/BibleVerseReader';
+import { BibleText } from '../../components/BibleText';
 import { useBible } from '../../hooks/use-bible';
 
 import { BibleToast } from '../../components/BibleToast';
@@ -40,6 +41,8 @@ export default function BibleScreen() {
   const [bookModalVisible, setBookModalVisible] = useState(false);
   const [chapterModalVisible, setChapterModalVisible] = useState(false);
   const [verseModalVisible, setVerseModalVisible] = useState(false);
+  
+  const [isChangingVersion, setIsChangingVersion] = useState<string | null>(null);
 
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const sectionListRef = useRef<any>(null);
@@ -183,19 +186,26 @@ export default function BibleScreen() {
       />
 
       <View style={styles.content}>
-        <BibleVerseReader
-          listRef={sectionListRef}
-          sections={sectionData}
-          blinkingVerse={blinkingVerse}
-          highlights={highlights}
-          version={version}
-          selectedKeys={selectedVerses.reduce((acc, v) => { acc[`${v.bookAbbrev}-${v.chapter}-${v.verse}`] = true; return acc; }, {} as Record<string, boolean>)}
-          bookAbbrev={currentBook.abbrev}
-          onVersePress={onVersePress}
-          onViewableItemsChanged={onViewableItemsChanged.current}
-          viewabilityConfig={viewabilityConfig.current}
-          onScrollToIndexFailed={onScrollToIndexFailed}
-        />
+        {isChangingVersion ? (
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <ActivityIndicator size="large" color="#008080" />
+            <BibleText style={{ marginTop: 16, fontWeight: '700', color: '#008080', fontSize: 16 }}>Carregando {isChangingVersion}...</BibleText>
+          </View>
+        ) : (
+          <BibleVerseReader
+            listRef={sectionListRef}
+            sections={sectionData}
+            blinkingVerse={blinkingVerse}
+            highlights={highlights}
+            version={version}
+            selectedKeys={selectedVerses.reduce((acc, v) => { acc[`${v.bookAbbrev}-${v.chapter}-${v.verse}`] = true; return acc; }, {} as Record<string, boolean>)}
+            bookAbbrev={currentBook.abbrev}
+            onVersePress={onVersePress}
+            onViewableItemsChanged={onViewableItemsChanged.current}
+            viewabilityConfig={viewabilityConfig.current}
+            onScrollToIndexFailed={onScrollToIndexFailed}
+          />
+        )}
 
         {!actionSheetVisible && (
           <>
@@ -229,7 +239,14 @@ export default function BibleScreen() {
         setBookModalVisible={setBookModalVisible}
         setChapterModalVisible={setChapterModalVisible}
         setVerseModalVisible={setVerseModalVisible}
-        onVersionSelect={(v) => { setVersion(v); }}
+        onVersionSelect={(v) => {
+          setVersionModalVisible(false);
+          setIsChangingVersion(v);
+          setTimeout(() => {
+            setVersion(v);
+            setIsChangingVersion(null);
+          }, 50);
+        }}
         onBookSelect={(b) => { setBook(b); setChapter(1); setVerse(1); }}
         onChapterSelect={(c) => { setChapter(c); setVerse(1); }}
         onVerseSelect={(v) => { setVerse(v); setTimeout(() => scrollToVerse(v, chapter), 300); }}

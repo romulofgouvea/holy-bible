@@ -1,10 +1,8 @@
-import React, { useMemo, useState } from 'react';
-import { StyleSheet } from 'react-native';
-import { Book, availableVersions } from '../data';
+import React, { useMemo } from 'react';
+import { Book } from '../data';
 import { useResponsive } from '../hooks/use-responsive';
 import { BibleBookModal } from './BibleBookModal';
 import { BibleNumberModal } from './BibleNumberModal';
-import { BibleText } from './BibleText';
 import { BibleVersionModal } from './BibleVersionModal';
 
 export type BibleModalsProps = {
@@ -88,7 +86,7 @@ export function BibleModals(props: BibleModalsProps) {
       <BibleNumberModal
         visible={chapterModalVisible}
         onClose={closeAllModals}
-        title="Selecione o capítulo"
+        title="Capítulos"
         iconName="list"
         items={chapterNumbers}
         onSelect={(num) => {
@@ -100,7 +98,7 @@ export function BibleModals(props: BibleModalsProps) {
       <BibleNumberModal
         visible={verseModalVisible}
         onClose={closeAllModals}
-        title="Selecione o versículo"
+        title="Versículos"
         iconName="align-left"
         items={verseNumbers}
         onSelect={(num) => {

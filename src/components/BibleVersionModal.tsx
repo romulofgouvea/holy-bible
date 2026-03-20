@@ -3,6 +3,7 @@ import React, { useMemo, useState } from 'react';
 import { Modal, ScrollView, StyleSheet, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { ALIASES, BibleVersionInfo } from '../data';
 import { useResponsive } from '../hooks/use-responsive';
+import { BibleGridBlock } from './BibleGridBlock';
 import { BibleListCard } from './BibleListCard';
 import { BibleText } from './BibleText';
 
@@ -13,8 +14,9 @@ type BibleVersionModalProps = {
 };
 
 export function BibleVersionModal({ visible, onClose, onSelect }: BibleVersionModalProps) {
-  const { ms, height } = useResponsive();
+  const { ms, height, width } = useResponsive();
   const [searchQuery, setSearchQuery] = useState('');
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
   const normalize = (str: string) => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 
@@ -23,6 +25,11 @@ export function BibleVersionModal({ visible, onClose, onSelect }: BibleVersionMo
     if (!query) return ALIASES;
     return ALIASES.filter((item) => normalize(item.name).includes(query) || normalize(item.sigla).includes(query));
   }, [searchQuery]);
+
+  const handleSelect = (item: BibleVersionInfo) => {
+    onSelect(item);
+    setSearchQuery('');
+  };
 
   return (
     <Modal visible={visible} animationType="slide" transparent>
@@ -33,7 +40,7 @@ export function BibleVersionModal({ visible, onClose, onSelect }: BibleVersionMo
               <View style={styles.headerIconWrap}>
                 <Feather name="book-open" size={ms(18)} color="#008080" />
               </View>
-              <BibleText style={[styles.title, { fontSize: ms(18) }]}>Bíblias</BibleText>
+              <BibleText style={[styles.title, { fontSize: ms(18) }]}>Versões</BibleText>
               <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
                 <Feather name="x" size={ms(22)} color="#666" />
               </TouchableOpacity>
@@ -43,7 +50,7 @@ export function BibleVersionModal({ visible, onClose, onSelect }: BibleVersionMo
               <Feather name="search" size={ms(18)} color="#008080" style={styles.searchIcon} />
               <TextInput
                 style={[styles.searchInput, { fontSize: ms(14) }]}
-                placeholder="Pesquisar tradução..."
+                placeholder="Pesquisar versão..."
                 placeholderTextColor="#999"
                 value={searchQuery}
                 onChangeText={setSearchQuery}
@@ -52,23 +59,45 @@ export function BibleVersionModal({ visible, onClose, onSelect }: BibleVersionMo
             </View>
 
             <ScrollView contentContainerStyle={styles.list} showsVerticalScrollIndicator={false}>
-              {filteredVersions.map((item) => (
-                <BibleListCard
-                  key={item.sigla}
-                  title={item.name}
-                  pillText={item.sigla}
-                  onPress={() => {
-                    onSelect(item);
-                    setSearchQuery('');
-                  }}
-                />
-              ))}
+              {viewMode === 'list' ? (
+                filteredVersions.map((item) => (
+                  <BibleListCard
+                    key={item.sigla}
+                    title={item.name}
+                    pillText={item.sigla}
+                    onPress={() => handleSelect(item)}
+                  />
+                ))
+              ) : (
+                <View style={styles.gridContainer}>
+                  {filteredVersions.map((item) => {
+                    const numCols = width > 600 ? 5 : 4;
+                    const itemWidthPercentage = (100 / numCols) - 2;
+                    return (
+                      <BibleGridBlock
+                        key={item.sigla}
+                        title={item.sigla}
+                        widthPercentage={itemWidthPercentage}
+                        onPress={() => handleSelect(item)}
+                      />
+                    );
+                  })}
+                </View>
+              )}
             </ScrollView>
 
             <View style={styles.footer}>
               <View style={styles.countPill}>
                 <BibleText style={styles.countNumber}>{filteredVersions.length}</BibleText>
-                <BibleText style={styles.countText}> {filteredVersions.length === 1 ? 'tradução encontrada' : 'traduções encontradas'}</BibleText>
+                <BibleText style={styles.countText}> {filteredVersions.length === 1 ? 'versão' : 'versões'}</BibleText>
+              </View>
+              <View style={styles.viewToggles}>
+                <TouchableOpacity onPress={() => setViewMode('grid')} style={[styles.toggleBtn, viewMode === 'grid' && styles.toggleBtnActive]}>
+                  <Feather name="grid" size={ms(18)} color={viewMode === 'grid' ? '#008080' : '#888'} />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => setViewMode('list')} style={[styles.toggleBtn, viewMode === 'list' && styles.toggleBtnActive]}>
+                  <Feather name="list" size={ms(18)} color={viewMode === 'list' ? '#008080' : '#888'} />
+                </TouchableOpacity>
               </View>
             </View>
           </View>
@@ -141,36 +170,13 @@ const styles = StyleSheet.create({
     color: '#333',
     ...({ outlineStyle: 'none' } as any),
   },
-  list: {
-    paddingHorizontal: 16,
-    paddingBottom: 16,
-    gap: 8,
-  },
-  footer: {
-    paddingHorizontal: 16,
-    paddingTop: 12,
-    borderTopWidth: 1,
-    borderTopColor: '#f0f0f0',
-  },
-  countPill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    alignSelf: 'flex-start',
-    backgroundColor: '#fff',
-    borderWidth: 1,
-    borderColor: '#0080806e',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 16,
-  },
-  countNumber: {
-    fontWeight: '800',
-    color: '#666',
-    fontSize: 13,
-  },
-  countText: {
-    color: '#666',
-    fontWeight: '600',
-    fontSize: 13,
-  }
+  list: { paddingHorizontal: 16, paddingBottom: 24, flexGrow: 1, gap: 8 },
+  footer: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 12, borderTopWidth: 1, borderTopColor: '#f0f0f0' },
+  countPill: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#e6f3f3', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 12 },
+  countNumber: { fontWeight: '800', color: '#008080', marginRight: 4 },
+  countText: { color: '#008080', fontWeight: '500' },
+  viewToggles: { flexDirection: 'row', backgroundColor: '#f5f5f5', borderRadius: 8, padding: 6, gap: 4 },
+  toggleBtn: { padding: 6, borderRadius: 6 },
+  toggleBtnActive: { backgroundColor: '#fff', elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.1, shadowRadius: 2 },
+  gridContainer: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, justifyContent: 'flex-start' },
 });
