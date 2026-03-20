@@ -16,24 +16,26 @@ export type BibleVersionInfo = {
 export const ALIASES = bibleVersions as BibleVersionInfo[];
 export const availableVersions = ALIASES.map(v => v.sigla);
 
-// ============================================================================
-// ATENÇÃO: O compilador do React Native (Metro) exige caminhos explícitos.
-// Para adicionar uma nova Bíblia (ex: NVI.json), faça apenas 2 coisas:
-// 1. Cadastre no `bible-versions.json`
-// 2. Adicione 1 ÚNICA LINHA no objeto abaixo mapeando a sigla pro arquivo:
-// ============================================================================
-const bibleDataFiles: Record<string, any> = {
-  'KJF': require('./KJF.json'),
-  'NAA': require('./NAA.json'),
-  // 'NVI': require('./NVI.json'), <-- Exemplo de como adicionar a próxima!
-};
+// Metro bundler magic context to dynamically bundle all adjacent .json files:
+// @ts-ignore
+const jsonContext = require.context('.', false, /\.json$/);
+
+const bibleDataFiles: Record<string, any> = {};
+
+ALIASES.forEach(v => {
+  try {
+    bibleDataFiles[v.sigla] = jsonContext(`./${v.sigla}.json`);
+  } catch (e) {
+    console.warn(`[BibleData] Aviso: Arquivo ${v.sigla}.json não encontrado na compilação.`);
+  }
+});
 
 export const getBibleData = (sigla: string): Book[] => {
   try {
     const data = bibleDataFiles[sigla];
     
     if (!data) {
-      console.warn(`[BibleData] Versão ${sigla} não mapeada. Adicione no bibleDataFiles em data/index.ts.`);
+      console.warn(`[BibleData] Versão ${sigla} não foi montada no Record. Verifique os arquivos JSON.`);
       return [];
     }
     

@@ -64,6 +64,15 @@ export default function StudyEditorScreen() {
   const blockRefs = useRef<Record<string, TextInput | null>>({});
   const versionBooks = useMemo(() => getBibleData(vpVersion), [vpVersion]);
 
+  useEffect(() => {
+    if (vpBook) {
+      const refreshedBook = versionBooks.find((b: Book) => b.name === vpBook.name);
+      if (refreshedBook && refreshedBook !== vpBook) {
+        setVpBook(refreshedBook);
+      }
+    }
+  }, [vpVersion, versionBooks]);
+
   const vpChapters = useMemo(() => vpBook ? Array.from({ length: vpBook.chapters.length }, (_, i) => i + 1) : [], [vpBook]);
 
   const vpVerses = useMemo(() => {
