@@ -24,7 +24,7 @@ export default function ConfigurationScreen() {
 
       <View style={styles.content}>
         <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-          <View style={styles.cardHeader}>
+          <TouchableOpacity style={styles.cardHeader} activeOpacity={0.8} onPress={() => toggleDarkMode()}>
             <View style={[styles.iconWrap, { backgroundColor: colors.surfaceVariant }]}>
               <Feather name={isDarkMode ? 'moon' : 'sun'} size={ms(20)} color={colors.primary} />
             </View>
@@ -33,25 +33,17 @@ export default function ConfigurationScreen() {
                 Modo Escuro
               </BibleText>
               <BibleText style={[styles.cardDesc, { fontSize: ms(13), color: colors.textMuted }]}>
-                Ajusta as cores do aplicativo para uma experiência noturna usando o padrão Material Design 3.
+                Ative o tema noturno no app
               </BibleText>
             </View>
-          </View>
-
-          <View style={[styles.divider, { backgroundColor: colors.surfaceVariant }]} />
-
-          <View style={styles.cardFooter}>
-            <BibleText style={[styles.cardFooterText, { fontSize: ms(14), color: colors.text }]}>
-              {isDarkMode ? 'Ativado' : 'Desativado'}
-            </BibleText>
             <Switch
+              style={{ marginLeft: 8 }}
               value={isDarkMode}
               onValueChange={toggleDarkMode}
-              trackColor={{ false: colors.surfaceVariant, true: colors.primary }}
-              thumbColor={isDarkMode ? colors.onPrimary : colors.border}
-              ios_backgroundColor={colors.surfaceVariant}
+              trackColor={{ false: colors.border, true: colors.primaryContainer }}
+              thumbColor={isDarkMode ? colors.primary : '#f4f3f4'}
             />
-          </View>
+          </TouchableOpacity>
         </View>
       </View>
 
@@ -59,7 +51,7 @@ export default function ConfigurationScreen() {
         visible={drawerVisible}
         activeItem="configuration"
         onClose={() => setDrawerVisible(false)}
-        onSelectItem={() => {}}
+        onSelectItem={() => { }}
       />
     </View>
   );
@@ -122,19 +114,5 @@ const styles = StyleSheet.create({
   },
   cardDesc: {
     lineHeight: 18,
-  },
-  divider: {
-    height: 1,
-    width: '100%',
-  },
-  cardFooter: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-  },
-  cardFooterText: {
-    fontWeight: '600',
   },
 });
