@@ -1,6 +1,7 @@
 import { BibleConfirmModal } from '@/components/BibleConfirmModal';
-import { BibleSelectModal } from '@/components/BibleSelectModal';
 import { BibleText } from '@/components/BibleText';
+import { BibleBookModal } from '../../../components/BibleBookModal';
+import { BibleNumberModal } from '../../../components/BibleNumberModal';
 import { Feather } from '@expo/vector-icons';
 import * as FileSystem from 'expo-file-system';
 import * as ImagePicker from 'expo-image-picker';
@@ -29,6 +30,7 @@ import { Block, makeBlock, Study, useStudies } from '../../../hooks/use-studies'
 import { StudyBlockToolbar } from '../../../components/study/StudyBlockToolbar';
 import { StudySlashMenu } from '../../../components/study/StudySlashMenu';
 import { StudyTopMenu } from '../../../components/study/StudyTopMenu';
+import { StudyVerseSelectModal } from '../../../components/study/StudyVerseSelectModal';
 
 const noOutline = Platform.select({ web: { outline: 'none', outlineWidth: 0 } as any, default: {} });
 
@@ -58,25 +60,12 @@ export default function StudyEditorScreen() {
   const [vpBook, setVpBook] = useState<Book | null>(null);
   const [vpChapter, setVpChapter] = useState(1);
   const [vpStep, setVpStep] = useState<'book' | 'chapter' | 'verses'>('book');
-  const [vpBookSearch, setVpBookSearch] = useState('');
-  const [vpChapterSearch, setVpChapterSearch] = useState('');
-  const [selectedVerseNums, setSelectedVerseNums] = useState<Set<number>>(new Set());
 
   const hydrated = useRef(false);
   const blockRefs = useRef<Record<string, TextInput | null>>({});
   const versionBooks = useMemo(() => getBibleData(vpVersion), [vpVersion]);
-  const normalize = (s: string) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
-
-  const filteredBooks = useMemo(() => {
-    const q = normalize(vpBookSearch.trim());
-    return q ? versionBooks.filter((b: Book) => normalize(b.abbrev).includes(q) || normalize(b.name).includes(q)) : versionBooks;
-  }, [vpBookSearch, versionBooks]);
 
   const vpChapters = useMemo(() => vpBook ? Array.from({ length: vpBook.chapters.length }, (_, i) => i + 1) : [], [vpBook]);
-  const filteredChapters = useMemo(() => {
-    const q = vpChapterSearch.trim();
-    return q ? vpChapters.filter(n => String(n).includes(q)) : vpChapters;
-  }, [vpChapterSearch, vpChapters]);
 
   const vpVerses = useMemo(() => {
     if (!vpBook) return [];
@@ -158,7 +147,7 @@ export default function StudyEditorScreen() {
     if (type === 'verse') {
       setBlocks(prev => prev.map(b => b.id === activeBlockId ? { ...b, content: clean((b as any).content) } as Block : b));
       setPendingBlockId(activeBlockId);
-      setVpStep('book'); setVpBook(null); setVpBookSearch(''); setSelectedVerseNums(new Set());
+      setVpStep('book'); setVpBook(null);
       setVersePickerVisible(true);
       return;
     }
@@ -177,7 +166,7 @@ export default function StudyEditorScreen() {
     setBlocks(prev => prev.map(b =>
       b.id === activeBlockId ? { id: b.id, type, content: clean((b as any).content) } as Block : b
     ));
-    setTimeout(() => blockRefs.current[activeBlockId]?.focus(), 80);
+    setTimeout(() => blockRefs.current[activeBlockId]?.focus(), 150);
   }, [activeBlockId]);
 
   const pickImage = useCallback(async (blockId: string) => {
@@ -210,26 +199,7 @@ export default function StudyEditorScreen() {
     setPendingVideoBlockId(null);
   }, [pendingVideoBlockId, videoUrl, videoTitle]);
 
-  const toggleVerseSelection = useCallback((num: number) => {
-    setSelectedVerseNums(prev => { const next = new Set(prev); next.has(num) ? next.delete(num) : next.add(num); return next; });
-  }, []);
 
-  const confirmVerseSelection = useCallback(() => {
-    if (!pendingBlockId || !vpBook || selectedVerseNums.size === 0) return;
-    const sorted = [...selectedVerseNums].sort((a, b) => a - b);
-    const ref = sorted.length === 1 ? `${vpBook.name} ${vpChapter}:${sorted[0]}` : `${vpBook.name} ${vpChapter}:${sorted[0]}–${sorted[sorted.length - 1]}`;
-    const content = sorted.map(n => { const v = vpVerses.find(v => v.verse === n); return `${n} ${v?.text ?? ''}`; }).join('\n');
-    setBlocks(prev => {
-      const idx = prev.findIndex(b => b.id === pendingBlockId);
-      const vb: Block = { id: pendingBlockId, type: 'verse', content, verseRef: ref, bookName: vpBook.name, chapter: vpChapter, verse: sorted[0] };
-      const nb = makeBlock('paragraph');
-      const next = [...prev];
-      if (idx === -1) return [...next, vb, nb];
-      next[idx] = vb; next.splice(idx + 1, 0, nb);
-      return next;
-    });
-    setVersePickerVisible(false); setPendingBlockId(null); setSelectedVerseNums(new Set());
-  }, [pendingBlockId, vpBook, vpChapter, vpVerses, selectedVerseNums]);
 
   const exportJSON = useCallback(async () => {
     setMenuVisible(false);
@@ -442,8 +412,8 @@ export default function StudyEditorScreen() {
       <ScrollView style={{ flex: 1, backgroundColor: '#fff' }} contentContainerStyle={styles.editorContent} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
         {blocks.map(item => (
           <View key={item.id} style={[
-            { zIndex: focusedId === item.id ? 20 : 1, paddingHorizontal: 12, paddingVertical: 4, marginVertical: 2, borderRadius: 12, borderWidth: 1, borderColor: 'transparent' },
-            focusedId === item.id && { backgroundColor: '#f9fcfc', borderColor: '#d3ebe8' }
+            { zIndex: focusedId === item.id ? 20 : 1, paddingLeft: 12, paddingRight: focusedId === item.id ? 56 : 12, paddingVertical: 4, marginVertical: 2 },
+            focusedId === item.id && { backgroundColor: '#f9fcfc', borderRadius: 12, borderWidth: 1, borderColor: '#d3ebe8' }
           ]}>
             {renderBlock(item)}
 
@@ -487,7 +457,7 @@ export default function StudyEditorScreen() {
           <View style={styles.videoModal}>
             <View style={styles.modalHandle} />
             <BibleText style={[styles.videoModalTitle, { fontSize: ms(18) }]}>Link de Vídeo</BibleText>
-            <TextInput style={[styles.videoInput, noOutline, { fontSize: ms(15) }]} value={videoUrl} onChangeText={setVideoUrl} placeholder="https://youtube.com/watch?v=..." placeholderTextColor="#bbb" autoCapitalize="none" keyboardType="url" {...({ outlineStyle: 'none' } as any)} underlineColorAndroid="transparent" />
+            <TextInput autoFocus style={[styles.videoInput, noOutline, { fontSize: ms(15) }]} value={videoUrl} onChangeText={setVideoUrl} placeholder="https://youtube.com/watch?v=..." placeholderTextColor="#bbb" autoCapitalize="none" keyboardType="url" {...({ outlineStyle: 'none' } as any)} underlineColorAndroid="transparent" />
             <TextInput style={[styles.videoInput, noOutline, { fontSize: ms(15) }]} value={videoTitle} onChangeText={setVideoTitle} placeholder="Título (opcional)" placeholderTextColor="#bbb" {...({ outlineStyle: 'none' } as any)} underlineColorAndroid="transparent" />
             <TouchableOpacity style={[styles.confirmBtn, !videoUrl.trim() && styles.confirmBtnDisabled]} onPress={confirmVideo} disabled={!videoUrl.trim()}>
               <BibleText style={[{ color: '#fff', fontWeight: '700', fontSize: ms(15) }]}>Inserir</BibleText>
@@ -496,37 +466,48 @@ export default function StudyEditorScreen() {
         </KeyboardAvoidingView>
       </Modal>
 
-      <BibleSelectModal visible={versePickerVisible && vpStep === 'book'} onClose={() => setVersePickerVisible(false)} title="Selecione o livro" placeholder="Buscar livro..." value={vpBookSearch} onChangeText={setVpBookSearch} items={filteredBooks} itemKey={b => b.abbrev} renderItem={b => <BibleText style={styles.modalItem}>{b.abbrev}</BibleText>} onSelect={b => { setVpBook(b); setVpChapter(1); setVpStep('chapter'); }} />
-      <BibleSelectModal visible={versePickerVisible && vpStep === 'chapter'} onClose={() => setVersePickerVisible(false)} title={`Capítulos — ${vpBook?.name}`} placeholder="" value={vpChapterSearch} onChangeText={setVpChapterSearch} items={filteredChapters} itemKey={n => String(n)} renderItem={n => <BibleText style={styles.modalItem}>{n}</BibleText>} onSelect={n => { setVpChapter(n); setVpStep('verses'); setSelectedVerseNums(new Set()); }} hideSearch />
+      <BibleBookModal
+        visible={versePickerVisible && vpStep === 'book'}
+        onClose={() => setVersePickerVisible(false)}
+        books={versionBooks}
+        onSelect={(bookName) => {
+          const b = versionBooks.find((book: Book) => book.name === bookName || book.abbrev === bookName);
+          if (b) { setVpBook(b); setVpChapter(1); setVpStep('chapter'); }
+        }}
+      />
+      
+      <BibleNumberModal
+        visible={versePickerVisible && vpStep === 'chapter'}
+        onClose={() => setVersePickerVisible(false)}
+        title={vpBook?.name ? `Capítulos — ${vpBook.name}` : 'Capítulos'}
+        iconName="list"
+        items={vpChapters}
+        onSelect={n => { setVpChapter(n); setVpStep('verses'); }}
+      />
 
-      <Modal visible={versePickerVisible && vpStep === 'verses'} transparent animationType="slide">
-        <View style={styles.versesBackdrop}>
-          <View style={styles.versesSheet}>
-            <View style={styles.versesHeader}>
-              <TouchableOpacity onPress={() => setVpStep('chapter')}><Feather name="arrow-left" size={ms(20)} color="#008080" /></TouchableOpacity>
-              <BibleText style={[styles.versesTitle, { fontSize: ms(16) }]}>{vpBook?.name} {vpChapter}</BibleText>
-              <TouchableOpacity onPress={() => setVersePickerVisible(false)}><Feather name="x" size={ms(20)} color="#999" /></TouchableOpacity>
-            </View>
-            <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
-              {vpVerses.map(({ verse, text }) => {
-                const selected = selectedVerseNums.has(verse);
-                return (
-                  <TouchableOpacity key={verse} style={[styles.verseRow, selected && styles.verseRowSelected]} onPress={() => toggleVerseSelection(verse)} activeOpacity={0.7}>
-                    <BibleText style={[styles.verseNumLabel, { fontSize: ms(12) }, selected && styles.verseNumLabelSelected]}>{verse}</BibleText>
-                    <BibleText style={[styles.verseRowText, { fontSize: ms(14) }]}>{text}</BibleText>
-                  </TouchableOpacity>
-                );
-              })}
-            </ScrollView>
-            <TouchableOpacity style={[styles.confirmBtn, selectedVerseNums.size === 0 && styles.confirmBtnDisabled]} onPress={confirmVerseSelection} disabled={selectedVerseNums.size === 0}>
-              <Feather name="check" size={ms(16)} color={selectedVerseNums.size === 0 ? '#aaa' : '#fff'} />
-              <BibleText style={[styles.confirmText, { fontSize: ms(14) }, selectedVerseNums.size === 0 && styles.confirmTextDisabled]}>
-                {selectedVerseNums.size === 0 ? 'Selecione versículos' : `Inserir ${selectedVerseNums.size} ${selectedVerseNums.size === 1 ? 'versículo' : 'versículos'}`}
-              </BibleText>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
+      <StudyVerseSelectModal
+        visible={versePickerVisible && vpStep === 'verses'}
+        onClose={() => setVersePickerVisible(false)}
+        bookName={vpBook?.name || ''}
+        chapter={vpChapter}
+        verses={vpVerses}
+        onConfirm={(sortedNums) => {
+          if (!pendingBlockId || !vpBook || sortedNums.length === 0) return;
+          const ref = sortedNums.length === 1 ? `${vpBook.name} ${vpChapter}:${sortedNums[0]}` : `${vpBook.name} ${vpChapter}:${sortedNums[0]}–${sortedNums[sortedNums.length - 1]}`;
+          const content = sortedNums.map(n => { const v = vpVerses.find(v => v.verse === n); return `${n} ${v?.text ?? ''}`; }).join('\n');
+          setBlocks(prev => {
+            const idx = prev.findIndex(b => b.id === pendingBlockId);
+            const vb: Block = { id: pendingBlockId, type: 'verse', content, verseRef: ref, bookName: vpBook.name, chapter: vpChapter, verse: sortedNums[0] };
+            const nb = makeBlock('paragraph');
+            const next = [...prev];
+            if (idx === -1) return [...next, vb, nb];
+            next[idx] = vb; next.splice(idx + 1, 0, nb);
+            return next;
+          });
+          setVersePickerVisible(false);
+          setPendingBlockId(null);
+        }}
+      />
 
       <BibleConfirmModal
         visible={deleteConfirmVisible}
@@ -558,7 +539,7 @@ const styles = StyleSheet.create({
   iconBtn: { padding: 8, borderRadius: 10, backgroundColor: 'rgba(255,255,255,0.15)' },
   titleInput: { flex: 1, color: '#fff', fontWeight: '700' },
   editorContent: { padding: 16, paddingBottom: 160, flexGrow: 1 },
-  blockInput: { color: '#1a1a1a', paddingVertical: 6, paddingHorizontal: 0, lineHeight: 24, minHeight: 32 },
+  blockInput: { color: '#1a1a1a', paddingVertical: 6, paddingHorizontal: 0, lineHeight: 24, minHeight: 40 },
   headerText: { fontWeight: '800', color: '#008080', paddingTop: 14, letterSpacing: 0.2 },
   h1Text: { fontWeight: '700', color: '#222', paddingTop: 10 },
   h2Text: { fontWeight: '600', color: '#444', paddingTop: 6 },
@@ -582,14 +563,5 @@ const styles = StyleSheet.create({
   confirmBtnDisabled: { backgroundColor: '#f0f0f0' },
   confirmText: { color: '#fff', fontWeight: '700' },
   confirmTextDisabled: { color: '#aaa' },
-  modalItem: { color: '#fff', fontWeight: '700', fontSize: 14 },
-  versesBackdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'flex-end' },
-  versesSheet: { backgroundColor: '#fff', borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 16, maxHeight: '85%', flex: 1 },
-  versesHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
-  versesTitle: { fontWeight: '700', color: '#222' },
-  verseRow: { flexDirection: 'row', alignItems: 'flex-start', paddingVertical: 12, paddingHorizontal: 8, borderBottomWidth: 1, borderBottomColor: '#f5f5f5', gap: 10 },
-  verseRowSelected: { backgroundColor: '#e0f2f1', borderLeftWidth: 3, borderLeftColor: '#008080', paddingLeft: 6 },
-  verseNumLabel: { fontWeight: '700', color: '#008080', minWidth: 24, paddingTop: 2 },
-  verseNumLabelSelected: { color: '#005f5f' },
-  verseRowText: { flex: 1, color: '#333', lineHeight: 20 },
+  modalItem: { color: '#fff', fontWeight: '700', fontSize: 14 }
 });

@@ -94,7 +94,7 @@ export function BibleDrawerMenu(props: DrawerMenuProps) {
         </View>
 
         <View style={styles.drawerFooter}>
-          <BibleText style={[styles.footerText, { fontSize: ms(11) }]}>Holy Bible App</BibleText>
+          <BibleText style={[styles.footerText, { fontSize: ms(11) }]}>Stevanini</BibleText>
         </View>
       </Animated.View>
     </View>
