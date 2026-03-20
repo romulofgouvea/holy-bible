@@ -197,19 +197,23 @@ export default function BibleScreen() {
           onScrollToIndexFailed={onScrollToIndexFailed}
         />
 
-        <TouchableOpacity
-          style={[styles.floatingArrow, styles.floatingArrowLeft]}
-          onPress={() => navigateChapter(-1)}
-        >
-          <Feather name="chevron-left" size={24} color="#ffffff" />
-        </TouchableOpacity>
+        {!actionSheetVisible && (
+          <>
+            <TouchableOpacity
+              style={[styles.floatingArrow, styles.floatingArrowLeft]}
+              onPress={() => navigateChapter(-1)}
+            >
+              <Feather name="chevron-left" size={24} color="#ffffff" />
+            </TouchableOpacity>
 
-        <TouchableOpacity
-          style={[styles.floatingArrow, styles.floatingArrowRight]}
-          onPress={() => navigateChapter(1)}
-        >
-          <Feather name="chevron-right" size={24} color="#ffffff" />
-        </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.floatingArrow, styles.floatingArrowRight]}
+              onPress={() => navigateChapter(1)}
+            >
+              <Feather name="chevron-right" size={24} color="#ffffff" />
+            </TouchableOpacity>
+          </>
+        )}
       </View>
 
       <BibleModals

@@ -20,27 +20,22 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   View
 } from 'react-native';
 import { availableVersions, Book, getBibleData } from '../../../data';
 import { useResponsive } from '../../../hooks/use-responsive';
 import { Block, makeBlock, Study, useStudies } from '../../../hooks/use-studies';
+import { StudyBlockToolbar } from '../../../components/study/StudyBlockToolbar';
+import { StudySlashMenu } from '../../../components/study/StudySlashMenu';
+import { StudyTopMenu } from '../../../components/study/StudyTopMenu';
 
 const noOutline = Platform.select({ web: { outline: 'none', outlineWidth: 0 } as any, default: {} });
-
-const SLASH_COMMANDS = [
-  { type: 'header', label: 'Cabeçalho', icon: 'minus' as const, desc: 'Seção de destaque' },
-  { type: 'h1', label: 'Título 1', icon: 'type' as const, desc: 'Título principal' },
-  { type: 'h2', label: 'Título 2', icon: 'type' as const, desc: 'Subtítulo' },
-  { type: 'verse', label: 'Versículo', icon: 'book-open' as const, desc: 'Citar versículo(s)' },
-  { type: 'image', label: 'Imagem', icon: 'image' as const, desc: 'Inserir imagem' },
-  { type: 'video', label: 'Link de Vídeo', icon: 'video' as const, desc: 'Link do YouTube' },
-];
 
 export default function StudyEditorScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { getStudy, updateStudy, deleteStudy, loaded } = useStudies();
-  const { ms } = useResponsive();
+  const { ms, height } = useResponsive();
   const router = useRouter();
 
   const [title, setTitle] = useState('');
@@ -338,7 +333,7 @@ export default function StudyEditorScreen() {
 
     if (item.type === 'image') {
       return (
-        <View key={item.id} style={[styles.imageBlock, isFocused && styles.blockFocusedBorder]}>
+        <View key={item.id} style={styles.imageBlock}>
           {item.uri ? (
             <TouchableOpacity activeOpacity={0.9} onPress={() => setFullScreenImage(item.uri)} onPressIn={() => { setFocusedId(item.id); setActiveBlockId(item.id); }}>
               <Image source={{ uri: item.uri }} style={styles.imagePreview} resizeMode="cover" />
@@ -365,7 +360,7 @@ export default function StudyEditorScreen() {
 
     if (item.type === 'video') {
       return (
-        <TouchableOpacity key={item.id} style={[styles.videoBlock, isFocused && styles.blockFocusedBorder]} activeOpacity={0.8} onPressIn={() => { setFocusedId(item.id); setActiveBlockId(item.id); }}>
+        <TouchableOpacity key={item.id} style={styles.videoBlock} activeOpacity={0.8} onPressIn={() => { setFocusedId(item.id); setActiveBlockId(item.id); }}>
           <View style={styles.videoIcon}><Feather name="video" size={ms(20)} color="#008080" /></View>
           <BibleText style={[styles.videoTitle, { fontSize: ms(14) }]} numberOfLines={1}>{item.title || item.url}</BibleText>
           <TouchableOpacity onPress={() => Linking.openURL(item.url)} style={{ padding: 8 }}>
@@ -377,7 +372,7 @@ export default function StudyEditorScreen() {
 
     if (item.type === 'verse') {
       return (
-        <TouchableOpacity key={item.id} style={[styles.verseBlock, isFocused && styles.blockFocusedBorder]} activeOpacity={0.8} onPressIn={() => { setFocusedId(item.id); setActiveBlockId(item.id); }}>
+        <TouchableOpacity key={item.id} style={styles.verseBlock} activeOpacity={0.8} onPressIn={() => { setFocusedId(item.id); setActiveBlockId(item.id); }}>
           <BibleText style={[styles.verseRef, { fontSize: ms(18), marginBottom: 16 }]}>{item.verseRef}</BibleText>
           <BibleText style={[styles.verseText, { fontSize: ms(16) }]}>
             {item.content.split('\n').map((line, i, arr) => {
@@ -446,32 +441,23 @@ export default function StudyEditorScreen() {
 
       <ScrollView style={{ flex: 1, backgroundColor: '#fff' }} contentContainerStyle={styles.editorContent} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
         {blocks.map(item => (
-          <View key={item.id} style={{ zIndex: focusedId === item.id ? 20 : 1 }}>
+          <View key={item.id} style={[
+            { zIndex: focusedId === item.id ? 20 : 1, paddingHorizontal: 12, paddingVertical: 4, marginVertical: 2, borderRadius: 12, borderWidth: 1, borderColor: 'transparent' },
+            focusedId === item.id && { backgroundColor: '#f9fcfc', borderColor: '#d3ebe8' }
+          ]}>
             {renderBlock(item)}
 
             {focusedId === item.id && (
-              <View style={styles.blockToolbarWrapper} pointerEvents="box-none" {...({ onMouseDown: (e: any) => e.preventDefault() } as any)}>
-                <View style={styles.blockToolbar}>
-                  <TouchableOpacity style={styles.toolBtn} onPress={() => focusedId && addBlockAfter(focusedId)}>
-                    <Feather name="plus" size={ms(18)} color="#008080" />
-                  </TouchableOpacity>
-                  <View style={styles.toolDivider} />
-                  <TouchableOpacity style={styles.toolBtn} onPress={() => focusedId && moveBlock(focusedId, 'up')} disabled={focusedIdx === 0}>
-                    <Feather name="arrow-up" size={ms(18)} color={focusedIdx === 0 ? '#ddd' : '#008080'} />
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.toolBtn} onPress={() => focusedId && moveBlock(focusedId, 'down')} disabled={focusedIdx === blocks.length - 1}>
-                    <Feather name="arrow-down" size={ms(18)} color={focusedIdx === blocks.length - 1 ? '#ddd' : '#008080'} />
-                  </TouchableOpacity>
-                  <View style={styles.toolDivider} />
-                  <TouchableOpacity style={styles.toolBtn} onPress={() => focusedId && deleteBlock(focusedId)}>
-                    <Feather name="trash-2" size={ms(18)} color="#e74c3c" />
-                  </TouchableOpacity>
-                  <View style={styles.toolDivider} />
-                  <TouchableOpacity style={styles.toolBtn} onPress={() => { Keyboard.dismiss(); setFocusedId(null); setActiveBlockId(null); setSlashVisible(false); }}>
-                    <Feather name="x" size={ms(18)} color="#999" />
-                  </TouchableOpacity>
-                </View>
-              </View>
+              <StudyBlockToolbar
+                isFirst={focusedIdx === 0}
+                isLast={focusedIdx === blocks.length - 1}
+                onAddAfter={() => focusedId && addBlockAfter(focusedId)}
+                onMoveUp={() => focusedId && moveBlock(focusedId, 'up')}
+                onMoveDown={() => focusedId && moveBlock(focusedId, 'down')}
+                onDelete={() => focusedId && deleteBlock(focusedId)}
+                onOpenCommands={() => { focusedId && setActiveBlockId(focusedId); setSlashVisible(true); Keyboard.dismiss(); }}
+                onClose={() => { Keyboard.dismiss(); setFocusedId(null); setActiveBlockId(null); setSlashVisible(false); }}
+              />
             )}
           </View>
         ))}
@@ -481,40 +467,19 @@ export default function StudyEditorScreen() {
         </TouchableOpacity>
       </ScrollView>
 
-      {slashVisible && (
-        <View style={styles.slashMenu}>
-          <BibleText style={[styles.slashTitle, { fontSize: ms(11) }]}>COMANDOS</BibleText>
-          {SLASH_COMMANDS.map(cmd => (
-            <TouchableOpacity key={cmd.type} style={styles.slashItem} onPress={() => applySlashCommand(cmd.type as Block['type'])}>
-              <View style={styles.slashIcon}><Feather name={cmd.icon} size={ms(16)} color="#008080" /></View>
-              <View><BibleText style={[styles.slashLabel, { fontSize: ms(14) }]}>{cmd.label}</BibleText><BibleText style={[styles.slashDesc, { fontSize: ms(11) }]}>{cmd.desc}</BibleText></View>
-            </TouchableOpacity>
-          ))}
-          <TouchableOpacity style={styles.slashCloseBtn} onPress={() => setSlashVisible(false)}>
-            <BibleText style={[styles.slashCloseText, { fontSize: ms(15) }]}>Fechar</BibleText>
-          </TouchableOpacity>
-        </View>
-      )}
+      <StudySlashMenu
+        visible={slashVisible}
+        onClose={() => setSlashVisible(false)}
+        onSelectCommand={applySlashCommand}
+      />
 
-      <Modal visible={menuVisible} transparent animationType="fade">
-        <TouchableOpacity style={styles.menuBackdrop} activeOpacity={1} onPress={() => setMenuVisible(false)}>
-          <View style={styles.menuSheet}>
-            <TouchableOpacity style={styles.menuItem} onPress={exportJSON}>
-              <Feather name="download" size={ms(18)} color="#008080" />
-              <BibleText style={[styles.menuItemText, { fontSize: ms(15) }]}>Exportar JSON</BibleText>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.menuItem} onPress={exportPDF}>
-              <Feather name="file-text" size={ms(18)} color="#008080" />
-              <BibleText style={[styles.menuItemText, { fontSize: ms(15) }]}>Exportar PDF</BibleText>
-            </TouchableOpacity>
-            <View style={styles.menuDivider} />
-            <TouchableOpacity style={styles.menuItem} onPress={handleDeleteStudy}>
-              <Feather name="trash-2" size={ms(18)} color="#e74c3c" />
-              <BibleText style={[styles.menuItemText, { fontSize: ms(15), color: '#e74c3c' }]}>Excluir estudo</BibleText>
-            </TouchableOpacity>
-          </View>
-        </TouchableOpacity>
-      </Modal>
+      <StudyTopMenu
+        visible={menuVisible}
+        onClose={() => setMenuVisible(false)}
+        onExportJSON={exportJSON}
+        onExportPDF={exportPDF}
+        onDelete={handleDeleteStudy}
+      />
 
       <Modal visible={videoModalVisible} transparent animationType="slide">
         <KeyboardAvoidingView style={{ flex: 1, justifyContent: 'flex-end' }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
@@ -597,7 +562,6 @@ const styles = StyleSheet.create({
   headerText: { fontWeight: '800', color: '#008080', paddingTop: 14, letterSpacing: 0.2 },
   h1Text: { fontWeight: '700', color: '#222', paddingTop: 10 },
   h2Text: { fontWeight: '600', color: '#444', paddingTop: 6 },
-  blockFocusedBorder: { borderRadius: 8, borderWidth: 1, borderColor: '#e0f2f1' },
   imageBlock: { marginVertical: 6, borderRadius: 12, overflow: 'hidden' },
   imagePreview: { width: '100%', height: 200, borderRadius: 12 },
   imagePlaceholder: { height: 200, backgroundColor: '#f5f5f5', borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
@@ -609,30 +573,7 @@ const styles = StyleSheet.create({
   verseRef: { fontWeight: '700', color: '#008080', marginBottom: 4 },
   verseText: { color: '#333', lineHeight: 22 },
   addBlockBtn: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 16, marginTop: 8 },
-  blockToolbarWrapper: { position: 'absolute', top: '100%', left: 0, right: 0, alignItems: 'flex-end', zIndex: 100, marginTop: 4, paddingRight: 4 },
-  blockToolbar: {
-    flexDirection: 'row', alignItems: 'center',
-    backgroundColor: '#fff',
-    borderRadius: 24,
-    paddingHorizontal: 8, paddingVertical: 4, gap: 2,
-    elevation: 10, shadowColor: '#008080', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.15, shadowRadius: 10,
-    borderWidth: 1, borderColor: '#f0f4f4'
-  },
-  toolBtn: { padding: 10, borderRadius: 10 },
-  toolDivider: { width: 1, height: 24, backgroundColor: '#eee', marginHorizontal: 4 },
-  slashMenu: { position: 'absolute', bottom: 0, left: 0, right: 0, backgroundColor: '#fff', borderTopLeftRadius: 20, borderTopRightRadius: 20, padding: 16, paddingBottom: 36, elevation: 24, shadowColor: '#000', shadowOffset: { width: 0, height: -4 }, shadowOpacity: 0.12, shadowRadius: 12, gap: 4 },
-  slashTitle: { color: '#aaa', fontWeight: '700', marginBottom: 4, letterSpacing: 1 },
-  slashItem: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 10, borderRadius: 12 },
-  slashIcon: { width: 36, height: 36, borderRadius: 10, backgroundColor: '#e6f3f3', alignItems: 'center', justifyContent: 'center' },
-  slashLabel: { fontWeight: '700', color: '#222' },
-  slashDesc: { color: '#aaa' },
-  slashCloseBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, backgroundColor: '#f0f0f0', borderRadius: 14, paddingVertical: 13, marginTop: 12 },
-  slashCloseText: { color: '#666', fontWeight: '700' },
   menuBackdrop: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0,0,0,0.3)' },
-  menuSheet: { position: 'absolute', top: 56, right: 12, backgroundColor: '#fff', borderRadius: 16, padding: 8, width: 200, elevation: 10, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.15, shadowRadius: 10 },
-  menuItem: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14, borderRadius: 12 },
-  menuItemText: { fontWeight: '600', color: '#333' },
-  menuDivider: { height: 1, backgroundColor: '#f0f0f0', marginVertical: 4, marginHorizontal: 8 },
   videoModal: { backgroundColor: '#fff', borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24, paddingBottom: 40, gap: 14 },
   modalHandle: { width: 40, height: 4, backgroundColor: '#e0e0e0', borderRadius: 2, alignSelf: 'center', marginBottom: 4 },
   videoModalTitle: { fontWeight: '800', color: '#222' },

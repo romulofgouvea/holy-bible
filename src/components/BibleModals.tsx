@@ -2,7 +2,8 @@ import React, { useMemo, useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { Book, availableVersions } from '../data';
 import { useResponsive } from '../hooks/use-responsive';
-import { BibleSelectModal } from './BibleSelectModal';
+import { BibleBookModal } from './BibleBookModal';
+import { BibleNumberModal } from './BibleNumberModal';
 import { BibleText } from './BibleText';
 import { BibleVersionModal } from './BibleVersionModal';
 
@@ -38,11 +39,6 @@ export function BibleModals(props: BibleModalsProps) {
   const { ms } = useResponsive();
   const fontSize = ms(14);
 
-  const [searchBookQuery, setSearchBookQuery] = useState('');
-  const [searchVersionQuery, setSearchVersionQuery] = useState('');
-  const [searchChapterQuery, setSearchChapterQuery] = useState('');
-  const [searchVerseQuery, setSearchVerseQuery] = useState('');
-
   const closeAllModals = () => {
     setVersionModalVisible(false);
     setBookModalVisible(false);
@@ -52,28 +48,9 @@ export function BibleModals(props: BibleModalsProps) {
 
   const normalize = (str: string) => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 
-  const filteredBooks = useMemo(() => {
-    const query = normalize(searchBookQuery.trim());
-    if (!query) return versionBooks;
-    return versionBooks.filter((item: Book) => {
-      const abbrev = normalize(item.abbrev || '');
-      const name = normalize(item.name || '');
-      return abbrev.includes(query) || name.includes(query);
-    });
-  }, [searchBookQuery, versionBooks]);
 
-  const filteredVersions = useMemo(() => {
-    const query = normalize(searchVersionQuery.trim());
-    if (!query) return availableVersions;
-    return availableVersions.filter((item) => normalize(item).includes(query));
-  }, [searchVersionQuery]);
 
   const chapterNumbers = useMemo(() => Array.from({ length: chapterCount }, (_, i) => i + 1), [chapterCount]);
-  const filteredChapters = useMemo(() => {
-    const query = searchChapterQuery.trim().toLowerCase();
-    if (!query) return chapterNumbers;
-    return chapterNumbers.filter((num) => num.toString().includes(query));
-  }, [searchChapterQuery, chapterNumbers]);
 
   const allVerses = useMemo(() => {
     const verses: { chapter: number; verse: number; text: string }[] = [];
@@ -87,11 +64,6 @@ export function BibleModals(props: BibleModalsProps) {
 
   const verseCount = allVerses.filter((item) => item.chapter === chapter).length || 1;
   const verseNumbers = useMemo(() => Array.from({ length: verseCount }, (_, i) => i + 1), [verseCount]);
-  const filteredVerses = useMemo(() => {
-    const query = searchVerseQuery.trim().toLowerCase();
-    if (!query) return verseNumbers;
-    return verseNumbers.filter((num) => num.toString().includes(query));
-  }, [searchVerseQuery, verseNumbers]);
 
   return (
     <>
@@ -100,68 +72,42 @@ export function BibleModals(props: BibleModalsProps) {
         onClose={closeAllModals}
         onSelect={(v) => {
           onVersionSelect(v.sigla, '');
-          setSearchVersionQuery('');
           setVersionModalVisible(false);
         }}
       />
-      <BibleSelectModal
+      <BibleBookModal
         visible={bookModalVisible}
         onClose={closeAllModals}
-        title="Selecione o livro"
-        placeholder="Buscar por abreviação"
-        value={searchBookQuery}
-        onChangeText={setSearchBookQuery}
-        items={filteredBooks}
-        itemKey={(item) => `${item.abbrev}-${item.name}`}
-        renderItem={(item) => <BibleText style={[styles.item, { fontSize }]}>{item.abbrev || item.name}</BibleText>}
-        onSelect={(item) => {
-          onBookSelect(item.name || item.abbrev || '');
-          setSearchBookQuery('');
+        books={versionBooks}
+        onSelect={(bookName) => {
+          onBookSelect(bookName);
           setBookModalVisible(false);
           setChapterModalVisible(true);
         }}
       />
-      <BibleSelectModal
+      <BibleNumberModal
         visible={chapterModalVisible}
         onClose={closeAllModals}
         title="Selecione o capítulo"
-        placeholder="Buscar capítulo"
-        value={searchChapterQuery}
-        onChangeText={setSearchChapterQuery}
-        items={filteredChapters}
-        itemKey={(item) => item.toString()}
-        renderItem={(item) => <BibleText style={[styles.item, { fontSize }]}>{item}</BibleText>}
+        iconName="list"
+        items={chapterNumbers}
         onSelect={(num) => {
           onChapterSelect(num);
-          setSearchChapterQuery('');
           setChapterModalVisible(false);
           setVerseModalVisible(true);
         }}
-        hideSearch
       />
-      <BibleSelectModal
+      <BibleNumberModal
         visible={verseModalVisible}
         onClose={closeAllModals}
         title="Selecione o versículo"
-        placeholder="Buscar versículo"
-        value={searchVerseQuery}
-        onChangeText={setSearchVerseQuery}
-        items={filteredVerses}
-        itemKey={(item) => item.toString()}
-        renderItem={(item) => <BibleText style={[styles.item, { fontSize }]}>{item}</BibleText>}
+        iconName="align-left"
+        items={verseNumbers}
         onSelect={(num) => {
           onVerseSelect(num);
-          setSearchVerseQuery('');
           setVerseModalVisible(false);
         }}
-        hideSearch
       />
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  item: {
-    color: '#ffffff'
-  }
-});
