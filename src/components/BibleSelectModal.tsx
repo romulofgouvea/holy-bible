@@ -1,16 +1,16 @@
 import { Feather } from '@expo/vector-icons';
 import React from 'react';
 import {
-    Modal,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    TouchableWithoutFeedback,
-    View
+  Modal,
+  ScrollView,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View
 } from 'react-native';
 import { useResponsive } from '../hooks/use-responsive';
+import { BibleText } from './BibleText';
 
 type SelectModalProps<T> = {
   visible: boolean;
@@ -26,7 +26,7 @@ type SelectModalProps<T> = {
   hideSearch?: boolean;
 };
 
-export const SelectModal = React.memo(function SelectModal<T>(props: SelectModalProps < T >) {
+export const BibleSelectModal = React.memo(function BibleSelectModal<T>(props: SelectModalProps<T>) {
   const { visible, onClose, title, placeholder, value, onChangeText, items, itemKey, renderItem, onSelect, hideSearch } = props;
   const { width, ms, s } = useResponsive();
   const numColumns = width > 600 ? 6 : 4;
@@ -38,7 +38,7 @@ export const SelectModal = React.memo(function SelectModal<T>(props: SelectModal
         <TouchableWithoutFeedback>
           <View style={styles.modalContentBig}>
             <View style={styles.modalHeader}>
-              <Text style={[styles.modalTitle, { fontSize: ms(20) }]}>{title}</Text>
+              <BibleText style={[styles.modalTitle, { fontSize: ms(20) }]}>{title}</BibleText>
               <TouchableOpacity onPress={onClose}>
                 <Feather name="x" size={ms(24)} color="#333" />
               </TouchableOpacity>

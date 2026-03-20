@@ -1,14 +1,14 @@
+import { BibleModals } from '@/components/BibleModals';
+import { BibleVerseActionSheet, SelectedVerse } from '@/components/BibleVerseActionSheet';
 import { Feather } from '@expo/vector-icons';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Animated, StyleSheet, TouchableOpacity, View } from 'react-native';
-import { BibleModals } from '../components/bible-modals';
-import { DrawerMenu } from '../components/drawer-menu';
-import { TopBar } from '../components/top-bar';
-import { VerseActionSheet, SelectedVerse } from '../components/verse-action-sheet';
-import { VerseReader } from '../components/verse-reader';
-import { useBible } from '../hooks/use-bible';
+import { BibleDrawerMenu } from '../../components/BibleDrawerMenu';
+import { BibleTopBar } from '../../components/BibleTopBar';
+import { BibleVerseReader } from '../../components/BibleVerseReader';
+import { useBible } from '../../hooks/use-bible';
 
-export default function HomeScreen() {
+export default function BibleScreen() {
   const {
     isReady,
     version, setVersion, versionBooks,
@@ -29,7 +29,6 @@ export default function HomeScreen() {
   const [selectedVerses, setSelectedVerses] = useState<SelectedVerse[]>([]);
 
   const [drawerVisible, setDrawerVisible] = useState(false);
-  const [activeSection, setActiveSection] = useState('biblia');
 
   const [versionModalVisible, setVersionModalVisible] = useState(false);
   const [bookModalVisible, setBookModalVisible] = useState(false);
@@ -165,7 +164,7 @@ export default function HomeScreen() {
 
   return (
     <Animated.View style={[styles.page, { opacity: fadeAnim }]}>
-      <TopBar
+      <BibleTopBar
         version={version}
         bookName={currentBook.name}
         currentChapter={visibleChapter}
@@ -178,7 +177,7 @@ export default function HomeScreen() {
       />
 
       <View style={styles.content}>
-        <VerseReader
+        <BibleVerseReader
           listRef={sectionListRef}
           sections={sectionData}
           blinkingVerse={blinkingVerse}
@@ -225,7 +224,7 @@ export default function HomeScreen() {
         onVerseSelect={(v) => { setVerse(v); setTimeout(() => scrollToVerse(v, chapter), 300); }}
       />
 
-      <VerseActionSheet
+      <BibleVerseActionSheet
         visible={actionSheetVisible}
         selectedVerses={selectedVerses}
         highlights={highlights}
@@ -233,11 +232,11 @@ export default function HomeScreen() {
         onToggleHighlight={toggleHighlight}
       />
 
-      <DrawerMenu
+      <BibleDrawerMenu
         visible={drawerVisible}
-        activeItem={activeSection}
+        activeItem="bible"
         onClose={() => setDrawerVisible(false)}
-        onSelectItem={(key: string) => setActiveSection(key)}
+        onSelectItem={() => setDrawerVisible(false)}
       />
     </Animated.View>
   );

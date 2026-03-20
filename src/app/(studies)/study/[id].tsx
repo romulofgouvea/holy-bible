@@ -1,3 +1,6 @@
+import { BibleConfirmModal } from '@/components/BibleConfirmModal';
+import { BibleSelectModal } from '@/components/BibleSelectModal';
+import { BibleText } from '@/components/BibleText';
 import { Feather } from '@expo/vector-icons';
 import * as FileSystem from 'expo-file-system';
 import * as ImagePicker from 'expo-image-picker';
@@ -15,16 +18,13 @@ import {
   Platform,
   ScrollView,
   StyleSheet,
-  Text,
   TextInput,
   TouchableOpacity,
   View
 } from 'react-native';
-import { ConfirmModal } from '../../components/confirm-modal';
-import { SelectModal } from '../../components/select-modal';
-import { availableVersions, Book, getBibleData } from '../../data';
-import { useResponsive } from '../../hooks/use-responsive';
-import { Block, makeBlock, Study, useStudies } from '../../hooks/use-studies';
+import { availableVersions, Book, getBibleData } from '../../../data';
+import { useResponsive } from '../../../hooks/use-responsive';
+import { Block, makeBlock, Study, useStudies } from '../../../hooks/use-studies';
 
 const noOutline = Platform.select({ web: { outline: 'none', outlineWidth: 0 } as any, default: {} });
 
@@ -346,7 +346,7 @@ export default function StudyEditorScreen() {
           ) : (
             <TouchableOpacity style={styles.imagePlaceholder} onPress={() => pickImage(item.id)}>
               <Feather name="image" size={ms(32)} color="#ccc" />
-              <Text style={{ color: '#ccc', marginTop: 8 }}>Toque para selecionar imagem</Text>
+              <BibleText style={{ color: '#ccc', marginTop: 8 }}>Toque para selecionar imagem</BibleText>
             </TouchableOpacity>
           )}
           <TextInput
@@ -367,7 +367,7 @@ export default function StudyEditorScreen() {
       return (
         <TouchableOpacity key={item.id} style={[styles.videoBlock, isFocused && styles.blockFocusedBorder]} activeOpacity={0.8} onPressIn={() => { setFocusedId(item.id); setActiveBlockId(item.id); }}>
           <View style={styles.videoIcon}><Feather name="video" size={ms(20)} color="#008080" /></View>
-          <Text style={[styles.videoTitle, { fontSize: ms(14) }]} numberOfLines={1}>{item.title || item.url}</Text>
+          <BibleText style={[styles.videoTitle, { fontSize: ms(14) }]} numberOfLines={1}>{item.title || item.url}</BibleText>
           <TouchableOpacity onPress={() => Linking.openURL(item.url)} style={{ padding: 8 }}>
             <Feather name="external-link" size={ms(16)} color="#008080" />
           </TouchableOpacity>
@@ -378,14 +378,14 @@ export default function StudyEditorScreen() {
     if (item.type === 'verse') {
       return (
         <TouchableOpacity key={item.id} style={[styles.verseBlock, isFocused && styles.blockFocusedBorder]} activeOpacity={0.8} onPressIn={() => { setFocusedId(item.id); setActiveBlockId(item.id); }}>
-          <Text style={[styles.verseRef, { fontSize: ms(18), marginBottom: 16 }]}>{item.verseRef}</Text>
-          <Text style={[styles.verseText, { fontSize: ms(16) }]}>
+          <BibleText style={[styles.verseRef, { fontSize: ms(18), marginBottom: 16 }]}>{item.verseRef}</BibleText>
+          <BibleText style={[styles.verseText, { fontSize: ms(16) }]}>
             {item.content.split('\n').map((line, i, arr) => {
               const sp = line.indexOf(' ');
               const num = line.slice(0, sp); const text = line.slice(sp + 1);
-              return <Text key={i}><Text style={{ color: '#008080', fontWeight: '700' }}>{num} </Text><Text style={{ fontStyle: 'italic', lineHeight: 20 }}>{text}</Text>{i < arr.length - 1 ? '\n\n' : ''}</Text>;
+              return <BibleText key={i}><BibleText style={{ color: '#008080', fontWeight: '700' }}>{num} </BibleText><BibleText style={{ fontStyle: 'italic', lineHeight: 20 }}>{text}</BibleText>{i < arr.length - 1 ? '\n\n' : ''}</BibleText>;
             })}
-          </Text>
+          </BibleText>
         </TouchableOpacity>
       );
     }
@@ -477,21 +477,21 @@ export default function StudyEditorScreen() {
         ))}
         <TouchableOpacity style={styles.addBlockBtn} onPress={() => { const last = blocks[blocks.length - 1]; addBlockAfter(last?.id ?? ''); }}>
           <Feather name="plus" size={ms(16)} color="#ccc" />
-          <Text style={[{ color: '#ccc', fontSize: ms(13) }]}>Adicionar bloco</Text>
+          <BibleText style={[{ color: '#ccc', fontSize: ms(13) }]}>Adicionar bloco</BibleText>
         </TouchableOpacity>
       </ScrollView>
 
       {slashVisible && (
         <View style={styles.slashMenu}>
-          <Text style={[styles.slashTitle, { fontSize: ms(11) }]}>COMANDOS</Text>
+          <BibleText style={[styles.slashTitle, { fontSize: ms(11) }]}>COMANDOS</BibleText>
           {SLASH_COMMANDS.map(cmd => (
             <TouchableOpacity key={cmd.type} style={styles.slashItem} onPress={() => applySlashCommand(cmd.type as Block['type'])}>
               <View style={styles.slashIcon}><Feather name={cmd.icon} size={ms(16)} color="#008080" /></View>
-              <View><Text style={[styles.slashLabel, { fontSize: ms(14) }]}>{cmd.label}</Text><Text style={[styles.slashDesc, { fontSize: ms(11) }]}>{cmd.desc}</Text></View>
+              <View><BibleText style={[styles.slashLabel, { fontSize: ms(14) }]}>{cmd.label}</BibleText><BibleText style={[styles.slashDesc, { fontSize: ms(11) }]}>{cmd.desc}</BibleText></View>
             </TouchableOpacity>
           ))}
           <TouchableOpacity style={styles.slashCloseBtn} onPress={() => setSlashVisible(false)}>
-            <Text style={[styles.slashCloseText, { fontSize: ms(15) }]}>Fechar</Text>
+            <BibleText style={[styles.slashCloseText, { fontSize: ms(15) }]}>Fechar</BibleText>
           </TouchableOpacity>
         </View>
       )}
@@ -501,16 +501,16 @@ export default function StudyEditorScreen() {
           <View style={styles.menuSheet}>
             <TouchableOpacity style={styles.menuItem} onPress={exportJSON}>
               <Feather name="download" size={ms(18)} color="#008080" />
-              <Text style={[styles.menuItemText, { fontSize: ms(15) }]}>Exportar JSON</Text>
+              <BibleText style={[styles.menuItemText, { fontSize: ms(15) }]}>Exportar JSON</BibleText>
             </TouchableOpacity>
             <TouchableOpacity style={styles.menuItem} onPress={exportPDF}>
               <Feather name="file-text" size={ms(18)} color="#008080" />
-              <Text style={[styles.menuItemText, { fontSize: ms(15) }]}>Exportar PDF</Text>
+              <BibleText style={[styles.menuItemText, { fontSize: ms(15) }]}>Exportar PDF</BibleText>
             </TouchableOpacity>
             <View style={styles.menuDivider} />
             <TouchableOpacity style={styles.menuItem} onPress={handleDeleteStudy}>
               <Feather name="trash-2" size={ms(18)} color="#e74c3c" />
-              <Text style={[styles.menuItemText, { fontSize: ms(15), color: '#e74c3c' }]}>Excluir estudo</Text>
+              <BibleText style={[styles.menuItemText, { fontSize: ms(15), color: '#e74c3c' }]}>Excluir estudo</BibleText>
             </TouchableOpacity>
           </View>
         </TouchableOpacity>
@@ -521,25 +521,25 @@ export default function StudyEditorScreen() {
           <TouchableOpacity style={styles.menuBackdrop} activeOpacity={1} onPress={() => setVideoModalVisible(false)} />
           <View style={styles.videoModal}>
             <View style={styles.modalHandle} />
-            <Text style={[styles.videoModalTitle, { fontSize: ms(18) }]}>Link de Vídeo</Text>
+            <BibleText style={[styles.videoModalTitle, { fontSize: ms(18) }]}>Link de Vídeo</BibleText>
             <TextInput style={[styles.videoInput, noOutline, { fontSize: ms(15) }]} value={videoUrl} onChangeText={setVideoUrl} placeholder="https://youtube.com/watch?v=..." placeholderTextColor="#bbb" autoCapitalize="none" keyboardType="url" {...({ outlineStyle: 'none' } as any)} underlineColorAndroid="transparent" />
             <TextInput style={[styles.videoInput, noOutline, { fontSize: ms(15) }]} value={videoTitle} onChangeText={setVideoTitle} placeholder="Título (opcional)" placeholderTextColor="#bbb" {...({ outlineStyle: 'none' } as any)} underlineColorAndroid="transparent" />
             <TouchableOpacity style={[styles.confirmBtn, !videoUrl.trim() && styles.confirmBtnDisabled]} onPress={confirmVideo} disabled={!videoUrl.trim()}>
-              <Text style={[{ color: '#fff', fontWeight: '700', fontSize: ms(15) }]}>Inserir</Text>
+              <BibleText style={[{ color: '#fff', fontWeight: '700', fontSize: ms(15) }]}>Inserir</BibleText>
             </TouchableOpacity>
           </View>
         </KeyboardAvoidingView>
       </Modal>
 
-      <SelectModal visible={versePickerVisible && vpStep === 'book'} onClose={() => setVersePickerVisible(false)} title="Selecione o livro" placeholder="Buscar livro..." value={vpBookSearch} onChangeText={setVpBookSearch} items={filteredBooks} itemKey={b => b.abbrev} renderItem={b => <Text style={styles.modalItem}>{b.abbrev}</Text>} onSelect={b => { setVpBook(b); setVpChapter(1); setVpStep('chapter'); }} />
-      <SelectModal visible={versePickerVisible && vpStep === 'chapter'} onClose={() => setVersePickerVisible(false)} title={`Capítulos — ${vpBook?.name}`} placeholder="" value={vpChapterSearch} onChangeText={setVpChapterSearch} items={filteredChapters} itemKey={n => String(n)} renderItem={n => <Text style={styles.modalItem}>{n}</Text>} onSelect={n => { setVpChapter(n); setVpStep('verses'); setSelectedVerseNums(new Set()); }} hideSearch />
+      <BibleSelectModal visible={versePickerVisible && vpStep === 'book'} onClose={() => setVersePickerVisible(false)} title="Selecione o livro" placeholder="Buscar livro..." value={vpBookSearch} onChangeText={setVpBookSearch} items={filteredBooks} itemKey={b => b.abbrev} renderItem={b => <BibleText style={styles.modalItem}>{b.abbrev}</BibleText>} onSelect={b => { setVpBook(b); setVpChapter(1); setVpStep('chapter'); }} />
+      <BibleSelectModal visible={versePickerVisible && vpStep === 'chapter'} onClose={() => setVersePickerVisible(false)} title={`Capítulos — ${vpBook?.name}`} placeholder="" value={vpChapterSearch} onChangeText={setVpChapterSearch} items={filteredChapters} itemKey={n => String(n)} renderItem={n => <BibleText style={styles.modalItem}>{n}</BibleText>} onSelect={n => { setVpChapter(n); setVpStep('verses'); setSelectedVerseNums(new Set()); }} hideSearch />
 
       <Modal visible={versePickerVisible && vpStep === 'verses'} transparent animationType="slide">
         <View style={styles.versesBackdrop}>
           <View style={styles.versesSheet}>
             <View style={styles.versesHeader}>
               <TouchableOpacity onPress={() => setVpStep('chapter')}><Feather name="arrow-left" size={ms(20)} color="#008080" /></TouchableOpacity>
-              <Text style={[styles.versesTitle, { fontSize: ms(16) }]}>{vpBook?.name} {vpChapter}</Text>
+              <BibleText style={[styles.versesTitle, { fontSize: ms(16) }]}>{vpBook?.name} {vpChapter}</BibleText>
               <TouchableOpacity onPress={() => setVersePickerVisible(false)}><Feather name="x" size={ms(20)} color="#999" /></TouchableOpacity>
             </View>
             <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
@@ -547,23 +547,23 @@ export default function StudyEditorScreen() {
                 const selected = selectedVerseNums.has(verse);
                 return (
                   <TouchableOpacity key={verse} style={[styles.verseRow, selected && styles.verseRowSelected]} onPress={() => toggleVerseSelection(verse)} activeOpacity={0.7}>
-                    <Text style={[styles.verseNumLabel, { fontSize: ms(12) }, selected && styles.verseNumLabelSelected]}>{verse}</Text>
-                    <Text style={[styles.verseRowText, { fontSize: ms(14) }]}>{text}</Text>
+                    <BibleText style={[styles.verseNumLabel, { fontSize: ms(12) }, selected && styles.verseNumLabelSelected]}>{verse}</BibleText>
+                    <BibleText style={[styles.verseRowText, { fontSize: ms(14) }]}>{text}</BibleText>
                   </TouchableOpacity>
                 );
               })}
             </ScrollView>
             <TouchableOpacity style={[styles.confirmBtn, selectedVerseNums.size === 0 && styles.confirmBtnDisabled]} onPress={confirmVerseSelection} disabled={selectedVerseNums.size === 0}>
               <Feather name="check" size={ms(16)} color={selectedVerseNums.size === 0 ? '#aaa' : '#fff'} />
-              <Text style={[styles.confirmText, { fontSize: ms(14) }, selectedVerseNums.size === 0 && styles.confirmTextDisabled]}>
+              <BibleText style={[styles.confirmText, { fontSize: ms(14) }, selectedVerseNums.size === 0 && styles.confirmTextDisabled]}>
                 {selectedVerseNums.size === 0 ? 'Selecione versículos' : `Inserir ${selectedVerseNums.size} ${selectedVerseNums.size === 1 ? 'versículo' : 'versículos'}`}
-              </Text>
+              </BibleText>
             </TouchableOpacity>
           </View>
         </View>
       </Modal>
 
-      <ConfirmModal
+      <BibleConfirmModal
         visible={deleteConfirmVisible}
         title="Excluir estudo"
         message="Tem certeza? Esta ação não pode ser desfeita."
@@ -572,7 +572,7 @@ export default function StudyEditorScreen() {
         onConfirm={() => {
           setDeleteConfirmVisible(false);
           deleteStudy(id);
-          router.replace('/estudos' as any);
+          router.replace('/studies' as any);
         }}
       />
 

@@ -1,8 +1,9 @@
-import { Text, StyleSheet } from 'react-native';
 import React, { useMemo, useState } from 'react';
-import { useResponsive } from '../hooks/use-responsive';
-import { SelectModal } from './select-modal';
+import { StyleSheet } from 'react-native';
 import { Book, availableVersions } from '../data';
+import { useResponsive } from '../hooks/use-responsive';
+import { BibleSelectModal } from './BibleSelectModal';
+import { BibleText } from './BibleText';
 
 export type BibleModalsProps = {
   versionBooks: Book[];
@@ -93,7 +94,7 @@ export function BibleModals(props: BibleModalsProps) {
 
   return (
     <>
-      <SelectModal
+      <BibleSelectModal
         visible={versionModalVisible}
         onClose={closeAllModals}
         title="Selecione a versão"
@@ -102,7 +103,7 @@ export function BibleModals(props: BibleModalsProps) {
         onChangeText={setSearchVersionQuery}
         items={filteredVersions}
         itemKey={(item) => item}
-        renderItem={(item) => <Text style={[styles.item, { fontSize }]}>{item}</Text>}
+        renderItem={(item) => <BibleText style={[styles.item, { fontSize }]}>{item}</BibleText>}
         onSelect={(item) => {
           onVersionSelect(item, versionBooks[0]?.name || '');
           setSearchVersionQuery('');
@@ -111,7 +112,7 @@ export function BibleModals(props: BibleModalsProps) {
           setBookModalVisible(true);
         }}
       />
-      <SelectModal
+      <BibleSelectModal
         visible={bookModalVisible}
         onClose={closeAllModals}
         title="Selecione o livro"
@@ -120,7 +121,7 @@ export function BibleModals(props: BibleModalsProps) {
         onChangeText={setSearchBookQuery}
         items={filteredBooks}
         itemKey={(item) => `${item.abbrev}-${item.name}`}
-        renderItem={(item) => <Text style={[styles.item, { fontSize }]}>{item.abbrev || item.name}</Text>}
+        renderItem={(item) => <BibleText style={[styles.item, { fontSize }]}>{item.abbrev || item.name}</BibleText>}
         onSelect={(item) => {
           onBookSelect(item.name || item.abbrev || '');
           setSearchBookQuery('');
@@ -128,7 +129,7 @@ export function BibleModals(props: BibleModalsProps) {
           setChapterModalVisible(true);
         }}
       />
-      <SelectModal
+      <BibleSelectModal
         visible={chapterModalVisible}
         onClose={closeAllModals}
         title="Selecione o capítulo"
@@ -137,7 +138,7 @@ export function BibleModals(props: BibleModalsProps) {
         onChangeText={setSearchChapterQuery}
         items={filteredChapters}
         itemKey={(item) => item.toString()}
-        renderItem={(item) => <Text style={[styles.item, { fontSize }]}>{item}</Text>}
+        renderItem={(item) => <BibleText style={[styles.item, { fontSize }]}>{item}</BibleText>}
         onSelect={(num) => {
           onChapterSelect(num);
           setSearchChapterQuery('');
@@ -146,7 +147,7 @@ export function BibleModals(props: BibleModalsProps) {
         }}
         hideSearch
       />
-      <SelectModal
+      <BibleSelectModal
         visible={verseModalVisible}
         onClose={closeAllModals}
         title="Selecione o versículo"
@@ -155,7 +156,7 @@ export function BibleModals(props: BibleModalsProps) {
         onChangeText={setSearchVerseQuery}
         items={filteredVerses}
         itemKey={(item) => item.toString()}
-        renderItem={(item) => <Text style={[styles.item, { fontSize }]}>{item}</Text>}
+        renderItem={(item) => <BibleText style={[styles.item, { fontSize }]}>{item}</BibleText>}
         onSelect={(num) => {
           onVerseSelect(num);
           setSearchVerseQuery('');

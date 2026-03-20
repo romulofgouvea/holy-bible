@@ -1,5 +1,5 @@
-import { SectionList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React from 'react';
+import { SectionList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useResponsive } from '../hooks/use-responsive';
 
 type VerseItem = {
@@ -30,10 +30,10 @@ type VerseReaderProps = {
     }) => void;
 };
 
-export const VerseReader = React.memo((props: VerseReaderProps) => {
-    const { 
-        sections, blinkingVerse, highlights, selectedKeys, bookAbbrev, 
-        onVersePress, onViewableItemsChanged, viewabilityConfig, listRef, onScrollToIndexFailed 
+export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
+    const {
+        sections, blinkingVerse, highlights, selectedKeys, bookAbbrev,
+        onVersePress, onViewableItemsChanged, viewabilityConfig, listRef, onScrollToIndexFailed
     } = props;
     const { ms } = useResponsive();
 
@@ -54,10 +54,10 @@ export const VerseReader = React.memo((props: VerseReaderProps) => {
                 const isBlinking = blinkingVerse === `${item.chapter}-${item.verse}`;
                 const isHighlighted = highlights[`${bookAbbrev}-${item.chapter}-${item.verse}`];
                 const isSelected = selectedKeys[`${bookAbbrev}-${item.chapter}-${item.verse}`];
-                
+
                 return (
-                    <TouchableOpacity 
-                        onPress={() => onVersePress(item)} 
+                    <TouchableOpacity
+                        onPress={() => onVersePress(item)}
                         activeOpacity={0.7}
                     >
                         <View style={[
@@ -66,7 +66,7 @@ export const VerseReader = React.memo((props: VerseReaderProps) => {
                             isBlinking && styles.blinkingRow,
                             isSelected && styles.selectedRow,
                         ]}>
-                            <Text style={[styles.verseText, { 
+                            <Text style={[styles.verseText, {
                                 fontSize: ms(22),
                                 lineHeight: ms(26)
                             }]}>{`   ${item.verse} ${item.text}`}</Text>

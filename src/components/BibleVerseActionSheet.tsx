@@ -1,8 +1,9 @@
 import { Feather } from '@expo/vector-icons';
 import * as Clipboard from 'expo-clipboard';
 import React from 'react';
-import { Animated, Share, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Animated, Share, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useResponsive } from '../hooks/use-responsive';
+import { BibleText } from './BibleText';
 
 export type SelectedVerse = {
   chapter: number;
@@ -20,7 +21,7 @@ type VerseActionSheetProps = {
   onToggleHighlight: (verse: SelectedVerse) => void;
 };
 
-export function VerseActionSheet(props: VerseActionSheetProps) {
+export function BibleVerseActionSheet(props: VerseActionSheetProps) {
   const { visible, selectedVerses, highlights, onClose, onToggleHighlight } = props;
   const { ms } = useResponsive();
   const translateY = React.useRef(new Animated.Value(100)).current;
@@ -68,9 +69,9 @@ export function VerseActionSheet(props: VerseActionSheetProps) {
   return (
     <Animated.View style={[styles.bar, { transform: [{ translateY }] }]}>
       <View style={styles.leftSection}>
-        <Text style={[styles.countText, { fontSize: ms(13) }]}>
+        <BibleText style={[styles.countText, { fontSize: ms(13) }]}>
           {count} {count === 1 ? 'versículo' : 'versículos'}
-        </Text>
+        </BibleText>
       </View>
 
       <View style={styles.actions}>

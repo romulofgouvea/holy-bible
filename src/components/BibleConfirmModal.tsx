@@ -1,6 +1,7 @@
 import React from 'react';
-import { Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Modal, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useResponsive } from '../hooks/use-responsive';
+import { BibleText } from './BibleText';
 
 type ConfirmModalProps = {
   visible: boolean;
@@ -12,7 +13,7 @@ type ConfirmModalProps = {
   onCancel: () => void;
 };
 
-export function ConfirmModal({
+export function BibleConfirmModal({
   visible,
   title,
   message,
@@ -27,14 +28,14 @@ export function ConfirmModal({
     <Modal visible={visible} transparent animationType="fade">
       <View style={styles.backdrop}>
         <View style={styles.dialog}>
-          <Text style={[styles.title, { fontSize: ms(18) }]}>{title}</Text>
-          <Text style={[styles.message, { fontSize: ms(15) }]}>{message}</Text>
+          <BibleText style={[styles.title, { fontSize: ms(18) }]}>{title}</BibleText>
+          <BibleText style={[styles.message, { fontSize: ms(15) }]}>{message}</BibleText>
           <View style={styles.actions}>
             <TouchableOpacity style={[styles.btn, styles.cancelBtn]} onPress={onCancel}>
-              <Text style={[styles.cancelText, { fontSize: ms(15) }]}>{cancelText}</Text>
+              <BibleText style={[styles.cancelText, { fontSize: ms(15) }]}>{cancelText}</BibleText>
             </TouchableOpacity>
             <TouchableOpacity style={[styles.btn, styles.confirmBtn]} onPress={onConfirm}>
-              <Text style={[styles.confirmText, { fontSize: ms(15) }]}>{confirmText}</Text>
+              <BibleText style={[styles.confirmText, { fontSize: ms(15) }]}>{confirmText}</BibleText>
             </TouchableOpacity>
           </View>
         </View>

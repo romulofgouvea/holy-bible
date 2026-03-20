@@ -1,9 +1,10 @@
-import { StyleSheet, Text, TouchableOpacity, View, useWindowDimensions } from 'react-native';
-import React from 'react';
 import { Feather } from '@expo/vector-icons';
+import React from 'react';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useResponsive } from '../hooks/use-responsive';
+import { BibleText } from './BibleText';
 
-type TopBarProps = {
+export type BibleTopBarProps = {
     version: string;
     bookName: string;
     currentChapter: number;
@@ -15,7 +16,7 @@ type TopBarProps = {
     onOpenMenu: () => void;
 };
 
-export const TopBar = React.memo((props: TopBarProps) => {
+export const BibleTopBar = React.memo((props: BibleTopBarProps) => {
     const { version, bookName, currentChapter, onOpenVersion, onOpenBook, onOpenChapter, onPrevChapter, onNextChapter, onOpenMenu } = props;
     const { ms } = useResponsive();
 
@@ -23,13 +24,13 @@ export const TopBar = React.memo((props: TopBarProps) => {
         <View style={styles.topBarRow}>
             <View style={styles.leftButtons}>
                 <TouchableOpacity style={styles.topBarButton} onPress={onOpenVersion}>
-                    <Text style={[styles.topBarButtonText, { fontSize: ms(15) }]}>{version}</Text>
+                    <BibleText style={[styles.topBarButtonText, { fontSize: ms(15) }]}>{version}</BibleText>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.topBarButton} onPress={onOpenBook}>
-                    <Text style={[styles.topBarButtonText, { fontSize: ms(15) }]}>{bookName}</Text>
+                    <BibleText style={[styles.topBarButtonText, { fontSize: ms(15) }]}>{bookName}</BibleText>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.topBarButton} onPress={onOpenChapter}>
-                    <Text style={[styles.topBarButtonText, { fontSize: ms(15) }]}>{currentChapter}</Text>
+                    <BibleText style={[styles.topBarButtonText, { fontSize: ms(15) }]}>{currentChapter}</BibleText>
                 </TouchableOpacity>
             </View>
 

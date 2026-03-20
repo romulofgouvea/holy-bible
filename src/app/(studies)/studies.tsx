@@ -1,7 +1,8 @@
+import { BibleConfirmModal } from '@/components/BibleConfirmModal';
 import { Feather } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
+import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
   Alert,
@@ -10,15 +11,14 @@ import {
   Modal,
   Platform,
   StyleSheet,
-  Text,
   TextInput,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native';
-import { ConfirmModal } from '../components/confirm-modal';
-import { DrawerMenu } from '../components/drawer-menu';
-import { useResponsive } from '../hooks/use-responsive';
-import { Study, useStudies } from '../hooks/use-studies';
+import { BibleDrawerMenu } from '../../components/BibleDrawerMenu';
+import { BibleText } from '../../components/BibleText';
+import { useResponsive } from '../../hooks/use-responsive';
+import { Study, useStudies } from '../../hooks/use-studies';
 
 export default function EstudosScreen() {
   const { ms } = useResponsive();
@@ -45,7 +45,7 @@ export default function EstudosScreen() {
     try {
       const result = await DocumentPicker.getDocumentAsync({ type: 'application/json' });
       if (result.canceled) return;
-      
+
       let raw = '';
       if (Platform.OS === 'web' && (result.assets[0] as any).file) {
         raw = await new Promise((resolve, reject) => {
@@ -59,14 +59,14 @@ export default function EstudosScreen() {
       } else {
         raw = await FileSystem.readAsStringAsync(result.assets[0].uri);
       }
-      
+
       const parsed = JSON.parse(raw) as Partial<Study>;
       if (!parsed.blocks || !parsed.title) { Alert.alert('Erro', 'Arquivo inválido'); return; }
-      
+
       const id = importStudy(parsed);
-      
+
       setTimeout(() => {
-        router.push(`/estudo/${id}` as any);
+        router.push(`/study/${id}` as any);
       }, 100);
     } catch (err) {
       console.log('Import err', err);
@@ -77,22 +77,22 @@ export default function EstudosScreen() {
   const renderEmpty = () => (
     <View style={styles.emptyContainer}>
       <Feather name="book" size={ms(64)} color="#d0e8e8" />
-      <Text style={[styles.emptyTitle, { fontSize: ms(20) }]}>Nenhum estudo ainda</Text>
-      <Text style={[styles.emptySubtitle, { fontSize: ms(14) }]}>
+      <BibleText style={[styles.emptyTitle, { fontSize: ms(20) }]}>Nenhum estudo ainda</BibleText>
+      <BibleText style={[styles.emptySubtitle, { fontSize: ms(14) }]}>
         Toque no botão + para criar seu primeiro estudo
-      </Text>
+      </BibleText>
     </View>
   );
 
   const renderItem = ({ item }: { item: Study }) => (
-    <TouchableOpacity style={styles.card} onPress={() => router.push(`/estudo/${item.id}` as any)} activeOpacity={0.75}>
+    <TouchableOpacity style={styles.card} onPress={() => router.push(`/study/${item.id}` as any)} activeOpacity={0.75}>
       <View style={styles.cardContent}>
         <View style={styles.cardIcon}>
           <Feather name="book-open" size={ms(17)} color="#008080" />
         </View>
         <View style={styles.cardText}>
-          <Text style={[styles.cardTitle, { fontSize: ms(14) }]}>{item.title}</Text>
-          <Text style={[styles.cardDate, { fontSize: ms(10) }]}>{item.createdAt}</Text>
+          <BibleText style={[styles.cardTitle, { fontSize: ms(14) }]}>{item.title}</BibleText>
+          <BibleText style={[styles.cardDate, { fontSize: ms(10) }]}>{item.createdAt}</BibleText>
         </View>
         <TouchableOpacity onPress={() => setStudyToDelete(item.id)} style={styles.deleteBtn}>
           <Feather name="trash-2" size={ms(16)} color="#ccc" />
@@ -104,7 +104,7 @@ export default function EstudosScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={[styles.headerTitle, { fontSize: ms(15) }]}>Estudos</Text>
+        <BibleText style={[styles.headerTitle, { fontSize: ms(15) }]}>Estudos</BibleText>
         <TouchableOpacity style={styles.menuBtn} onPress={() => setDrawerVisible(true)}>
           <Feather name="menu" size={ms(22)} color="#fff" />
         </TouchableOpacity>
@@ -128,12 +128,12 @@ export default function EstudosScreen() {
       {fabMenuVisible && (
         <View style={styles.fabActions}>
           <TouchableOpacity style={styles.fabActionItem} onPress={() => { setFabMenuVisible(false); setModalVisible(true); }}>
-            <Text style={[styles.fabActionLabel, { fontSize: ms(14) }]}>Novo Estudo</Text>
+            <BibleText style={[styles.fabActionLabel, { fontSize: ms(14) }]}>Novo Estudo</BibleText>
             <View style={styles.fabActionIcon}><Feather name="file-plus" size={ms(20)} color="#fff" /></View>
           </TouchableOpacity>
-          
+
           <TouchableOpacity style={styles.fabActionItem} onPress={handleImport}>
-            <Text style={[styles.fabActionLabel, { fontSize: ms(14) }]}>Importar JSON</Text>
+            <BibleText style={[styles.fabActionLabel, { fontSize: ms(14) }]}>Importar JSON</BibleText>
             <View style={[styles.fabActionIcon, { backgroundColor: '#e74c3c' }]}><Feather name="upload" size={ms(20)} color="#fff" /></View>
           </TouchableOpacity>
         </View>
@@ -148,7 +148,7 @@ export default function EstudosScreen() {
           <TouchableOpacity style={styles.modalBackdrop} activeOpacity={1} onPress={() => setModalVisible(false)} />
           <View style={styles.modalSheet}>
             <View style={styles.modalHandle} />
-            <Text style={[styles.modalTitle, { fontSize: ms(20) }]}>Novo Estudo</Text>
+            <BibleText style={[styles.modalTitle, { fontSize: ms(20) }]}>Novo Estudo</BibleText>
             <TextInput
               style={[styles.input, { fontSize: ms(16) }]}
               placeholder="Título do estudo"
@@ -169,20 +169,20 @@ export default function EstudosScreen() {
             />
             <View style={styles.modalActions}>
               <TouchableOpacity style={styles.cancelBtn} onPress={() => setModalVisible(false)}>
-                <Text style={[styles.cancelText, { fontSize: ms(15) }]}>Cancelar</Text>
+                <BibleText style={[styles.cancelText, { fontSize: ms(15) }]}>Cancelar</BibleText>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.createBtn, !newTitle.trim() && styles.createBtnDisabled]}
                 onPress={handleCreate}
               >
-                <Text style={[styles.createText, { fontSize: ms(15) }]}>Criar</Text>
+                <BibleText style={[styles.createText, { fontSize: ms(15) }]}>Criar</BibleText>
               </TouchableOpacity>
             </View>
           </View>
         </KeyboardAvoidingView>
       </Modal>
 
-      <ConfirmModal
+      <BibleConfirmModal
         visible={!!studyToDelete}
         title="Excluir estudo"
         message="Tem certeza? Esta ação não pode ser desfeita e todos os blocos do estudo serão perdidos."
@@ -194,11 +194,11 @@ export default function EstudosScreen() {
         }}
       />
 
-      <DrawerMenu
+      <BibleDrawerMenu
         visible={drawerVisible}
-        activeItem="estudos"
+        activeItem="studies"
         onClose={() => setDrawerVisible(false)}
-        onSelectItem={() => {}}
+        onSelectItem={() => { }}
       />
     </View>
   );

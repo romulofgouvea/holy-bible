@@ -1,8 +1,9 @@
 import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useRef } from 'react';
-import { Animated, Dimensions, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { Animated, Dimensions, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { useResponsive } from '../hooks/use-responsive';
+import { BibleText } from './BibleText';
 
 type MenuItem = {
   key: string;
@@ -12,8 +13,8 @@ type MenuItem = {
 };
 
 const MENU_ITEMS: MenuItem[] = [
-  { key: 'biblia', label: 'Bíblia', icon: 'book-open', route: '/' },
-  { key: 'estudos', label: 'Estudos', icon: 'edit-3', route: '/estudos' },
+  { key: 'bible', label: 'Bíblia', icon: 'book-open', route: '/' },
+  { key: 'studies', label: 'Estudos', icon: 'edit-3', route: '/studies' },
 ];
 
 type DrawerMenuProps = {
@@ -26,7 +27,7 @@ type DrawerMenuProps = {
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const DRAWER_WIDTH = Math.min(240, SCREEN_WIDTH * 0.72);
 
-export function DrawerMenu(props: DrawerMenuProps) {
+export function BibleDrawerMenu(props: DrawerMenuProps) {
   const { visible, activeItem, onClose, onSelectItem } = props;
   const { ms } = useResponsive();
   const router = useRouter();
@@ -64,7 +65,7 @@ export function DrawerMenu(props: DrawerMenuProps) {
           <View style={styles.drawerLogo}>
             <Feather name="book" size={ms(19)} color="#fff" />
           </View>
-          <Text style={[styles.drawerTitle, { fontSize: ms(17) }]}>Holy Bible</Text>
+          <BibleText style={[styles.drawerTitle, { fontSize: ms(17) }]}>Holy Bible</BibleText>
         </View>
 
         <View style={styles.menuList}>
@@ -84,16 +85,16 @@ export function DrawerMenu(props: DrawerMenuProps) {
                 <View style={[styles.menuIconWrap, isActive && styles.menuIconWrapActive]}>
                   <Feather name={item.icon} size={ms(18)} color={isActive ? '#008080' : '#666'} />
                 </View>
-                <Text style={[styles.menuLabel, { fontSize: ms(15) }, isActive && styles.menuLabelActive]}>
+                <BibleText style={[styles.menuLabel, { fontSize: ms(15) }, isActive && styles.menuLabelActive]}>
                   {item.label}
-                </Text>
+                </BibleText>
               </TouchableOpacity>
             );
           })}
         </View>
 
         <View style={styles.drawerFooter}>
-          <Text style={[styles.footerText, { fontSize: ms(11) }]}>Holy Bible App</Text>
+          <BibleText style={[styles.footerText, { fontSize: ms(11) }]}>Holy Bible App</BibleText>
         </View>
       </Animated.View>
     </View>
