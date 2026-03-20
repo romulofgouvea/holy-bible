@@ -4,6 +4,7 @@ import { Book, availableVersions } from '../data';
 import { useResponsive } from '../hooks/use-responsive';
 import { BibleSelectModal } from './BibleSelectModal';
 import { BibleText } from './BibleText';
+import { BibleVersionModal } from './BibleVersionModal';
 
 export type BibleModalsProps = {
   versionBooks: Book[];
@@ -94,22 +95,13 @@ export function BibleModals(props: BibleModalsProps) {
 
   return (
     <>
-      <BibleSelectModal
+      <BibleVersionModal
         visible={versionModalVisible}
         onClose={closeAllModals}
-        title="Selecione a versão"
-        placeholder="Buscar versão"
-        value={searchVersionQuery}
-        onChangeText={setSearchVersionQuery}
-        items={filteredVersions}
-        itemKey={(item) => item}
-        renderItem={(item) => <BibleText style={[styles.item, { fontSize }]}>{item}</BibleText>}
-        onSelect={(item) => {
-          onVersionSelect(item, versionBooks[0]?.name || '');
+        onSelect={(v) => {
+          onVersionSelect(v.sigla, '');
           setSearchVersionQuery('');
-          setSearchBookQuery('');
           setVersionModalVisible(false);
-          setBookModalVisible(true);
         }}
       />
       <BibleSelectModal

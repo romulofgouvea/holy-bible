@@ -188,6 +188,7 @@ export default function BibleScreen() {
           sections={sectionData}
           blinkingVerse={blinkingVerse}
           highlights={highlights}
+          version={version}
           selectedKeys={selectedVerses.reduce((acc, v) => { acc[`${v.bookAbbrev}-${v.chapter}-${v.verse}`] = true; return acc; }, {} as Record<string, boolean>)}
           bookAbbrev={currentBook.abbrev}
           onVersePress={onVersePress}
@@ -224,7 +225,7 @@ export default function BibleScreen() {
         setBookModalVisible={setBookModalVisible}
         setChapterModalVisible={setChapterModalVisible}
         setVerseModalVisible={setVerseModalVisible}
-        onVersionSelect={(v, firstBook) => { setVersion(v); setBook(firstBook); setChapter(1); setVerse(1); }}
+        onVersionSelect={(v) => { setVersion(v); }}
         onBookSelect={(b) => { setBook(b); setChapter(1); setVerse(1); }}
         onChapterSelect={(c) => { setChapter(c); setVerse(1); }}
         onVerseSelect={(v) => { setVerse(v); setTimeout(() => scrollToVerse(v, chapter), 300); }}

@@ -19,6 +19,7 @@ type VerseReaderProps = {
     highlights: Record<string, boolean>;
     selectedKeys: Record<string, boolean>;
     bookAbbrev: string;
+    version: string;
     onVersePress: (item: VerseItem) => void;
     onViewableItemsChanged: ({ viewableItems }: { viewableItems: any[] }) => void;
     viewabilityConfig: any;
@@ -32,7 +33,7 @@ type VerseReaderProps = {
 
 export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
     const {
-        sections, blinkingVerse, highlights, selectedKeys, bookAbbrev,
+        sections, blinkingVerse, highlights, selectedKeys, bookAbbrev, version,
         onVersePress, onViewableItemsChanged, viewabilityConfig, listRef, onScrollToIndexFailed
     } = props;
     const { ms } = useResponsive();
@@ -42,7 +43,7 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
             ref={listRef}
             style={styles.verseList}
             sections={sections}
-            extraData={{ blinkingVerse, highlights, selectedKeys }}
+            extraData={{ blinkingVerse, highlights, selectedKeys, version }}
             keyExtractor={(item, idx) => `${item.chapter}-${item.verse}-${idx}`}
             onScrollToIndexFailed={onScrollToIndexFailed}
             renderSectionHeader={({ section: { title } }) => (
