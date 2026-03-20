@@ -15,29 +15,29 @@ export type ThemeColors = {
 };
 
 const lightColors: ThemeColors = {
-  background: '#F4F7F7',
+  background: '#FEF7FF',
   surface: '#FFFFFF',
-  surfaceVariant: '#E4E9E9',
-  primary: '#008080',
+  surfaceVariant: '#E7E0EB',
+  primary: '#6750A4',
   onPrimary: '#FFFFFF',
-  primaryContainer: '#CCECEC',
-  onPrimaryContainer: '#002727',
-  text: '#191C1C',
-  textMuted: '#5A6464',
-  border: '#C4CACA',
+  primaryContainer: '#EADDFF',
+  onPrimaryContainer: '#21005D',
+  text: '#1D1B20',
+  textMuted: '#49454F',
+  border: '#CAC4D0',
 };
 
 const darkColors: ThemeColors = {
-  background: '#111414',
-  surface: '#1C2020',
-  surfaceVariant: '#2F3636',
-  primary: '#5CE5E5',
-  onPrimary: '#003737',
-  primaryContainer: '#004F4F',
-  onPrimaryContainer: '#9CF2F2',
-  text: '#E0E3E3',
-  textMuted: '#A0A8A8',
-  border: '#6F7979',
+  background: '#141218',
+  surface: '#1D1B20',
+  surfaceVariant: '#49454F',
+  primary: '#D0BCFF',
+  onPrimary: '#381E72',
+  primaryContainer: '#4F378B',
+  onPrimaryContainer: '#EADDFF',
+  text: '#E6E0E9',
+  textMuted: '#CAC4D0',
+  border: '#938F99',
 };
 
 type ThemeContextType = {

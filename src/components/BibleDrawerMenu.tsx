@@ -1,7 +1,7 @@
 import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import React, { useEffect, useRef } from 'react';
-import { Animated, Dimensions, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { Animated, Dimensions, Modal, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { ROUTES } from '../constants/routes';
 import { useResponsive } from '../hooks/use-responsive';
 import { useTheme } from '../hooks/use-theme';
@@ -34,35 +34,52 @@ export function BibleDrawerMenu(props: DrawerMenuProps) {
   const { visible, activeItem, onClose, onSelectItem } = props;
   const { ms } = useResponsive();
   const { colors } = useTheme();
+  const [modalVisible, setModalVisible] = useState(visible);
   const router = useRouter();
   const translateX = useRef(new Animated.Value(DRAWER_WIDTH)).current;
   const backdropOpacity = useRef(new Animated.Value(0)).current;
-  const hasBeenVisible = useRef(false);
 
   useEffect(() => {
-    if (visible) hasBeenVisible.current = true;
-    Animated.parallel([
-      Animated.spring(translateX, {
-        toValue: visible ? 0 : DRAWER_WIDTH,
-        useNativeDriver: true,
-        bounciness: 0,
-        speed: 20,
-      }),
-      Animated.timing(backdropOpacity, {
-        toValue: visible ? 1 : 0,
-        duration: 250,
-        useNativeDriver: true,
-      }),
-    ]).start();
+    if (visible) {
+      setModalVisible(true);
+      Animated.parallel([
+        Animated.spring(translateX, {
+          toValue: 0,
+          useNativeDriver: true,
+          bounciness: 0,
+          speed: 20,
+        }),
+        Animated.timing(backdropOpacity, {
+          toValue: 1,
+          duration: 250,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    } else {
+      Animated.parallel([
+        Animated.spring(translateX, {
+          toValue: DRAWER_WIDTH,
+          useNativeDriver: true,
+          bounciness: 0,
+          speed: 20,
+        }),
+        Animated.timing(backdropOpacity, {
+          toValue: 0,
+          duration: 250,
+          useNativeDriver: true,
+        }),
+      ]).start(() => {
+        setModalVisible(false);
+      });
+    }
   }, [visible]);
 
-  if (!visible && !hasBeenVisible.current) return null;
-
   return (
-    <View style={[StyleSheet.absoluteFill, { zIndex: visible ? 9999 : -1 }]} pointerEvents={visible ? 'auto' : 'none'} accessibilityViewIsModal={visible}>
-      <TouchableWithoutFeedback onPress={onClose}>
-        <Animated.View style={[styles.backdrop, { opacity: backdropOpacity }]} />
-      </TouchableWithoutFeedback>
+    <Modal visible={modalVisible} transparent animationType="none">
+      <View style={StyleSheet.absoluteFill}>
+        <TouchableWithoutFeedback onPress={onClose}>
+          <Animated.View style={[styles.backdrop, { opacity: backdropOpacity }]} />
+        </TouchableWithoutFeedback>
 
       <Animated.View style={[styles.drawer, { transform: [{ translateX }], backgroundColor: colors.surface }]}>
         <View style={[styles.drawerHeader, { backgroundColor: colors.primary }]}>
@@ -101,7 +118,8 @@ export function BibleDrawerMenu(props: DrawerMenuProps) {
           <BibleText style={[styles.footerText, { fontSize: ms(11), color: colors.textMuted }]}>Stevanini</BibleText>
         </View>
       </Animated.View>
-    </View>
+      </View>
+    </Modal>
   );
 }
 
