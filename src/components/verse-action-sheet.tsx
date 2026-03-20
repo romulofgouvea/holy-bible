@@ -1,122 +1,146 @@
 import { Feather } from '@expo/vector-icons';
 import * as Clipboard from 'expo-clipboard';
 import React from 'react';
-import { Modal, Share, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { Animated, Share, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useResponsive } from '../hooks/use-responsive';
+
+export type SelectedVerse = {
+  chapter: number;
+  verse: number;
+  text: string;
+  bookName: string;
+  bookAbbrev: string;
+};
 
 type VerseActionSheetProps = {
   visible: boolean;
+  selectedVerses: SelectedVerse[];
+  highlights: Record<string, boolean>;
   onClose: () => void;
-  verse: { chapter: number; verse: number; text: string; bookName: string } | null;
-  isHighlighted: boolean;
-  onToggleHighlight: () => void;
+  onToggleHighlight: (verse: SelectedVerse) => void;
 };
 
 export function VerseActionSheet(props: VerseActionSheetProps) {
-  const { visible, onClose, verse, isHighlighted, onToggleHighlight } = props;
+  const { visible, selectedVerses, highlights, onClose, onToggleHighlight } = props;
   const { ms } = useResponsive();
+  const translateY = React.useRef(new Animated.Value(100)).current;
 
-  if (!visible || !verse) return null;
+  React.useEffect(() => {
+    Animated.spring(translateY, {
+      toValue: visible ? 0 : 100,
+      useNativeDriver: true,
+      bounciness: 4,
+    }).start();
+  }, [visible]);
 
-  const fullText = `${verse.bookName} ${verse.chapter}:${verse.verse}\n\n"${verse.text}"`;
+  if (!visible && selectedVerses.length === 0) return null;
+
+  const count = selectedVerses.length;
+  const allHighlighted = count > 0 && selectedVerses.every(
+    (v) => highlights[`${v.bookAbbrev}-${v.chapter}-${v.verse}`]
+  );
+
+  const buildText = () => {
+    if (count === 0) return '';
+    const sorted = [...selectedVerses].sort((a, b) => a.chapter !== b.chapter ? a.chapter - b.chapter : a.verse - b.verse);
+    const header = count === 1
+      ? `${sorted[0].bookName} ${sorted[0].chapter}:${sorted[0].verse}`
+      : `${sorted[0].bookName} ${sorted[0].chapter}:${sorted[0].verse}–${sorted[sorted.length - 1].verse}`;
+    const body = sorted.map((v) => `${v.verse} ${v.text}`).join('\n');
+    return `${header}\n\n${body}`;
+  };
 
   const onCopy = async () => {
-    await Clipboard.setStringAsync(fullText);
-    onClose();
+    await Clipboard.setStringAsync(buildText());
   };
 
   const onShare = async () => {
-    try {
-      await Share.share({ message: fullText });
-    } catch (e) { }
-    onClose();
+    try { await Share.share({ message: buildText() }); } catch (e) { }
   };
 
-  const handleToggle = () => {
-    onToggleHighlight();
-    onClose();
+  const onHighlight = () => {
+    selectedVerses.forEach((v) => onToggleHighlight(v));
   };
+
+  const iconSize = ms(26);
+  const iconColor = '#008080';
 
   return (
-    <Modal visible={visible} transparent animationType="slide">
-      <TouchableOpacity activeOpacity={1} style={styles.backdrop} onPress={onClose}>
-        <TouchableWithoutFeedback>
-          <View style={styles.sheet}>
-            <View style={styles.header}>
-              <Text style={[styles.title, { fontSize: ms(18) }]}>
-                {verse.bookName} {verse.chapter}:{verse.verse}
-              </Text>
-              <TouchableOpacity onPress={onClose}>
-                <Feather name="x" size={ms(24)} color="#333" />
-              </TouchableOpacity>
-            </View>
+    <Animated.View style={[styles.bar, { transform: [{ translateY }] }]}>
+      <View style={styles.leftSection}>
+        <Text style={[styles.countText, { fontSize: ms(13) }]}>
+          {count} {count === 1 ? 'versículo' : 'versículos'}
+        </Text>
+      </View>
 
-            <View style={styles.options}>
-              <TouchableOpacity style={styles.option} onPress={onShare}>
-                <Feather name="share-2" size={ms(22)} color="#008080" />
-                <Text style={[styles.optionText, { fontSize: ms(16) }]}>Compartilhar</Text>
-              </TouchableOpacity>
+      <View style={styles.actions}>
+        <TouchableOpacity style={styles.iconBtn} onPress={onShare} disabled={count === 0}>
+          <Feather name="share-2" size={iconSize} color={count === 0 ? '#ccc' : iconColor} />
+        </TouchableOpacity>
 
-              <TouchableOpacity style={styles.option} onPress={onCopy}>
-                <Feather name="copy" size={ms(22)} color="#008080" />
-                <Text style={[styles.optionText, { fontSize: ms(16) }]}>Copiar Texto</Text>
-              </TouchableOpacity>
+        <TouchableOpacity style={styles.iconBtn} onPress={onCopy} disabled={count === 0}>
+          <Feather name="copy" size={iconSize} color={count === 0 ? '#ccc' : iconColor} />
+        </TouchableOpacity>
 
-              <TouchableOpacity style={styles.option} onPress={handleToggle}>
-                <Feather name="bookmark" size={ms(22)} color={isHighlighted ? "#ff6b6b" : "#008080"} />
-                <Text style={[styles.optionText, { fontSize: ms(16) }]}>
-                  {isHighlighted ? 'Remover Marcação' : 'Marcar Versículo'}
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </TouchableWithoutFeedback>
-      </TouchableOpacity>
-    </Modal>
+        <TouchableOpacity style={styles.iconBtn} onPress={onHighlight} disabled={count === 0}>
+          <Feather
+            name="bookmark"
+            size={iconSize}
+            color={count === 0 ? '#ccc' : allHighlighted ? '#e74c3c' : iconColor}
+          />
+        </TouchableOpacity>
+
+        <View style={styles.divider} />
+
+        <TouchableOpacity style={styles.iconBtn} onPress={onClose}>
+          <Feather name="x" size={iconSize} color="#888" />
+        </TouchableOpacity>
+      </View>
+    </Animated.View>
   );
 }
 
 const styles = StyleSheet.create({
-  backdrop: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'flex-end',
-  },
-  sheet: {
+  bar: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     backgroundColor: '#fff',
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    padding: 24,
-    paddingBottom: 40,
+    paddingHorizontal: 20,
+    paddingVertical: 14,
+    paddingBottom: 28,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
     elevation: 20,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: -5 },
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.12,
+    shadowRadius: 12,
   },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 20,
+  leftSection: {
+    flex: 1,
   },
-  title: {
-    fontWeight: '800',
-    color: '#333',
-  },
-  options: {
-    gap: 12,
-  },
-  option: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#f8f9fa',
-    padding: 16,
-    borderRadius: 16,
-    gap: 12,
-  },
-  optionText: {
+  countText: {
     fontWeight: '700',
-    color: '#333',
+    color: '#555',
+  },
+  actions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  iconBtn: {
+    padding: 10,
+    borderRadius: 12,
+  },
+  divider: {
+    width: 1,
+    height: 28,
+    backgroundColor: '#e0e0e0',
+    marginHorizontal: 4,
   },
 });

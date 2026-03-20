@@ -17,6 +17,7 @@ type VerseReaderProps = {
     sections: SectionType[];
     blinkingVerse: string | null;
     highlights: Record<string, boolean>;
+    selectedKeys: Record<string, boolean>;
     bookAbbrev: string;
     onVersePress: (item: VerseItem) => void;
     onViewableItemsChanged: ({ viewableItems }: { viewableItems: any[] }) => void;
@@ -31,7 +32,7 @@ type VerseReaderProps = {
 
 export const VerseReader = React.memo((props: VerseReaderProps) => {
     const { 
-        sections, blinkingVerse, highlights, bookAbbrev, 
+        sections, blinkingVerse, highlights, selectedKeys, bookAbbrev, 
         onVersePress, onViewableItemsChanged, viewabilityConfig, listRef, onScrollToIndexFailed 
     } = props;
     const { ms } = useResponsive();
@@ -41,7 +42,7 @@ export const VerseReader = React.memo((props: VerseReaderProps) => {
             ref={listRef}
             style={styles.verseList}
             sections={sections}
-            extraData={{ blinkingVerse, highlights }}
+            extraData={{ blinkingVerse, highlights, selectedKeys }}
             keyExtractor={(item, idx) => `${item.chapter}-${item.verse}-${idx}`}
             onScrollToIndexFailed={onScrollToIndexFailed}
             renderSectionHeader={({ section: { title } }) => (
@@ -52,6 +53,7 @@ export const VerseReader = React.memo((props: VerseReaderProps) => {
             renderItem={({ item }) => {
                 const isBlinking = blinkingVerse === `${item.chapter}-${item.verse}`;
                 const isHighlighted = highlights[`${bookAbbrev}-${item.chapter}-${item.verse}`];
+                const isSelected = selectedKeys[`${bookAbbrev}-${item.chapter}-${item.verse}`];
                 
                 return (
                     <TouchableOpacity 
@@ -61,7 +63,8 @@ export const VerseReader = React.memo((props: VerseReaderProps) => {
                         <View style={[
                             styles.verseRow,
                             isHighlighted && styles.highlightedRow,
-                            isBlinking && styles.blinkingRow
+                            isBlinking && styles.blinkingRow,
+                            isSelected && styles.selectedRow,
                         ]}>
                             <Text style={[styles.verseText, { 
                                 fontSize: ms(22),
@@ -110,6 +113,11 @@ const styles = StyleSheet.create({
     },
     blinkingRow: {
         backgroundColor: '#e6f2ff',
+    },
+    selectedRow: {
+        backgroundColor: '#e0f2f1',
+        borderLeftWidth: 3,
+        borderLeftColor: '#008080',
     },
     verseNumber: {
         fontWeight: '700',
