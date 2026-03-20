@@ -21,11 +21,13 @@ import { BibleText } from '../../components/BibleText';
 import { ROUTES } from '../../constants/routes';
 import { useResponsive } from '../../hooks/use-responsive';
 import { Study, useStudies } from '../../hooks/use-studies';
+import { useTheme } from '../../hooks/use-theme';
 
 export default function EstudosScreen() {
   const { ms } = useResponsive();
   const router = useRouter();
   const { studies, createStudy, deleteStudy, importBulk } = useStudies();
+  const { colors } = useTheme();
   const [modalVisible, setModalVisible] = useState(false);
   const [newTitle, setNewTitle] = useState('');
   const [newDescription, setNewDescription] = useState('');
@@ -103,9 +105,9 @@ export default function EstudosScreen() {
 
   const renderEmpty = () => (
     <View style={styles.emptyContainer}>
-      <Feather name="book" size={ms(64)} color="#d0e8e8" />
-      <BibleText style={[styles.emptyTitle, { fontSize: ms(20) }]}>Nenhum estudo ainda</BibleText>
-      <BibleText style={[styles.emptySubtitle, { fontSize: ms(14) }]}>
+      <Feather name="book" size={ms(64)} color={colors.surfaceVariant} />
+      <BibleText style={[styles.emptyTitle, { fontSize: ms(20), color: colors.text }]}>Nenhum estudo ainda</BibleText>
+      <BibleText style={[styles.emptySubtitle, { fontSize: ms(14), color: colors.textMuted }]}>
         Toque no botão + para criar seu primeiro estudo
       </BibleText>
     </View>
@@ -115,15 +117,15 @@ export default function EstudosScreen() {
     const firstParaObj = item.blocks?.find(b => b.type === 'paragraph');
     const firstPara = firstParaObj && 'content' in firstParaObj ? firstParaObj.content : null;
     return (
-      <TouchableOpacity style={styles.card} onPress={() => router.push(ROUTES.STUDY_EDITOR(item.id) as any)} activeOpacity={0.75}>
+      <TouchableOpacity style={[styles.card, { backgroundColor: colors.surface, shadowColor: colors.primary }]} onPress={() => router.push(ROUTES.STUDY_EDITOR(item.id) as any)} activeOpacity={0.75}>
         <View style={styles.cardContent}>
-          <View style={styles.cardIcon}>
-            <Feather name="book-open" size={ms(20)} color="#008080" />
+          <View style={[styles.cardIcon, { backgroundColor: colors.surfaceVariant }]}>
+            <Feather name="book-open" size={ms(20)} color={colors.primary} />
           </View>
           <View style={styles.cardText}>
-            <BibleText style={[styles.cardTitle, { fontSize: ms(15) }]}>{item.title}</BibleText>
-            {!!firstPara && <BibleText style={[styles.cardDesc, { fontSize: ms(13) }]} numberOfLines={2}>{firstPara}</BibleText>}
-            <BibleText style={[styles.cardDate, { fontSize: ms(11) }]}>{item.createdAt}</BibleText>
+            <BibleText style={[styles.cardTitle, { fontSize: ms(15), color: colors.text }]}>{item.title}</BibleText>
+            {!!firstPara && <BibleText style={[styles.cardDesc, { fontSize: ms(13), color: colors.textMuted }]} numberOfLines={2}>{firstPara}</BibleText>}
+            <BibleText style={[styles.cardDate, { fontSize: ms(11), color: colors.border }]}>{item.createdAt}</BibleText>
           </View>
           <TouchableOpacity onPress={() => setStudyToDelete(item.id)} style={styles.deleteBtn}>
             <Feather name="trash-2" size={ms(18)} color="#e74c3c" />
@@ -134,11 +136,11 @@ export default function EstudosScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <BibleText style={[styles.headerTitle, { fontSize: ms(15) }]}>Estudos</BibleText>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <View style={[styles.header, { backgroundColor: colors.primary }]}>
+        <BibleText style={[styles.headerTitle, { fontSize: ms(15), color: colors.onPrimary }]}>Estudos</BibleText>
         <TouchableOpacity style={styles.menuBtn} onPress={() => setDrawerVisible(true)}>
-          <Feather name="menu" size={ms(22)} color="#fff" />
+          <Feather name="menu" size={ms(22)} color={colors.onPrimary} />
         </TouchableOpacity>
       </View>
 
@@ -160,44 +162,44 @@ export default function EstudosScreen() {
       {fabMenuVisible && (
         <View style={styles.fabActions}>
           <TouchableOpacity style={styles.fabActionItem} onPress={() => { setFabMenuVisible(false); setModalVisible(true); }}>
-            <BibleText style={[styles.fabActionLabel, { fontSize: ms(14) }]}>Novo Estudo</BibleText>
-            <View style={styles.fabActionIcon}><Feather name="file-plus" size={ms(20)} color="#fff" /></View>
+            <BibleText style={[styles.fabActionLabel, { fontSize: ms(14), color: colors.text, backgroundColor: colors.surface }]}>Novo Estudo</BibleText>
+            <View style={[styles.fabActionIcon, { backgroundColor: colors.primary }]}><Feather name="file-plus" size={ms(20)} color={colors.onPrimary} /></View>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.fabActionItem} onPress={handleBackup}>
-            <BibleText style={[styles.fabActionLabel, { fontSize: ms(14) }]}>Fazer Bkp</BibleText>
+            <BibleText style={[styles.fabActionLabel, { fontSize: ms(14), color: colors.text, backgroundColor: colors.surface }]}>Fazer Bkp</BibleText>
             <View style={[styles.fabActionIcon, { backgroundColor: '#3498db' }]}><Feather name="download" size={ms(20)} color="#fff" /></View>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.fabActionItem} onPress={handleImport}>
-            <BibleText style={[styles.fabActionLabel, { fontSize: ms(14) }]}>Restaurar Bkp</BibleText>
+            <BibleText style={[styles.fabActionLabel, { fontSize: ms(14), color: colors.text, backgroundColor: colors.surface }]}>Restaurar Bkp</BibleText>
             <View style={[styles.fabActionIcon, { backgroundColor: '#e74c3c' }]}><Feather name="upload" size={ms(20)} color="#fff" /></View>
           </TouchableOpacity>
         </View>
       )}
 
-      <TouchableOpacity style={styles.fab} onPress={() => setFabMenuVisible(!fabMenuVisible)} activeOpacity={0.85}>
-        <Feather name={fabMenuVisible ? 'x' : 'plus'} size={ms(28)} color="#fff" />
+      <TouchableOpacity style={[styles.fab, { backgroundColor: colors.primary }]} onPress={() => setFabMenuVisible(!fabMenuVisible)} activeOpacity={0.85}>
+        <Feather name={fabMenuVisible ? 'x' : 'plus'} size={ms(28)} color={colors.onPrimary} />
       </TouchableOpacity>
 
       <Modal visible={modalVisible} transparent animationType="slide">
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.modalWrapper}>
           <TouchableOpacity style={styles.modalBackdrop} activeOpacity={1} onPress={() => setModalVisible(false)} />
-          <View style={styles.modalSheet}>
-            <View style={styles.modalHandle} />
-            <BibleText style={[styles.modalTitle, { fontSize: ms(20) }]}>Novo Estudo</BibleText>
+          <View style={[styles.modalSheet, { backgroundColor: colors.surface }]}>
+            <View style={[styles.modalHandle, { backgroundColor: colors.border }]} />
+            <BibleText style={[styles.modalTitle, { fontSize: ms(20), color: colors.text }]}>Novo Estudo</BibleText>
             <TextInput
-              style={[styles.input, { fontSize: ms(16) }]}
+              style={[styles.input, { fontSize: ms(16), backgroundColor: colors.surfaceVariant, color: colors.text }]}
               placeholder="Título do estudo"
-              placeholderTextColor="#aaa"
+              placeholderTextColor={colors.textMuted}
               value={newTitle}
               onChangeText={setNewTitle}
               {...({ outlineStyle: 'none' } as any)}
             />
             <TextInput
-              style={[styles.input, styles.inputMultiline, { fontSize: ms(15) }]}
+              style={[styles.input, styles.inputMultiline, { fontSize: ms(15), backgroundColor: colors.surfaceVariant, color: colors.text }]}
               placeholder="Descrição inicial (opcional)"
-              placeholderTextColor="#aaa"
+              placeholderTextColor={colors.textMuted}
               value={newDescription}
               onChangeText={setNewDescription}
               multiline
@@ -205,14 +207,14 @@ export default function EstudosScreen() {
               {...({ outlineStyle: 'none' } as any)}
             />
             <View style={styles.modalActions}>
-              <TouchableOpacity style={styles.cancelBtn} onPress={() => setModalVisible(false)}>
-                <BibleText style={[styles.cancelText, { fontSize: ms(15) }]}>Cancelar</BibleText>
+              <TouchableOpacity style={[styles.cancelBtn, { backgroundColor: colors.surfaceVariant }]} onPress={() => setModalVisible(false)}>
+                <BibleText style={[styles.cancelText, { fontSize: ms(15), color: colors.text }]}>Cancelar</BibleText>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.createBtn, !newTitle.trim() && styles.createBtnDisabled]}
+                style={[styles.createBtn, { backgroundColor: colors.primary }, !newTitle.trim() && styles.createBtnDisabled]}
                 onPress={handleCreate}
               >
-                <BibleText style={[styles.createText, { fontSize: ms(15) }]}>Criar</BibleText>
+                <BibleText style={[styles.createText, { fontSize: ms(15), color: colors.onPrimary }]}>Criar</BibleText>
               </TouchableOpacity>
             </View>
           </View>

@@ -2,6 +2,7 @@ import { Feather } from '@expo/vector-icons';
 import React from 'react';
 import { Modal, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useResponsive } from '../../hooks/use-responsive';
+import { useTheme } from '../../hooks/use-theme';
 import { BibleText } from '../BibleText';
 
 type StudyTopMenuProps = {
@@ -12,14 +13,15 @@ type StudyTopMenuProps = {
 
 export function StudyTopMenu({ visible, onClose, onExportPDF }: StudyTopMenuProps) {
   const { ms } = useResponsive();
+  const { colors } = useTheme();
 
   return (
     <Modal visible={visible} transparent animationType="fade">
       <TouchableOpacity style={styles.menuBackdrop} activeOpacity={1} onPress={onClose}>
-        <View style={styles.menuSheet}>
+        <View style={[styles.menuSheet, { backgroundColor: colors.surface }]}>
           <TouchableOpacity style={styles.menuItem} onPress={onExportPDF}>
-            <Feather name="file-text" size={ms(18)} color="#008080" />
-            <BibleText style={[styles.menuItemText, { fontSize: ms(15) }]}>Exportar PDF</BibleText>
+            <Feather name="file-text" size={ms(18)} color={colors.primary} />
+            <BibleText style={[styles.menuItemText, { fontSize: ms(15), color: colors.text }]}>Exportar PDF</BibleText>
           </TouchableOpacity>
         </View>
       </TouchableOpacity>

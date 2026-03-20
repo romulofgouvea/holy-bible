@@ -1,6 +1,7 @@
 import React from 'react';
 import { SectionList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useResponsive } from '../hooks/use-responsive';
+import { useTheme } from '../hooks/use-theme';
 
 type VerseItem = {
     chapter: number;
@@ -37,18 +38,19 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
         onVersePress, onViewableItemsChanged, viewabilityConfig, listRef, onScrollToIndexFailed
     } = props;
     const { ms } = useResponsive();
+    const { colors } = useTheme();
 
     return (
         <SectionList
             ref={listRef}
-            style={styles.verseList}
+            style={[styles.verseList, { backgroundColor: colors.background }]}
             sections={sections}
-            extraData={{ blinkingVerse, highlights, selectedKeys, version }}
+            extraData={{ blinkingVerse, highlights, selectedKeys, version, colors }}
             keyExtractor={(item, idx) => `${item.chapter}-${item.verse}-${idx}`}
             onScrollToIndexFailed={onScrollToIndexFailed}
             renderSectionHeader={({ section: { title } }) => (
-                <View style={styles.chapterHeader}>
-                    <Text style={[styles.chapterHeaderText, { fontSize: ms(28) }]}>{title}</Text>
+                <View style={[styles.chapterHeader, { backgroundColor: colors.background }]}>
+                    <Text style={[styles.chapterHeaderText, { fontSize: ms(28), color: colors.text }]}>{title}</Text>
                 </View>
             )}
             renderItem={({ item }) => {
@@ -63,15 +65,16 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
                     >
                         <View style={[
                             styles.verseRow,
-                            isHighlighted && styles.highlightedRow,
-                            isBlinking && styles.blinkingRow,
-                            isSelected && styles.selectedRow,
+                            isHighlighted && [styles.highlightedRow, { backgroundColor: colors.surfaceVariant }],
+                            isBlinking && [styles.blinkingRow, { backgroundColor: colors.primaryContainer }],
+                            isSelected && [styles.selectedRow, { backgroundColor: colors.surface, borderLeftColor: colors.primary }],
                         ]}>
                             <Text style={[styles.verseText, {
                                 fontSize: ms(22),
-                                lineHeight: ms(26)
+                                lineHeight: ms(26),
+                                color: colors.text
                             }]}>
-                                <Text style={{ color: '#008080', fontWeight: '700', fontSize: ms(16), marginLeft: 16, marginRight: 8 }}>
+                                <Text style={{ color: colors.primary, fontWeight: '700', fontSize: ms(16), marginLeft: 16, marginRight: 8 }}>
                                     {`${item.verse} `}
                                 </Text>
                                 {item.text}

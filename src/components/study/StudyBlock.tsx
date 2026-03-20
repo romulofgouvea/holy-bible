@@ -5,6 +5,7 @@ import { Image, Keyboard, Linking, Platform, StyleSheet, TextInput, TouchableOpa
 import { useRouter } from 'expo-router';
 import { ROUTES } from '../../constants/routes';
 import { useResponsive } from '../../hooks/use-responsive';
+import { useTheme } from '../../hooks/use-theme';
 import { Block, makeBlock } from '../../hooks/use-studies';
 import { BibleText } from '../BibleText';
 import { StudyBlockToolbar } from './StudyBlockToolbar';
@@ -51,6 +52,7 @@ export function StudyBlock({
 }: StudyBlockProps) {
   const router = useRouter();
   const { ms } = useResponsive();
+  const { colors } = useTheme();
   const isFocused = focusedId === item.id;
 
   const updateBlockContent = (content: string) => {
@@ -94,11 +96,11 @@ export function StudyBlock({
 
     if (item.type === 'video') {
       return (
-        <TouchableOpacity style={styles.videoBlock} activeOpacity={0.8} onPressIn={() => { setFocusedId(item.id); setActiveBlockId(item.id); }}>
-          <View style={styles.videoIcon}><Feather name="video" size={ms(20)} color="#008080" /></View>
-          <BibleText style={[styles.videoTitle, { fontSize: ms(14) }]} numberOfLines={1}>{item.title || item.url}</BibleText>
+        <TouchableOpacity style={[styles.videoBlock, { backgroundColor: colors.surfaceVariant }]} activeOpacity={0.8} onPressIn={() => { setFocusedId(item.id); setActiveBlockId(item.id); }}>
+          <View style={[styles.videoIcon, { backgroundColor: colors.surface }]}><Feather name="video" size={ms(20)} color={colors.primary} /></View>
+          <BibleText style={[styles.videoTitle, { fontSize: ms(14), color: colors.text }]} numberOfLines={1}>{item.title || item.url}</BibleText>
           <TouchableOpacity onPress={() => Linking.openURL(item.url)} style={{ padding: 8 }}>
-            <Feather name="external-link" size={ms(16)} color="#008080" />
+            <Feather name="external-link" size={ms(16)} color={colors.primary} />
           </TouchableOpacity>
         </TouchableOpacity>
       );
@@ -106,15 +108,15 @@ export function StudyBlock({
 
     if (item.type === 'verse') {
       return (
-        <TouchableOpacity style={styles.verseBlock} activeOpacity={0.8} onPressIn={() => { setFocusedId(item.id); setActiveBlockId(item.id); }}>
-          <BibleText style={[styles.verseRef, { fontSize: ms(18), marginBottom: 16 }]}>{item.verseRef}</BibleText>
-          <BibleText style={[styles.verseText, { fontSize: ms(16) }]}>
+        <TouchableOpacity style={[styles.verseBlock, { backgroundColor: colors.surface, borderLeftColor: colors.primary }]} activeOpacity={0.8} onPressIn={() => { setFocusedId(item.id); setActiveBlockId(item.id); }}>
+          <BibleText style={[styles.verseRef, { fontSize: ms(18), marginBottom: 16, color: colors.primary }]}>{item.verseRef}</BibleText>
+          <BibleText style={[styles.verseText, { fontSize: ms(16), color: colors.text }]}>
             {item.content.split('\n').map((line, i, arr) => {
               const sp = line.indexOf(' ');
               const num = line.slice(0, sp); const text = line.slice(sp + 1);
               return (
                 <BibleText key={i}>
-                  <BibleText style={{ color: '#008080', fontWeight: '700' }}>{num} </BibleText>
+                  <BibleText style={{ color: colors.primary, fontWeight: '700' }}>{num} </BibleText>
                   <BibleText style={{ fontStyle: 'italic', lineHeight: 20 }}>{text}</BibleText>
                   {i < arr.length - 1 ? '\n\n' : ''}
                 </BibleText>
@@ -128,10 +130,10 @@ export function StudyBlock({
     const fsMap: Record<string, number> = { header: ms(22), h1: ms(19), h2: ms(16), paragraph: ms(15) };
     const textStyle = [
       styles.blockInput,
-      item.type === 'header' && styles.headerText,
-      item.type === 'h1' && styles.h1Text,
-      item.type === 'h2' && styles.h2Text,
-      { fontSize: fsMap[item.type] ?? ms(15) },
+      item.type === 'header' && [styles.headerText, { color: colors.primary }],
+      item.type === 'h1' && [styles.h1Text, { color: colors.text }],
+      item.type === 'h2' && [styles.h2Text, { color: colors.textMuted }],
+      { fontSize: fsMap[item.type] ?? ms(15), color: colors.text },
       noOutline,
     ];
     const placeholder = item.type === 'header' ? 'Cabeçalho...' : item.type === 'h1' ? 'Título 1...' : item.type === 'h2' ? 'Título 2...' : "Escreva algo ou '/' para opções...";
@@ -159,7 +161,7 @@ export function StudyBlock({
   return (
     <View style={[
       { zIndex: isFocused ? 20 : 1, paddingLeft: 12, paddingRight: isFocused ? 56 : 12, paddingVertical: 4, marginVertical: 2 },
-      isFocused && { backgroundColor: '#f9fcfc', borderRadius: 12, borderWidth: 1, borderColor: '#d3ebe8' }
+      isFocused && { backgroundColor: colors.surfaceVariant, borderRadius: 12, borderWidth: 1, borderColor: colors.border }
     ]}>
       {renderContent()}
 

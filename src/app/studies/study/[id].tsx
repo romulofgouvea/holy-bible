@@ -29,6 +29,7 @@ import { StudyVerseSelectModal } from '../../../components/study/StudyVerseSelec
 import { ROUTES } from '../../../constants/routes';
 import { availableVersions, Book, getBibleData } from '../../../data';
 import { useResponsive } from '../../../hooks/use-responsive';
+import { useTheme } from '../../../hooks/use-theme';
 import { Block, makeBlock, Study, useStudies } from '../../../hooks/use-studies';
 
 const noOutline = Platform.select({ web: { outline: 'none', outlineWidth: 0 } as any, default: {} });
@@ -37,6 +38,7 @@ export default function StudyEditorScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { getStudy, updateStudy, deleteStudy, loaded } = useStudies();
   const { ms, height } = useResponsive();
+  const { colors } = useTheme();
   const router = useRouter();
 
   const [title, setTitle] = useState('');
@@ -234,26 +236,26 @@ export default function StudyEditorScreen() {
   }, [id, getStudy, buildHTML]);
 
   return (
-    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-      <View style={styles.topBar}>
+    <KeyboardAvoidingView style={{ flex: 1, backgroundColor: colors.background }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      <View style={[styles.topBar, { backgroundColor: colors.primary }]}>
         <TouchableOpacity style={styles.iconBtn} onPress={() => router.canGoBack() ? router.back() : router.replace(ROUTES.STUDIES as any)}>
-          <Feather name="arrow-left" size={ms(22)} color="#fff" />
+          <Feather name="arrow-left" size={ms(22)} color={colors.onPrimary} />
         </TouchableOpacity>
         <TextInput
-          style={[styles.titleInput, { fontSize: ms(16) }, noOutline]}
+          style={[styles.titleInput, { fontSize: ms(16), color: colors.onPrimary }, noOutline]}
           value={title}
           onChangeText={setTitle}
           placeholder="Nome do estudo"
-          placeholderTextColor="rgba(255,255,255,0.5)"
+          placeholderTextColor={colors.textMuted}
           {...({ outlineStyle: 'none' } as any)}
           underlineColorAndroid="transparent"
         />
         <TouchableOpacity style={styles.iconBtn} onPress={() => setMenuVisible(true)}>
-          <Feather name="more-vertical" size={ms(22)} color="#fff" />
+          <Feather name="more-vertical" size={ms(22)} color={colors.onPrimary} />
         </TouchableOpacity>
       </View>
 
-      <ScrollView style={{ flex: 1, backgroundColor: '#fff' }} contentContainerStyle={styles.editorContent} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+      <ScrollView style={{ flex: 1, backgroundColor: colors.background }} contentContainerStyle={styles.editorContent} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
         {blocks.map((item, index) => (
           <StudyBlock
             key={item.id}
@@ -273,8 +275,8 @@ export default function StudyEditorScreen() {
           />
         ))}
         <TouchableOpacity style={styles.addBlockBtn} onPress={() => { const last = blocks[blocks.length - 1]; addBlockAfter(last?.id ?? ''); }}>
-          <Feather name="plus" size={ms(16)} color="#ccc" />
-          <BibleText style={[{ color: '#ccc', fontSize: ms(13) }]}>Adicionar bloco</BibleText>
+          <Feather name="plus" size={ms(16)} color={colors.textMuted} />
+          <BibleText style={[{ color: colors.textMuted, fontSize: ms(13) }]}>Adicionar bloco</BibleText>
         </TouchableOpacity>
       </ScrollView>
 

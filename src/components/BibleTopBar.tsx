@@ -2,6 +2,7 @@ import { Feather } from '@expo/vector-icons';
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useResponsive } from '../hooks/use-responsive';
+import { useTheme } from '../hooks/use-theme';
 import { BibleText } from './BibleText';
 
 export type BibleTopBarProps = {
@@ -19,23 +20,24 @@ export type BibleTopBarProps = {
 export const BibleTopBar = React.memo((props: BibleTopBarProps) => {
     const { version, bookName, currentChapter, onOpenVersion, onOpenBook, onOpenChapter, onPrevChapter, onNextChapter, onOpenMenu } = props;
     const { ms } = useResponsive();
+    const { colors } = useTheme();
 
     return (
-        <View style={styles.topBarRow}>
+        <View style={[styles.topBarRow, { backgroundColor: colors.primary }]}>
             <View style={styles.leftButtons}>
                 <TouchableOpacity style={styles.topBarButton} onPress={onOpenVersion}>
-                    <BibleText style={[styles.topBarButtonText, { fontSize: ms(15) }]}>{version}</BibleText>
+                    <BibleText style={[styles.topBarButtonText, { fontSize: ms(15), color: colors.onPrimary }]}>{version}</BibleText>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.topBarButton} onPress={onOpenBook}>
-                    <BibleText style={[styles.topBarButtonText, { fontSize: ms(15) }]}>{bookName}</BibleText>
+                    <BibleText style={[styles.topBarButtonText, { fontSize: ms(15), color: colors.onPrimary }]}>{bookName}</BibleText>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.topBarButton} onPress={onOpenChapter}>
-                    <BibleText style={[styles.topBarButtonText, { fontSize: ms(15) }]}>{currentChapter}</BibleText>
+                    <BibleText style={[styles.topBarButtonText, { fontSize: ms(15), color: colors.onPrimary }]}>{currentChapter}</BibleText>
                 </TouchableOpacity>
             </View>
 
             <TouchableOpacity style={styles.menuButton} onPress={onOpenMenu}>
-                <Feather name="menu" size={ms(22)} color="#fff" />
+                <Feather name="menu" size={ms(22)} color={colors.onPrimary} />
             </TouchableOpacity>
         </View>
     );

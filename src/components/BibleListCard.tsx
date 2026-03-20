@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useResponsive } from '../hooks/use-responsive';
+import { useTheme } from '../hooks/use-theme';
 import { BibleText } from './BibleText';
 
 type BibleListCardProps = {
@@ -11,12 +12,13 @@ type BibleListCardProps = {
 
 export function BibleListCard({ title, pillText, onPress }: BibleListCardProps) {
   const { ms } = useResponsive();
+  const { colors } = useTheme();
   return (
-    <TouchableOpacity activeOpacity={0.7} style={styles.card} onPress={onPress}>
-      <BibleText style={[styles.cardTitle, { fontSize: ms(14) }]}>{title}</BibleText>
+    <TouchableOpacity activeOpacity={0.7} style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.primary }]} onPress={onPress}>
+      <BibleText style={[styles.cardTitle, { fontSize: ms(14), color: colors.text }]}>{title}</BibleText>
       {pillText !== undefined && (
-        <View style={styles.pill}>
-          <BibleText style={[styles.pillText, { fontSize: ms(14) }]}>{pillText}</BibleText>
+        <View style={[styles.pill, { backgroundColor: colors.surfaceVariant, borderColor: colors.primary }]}>
+          <BibleText style={[styles.pillText, { fontSize: ms(14), color: colors.primary }]}>{pillText}</BibleText>
         </View>
       )}
     </TouchableOpacity>

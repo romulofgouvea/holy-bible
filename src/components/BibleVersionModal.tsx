@@ -6,6 +6,7 @@ import { useResponsive } from '../hooks/use-responsive';
 import { BibleGridBlock } from './BibleGridBlock';
 import { BibleListCard } from './BibleListCard';
 import { BibleText } from './BibleText';
+import { useTheme } from '../hooks/use-theme';
 
 type BibleVersionModalProps = {
   visible: boolean;
@@ -15,6 +16,7 @@ type BibleVersionModalProps = {
 
 export function BibleVersionModal({ visible, onClose, onSelect }: BibleVersionModalProps) {
   const { ms, height, width } = useResponsive();
+  const { colors } = useTheme();
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchVisible, setIsSearchVisible] = useState(false);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
@@ -36,35 +38,35 @@ export function BibleVersionModal({ visible, onClose, onSelect }: BibleVersionMo
     <Modal visible={visible} animationType="slide" transparent>
       <TouchableOpacity activeOpacity={1} style={styles.modalBackdrop} onPress={onClose} id="bible-version-backdrop">
         <TouchableWithoutFeedback>
-          <View style={[styles.bottomSheet, { height: height * 0.85 }]} id="bible-version-sheet">
+          <View style={[styles.bottomSheet, { height: height * 0.85, backgroundColor: colors.surface }]} id="bible-version-sheet">
             <View style={styles.header}>
-              <View style={styles.headerIconWrap}>
-                <Feather name="book-open" size={ms(18)} color="#008080" />
+              <View style={[styles.headerIconWrap, { backgroundColor: colors.primaryContainer }]}>
+                <Feather name="book-open" size={ms(18)} color={colors.primary} />
               </View>
-              <BibleText style={[styles.title, { fontSize: ms(18) }]}>Versões</BibleText>
-              <TouchableOpacity onPress={() => setIsSearchVisible(!isSearchVisible)} style={styles.searchToggleBtn}>
-                <Feather name="search" size={ms(18)} color={isSearchVisible ? '#008080' : '#888'} />
+              <BibleText style={[styles.title, { fontSize: ms(18), color: colors.primary }]}>Versões</BibleText>
+              <TouchableOpacity onPress={() => setIsSearchVisible(!isSearchVisible)} style={[styles.searchToggleBtn, { backgroundColor: colors.surfaceVariant }]}>
+                <Feather name="search" size={ms(18)} color={isSearchVisible ? colors.primary : colors.textMuted} />
               </TouchableOpacity>
-              <View style={styles.viewToggles}>
-                <TouchableOpacity onPress={() => setViewMode('grid')} style={[styles.toggleBtn, viewMode === 'grid' && styles.toggleBtnActive]}>
-                  <Feather name="grid" size={ms(18)} color={viewMode === 'grid' ? '#008080' : '#888'} />
+              <View style={[styles.viewToggles, { backgroundColor: colors.surfaceVariant }]}>
+                <TouchableOpacity onPress={() => setViewMode('grid')} style={[styles.toggleBtn, viewMode === 'grid' && { backgroundColor: colors.surface }]}>
+                  <Feather name="grid" size={ms(18)} color={viewMode === 'grid' ? colors.primary : colors.textMuted} />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => setViewMode('list')} style={[styles.toggleBtn, viewMode === 'list' && styles.toggleBtnActive]}>
-                  <Feather name="list" size={ms(18)} color={viewMode === 'list' ? '#008080' : '#888'} />
+                <TouchableOpacity onPress={() => setViewMode('list')} style={[styles.toggleBtn, viewMode === 'list' && { backgroundColor: colors.surface }]}>
+                  <Feather name="list" size={ms(18)} color={viewMode === 'list' ? colors.primary : colors.textMuted} />
                 </TouchableOpacity>
               </View>
-              <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
+              <TouchableOpacity onPress={onClose} style={[styles.closeBtn, { backgroundColor: colors.surfaceVariant }]}>
                 <Feather name="x" size={ms(18)} color="#e74c3c" />
               </TouchableOpacity>
             </View>
 
             {isSearchVisible && (
-              <View style={styles.searchContainer}>
-                <Feather name="search" size={ms(18)} color="#008080" style={styles.searchIcon} />
+              <View style={[styles.searchContainer, { backgroundColor: colors.surfaceVariant, borderColor: colors.border }]}>
+                <Feather name="search" size={ms(18)} color={colors.primary} style={styles.searchIcon} />
                 <TextInput
-                  style={[styles.searchInput, { fontSize: ms(14) }]}
+                  style={[styles.searchInput, { fontSize: ms(14), color: colors.text }]}
                   placeholder="Pesquisar versão..."
-                  placeholderTextColor="#999"
+                  placeholderTextColor={colors.textMuted}
                   value={searchQuery}
                   onChangeText={setSearchQuery}
                   underlineColorAndroid="transparent"
@@ -72,7 +74,7 @@ export function BibleVersionModal({ visible, onClose, onSelect }: BibleVersionMo
               </View>
             )}
 
-            <View style={styles.divider} />
+            <View style={[styles.divider, { backgroundColor: colors.border }]} />
 
             <ScrollView contentContainerStyle={styles.list} showsVerticalScrollIndicator={false}>
               {viewMode === 'list' ? (
@@ -102,12 +104,12 @@ export function BibleVersionModal({ visible, onClose, onSelect }: BibleVersionMo
               )}
             </ScrollView>
 
-            <View style={styles.divider} />
+            <View style={[styles.divider, { backgroundColor: colors.border }]} />
 
             <View style={styles.footer}>
-              <View style={styles.countPill}>
-                <BibleText style={styles.countNumber}>{filteredVersions.length}</BibleText>
-                <BibleText style={styles.countText}> {filteredVersions.length === 1 ? 'versão' : 'versões'}</BibleText>
+              <View style={[styles.countPill, { backgroundColor: colors.surfaceVariant, borderColor: colors.primary }]}>
+                <BibleText style={[styles.countNumber, { color: colors.primary }]}>{filteredVersions.length}</BibleText>
+                <BibleText style={[styles.countText, { color: colors.primary }]}> {filteredVersions.length === 1 ? 'versão' : 'versões'}</BibleText>
               </View>
             </View>
           </View>

@@ -4,6 +4,7 @@ import React, { useEffect, useRef } from 'react';
 import { Animated, Dimensions, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { ROUTES } from '../constants/routes';
 import { useResponsive } from '../hooks/use-responsive';
+import { useTheme } from '../hooks/use-theme';
 import { BibleText } from './BibleText';
 
 type MenuItem = {
@@ -16,6 +17,7 @@ type MenuItem = {
 const MENU_ITEMS: MenuItem[] = [
   { key: 'bible', label: 'Bíblia', icon: 'book-open', route: ROUTES.BIBLE },
   { key: 'studies', label: 'Estudos', icon: 'edit-3', route: ROUTES.STUDIES },
+  { key: 'configuration', label: 'Configurações', icon: 'settings', route: ROUTES.CONFIGURATION },
 ];
 
 type DrawerMenuProps = {
@@ -31,6 +33,7 @@ const DRAWER_WIDTH = Math.min(240, SCREEN_WIDTH * 0.72);
 export function BibleDrawerMenu(props: DrawerMenuProps) {
   const { visible, activeItem, onClose, onSelectItem } = props;
   const { ms } = useResponsive();
+  const { colors } = useTheme();
   const router = useRouter();
   const translateX = useRef(new Animated.Value(DRAWER_WIDTH)).current;
   const backdropOpacity = useRef(new Animated.Value(0)).current;
@@ -56,17 +59,17 @@ export function BibleDrawerMenu(props: DrawerMenuProps) {
   if (!visible && !hasBeenVisible.current) return null;
 
   return (
-    <View style={StyleSheet.absoluteFill} pointerEvents={visible ? 'auto' : 'none'}>
+    <View style={[StyleSheet.absoluteFill, { zIndex: visible ? 9999 : -1 }]} pointerEvents={visible ? 'auto' : 'none'} accessibilityViewIsModal={visible}>
       <TouchableWithoutFeedback onPress={onClose}>
         <Animated.View style={[styles.backdrop, { opacity: backdropOpacity }]} />
       </TouchableWithoutFeedback>
 
-      <Animated.View style={[styles.drawer, { transform: [{ translateX }] }]}>
-        <View style={styles.drawerHeader}>
+      <Animated.View style={[styles.drawer, { transform: [{ translateX }], backgroundColor: colors.surface }]}>
+        <View style={[styles.drawerHeader, { backgroundColor: colors.primary }]}>
           <View style={styles.drawerLogo}>
-            <Feather name="book" size={ms(19)} color="#fff" />
+            <Feather name="book" size={ms(19)} color={colors.onPrimary} />
           </View>
-          <BibleText style={[styles.drawerTitle, { fontSize: ms(17) }]}>Bíblia Sagrada</BibleText>
+          <BibleText style={[styles.drawerTitle, { fontSize: ms(17), color: colors.onPrimary }]}>Bíblia Sagrada</BibleText>
         </View>
 
         <View style={styles.menuList}>
@@ -75,18 +78,18 @@ export function BibleDrawerMenu(props: DrawerMenuProps) {
             return (
               <TouchableOpacity
                 key={item.key}
-                style={[styles.menuItem, isActive && styles.menuItemActive]}
+                style={[styles.menuItem, isActive && { backgroundColor: colors.primaryContainer }]}
                 onPress={() => {
                   onSelectItem(item.key);
                   onClose();
-                  router.push(item.route as any);
+                  setTimeout(() => router.push(item.route as any), 150);
                 }}
                 activeOpacity={0.7}
               >
-                <View style={[styles.menuIconWrap, isActive && styles.menuIconWrapActive]}>
-                  <Feather name={item.icon} size={ms(18)} color={isActive ? '#008080' : '#666'} />
+                <View style={[styles.menuIconWrap, isActive && { backgroundColor: colors.primary }, !isActive && { backgroundColor: colors.surfaceVariant }]}>
+                  <Feather name={item.icon} size={ms(18)} color={isActive ? colors.onPrimary : colors.textMuted} />
                 </View>
-                <BibleText style={[styles.menuLabel, { fontSize: ms(15) }, isActive && styles.menuLabelActive]}>
+                <BibleText style={[styles.menuLabel, { fontSize: ms(15) }, isActive ? { color: colors.onPrimaryContainer, fontWeight: '800' } : { color: colors.text }]}>
                   {item.label}
                 </BibleText>
               </TouchableOpacity>
@@ -94,8 +97,8 @@ export function BibleDrawerMenu(props: DrawerMenuProps) {
           })}
         </View>
 
-        <View style={styles.drawerFooter}>
-          <BibleText style={[styles.footerText, { fontSize: ms(11) }]}>Stevanini</BibleText>
+        <View style={[styles.drawerFooter, { borderTopColor: colors.border }]}>
+          <BibleText style={[styles.footerText, { fontSize: ms(11), color: colors.textMuted }]}>Stevanini</BibleText>
         </View>
       </Animated.View>
     </View>

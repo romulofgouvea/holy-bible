@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, TouchableOpacity } from 'react-native';
 import { useResponsive } from '../hooks/use-responsive';
+import { useTheme } from '../hooks/use-theme';
 import { BibleText } from './BibleText';
 
 type BibleGridBlockProps = {
@@ -11,13 +12,14 @@ type BibleGridBlockProps = {
 
 export function BibleGridBlock({ title, widthPercentage, onPress }: BibleGridBlockProps) {
   const { ms } = useResponsive();
+  const { colors } = useTheme();
   return (
     <TouchableOpacity
       activeOpacity={0.7}
-      style={[styles.gridItem, { width: `${widthPercentage}%` }]}
+      style={[styles.gridItem, { width: `${widthPercentage}%`, backgroundColor: colors.surfaceVariant, borderColor: colors.primary }]}
       onPress={onPress}
     >
-      <BibleText style={[styles.gridText, { fontSize: ms(16) }]} numberOfLines={1}>
+      <BibleText style={[styles.gridText, { fontSize: ms(16), color: colors.primary }]} numberOfLines={1}>
         {title}
       </BibleText>
     </TouchableOpacity>

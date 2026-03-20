@@ -3,6 +3,7 @@ import * as Clipboard from 'expo-clipboard';
 import React from 'react';
 import { Animated, Share, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useResponsive } from '../hooks/use-responsive';
+import { useTheme } from '../hooks/use-theme';
 
 export type SelectedVerse = {
   chapter: number;
@@ -24,6 +25,7 @@ type VerseActionSheetProps = {
 export function BibleVerseActionSheet(props: VerseActionSheetProps) {
   const { visible, selectedVerses, highlights, onClose, onBulkHighlight } = props;
   const { ms } = useResponsive();
+  const { colors } = useTheme();
   const translateY = React.useRef(new Animated.Value(100)).current;
 
   React.useEffect(() => {
@@ -99,30 +101,30 @@ export function BibleVerseActionSheet(props: VerseActionSheetProps) {
   };
 
   const iconSize = ms(22);
-  const iconColor = '#008080';
+  const iconColor = colors.primary;
 
   return (
-    <Animated.View style={[styles.bar, { transform: [{ translateY }] }]} id="bible-verse-action-sheet">
+    <Animated.View style={[styles.bar, { transform: [{ translateY }], backgroundColor: colors.surface }]} id="bible-verse-action-sheet">
       <View style={styles.actions}>
         <TouchableOpacity style={styles.iconBtn} onPress={onShare} disabled={count === 0}>
-          <Feather name="share-2" size={iconSize} color={count === 0 ? '#ccc' : iconColor} />
+          <Feather name="share-2" size={iconSize} color={count === 0 ? colors.textMuted : iconColor} />
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.iconBtn} onPress={onCopy} disabled={count === 0}>
-          <Feather name="copy" size={iconSize} color={count === 0 ? '#ccc' : iconColor} />
+          <Feather name="copy" size={iconSize} color={count === 0 ? colors.textMuted : iconColor} />
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.iconBtn} onPress={onHighlight} disabled={count === 0}>
           <FontAwesome
             name={allHighlighted ? 'star' : 'star-o'}
             size={iconSize}
-            color={count === 0 ? '#ccc' : allHighlighted ? '#f5c518' : iconColor}
+            color={count === 0 ? colors.textMuted : allHighlighted ? '#f5c518' : iconColor}
           />
         </TouchableOpacity>
 
       </View>
       <View style={styles.removeActions}>
-        <View style={styles.divider} />
+        <View style={[styles.divider, { backgroundColor: colors.border }]} />
 
         <TouchableOpacity style={styles.iconBtn} onPress={onClose}>
           <Feather name="x" size={iconSize} color="red" />

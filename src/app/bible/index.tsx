@@ -12,6 +12,7 @@ import { useLocalSearchParams } from 'expo-router';
 
 import { BibleToast } from '../../components/BibleToast';
 import { useToast } from '../../hooks/use-toast';
+import { useTheme } from '../../hooks/use-theme';
 
 export default function BibleScreen() {
   const {
@@ -32,6 +33,7 @@ export default function BibleScreen() {
   } = useBible();
 
   const { toast, opacity, show } = useToast();
+  const { colors } = useTheme();
 
   const [actionSheetVisible, setActionSheetVisible] = useState(false);
   const [selectedVerses, setSelectedVerses] = useState<SelectedVerse[]>([]);
@@ -195,7 +197,7 @@ export default function BibleScreen() {
   });
 
   return (
-    <Animated.View style={[styles.page, { opacity: fadeAnim }]}>
+    <Animated.View style={[styles.page, { opacity: fadeAnim, backgroundColor: colors.background }]}>
       <BibleTopBar
         version={version}
         bookName={currentBook.name}
@@ -211,8 +213,8 @@ export default function BibleScreen() {
       <View style={styles.content}>
         {isChangingVersion ? (
           <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <ActivityIndicator size="large" color="#008080" />
-            <BibleText style={{ marginTop: 16, fontWeight: '700', color: '#008080', fontSize: 16 }}>Carregando {isChangingVersion}...</BibleText>
+            <ActivityIndicator size="large" color={colors.primary} />
+            <BibleText style={{ marginTop: 16, fontWeight: '700', color: colors.primary, fontSize: 16 }}>Carregando {isChangingVersion}...</BibleText>
           </View>
         ) : (
           <BibleVerseReader
@@ -233,17 +235,17 @@ export default function BibleScreen() {
         {!actionSheetVisible && (
           <>
             <TouchableOpacity
-              style={[styles.floatingArrow, styles.floatingArrowLeft]}
+              style={[styles.floatingArrow, styles.floatingArrowLeft, { backgroundColor: colors.primary }]}
               onPress={() => navigateChapter(-1)}
             >
-              <Feather name="chevron-left" size={24} color="#ffffff" />
+              <Feather name="chevron-left" size={24} color={colors.onPrimary} />
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.floatingArrow, styles.floatingArrowRight]}
+              style={[styles.floatingArrow, styles.floatingArrowRight, { backgroundColor: colors.primary }]}
               onPress={() => navigateChapter(1)}
             >
-              <Feather name="chevron-right" size={24} color="#ffffff" />
+              <Feather name="chevron-right" size={24} color={colors.onPrimary} />
             </TouchableOpacity>
           </>
         )}

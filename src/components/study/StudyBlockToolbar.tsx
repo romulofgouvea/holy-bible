@@ -2,6 +2,7 @@ import { Feather } from '@expo/vector-icons';
 import React from 'react';
 import { Keyboard, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import { useResponsive } from '../../hooks/use-responsive';
+import { useTheme } from '../../hooks/use-theme';
 import { Block, makeBlock } from '../../hooks/use-studies';
 
 type StudyBlockToolbarProps = {
@@ -59,38 +60,39 @@ export function StudyBlockToolbar({
   isFirst, isLast, onAddAfter, onMoveUp, onMoveDown, onDelete, onClose, onOpenCommands, onGoToBible
 }: StudyBlockToolbarProps) {
   const { ms } = useResponsive();
+  const { colors } = useTheme();
   return (
     <View style={styles.wrapper} pointerEvents="box-none" {...({ onMouseDown: (e: any) => e.preventDefault() } as any)}>
-      <View style={styles.toolbar}>
+      <View style={[styles.toolbar, { backgroundColor: colors.surface, shadowColor: colors.primary, borderColor: colors.border }]}>
         <TouchableOpacity style={styles.toolBtn} onPress={onOpenCommands}>
-          <Feather name="command" size={ms(16)} color="#008080" />
+          <Feather name="command" size={ms(16)} color={colors.primary} />
         </TouchableOpacity>
         {onGoToBible && (
           <>
-            <View style={styles.divider} />
+            <View style={[styles.divider, { backgroundColor: colors.border }]} />
             <TouchableOpacity style={styles.toolBtn} onPress={onGoToBible}>
-              <Feather name="book-open" size={ms(16)} color="#008080" />
+              <Feather name="book-open" size={ms(16)} color={colors.primary} />
             </TouchableOpacity>
           </>
         )}
-        <View style={styles.divider} />
+        <View style={[styles.divider, { backgroundColor: colors.border }]} />
         <TouchableOpacity style={styles.toolBtn} onPress={onAddAfter}>
-          <Feather name="plus" size={ms(16)} color="#008080" />
+          <Feather name="plus" size={ms(16)} color={colors.primary} />
         </TouchableOpacity>
-        <View style={styles.divider} />
+        <View style={[styles.divider, { backgroundColor: colors.border }]} />
         <TouchableOpacity style={styles.toolBtn} onPress={onMoveUp} disabled={isFirst}>
-          <Feather name="arrow-up" size={ms(16)} color={isFirst ? '#ddd' : '#008080'} />
+          <Feather name="arrow-up" size={ms(16)} color={isFirst ? colors.border : colors.primary} />
         </TouchableOpacity>
         <TouchableOpacity style={styles.toolBtn} onPress={onMoveDown} disabled={isLast}>
-          <Feather name="arrow-down" size={ms(16)} color={isLast ? '#ddd' : '#008080'} />
+          <Feather name="arrow-down" size={ms(16)} color={isLast ? colors.border : colors.primary} />
         </TouchableOpacity>
-        <View style={styles.divider} />
+        <View style={[styles.divider, { backgroundColor: colors.border }]} />
         <TouchableOpacity style={styles.toolBtn} onPress={onDelete}>
           <Feather name="trash-2" size={ms(16)} color="#e74c3c" />
         </TouchableOpacity>
-        <View style={styles.divider} />
+        <View style={[styles.divider, { backgroundColor: colors.border }]} />
         <TouchableOpacity style={styles.toolBtn} onPress={onClose}>
-          <Feather name="x" size={ms(16)} color="#999" />
+          <Feather name="x" size={ms(16)} color={colors.textMuted} />
         </TouchableOpacity>
       </View>
     </View>

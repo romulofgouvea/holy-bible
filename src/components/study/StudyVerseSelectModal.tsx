@@ -2,6 +2,7 @@ import { Feather } from '@expo/vector-icons';
 import React, { useEffect, useState } from 'react';
 import { Modal, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useResponsive } from '../../hooks/use-responsive';
+import { useTheme } from '../../hooks/use-theme';
 import { BibleText } from '../BibleText';
 
 type StudyVerseSelectModalProps = {
@@ -16,6 +17,7 @@ type StudyVerseSelectModalProps = {
 
 export function StudyVerseSelectModal({ visible, onClose, onBack, bookName, chapter, verses, onConfirm }: StudyVerseSelectModalProps) {
   const { ms, height } = useResponsive();
+  const { colors } = useTheme();
   const [selectedNums, setSelectedNums] = useState<Set<number>>(new Set());
 
   useEffect(() => {
@@ -38,38 +40,38 @@ export function StudyVerseSelectModal({ visible, onClose, onBack, bookName, chap
   return (
     <Modal visible={visible} transparent animationType="slide">
       <View style={styles.backdrop} id="study-verse-backdrop">
-        <View style={[styles.sheet, { maxHeight: height * 0.85 }]} id="study-verse-sheet">
+        <View style={[styles.sheet, { maxHeight: height * 0.85, backgroundColor: colors.surface }]} id="study-verse-sheet">
           <View style={styles.header}>
             {onBack ? (
-              <TouchableOpacity onPress={onBack} style={[styles.headerIconWrap, { backgroundColor: '#f5f5f5' }]}>
-                <Feather name="arrow-left" size={ms(18)} color="#333" />
+              <TouchableOpacity onPress={onBack} style={[styles.headerIconWrap, { backgroundColor: colors.surfaceVariant }]}>
+                <Feather name="arrow-left" size={ms(18)} color={colors.text} />
               </TouchableOpacity>
             ) : (
-              <View style={styles.headerIconWrap}>
-                <Feather name="list" size={ms(18)} color="#008080" />
+              <View style={[styles.headerIconWrap, { backgroundColor: colors.primaryContainer }]}>
+                <Feather name="list" size={ms(18)} color={colors.primary} />
               </View>
             )}
-            <BibleText style={[styles.title, { fontSize: ms(18) }]}>{bookName} {chapter}</BibleText>
-            <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
+            <BibleText style={[styles.title, { fontSize: ms(18), color: colors.primary }]}>{bookName} {chapter}</BibleText>
+            <TouchableOpacity onPress={onClose} style={[styles.closeBtn, { backgroundColor: colors.surfaceVariant }]}>
               <Feather name="x" size={ms(18)} color="#e74c3c" />
             </TouchableOpacity>
           </View>
-          <View style={styles.divider} />
+          <View style={[styles.divider, { backgroundColor: colors.border }]} />
           <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
             {verses.map(({ verse, text }) => {
               const selected = selectedNums.has(verse);
               return (
-                <TouchableOpacity key={verse} style={[styles.verseRow, selected && styles.verseRowSelected]} onPress={() => toggleVerse(verse)} activeOpacity={0.7}>
-                  <BibleText style={[styles.verseNumLabel, { fontSize: ms(12) }, selected && styles.verseNumLabelSelected]}>{verse}</BibleText>
-                  <BibleText style={[styles.verseRowText, { fontSize: ms(14) }]}>{text}</BibleText>
+                <TouchableOpacity key={verse} style={[styles.verseRow, { borderBottomColor: colors.surfaceVariant }, selected && { backgroundColor: colors.primaryContainer, borderLeftWidth: 3, borderLeftColor: colors.primary, paddingLeft: 6 }]} onPress={() => toggleVerse(verse)} activeOpacity={0.7}>
+                  <BibleText style={[styles.verseNumLabel, { fontSize: ms(12), color: colors.primary }, selected && { color: colors.onPrimaryContainer }]}>{verse}</BibleText>
+                  <BibleText style={[styles.verseRowText, { fontSize: ms(14), color: colors.text }]}>{text}</BibleText>
                 </TouchableOpacity>
               );
             })}
           </ScrollView>
-          <View style={styles.divider} />
-          <TouchableOpacity style={[styles.confirmBtn, selectedNums.size === 0 && styles.confirmBtnDisabled]} onPress={handleConfirm} disabled={selectedNums.size === 0}>
-            <Feather name="check" size={ms(16)} color={selectedNums.size === 0 ? '#aaa' : '#fff'} />
-            <BibleText style={[styles.confirmText, { fontSize: ms(14) }, selectedNums.size === 0 && styles.confirmTextDisabled]}>
+          <View style={[styles.divider, { backgroundColor: colors.border }]} />
+          <TouchableOpacity style={[styles.confirmBtn, { backgroundColor: colors.primary }, selectedNums.size === 0 && { backgroundColor: colors.surfaceVariant }]} onPress={handleConfirm} disabled={selectedNums.size === 0}>
+            <Feather name="check" size={ms(16)} color={selectedNums.size === 0 ? colors.textMuted : colors.onPrimary} />
+            <BibleText style={[styles.confirmText, { fontSize: ms(14), color: colors.onPrimary }, selectedNums.size === 0 && { color: colors.textMuted }]}>
               {selectedNums.size === 0 ? 'Versículos' : `Inserir ${selectedNums.size} ${selectedNums.size === 1 ? 'versículo' : 'versículos'}`}
             </BibleText>
           </TouchableOpacity>

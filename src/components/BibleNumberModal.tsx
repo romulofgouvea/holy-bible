@@ -4,6 +4,7 @@ import { Modal, ScrollView, StyleSheet, TouchableOpacity, TouchableWithoutFeedba
 import { useResponsive } from '../hooks/use-responsive';
 import { BibleGridBlock } from './BibleGridBlock';
 import { BibleText } from './BibleText';
+import { useTheme } from '../hooks/use-theme';
 
 type BibleNumberModalProps = {
   visible: boolean;
@@ -17,29 +18,30 @@ type BibleNumberModalProps = {
 
 export function BibleNumberModal({ visible, onClose, onBack, items, title, iconName, onSelect }: BibleNumberModalProps) {
   const { ms, height, width } = useResponsive();
+  const { colors } = useTheme();
 
   return (
     <Modal visible={visible} animationType="slide" transparent>
       <TouchableOpacity activeOpacity={1} style={styles.modalBackdrop} onPress={onClose} id="bible-number-backdrop">
         <TouchableWithoutFeedback>
-          <View style={[styles.bottomSheet, { height: height * 0.85 }]} id="bible-number-sheet">
+          <View style={[styles.bottomSheet, { height: height * 0.85, backgroundColor: colors.surface }]} id="bible-number-sheet">
             <View style={styles.header}>
               {onBack ? (
-                <TouchableOpacity onPress={onBack} style={[styles.headerIconWrap, { backgroundColor: '#f5f5f5' }]}>
-                  <Feather name="arrow-left" size={ms(18)} color="#333" />
+                <TouchableOpacity onPress={onBack} style={[styles.headerIconWrap, { backgroundColor: colors.surfaceVariant }]}>
+                  <Feather name="arrow-left" size={ms(18)} color={colors.text} />
                 </TouchableOpacity>
               ) : (
-                <View style={styles.headerIconWrap}>
-                  <Feather name={iconName} size={ms(18)} color="#008080" />
+                <View style={[styles.headerIconWrap, { backgroundColor: colors.primaryContainer }]}>
+                  <Feather name={iconName} size={ms(18)} color={colors.primary} />
                 </View>
               )}
-              <BibleText style={[styles.title, { fontSize: ms(18) }]}>{title}</BibleText>
-              <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
+              <BibleText style={[styles.title, { fontSize: ms(18), color: colors.primary }]}>{title}</BibleText>
+              <TouchableOpacity onPress={onClose} style={[styles.closeBtn, { backgroundColor: colors.surfaceVariant }]}>
                 <Feather name="x" size={ms(18)} color="#e74c3c" />
               </TouchableOpacity>
             </View>
 
-            <View style={styles.divider} />
+            <View style={[styles.divider, { backgroundColor: colors.border }]} />
 
             <ScrollView contentContainerStyle={styles.list} showsVerticalScrollIndicator={false}>
               <View style={styles.gridContainer}>
@@ -60,12 +62,12 @@ export function BibleNumberModal({ visible, onClose, onBack, items, title, iconN
               </View>
             </ScrollView>
 
-            <View style={styles.divider} />
+            <View style={[styles.divider, { backgroundColor: colors.border }]} />
 
             <View style={styles.footer}>
-              <View style={styles.countPill}>
-                <BibleText style={styles.countNumber}>{items.length}</BibleText>
-                <BibleText style={styles.countText}> {`${title.toLowerCase()}`}</BibleText>
+              <View style={[styles.countPill, { backgroundColor: colors.surfaceVariant, borderColor: colors.primary }]}>
+                <BibleText style={[styles.countNumber, { color: colors.primary }]}>{items.length}</BibleText>
+                <BibleText style={[styles.countText, { color: colors.primary }]}> {`${title.toLowerCase()}`}</BibleText>
               </View>
             </View>
           </View>

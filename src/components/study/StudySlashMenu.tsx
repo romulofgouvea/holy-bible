@@ -2,6 +2,7 @@ import { Feather } from '@expo/vector-icons';
 import React from 'react';
 import { Modal, ScrollView, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { useResponsive } from '../../hooks/use-responsive';
+import { useTheme } from '../../hooks/use-theme';
 import { Block } from '../../hooks/use-studies';
 import { BibleText } from '../BibleText';
 
@@ -22,33 +23,34 @@ type StudySlashMenuProps = {
 
 export function StudySlashMenu({ visible, onClose, onSelectCommand }: StudySlashMenuProps) {
   const { ms, height } = useResponsive();
+  const { colors } = useTheme();
 
   return (
     <Modal visible={visible} animationType="slide" transparent>
       <TouchableOpacity activeOpacity={1} style={styles.backdrop} onPress={onClose}>
         <TouchableWithoutFeedback>
-          <View style={[styles.bottomSheet, { maxHeight: height * 0.85 }]}>
+          <View style={[styles.bottomSheet, { maxHeight: height * 0.85, backgroundColor: colors.surface }]}>
             <View style={styles.header}>
-              <View style={styles.headerIconWrap}>
-                <Feather name="command" size={ms(18)} color="#008080" />
+              <View style={[styles.headerIconWrap, { backgroundColor: colors.primaryContainer }]}>
+                <Feather name="command" size={ms(18)} color={colors.primary} />
               </View>
-              <BibleText style={[styles.title, { fontSize: ms(18) }]}>Comandos</BibleText>
+              <BibleText style={[styles.title, { fontSize: ms(18), color: colors.primary }]}>Comandos</BibleText>
               <TouchableOpacity onPress={onClose} style={styles.closeBtnTop}>
-                <Feather name="x" size={ms(22)} color="#666" />
+                <Feather name="x" size={ms(22)} color={colors.textMuted} />
               </TouchableOpacity>
             </View>
 
             <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.list}>
               {SLASH_COMMANDS.map(cmd => (
-                <TouchableOpacity key={cmd.type} activeOpacity={0.7} style={styles.card} onPress={() => onSelectCommand(cmd.type as Block['type'])}>
-                  <View style={styles.icon}>
-                    <Feather name={cmd.icon} size={ms(18)} color="#008080" />
+                <TouchableOpacity key={cmd.type} activeOpacity={0.7} style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.primary }]} onPress={() => onSelectCommand(cmd.type as Block['type'])}>
+                  <View style={[styles.icon, { backgroundColor: colors.primaryContainer }]}>
+                    <Feather name={cmd.icon} size={ms(18)} color={colors.primary} />
                   </View>
                   <View style={{ flex: 1 }}>
-                    <BibleText style={[styles.label, { fontSize: ms(14) }]}>{cmd.label}</BibleText>
-                    <BibleText style={[styles.desc, { fontSize: ms(12) }]}>{cmd.desc}</BibleText>
+                    <BibleText style={[styles.label, { fontSize: ms(14), color: colors.text }]}>{cmd.label}</BibleText>
+                    <BibleText style={[styles.desc, { fontSize: ms(12), color: colors.textMuted }]}>{cmd.desc}</BibleText>
                   </View>
-                  <Feather name="chevron-right" size={ms(20)} color="#ccc" />
+                  <Feather name="chevron-right" size={ms(20)} color={colors.surfaceVariant} />
                 </TouchableOpacity>
               ))}
             </ScrollView>
