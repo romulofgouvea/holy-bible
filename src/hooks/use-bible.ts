@@ -129,12 +129,7 @@ export function useBible() {
     }
   }, [versionBooks]);
 
-  const onVersePress = useCallback((item: { chapter: number; verse: number }) => {
-    setChapter(item.chapter);
-    setVerse(item.verse);
-    setVisibleChapter(item.chapter);
-    setVisibleVerse(item.verse);
-
+  const toggleHighlight = useCallback((item: { chapterIndex?: number; verseIndex?: number; chapter: number; verse: number }) => {
     setHighlights((prev) => {
       const key = `${currentBook.abbrev}-${item.chapter}-${item.verse}`;
       const clone = { ...prev };
@@ -144,6 +139,13 @@ export function useBible() {
       return clone;
     });
   }, [currentBook.abbrev]);
+
+  const onVersePress = useCallback((item: { chapter: number; verse: number }) => {
+    setChapter(item.chapter);
+    setVerse(item.verse);
+    setVisibleChapter(item.chapter);
+    setVisibleVerse(item.verse);
+  }, []);
 
   return {
     isReady,
@@ -157,6 +159,7 @@ export function useBible() {
     highlights, setHighlights,
     sectionData,
     changeChapter,
-    onVersePress
+    onVersePress,
+    toggleHighlight
   };
 }

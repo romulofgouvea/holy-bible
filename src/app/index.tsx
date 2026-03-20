@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Animated, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { BibleModals } from '../components/bible-modals';
 import { TopBar } from '../components/top-bar';
+import { VerseActionSheet, SelectedVerse } from '../components/verse-action-sheet';
 import { VerseReader } from '../components/verse-reader';
 import { useBible } from '../hooks/use-bible';
 
@@ -16,11 +17,15 @@ export default function HomeScreen() {
     visibleChapter, setVisibleChapter,
     visibleVerse, setVisibleVerse,
     blinkingVerse, setBlinkingVerse,
-    highlights,
     sectionData,
     changeChapter,
-    onVersePress
+    onVersePress: originalOnVersePress,
+    toggleHighlight,
+    highlights
   } = useBible();
+
+  const [actionSheetVisible, setActionSheetVisible] = useState(false);
+  const [selectedVerses, setSelectedVerses] = useState<SelectedVerse[]>([]);
 
   const [versionModalVisible, setVersionModalVisible] = useState(false);
   const [bookModalVisible, setBookModalVisible] = useState(false);
@@ -115,6 +120,36 @@ export default function HomeScreen() {
     minimumViewTime: 150,
   });
 
+  const onVersePress = (item: any) => {
+    const verseText = sectionData[0]?.data.find((v: any) => v.verse === item.verse)?.text || '';
+    const selected: SelectedVerse = {
+      chapter: item.chapter,
+      verse: item.verse,
+      text: verseText,
+      bookName: currentBook.name,
+      bookAbbrev: currentBook.abbrev,
+    };
+    const key = `${selected.bookAbbrev}-${selected.chapter}-${selected.verse}`;
+
+    setSelectedVerses((prev) => {
+      const exists = prev.some((v) => `${v.bookAbbrev}-${v.chapter}-${v.verse}` === key);
+      const next = exists
+        ? prev.filter((v) => `${v.bookAbbrev}-${v.chapter}-${v.verse}` !== key)
+        : [...prev, selected];
+      if (next.length === 0) {
+        setActionSheetVisible(false);
+      } else {
+        setActionSheetVisible(true);
+      }
+      return next;
+    });
+  };
+
+  const onActionSheetClose = () => {
+    setActionSheetVisible(false);
+    setSelectedVerses([]);
+  };
+
   const onViewableItemsChanged = useRef(({ viewableItems }: { viewableItems: any[] }) => {
     if (isAutoScrolling.current) return;
     const firstVisible = viewableItems.find((v) => v.item && v.item.chapter && v.item.verse && v.isViewable)?.item;
@@ -143,6 +178,7 @@ export default function HomeScreen() {
           sections={sectionData}
           blinkingVerse={blinkingVerse}
           highlights={highlights}
+          selectedKeys={selectedVerses.reduce((acc, v) => { acc[`${v.bookAbbrev}-${v.chapter}-${v.verse}`] = true; return acc; }, {} as Record<string, boolean>)}
           bookAbbrev={currentBook.abbrev}
           onVersePress={onVersePress}
           onViewableItemsChanged={onViewableItemsChanged.current}
@@ -182,6 +218,14 @@ export default function HomeScreen() {
         onBookSelect={(b) => { setBook(b); setChapter(1); setVerse(1); }}
         onChapterSelect={(c) => { setChapter(c); setVerse(1); }}
         onVerseSelect={(v) => { setVerse(v); setTimeout(() => scrollToVerse(v, chapter), 300); }}
+      />
+
+      <VerseActionSheet
+        visible={actionSheetVisible}
+        selectedVerses={selectedVerses}
+        highlights={highlights}
+        onClose={onActionSheetClose}
+        onToggleHighlight={toggleHighlight}
       />
     </Animated.View>
   );
