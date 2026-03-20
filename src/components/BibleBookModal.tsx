@@ -11,10 +11,12 @@ type BibleBookModalProps = {
   visible: boolean;
   onClose: () => void;
   books: Book[];
+  versionSigla?: string;
+  onVersionPress?: () => void;
   onSelect: (bookName: string) => void;
 };
 
-export function BibleBookModal({ visible, onClose, books, onSelect }: BibleBookModalProps) {
+export function BibleBookModal({ visible, onClose, books, versionSigla, onVersionPress, onSelect }: BibleBookModalProps) {
   const { ms, height, width } = useResponsive();
   const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState<'list' | 'grid'>('grid');
@@ -37,6 +39,12 @@ export function BibleBookModal({ visible, onClose, books, onSelect }: BibleBookM
                 <Feather name="book" size={ms(18)} color="#008080" />
               </View>
               <BibleText style={[styles.title, { fontSize: ms(18) }]}>Livros</BibleText>
+              {versionSigla && onVersionPress && (
+                <TouchableOpacity activeOpacity={0.7} style={styles.versionPill} onPress={onVersionPress}>
+                  <BibleText style={[styles.versionPillText, { fontSize: ms(13) }]}>{versionSigla}</BibleText>
+                  <Feather name="chevron-down" size={ms(14)} color="#008080" style={{ marginLeft: 2 }} />
+                </TouchableOpacity>
+              )}
               <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
                 <Feather name="x" size={ms(22)} color="#666" />
               </TouchableOpacity>
@@ -146,6 +154,19 @@ const styles = StyleSheet.create({
     flex: 1,
     fontWeight: '700',
     color: '#008080',
+  },
+  versionPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#e6f3f3',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 12,
+    marginRight: 12,
+  },
+  versionPillText: {
+    color: '#008080',
+    fontWeight: '800',
   },
   closeBtn: {
     padding: 4,

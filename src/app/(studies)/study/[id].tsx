@@ -1,7 +1,4 @@
-import { BibleConfirmModal } from '@/components/BibleConfirmModal';
 import { BibleText } from '@/components/BibleText';
-import { BibleBookModal } from '../../../components/BibleBookModal';
-import { BibleNumberModal } from '../../../components/BibleNumberModal';
 import { Feather } from '@expo/vector-icons';
 import * as FileSystem from 'expo-file-system';
 import * as ImagePicker from 'expo-image-picker';
@@ -21,16 +18,18 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
-  TouchableWithoutFeedback,
   View
 } from 'react-native';
-import { availableVersions, Book, getBibleData } from '../../../data';
-import { useResponsive } from '../../../hooks/use-responsive';
-import { Block, makeBlock, Study, useStudies } from '../../../hooks/use-studies';
+import { BibleBookModal } from '../../../components/BibleBookModal';
+import { BibleNumberModal } from '../../../components/BibleNumberModal';
+import { BibleVersionModal } from '../../../components/BibleVersionModal';
 import { StudyBlockToolbar } from '../../../components/study/StudyBlockToolbar';
 import { StudySlashMenu } from '../../../components/study/StudySlashMenu';
 import { StudyTopMenu } from '../../../components/study/StudyTopMenu';
 import { StudyVerseSelectModal } from '../../../components/study/StudyVerseSelectModal';
+import { availableVersions, Book, getBibleData } from '../../../data';
+import { useResponsive } from '../../../hooks/use-responsive';
+import { Block, makeBlock, Study, useStudies } from '../../../hooks/use-studies';
 
 const noOutline = Platform.select({ web: { outline: 'none', outlineWidth: 0 } as any, default: {} });
 
@@ -50,13 +49,13 @@ export default function StudyEditorScreen() {
   const [videoUrl, setVideoUrl] = useState('');
   const [videoTitle, setVideoTitle] = useState('');
   const [pendingVideoBlockId, setPendingVideoBlockId] = useState<string | null>(null);
-  const [deleteConfirmVisible, setDeleteConfirmVisible] = useState(false);
   const [fullScreenImage, setFullScreenImage] = useState<string | null>(null);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
 
   const [versePickerVisible, setVersePickerVisible] = useState(false);
+  const [versionModalVisible, setVersionModalVisible] = useState(false);
   const [pendingBlockId, setPendingBlockId] = useState<string | null>(null);
-  const [vpVersion] = useState(availableVersions[0]);
+  const [vpVersion, setVpVersion] = useState(availableVersions[0]);
   const [vpBook, setVpBook] = useState<Book | null>(null);
   const [vpChapter, setVpChapter] = useState(1);
   const [vpStep, setVpStep] = useState<'book' | 'chapter' | 'verses'>('book');
@@ -200,27 +199,6 @@ export default function StudyEditorScreen() {
   }, [pendingVideoBlockId, videoUrl, videoTitle]);
 
 
-
-  const exportJSON = useCallback(async () => {
-    setMenuVisible(false);
-    const study = getStudy(id);
-    if (!study) return;
-    const json = JSON.stringify(study, null, 2);
-    if (Platform.OS === 'web') {
-      const blob = new Blob([json], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a'); a.href = url; a.download = `${study.title}.json`; a.click();
-    } else {
-      const path = `${(FileSystem as any).documentDirectory}${study.title.replace(/[^a-z0-9]/gi, '_')}.json`;
-      await FileSystem.writeAsStringAsync(path, json);
-      await Sharing.shareAsync(path, { mimeType: 'application/json' });
-    }
-  }, [id, getStudy]);
-
-  const handleDeleteStudy = useCallback(() => {
-    setMenuVisible(false);
-    setDeleteConfirmVisible(true);
-  }, []);
 
   const buildHTML = useCallback((study: Study) => {
     const blockHTML = study.blocks.map(b => {
@@ -392,7 +370,7 @@ export default function StudyEditorScreen() {
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <View style={styles.topBar}>
-        <TouchableOpacity style={styles.iconBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/estudos' as any)}>
+        <TouchableOpacity style={styles.iconBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/studies' as any)}>
           <Feather name="arrow-left" size={ms(22)} color="#fff" />
         </TouchableOpacity>
         <TextInput
@@ -446,9 +424,7 @@ export default function StudyEditorScreen() {
       <StudyTopMenu
         visible={menuVisible}
         onClose={() => setMenuVisible(false)}
-        onExportJSON={exportJSON}
         onExportPDF={exportPDF}
-        onDelete={handleDeleteStudy}
       />
 
       <Modal visible={videoModalVisible} transparent animationType="slide">
@@ -470,12 +446,17 @@ export default function StudyEditorScreen() {
         visible={versePickerVisible && vpStep === 'book'}
         onClose={() => setVersePickerVisible(false)}
         books={versionBooks}
+        versionSigla={vpVersion.toUpperCase()}
+        onVersionPress={() => {
+          setVersePickerVisible(false);
+          setVersionModalVisible(true);
+        }}
         onSelect={(bookName) => {
           const b = versionBooks.find((book: Book) => book.name === bookName || book.abbrev === bookName);
           if (b) { setVpBook(b); setVpChapter(1); setVpStep('chapter'); }
         }}
       />
-      
+
       <BibleNumberModal
         visible={versePickerVisible && vpStep === 'chapter'}
         onClose={() => setVersePickerVisible(false)}
@@ -493,8 +474,25 @@ export default function StudyEditorScreen() {
         verses={vpVerses}
         onConfirm={(sortedNums) => {
           if (!pendingBlockId || !vpBook || sortedNums.length === 0) return;
-          const ref = sortedNums.length === 1 ? `${vpBook.name} ${vpChapter}:${sortedNums[0]}` : `${vpBook.name} ${vpChapter}:${sortedNums[0]}–${sortedNums[sortedNums.length - 1]}`;
+
+          const groups: string[] = [];
+          let start = sortedNums[0];
+          let end = sortedNums[0];
+          for (let i = 1; i < sortedNums.length; i++) {
+            if (sortedNums[i] === end + 1) {
+              end = sortedNums[i];
+            } else {
+              groups.push(start === end ? `${start}` : `${start}-${end}`);
+              start = sortedNums[i];
+              end = sortedNums[i];
+            }
+          }
+          groups.push(start === end ? `${start}` : `${start}-${end}`);
+          const formattedRanges = groups.join(', ');
+
+          const ref = `${vpBook.name} ${vpChapter}:${formattedRanges} (${vpVersion.toUpperCase()})`;
           const content = sortedNums.map(n => { const v = vpVerses.find(v => v.verse === n); return `${n} ${v?.text ?? ''}`; }).join('\n');
+
           setBlocks(prev => {
             const idx = prev.findIndex(b => b.id === pendingBlockId);
             const vb: Block = { id: pendingBlockId, type: 'verse', content, verseRef: ref, bookName: vpBook.name, chapter: vpChapter, verse: sortedNums[0] };
@@ -509,19 +507,6 @@ export default function StudyEditorScreen() {
         }}
       />
 
-      <BibleConfirmModal
-        visible={deleteConfirmVisible}
-        title="Excluir estudo"
-        message="Tem certeza? Esta ação não pode ser desfeita."
-        confirmText="Excluir"
-        onCancel={() => setDeleteConfirmVisible(false)}
-        onConfirm={() => {
-          setDeleteConfirmVisible(false);
-          deleteStudy(id);
-          router.replace('/studies' as any);
-        }}
-      />
-
       <Modal visible={!!fullScreenImage} transparent animationType="fade">
         <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.9)' }}>
           <TouchableOpacity style={{ position: 'absolute', top: 40, right: 20, zIndex: 2, padding: 10, backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: 20 }} onPress={() => setFullScreenImage(null)}>
@@ -530,6 +515,16 @@ export default function StudyEditorScreen() {
           {fullScreenImage && <Image source={{ uri: fullScreenImage }} style={{ flex: 1 }} resizeMode="contain" />}
         </View>
       </Modal>
+
+      <BibleVersionModal
+        visible={versionModalVisible}
+        onClose={() => { setVersionModalVisible(false); setVersePickerVisible(true); }}
+        onSelect={(v) => {
+          setVpVersion(v.sigla);
+          setVersionModalVisible(false);
+          setVersePickerVisible(true);
+        }}
+      />
     </KeyboardAvoidingView>
   );
 }

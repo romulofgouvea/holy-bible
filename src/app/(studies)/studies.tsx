@@ -3,6 +3,7 @@ import { Feather } from '@expo/vector-icons';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
 import { useRouter } from 'expo-router';
+import * as Sharing from 'expo-sharing';
 import React, { useState } from 'react';
 import {
   Alert,
@@ -23,7 +24,7 @@ import { Study, useStudies } from '../../hooks/use-studies';
 export default function EstudosScreen() {
   const { ms } = useResponsive();
   const router = useRouter();
-  const { studies, createStudy, deleteStudy, importStudy } = useStudies();
+  const { studies, createStudy, deleteStudy, importBulk } = useStudies();
   const [modalVisible, setModalVisible] = useState(false);
   const [newTitle, setNewTitle] = useState('');
   const [newDescription, setNewDescription] = useState('');
@@ -37,7 +38,29 @@ export default function EstudosScreen() {
     setNewTitle('');
     setNewDescription('');
     setModalVisible(false);
-    router.push(`/estudo/${id}` as any);
+    router.push(`/study/${id}` as any);
+  };
+
+  const handleBackup = async () => {
+    setFabMenuVisible(false);
+    try {
+      if (studies.length === 0) {
+        Alert.alert('Aviso', 'Não há estudos para exportar.');
+        return;
+      }
+      const json = JSON.stringify(studies, null, 2);
+      if (Platform.OS === 'web') {
+        const blob = new Blob([json], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a'); a.href = url; a.download = `backup_estudos_biblia_${new Date().getTime()}.json`; a.click();
+      } else {
+        const path = `${(FileSystem as any).documentDirectory}backup_estudos_${new Date().getTime()}.json`;
+        await FileSystem.writeAsStringAsync(path, json);
+        await Sharing.shareAsync(path, { mimeType: 'application/json' });
+      }
+    } catch (err) {
+      Alert.alert('Erro', 'Não foi possível criar o arquivo de backup.');
+    }
   };
 
   const handleImport = async () => {
@@ -60,17 +83,20 @@ export default function EstudosScreen() {
         raw = await FileSystem.readAsStringAsync(result.assets[0].uri);
       }
 
-      const parsed = JSON.parse(raw) as Partial<Study>;
-      if (!parsed.blocks || !parsed.title) { Alert.alert('Erro', 'Arquivo inválido'); return; }
+      const parsed = JSON.parse(raw);
+      if (!Array.isArray(parsed)) {
+        Alert.alert('Erro', 'Formato de arquivo inválido. É esperado um backup de múltiplos estudos (Array). Se você está tentando importar um único estudo antigo, crie um novo e cole os dados.');
+        return;
+      }
 
-      const id = importStudy(parsed);
-
-      setTimeout(() => {
-        router.push(`/study/${id}` as any);
-      }, 100);
+      const importedCount = importBulk(parsed);
+      Alert.alert(
+        'Restauração Concluída',
+        `${importedCount} estudo(s) restaurado(s) com sucesso.\n\n(${parsed.length - importedCount} ignorados pois já existem no app.)`
+      );
     } catch (err) {
       console.log('Import err', err);
-      Alert.alert('Erro', 'Não foi possível importar o arquivo');
+      Alert.alert('Erro', 'Não foi possível tratar o arquivo de restauração.');
     }
   };
 
@@ -132,8 +158,13 @@ export default function EstudosScreen() {
             <View style={styles.fabActionIcon}><Feather name="file-plus" size={ms(20)} color="#fff" /></View>
           </TouchableOpacity>
 
+          <TouchableOpacity style={styles.fabActionItem} onPress={handleBackup}>
+            <BibleText style={[styles.fabActionLabel, { fontSize: ms(14) }]}>Fazer Bkp</BibleText>
+            <View style={[styles.fabActionIcon, { backgroundColor: '#3498db' }]}><Feather name="download" size={ms(20)} color="#fff" /></View>
+          </TouchableOpacity>
+
           <TouchableOpacity style={styles.fabActionItem} onPress={handleImport}>
-            <BibleText style={[styles.fabActionLabel, { fontSize: ms(14) }]}>Importar JSON</BibleText>
+            <BibleText style={[styles.fabActionLabel, { fontSize: ms(14) }]}>Restaurar Bkp</BibleText>
             <View style={[styles.fabActionIcon, { backgroundColor: '#e74c3c' }]}><Feather name="upload" size={ms(20)} color="#fff" /></View>
           </TouchableOpacity>
         </View>

@@ -7,30 +7,19 @@ import { BibleText } from '../BibleText';
 type StudyTopMenuProps = {
   visible: boolean;
   onClose: () => void;
-  onExportJSON: () => void;
   onExportPDF: () => void;
-  onDelete: () => void;
 };
 
-export function StudyTopMenu({ visible, onClose, onExportJSON, onExportPDF, onDelete }: StudyTopMenuProps) {
+export function StudyTopMenu({ visible, onClose, onExportPDF }: StudyTopMenuProps) {
   const { ms } = useResponsive();
 
   return (
     <Modal visible={visible} transparent animationType="fade">
       <TouchableOpacity style={styles.menuBackdrop} activeOpacity={1} onPress={onClose}>
         <View style={styles.menuSheet}>
-          <TouchableOpacity style={styles.menuItem} onPress={onExportJSON}>
-            <Feather name="download" size={ms(18)} color="#008080" />
-            <BibleText style={[styles.menuItemText, { fontSize: ms(15) }]}>Exportar JSON</BibleText>
-          </TouchableOpacity>
           <TouchableOpacity style={styles.menuItem} onPress={onExportPDF}>
             <Feather name="file-text" size={ms(18)} color="#008080" />
             <BibleText style={[styles.menuItemText, { fontSize: ms(15) }]}>Exportar PDF</BibleText>
-          </TouchableOpacity>
-          <View style={styles.menuDivider} />
-          <TouchableOpacity style={styles.menuItem} onPress={onDelete}>
-            <Feather name="trash-2" size={ms(18)} color="#e74c3c" />
-            <BibleText style={[styles.menuItemText, { fontSize: ms(15), color: '#e74c3c' }]}>Excluir estudo</BibleText>
           </TouchableOpacity>
         </View>
       </TouchableOpacity>

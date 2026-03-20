@@ -1,5 +1,35 @@
 [
   {
+    "name": "Almeida Corrigida e Fiel",
+    "sigla": "ACF",
+    "year": 1994,
+    "publisher": "SBTB"
+  },
+  {
+    "name": "Almeida Revista e Atualizada",
+    "sigla": "ARA",
+    "year": 1993,
+    "publisher": "SBB"
+  },
+  {
+    "name": "King James Atualizada",
+    "sigla": "KJA",
+    "year": 1999,
+    "publisher": "Abba Press"
+  },
+  {
+    "name": "Nova Versão Internacional",
+    "sigla": "NVI",
+    "year": 0,
+    "publisher": ""
+  },
+  {
+    "name": "Nova Versão Transformadora",
+    "sigla": "NVT",
+    "year": 2016,
+    "publisher": "Mundo Cristão"
+  },
+  {
     "name": "King James Fiel",
     "sigla": "KJF",
     "year": 1611,

@@ -58,13 +58,22 @@ export function useStudies() {
 
   const importStudy = useCallback((imported: Partial<Study>) => {
     const study: Study = {
-      id: makeId(),
+      id: imported.id || makeId(),
       title: imported.title || 'Estudo Importado',
       createdAt: imported.createdAt || new Date().toLocaleDateString('pt-BR'),
       blocks: imported.blocks && imported.blocks.length ? imported.blocks : [makeBlock('paragraph')],
     };
     persist([study, ...studies]);
     return study.id;
+  }, [studies, persist]);
+
+  const importBulk = useCallback((importedStudies: Study[]) => {
+    const existingIds = new Set(studies.map(s => s.id));
+    const newStudies = importedStudies.filter(s => s.id && s.title && s.blocks && !existingIds.has(s.id));
+    if (newStudies.length > 0) {
+      persist([...newStudies, ...studies]);
+    }
+    return newStudies.length;
   }, [studies, persist]);
 
   const updateStudy = useCallback((id: string, blocks: Block[], title?: string) => {
@@ -81,5 +90,5 @@ export function useStudies() {
     return studies.find((s) => s.id === id);
   }, [studies]);
 
-  return { studies, loaded, createStudy, importStudy, updateStudy, deleteStudy, getStudy };
+  return { studies, loaded, createStudy, importStudy, importBulk, updateStudy, deleteStudy, getStudy };
 }
