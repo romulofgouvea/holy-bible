@@ -28,16 +28,16 @@ export const lightColors: ThemeColors = {
 };
 
 export const darkColors: ThemeColors = {
-  background: '#141218',
-  surface: '#1D1B20',
-  surfaceVariant: '#49454F',
+  background: '#202124',
+  surface: '#2D2E31',
+  surfaceVariant: '#3C4043',
   primary: '#CFA7FF',
   onPrimary: '#46008B',
   primaryContainer: '#6500B9',
   onPrimaryContainer: '#F0E5FF',
-  text: '#E6E0E9',
-  textMuted: '#CAC4D0',
-  border: '#938F99',
+  text: '#E8EAED',
+  textMuted: '#9AA0A6',
+  border: '#5F6368',
 };
 
 type ThemeContextType = {

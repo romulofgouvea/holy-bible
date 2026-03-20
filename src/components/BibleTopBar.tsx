@@ -42,7 +42,7 @@ export const BibleTopBar = React.memo((props: BibleTopBarProps) => {
                     <BibleText style={{ fontWeight: '800', fontSize: ms(16), color: colors.onPrimary }}>Aa</BibleText>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.menuButton} onPress={onOpenMenu}>
-                    <Feather name="menu" size={ms(22)} color={colors.onPrimary} />
+                    <Feather name="menu" size={ms(20)} color={colors.onPrimary} />
                 </TouchableOpacity>
             </View>
         </View>
@@ -63,10 +63,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     topBarButton: {
+        height: 38,
+        justifyContent: 'center',
         backgroundColor: 'rgba(255,255,255,0.2)',
         borderRadius: 10,
         paddingHorizontal: 12,
-        paddingVertical: 8,
         marginHorizontal: 3,
     },
     topBarButtonText: {
@@ -75,7 +76,10 @@ const styles = StyleSheet.create({
         fontSize: 15,
     },
     menuButton: {
-        padding: 8,
+        width: 38,
+        height: 38,
+        alignItems: 'center',
+        justifyContent: 'center',
         borderRadius: 10,
         backgroundColor: 'rgba(255,255,255,0.15)',
         marginLeft: 4,

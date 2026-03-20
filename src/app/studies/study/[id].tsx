@@ -243,7 +243,7 @@ export default function StudyEditorScreen() {
     <KeyboardAvoidingView style={{ flex: 1, backgroundColor: readerColors.background }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <View style={[styles.topBar, { backgroundColor: colors.primary }]}>
         <TouchableOpacity style={styles.iconBtn} onPress={() => router.canGoBack() ? router.back() : router.replace(ROUTES.STUDIES as any)}>
-          <Feather name="arrow-left" size={ms(22)} color={colors.onPrimary} />
+          <Feather name="arrow-left" size={ms(20)} color={colors.onPrimary} />
         </TouchableOpacity>
         <TextInput
           style={[styles.titleInput, { fontSize: ms(16), color: colors.onPrimary }, noOutline]}
@@ -259,7 +259,7 @@ export default function StudyEditorScreen() {
             <BibleText style={{ fontWeight: '800', fontSize: ms(16), color: colors.onPrimary }}>Aa</BibleText>
           </TouchableOpacity>
           <TouchableOpacity style={[styles.iconBtn, { marginLeft: 4 }]} onPress={() => setMenuVisible(true)}>
-            <Feather name="more-vertical" size={ms(22)} color={colors.onPrimary} />
+            <Feather name="more-vertical" size={ms(20)} color={colors.onPrimary} />
           </TouchableOpacity>
         </View>
       </View>
@@ -413,7 +413,7 @@ export default function StudyEditorScreen() {
 
 const styles = StyleSheet.create({
   topBar: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#008080', paddingHorizontal: 8, paddingVertical: 8, gap: 8 },
-  iconBtn: { padding: 8, borderRadius: 10, backgroundColor: 'rgba(255,255,255,0.15)' },
+  iconBtn: { width: 38, height: 38, alignItems: 'center', justifyContent: 'center', borderRadius: 10, backgroundColor: 'rgba(255,255,255,0.15)' },
   titleInput: { flex: 1, color: '#fff', fontWeight: '700' },
   editorContent: { padding: 8, paddingBottom: 160, flexGrow: 1 },
   blockInput: { color: '#1a1a1a', paddingVertical: 6, paddingHorizontal: 0, lineHeight: 24, minHeight: 40 },

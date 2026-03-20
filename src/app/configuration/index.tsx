@@ -3,9 +3,9 @@ import React, { useState } from 'react';
 import { StyleSheet, Switch, TouchableOpacity, View } from 'react-native';
 import { BibleDrawerMenu } from '../../components/BibleDrawerMenu';
 import { BibleText } from '../../components/BibleText';
+import { useReaderSettings } from '../../hooks/use-reader-settings';
 import { useResponsive } from '../../hooks/use-responsive';
 import { useTheme } from '../../hooks/use-theme';
-import { useReaderSettings } from '../../hooks/use-reader-settings';
 
 export default function ConfigurationScreen() {
   const { ms } = useResponsive();
@@ -26,7 +26,7 @@ export default function ConfigurationScreen() {
           Configurações
         </BibleText>
         <TouchableOpacity style={styles.menuBtn} onPress={() => setDrawerVisible(true)}>
-          <Feather name="menu" size={ms(22)} color={colors.onPrimary} />
+          <Feather name="menu" size={ms(20)} color={colors.onPrimary} />
         </TouchableOpacity>
       </View>
 
@@ -77,7 +77,10 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   menuBtn: {
-    padding: 8,
+    width: 38,
+    height: 38,
+    alignItems: 'center',
+    justifyContent: 'center',
     borderRadius: 10,
     backgroundColor: 'rgba(255,255,255,0.15)',
     marginLeft: 4,
@@ -107,9 +110,9 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   iconWrap: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    width: 38,
+    height: 38,
+    borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
   },

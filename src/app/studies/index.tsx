@@ -128,7 +128,7 @@ export default function EstudosScreen() {
             <BibleText style={[styles.cardDate, { fontSize: ms(10), color: colors.border }]}>{item.createdAt}</BibleText>
           </View>
           <TouchableOpacity onPress={() => setStudyToDelete(item.id)} style={[styles.deleteBtn]}>
-            <Feather name="trash-2" size={ms(16)} color="#e74c3c" />
+            <Feather name="trash-2" size={ms(20)} color="#e74c3c" />
           </TouchableOpacity>
         </View>
       </TouchableOpacity>
@@ -140,7 +140,7 @@ export default function EstudosScreen() {
       <View style={[styles.header, { backgroundColor: colors.primary }]}>
         <BibleText style={[styles.headerTitle, { fontSize: ms(15), color: colors.onPrimary }]}>Estudos</BibleText>
         <TouchableOpacity style={styles.menuBtn} onPress={() => setDrawerVisible(true)}>
-          <Feather name="menu" size={ms(22)} color={colors.onPrimary} />
+          <Feather name="menu" size={ms(20)} color={colors.onPrimary} />
         </TouchableOpacity>
       </View>
 
@@ -253,7 +253,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  menuBtn: { padding: 8, borderRadius: 10, backgroundColor: 'rgba(255,255,255,0.15)', marginLeft: 4 },
+  menuBtn: { width: 38, height: 38, alignItems: 'center', justifyContent: 'center', borderRadius: 10, backgroundColor: 'rgba(255,255,255,0.15)', marginLeft: 4 },
   headerTitle: { color: '#fff', fontWeight: '700', marginHorizontal: 8 },
   listContent: { padding: 8, paddingTop: 8, flexGrow: 1 },
   emptyContainer: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingTop: 80, gap: 12 },
@@ -267,12 +267,12 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   cardContent: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12, paddingVertical: 12, gap: 14 },
-  cardIcon: { width: 40, height: 40, borderRadius: 10, backgroundColor: '#e6f3f3', alignItems: 'center', justifyContent: 'center' },
+  cardIcon: { width: 38, height: 38, borderRadius: 10, backgroundColor: '#e6f3f3', alignItems: 'center', justifyContent: 'center' },
   cardText: { flex: 1, gap: 4 },
   cardTitle: { fontWeight: '700', color: '#222' },
   cardDesc: { color: '#666', lineHeight: 18 },
   cardDate: { color: '#bbb', marginTop: 2 },
-  deleteBtn: { padding: 8, borderRadius: 8 },
+  deleteBtn: { width: 38, height: 38, alignItems: 'center', justifyContent: 'center', borderRadius: 10, backgroundColor: 'rgba(231, 76, 60, 0.1)' },
   fabMenuBackdrop: { flex: 1, backgroundColor: 'rgba(255,255,255,0.8)' },
   fabActions: { position: 'absolute', bottom: 100, right: 24, alignItems: 'flex-end', gap: 16 },
   fabActionItem: { flexDirection: 'row', alignItems: 'center', gap: 12 },

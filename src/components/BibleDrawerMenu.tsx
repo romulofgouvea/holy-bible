@@ -151,8 +151,8 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   drawerLogo: {
-    width: 34,
-    height: 34,
+    width: 38,
+    height: 38,
     borderRadius: 10,
     backgroundColor: 'rgba(255,255,255,0.2)',
     alignItems: 'center',
@@ -182,9 +182,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#e6f3f3',
   },
   menuIconWrap: {
-    width: 30,
-    height: 30,
-    borderRadius: 8,
+    width: 38,
+    height: 38,
+    borderRadius: 10,
     backgroundColor: '#f5f5f5',
     alignItems: 'center',
     justifyContent: 'center',
