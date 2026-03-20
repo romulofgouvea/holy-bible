@@ -11,6 +11,7 @@ export type Study = {
   id: string;
   title: string;
   createdAt: string;
+  timestamp?: number;
   blocks: Block[];
 };
 
@@ -47,7 +48,8 @@ export function useStudies() {
     const study: Study = {
       id: makeId(),
       title,
-      createdAt: new Date().toLocaleDateString('pt-BR'),
+      createdAt: new Date().toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }),
+      timestamp: Date.now(),
       blocks: [
         { id: makeId(), type: 'paragraph', content: description || '' }
       ],
@@ -60,10 +62,13 @@ export function useStudies() {
     const study: Study = {
       id: imported.id || makeId(),
       title: imported.title || 'Estudo Importado',
-      createdAt: imported.createdAt || new Date().toLocaleDateString('pt-BR'),
+      createdAt: imported.createdAt || new Date().toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }),
+      timestamp: imported.timestamp || Date.now(),
       blocks: imported.blocks && imported.blocks.length ? imported.blocks : [makeBlock('paragraph')],
     };
-    persist([study, ...studies]);
+    const combined = [study, ...studies];
+    combined.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+    persist(combined);
     return study.id;
   }, [studies, persist]);
 
@@ -71,7 +76,9 @@ export function useStudies() {
     const existingIds = new Set(studies.map(s => s.id));
     const newStudies = importedStudies.filter(s => s.id && s.title && s.blocks && !existingIds.has(s.id));
     if (newStudies.length > 0) {
-      persist([...newStudies, ...studies]);
+      const combined = [...newStudies, ...studies];
+      combined.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+      persist(combined);
     }
     return newStudies.length;
   }, [studies, persist]);

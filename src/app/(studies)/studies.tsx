@@ -110,22 +110,27 @@ export default function EstudosScreen() {
     </View>
   );
 
-  const renderItem = ({ item }: { item: Study }) => (
-    <TouchableOpacity style={styles.card} onPress={() => router.push(`/study/${item.id}` as any)} activeOpacity={0.75}>
-      <View style={styles.cardContent}>
-        <View style={styles.cardIcon}>
-          <Feather name="book-open" size={ms(17)} color="#008080" />
+  const renderItem = ({ item }: { item: Study }) => {
+    const firstParaObj = item.blocks?.find(b => b.type === 'paragraph');
+    const firstPara = firstParaObj && 'content' in firstParaObj ? firstParaObj.content : null;
+    return (
+      <TouchableOpacity style={styles.card} onPress={() => router.push(`/study/${item.id}` as any)} activeOpacity={0.75}>
+        <View style={styles.cardContent}>
+          <View style={styles.cardIcon}>
+            <Feather name="book-open" size={ms(20)} color="#008080" />
+          </View>
+          <View style={styles.cardText}>
+            <BibleText style={[styles.cardTitle, { fontSize: ms(15) }]}>{item.title}</BibleText>
+            {!!firstPara && <BibleText style={[styles.cardDesc, { fontSize: ms(13) }]} numberOfLines={2}>{firstPara}</BibleText>}
+            <BibleText style={[styles.cardDate, { fontSize: ms(11) }]}>{item.createdAt}</BibleText>
+          </View>
+          <TouchableOpacity onPress={() => setStudyToDelete(item.id)} style={styles.deleteBtn}>
+            <Feather name="trash-2" size={ms(18)} color="#e74c3c" />
+          </TouchableOpacity>
         </View>
-        <View style={styles.cardText}>
-          <BibleText style={[styles.cardTitle, { fontSize: ms(14) }]}>{item.title}</BibleText>
-          <BibleText style={[styles.cardDate, { fontSize: ms(10) }]}>{item.createdAt}</BibleText>
-        </View>
-        <TouchableOpacity onPress={() => setStudyToDelete(item.id)} style={styles.deleteBtn}>
-          <Feather name="trash-2" size={ms(16)} color="#ccc" />
-        </TouchableOpacity>
-      </View>
-    </TouchableOpacity>
-  );
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <View style={styles.container}>
@@ -261,12 +266,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.06,
     shadowRadius: 4,
   },
-  cardContent: { flexDirection: 'row', alignItems: 'center', padding: 10, gap: 10 },
-  cardIcon: { width: 36, height: 36, borderRadius: 10, backgroundColor: '#e6f3f3', alignItems: 'center', justifyContent: 'center' },
-  cardText: { flex: 1, gap: 2 },
+  cardContent: { flexDirection: 'row', alignItems: 'center', padding: 14, gap: 12 },
+  cardIcon: { width: 42, height: 42, borderRadius: 12, backgroundColor: '#e6f3f3', alignItems: 'center', justifyContent: 'center' },
+  cardText: { flex: 1, gap: 4 },
   cardTitle: { fontWeight: '700', color: '#222' },
+  cardDesc: { color: '#666', lineHeight: 18 },
   cardDate: { color: '#bbb', marginTop: 2 },
-  deleteBtn: { padding: 6 },
+  deleteBtn: { padding: 8, backgroundColor: '#fdeded', borderRadius: 8 },
   fabMenuBackdrop: { flex: 1, backgroundColor: 'rgba(255,255,255,0.8)' },
   fabActions: { position: 'absolute', bottom: 100, right: 24, alignItems: 'flex-end', gap: 16 },
   fabActionItem: { flexDirection: 'row', alignItems: 'center', gap: 12 },
