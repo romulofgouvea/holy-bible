@@ -38,14 +38,22 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
         onVersePress, onViewableItemsChanged, viewabilityConfig, listRef, onScrollToIndexFailed
     } = props;
     const { ms } = useResponsive();
-    const { fontSizeMultiplier, textAlign, readerColors } = useReaderSettings();
+    const { fontSizeMultiplier, textAlign, readerColors, readerTheme } = useReaderSettings();
+
+    const getHighlightColor = () => {
+        if (readerTheme === 'dark') return 'rgba(255, 215, 0, 0.25)';
+        if (readerTheme === 'sepia') return 'rgba(255, 193, 7, 0.4)';
+        return 'rgba(255, 224, 102, 0.6)';
+    };
+
+    const highlightColor = getHighlightColor();
 
     return (
         <SectionList
             ref={listRef}
             style={[styles.verseList, { backgroundColor: readerColors.background }]}
             sections={sections}
-            extraData={{ blinkingVerse, highlights, selectedKeys, version, readerColors, fontSizeMultiplier, textAlign }}
+            extraData={{ blinkingVerse, highlights, selectedKeys, version, readerColors, fontSizeMultiplier, textAlign, highlightColor }}
             keyExtractor={(item, idx) => `${item.chapter}-${item.verse}-${idx}`}
             onScrollToIndexFailed={onScrollToIndexFailed}
             renderSectionHeader={({ section: { title } }) => (
@@ -65,9 +73,9 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
                     >
                         <View style={[
                             styles.verseRow,
-                            isHighlighted && [styles.highlightedRow, { backgroundColor: readerColors.surfaceVariant }],
+                            isHighlighted && [styles.highlightedRow, { backgroundColor: highlightColor }],
                             isBlinking && [styles.blinkingRow, { backgroundColor: readerColors.primaryContainer }],
-                            isSelected && [styles.selectedRow, { backgroundColor: readerColors.surface, borderLeftColor: readerColors.primary }],
+                            isSelected && [styles.selectedRow, { backgroundColor: readerColors.surfaceVariant, borderLeftColor: readerColors.primary }],
                         ]}>
                             <Text style={[styles.verseText, {
                                 fontSize: ms(22 * fontSizeMultiplier),
