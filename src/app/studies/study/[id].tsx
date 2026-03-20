@@ -21,6 +21,7 @@ import {
 import { BibleBookModal } from '../../../components/BibleBookModal';
 import { BibleNumberModal } from '../../../components/BibleNumberModal';
 import { BibleVersionModal } from '../../../components/BibleVersionModal';
+import { ReaderSettingsModal } from '../../../components/ReaderSettingsModal';
 import { pickImageAction, StudyBlock } from '../../../components/study/StudyBlock';
 import { useBlockActions } from '../../../components/study/StudyBlockToolbar';
 import { StudySlashMenu } from '../../../components/study/StudySlashMenu';
@@ -30,6 +31,7 @@ import { ROUTES } from '../../../constants/routes';
 import { availableVersions, Book, getBibleData } from '../../../data';
 import { useResponsive } from '../../../hooks/use-responsive';
 import { useTheme } from '../../../hooks/use-theme';
+import { useReaderSettings } from '../../../hooks/use-reader-settings';
 import { Block, makeBlock, Study, useStudies } from '../../../hooks/use-studies';
 
 const noOutline = Platform.select({ web: { outline: 'none', outlineWidth: 0 } as any, default: {} });
@@ -39,6 +41,7 @@ export default function StudyEditorScreen() {
   const { getStudy, updateStudy, deleteStudy, loaded } = useStudies();
   const { ms, height } = useResponsive();
   const { colors } = useTheme();
+  const { readerColors } = useReaderSettings();
   const router = useRouter();
 
   const [title, setTitle] = useState('');
@@ -47,6 +50,7 @@ export default function StudyEditorScreen() {
   const [slashVisible, setSlashVisible] = useState(false);
   const [activeBlockId, setActiveBlockId] = useState<string | null>(null);
   const [menuVisible, setMenuVisible] = useState(false);
+  const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [videoModalVisible, setVideoModalVisible] = useState(false);
   const [videoUrl, setVideoUrl] = useState('');
   const [videoTitle, setVideoTitle] = useState('');
@@ -236,7 +240,7 @@ export default function StudyEditorScreen() {
   }, [id, getStudy, buildHTML]);
 
   return (
-    <KeyboardAvoidingView style={{ flex: 1, backgroundColor: colors.background }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+    <KeyboardAvoidingView style={{ flex: 1, backgroundColor: readerColors.background }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <View style={[styles.topBar, { backgroundColor: colors.primary }]}>
         <TouchableOpacity style={styles.iconBtn} onPress={() => router.canGoBack() ? router.back() : router.replace(ROUTES.STUDIES as any)}>
           <Feather name="arrow-left" size={ms(22)} color={colors.onPrimary} />
@@ -250,12 +254,17 @@ export default function StudyEditorScreen() {
           {...({ outlineStyle: 'none' } as any)}
           underlineColorAndroid="transparent"
         />
-        <TouchableOpacity style={styles.iconBtn} onPress={() => setMenuVisible(true)}>
-          <Feather name="more-vertical" size={ms(22)} color={colors.onPrimary} />
-        </TouchableOpacity>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <TouchableOpacity style={styles.iconBtn} onPress={() => setSettingsModalVisible(true)}>
+            <BibleText style={{ fontWeight: '800', fontSize: ms(16), color: colors.onPrimary }}>Aa</BibleText>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.iconBtn, { marginLeft: 4 }]} onPress={() => setMenuVisible(true)}>
+            <Feather name="more-vertical" size={ms(22)} color={colors.onPrimary} />
+          </TouchableOpacity>
+        </View>
       </View>
 
-      <ScrollView style={{ flex: 1, backgroundColor: colors.background }} contentContainerStyle={styles.editorContent} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+      <ScrollView style={{ flex: 1, backgroundColor: readerColors.background }} contentContainerStyle={styles.editorContent} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
         {blocks.map((item, index) => (
           <StudyBlock
             key={item.id}
@@ -290,6 +299,11 @@ export default function StudyEditorScreen() {
         visible={menuVisible}
         onClose={() => setMenuVisible(false)}
         onExportPDF={exportPDF}
+      />
+
+      <ReaderSettingsModal
+        visible={settingsModalVisible}
+        onClose={() => setSettingsModalVisible(false)}
       />
 
       <Modal visible={videoModalVisible} transparent animationType="slide">

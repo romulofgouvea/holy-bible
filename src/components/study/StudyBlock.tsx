@@ -6,6 +6,7 @@ import { useRouter } from 'expo-router';
 import { ROUTES } from '../../constants/routes';
 import { useResponsive } from '../../hooks/use-responsive';
 import { useTheme } from '../../hooks/use-theme';
+import { useReaderSettings } from '../../hooks/use-reader-settings';
 import { Block, makeBlock } from '../../hooks/use-studies';
 import { BibleText } from '../BibleText';
 import { StudyBlockToolbar } from './StudyBlockToolbar';
@@ -53,6 +54,7 @@ export function StudyBlock({
   const router = useRouter();
   const { ms } = useResponsive();
   const { colors } = useTheme();
+  const { fontSizeMultiplier, textAlign, readerColors } = useReaderSettings();
   const isFocused = focusedId === item.id;
 
   const updateBlockContent = (content: string) => {
@@ -108,16 +110,16 @@ export function StudyBlock({
 
     if (item.type === 'verse') {
       return (
-        <TouchableOpacity style={[styles.verseBlock, { backgroundColor: colors.surface, borderLeftColor: colors.primary }]} activeOpacity={0.8} onPressIn={() => { setFocusedId(item.id); setActiveBlockId(item.id); }}>
-          <BibleText style={[styles.verseRef, { fontSize: ms(18), marginBottom: 16, color: colors.primary }]}>{item.verseRef}</BibleText>
-          <BibleText style={[styles.verseText, { fontSize: ms(16), color: colors.text }]}>
+        <TouchableOpacity style={[styles.verseBlock, { backgroundColor: readerColors.surface, borderLeftColor: readerColors.primary }]} activeOpacity={0.8} onPressIn={() => { setFocusedId(item.id); setActiveBlockId(item.id); }}>
+          <BibleText style={[styles.verseRef, { fontSize: ms(18 * fontSizeMultiplier), marginBottom: 16, color: readerColors.primary }]}>{item.verseRef}</BibleText>
+          <BibleText style={[styles.verseText, { fontSize: ms(16 * fontSizeMultiplier), color: readerColors.text }]}>
             {item.content.split('\n').map((line, i, arr) => {
               const sp = line.indexOf(' ');
               const num = line.slice(0, sp); const text = line.slice(sp + 1);
               return (
-                <BibleText key={i}>
-                  <BibleText style={{ color: colors.primary, fontWeight: '700' }}>{num} </BibleText>
-                  <BibleText style={{ fontStyle: 'italic', lineHeight: 20 }}>{text}</BibleText>
+                <BibleText key={i} style={{ textAlign: textAlign as any }}>
+                  <BibleText style={{ color: readerColors.primary, fontWeight: '700' }}>{num} </BibleText>
+                  <BibleText style={{ fontStyle: 'italic', lineHeight: 20 * fontSizeMultiplier }}>{text}</BibleText>
                   {i < arr.length - 1 ? '\n\n' : ''}
                 </BibleText>
               );
@@ -127,13 +129,13 @@ export function StudyBlock({
       );
     }
 
-    const fsMap: Record<string, number> = { header: ms(22), h1: ms(19), h2: ms(16), paragraph: ms(15) };
+    const fsMap: Record<string, number> = { header: ms(22 * fontSizeMultiplier), h1: ms(19 * fontSizeMultiplier), h2: ms(16 * fontSizeMultiplier), paragraph: ms(15 * fontSizeMultiplier) };
     const textStyle = [
       styles.blockInput,
-      item.type === 'header' && [styles.headerText, { color: colors.primary }],
-      item.type === 'h1' && [styles.h1Text, { color: colors.text }],
-      item.type === 'h2' && [styles.h2Text, { color: colors.textMuted }],
-      { fontSize: fsMap[item.type] ?? ms(15), color: colors.text },
+      item.type === 'header' && [styles.headerText, { color: readerColors.primary }],
+      item.type === 'h1' && [styles.h1Text, { color: readerColors.text }],
+      item.type === 'h2' && [styles.h2Text, { color: readerColors.textMuted }],
+      { fontSize: fsMap[item.type] ?? ms(15 * fontSizeMultiplier), color: readerColors.text, textAlign: textAlign as any },
       noOutline,
     ];
     const placeholder = item.type === 'header' ? 'Cabeçalho...' : item.type === 'h1' ? 'Título 1...' : item.type === 'h2' ? 'Título 2...' : "Escreva algo ou '/' para opções...";

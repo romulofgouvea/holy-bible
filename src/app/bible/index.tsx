@@ -1,4 +1,5 @@
 import { BibleModals } from '@/components/BibleModals';
+import { ReaderSettingsModal } from '@/components/ReaderSettingsModal';
 import { BibleVerseActionSheet, SelectedVerse } from '@/components/BibleVerseActionSheet';
 import { Feather } from '@expo/vector-icons';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -13,6 +14,7 @@ import { useLocalSearchParams } from 'expo-router';
 import { BibleToast } from '../../components/BibleToast';
 import { useToast } from '../../hooks/use-toast';
 import { useTheme } from '../../hooks/use-theme';
+import { useReaderSettings } from '../../hooks/use-reader-settings';
 
 export default function BibleScreen() {
   const {
@@ -34,6 +36,7 @@ export default function BibleScreen() {
 
   const { toast, opacity, show } = useToast();
   const { colors } = useTheme();
+  const { readerColors } = useReaderSettings();
 
   const [actionSheetVisible, setActionSheetVisible] = useState(false);
   const [selectedVerses, setSelectedVerses] = useState<SelectedVerse[]>([]);
@@ -45,6 +48,7 @@ export default function BibleScreen() {
   const [bookModalVisible, setBookModalVisible] = useState(false);
   const [chapterModalVisible, setChapterModalVisible] = useState(false);
   const [verseModalVisible, setVerseModalVisible] = useState(false);
+  const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   
   const [isChangingVersion, setIsChangingVersion] = useState<string | null>(null);
 
@@ -208,6 +212,7 @@ export default function BibleScreen() {
         onPrevChapter={() => navigateChapter(-1)}
         onNextChapter={() => navigateChapter(1)}
         onOpenMenu={() => setDrawerVisible(true)}
+        onOpenSettings={() => setSettingsModalVisible(true)}
       />
 
       <View style={styles.content}>
@@ -235,17 +240,17 @@ export default function BibleScreen() {
         {!actionSheetVisible && (
           <>
             <TouchableOpacity
-              style={[styles.floatingArrow, styles.floatingArrowLeft, { backgroundColor: colors.primary }]}
+              style={[styles.floatingArrow, styles.floatingArrowLeft, { backgroundColor: readerColors.primary }]}
               onPress={() => navigateChapter(-1)}
             >
-              <Feather name="chevron-left" size={24} color={colors.onPrimary} />
+              <Feather name="chevron-left" size={24} color={readerColors.onPrimary} />
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.floatingArrow, styles.floatingArrowRight, { backgroundColor: colors.primary }]}
+              style={[styles.floatingArrow, styles.floatingArrowRight, { backgroundColor: readerColors.primary }]}
               onPress={() => navigateChapter(1)}
             >
-              <Feather name="chevron-right" size={24} color={colors.onPrimary} />
+              <Feather name="chevron-right" size={24} color={readerColors.onPrimary} />
             </TouchableOpacity>
           </>
         )}
@@ -284,6 +289,11 @@ export default function BibleScreen() {
         onClose={onActionSheetClose}
         onBulkHighlight={bulkToggleHighlight}
         onShowToast={show}
+      />
+
+      <ReaderSettingsModal
+        visible={settingsModalVisible}
+        onClose={() => setSettingsModalVisible(false)}
       />
 
       <BibleDrawerMenu

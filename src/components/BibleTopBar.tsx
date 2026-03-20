@@ -15,10 +15,11 @@ export type BibleTopBarProps = {
     onPrevChapter: () => void;
     onNextChapter: () => void;
     onOpenMenu: () => void;
+    onOpenSettings: () => void;
 };
 
 export const BibleTopBar = React.memo((props: BibleTopBarProps) => {
-    const { version, bookName, currentChapter, onOpenVersion, onOpenBook, onOpenChapter, onPrevChapter, onNextChapter, onOpenMenu } = props;
+    const { version, bookName, currentChapter, onOpenVersion, onOpenBook, onOpenChapter, onPrevChapter, onNextChapter, onOpenMenu, onOpenSettings } = props;
     const { ms } = useResponsive();
     const { colors } = useTheme();
 
@@ -36,9 +37,14 @@ export const BibleTopBar = React.memo((props: BibleTopBarProps) => {
                 </TouchableOpacity>
             </View>
 
-            <TouchableOpacity style={styles.menuButton} onPress={onOpenMenu}>
-                <Feather name="menu" size={ms(22)} color={colors.onPrimary} />
-            </TouchableOpacity>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <TouchableOpacity style={styles.menuButton} onPress={onOpenSettings}>
+                    <BibleText style={{ fontWeight: '800', fontSize: ms(16), color: colors.onPrimary }}>Aa</BibleText>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.menuButton} onPress={onOpenMenu}>
+                    <Feather name="menu" size={ms(22)} color={colors.onPrimary} />
+                </TouchableOpacity>
+            </View>
         </View>
     );
 });

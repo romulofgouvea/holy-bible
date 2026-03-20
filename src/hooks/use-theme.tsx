@@ -14,27 +14,27 @@ export type ThemeColors = {
   border: string;
 };
 
-const lightColors: ThemeColors = {
+export const lightColors: ThemeColors = {
   background: '#FEF7FF',
   surface: '#FFFFFF',
   surfaceVariant: '#E7E0EB',
-  primary: '#6750A4',
+  primary: '#820AD1',
   onPrimary: '#FFFFFF',
-  primaryContainer: '#EADDFF',
-  onPrimaryContainer: '#21005D',
+  primaryContainer: '#F0E5FF',
+  onPrimaryContainer: '#2B0054',
   text: '#1D1B20',
   textMuted: '#49454F',
   border: '#CAC4D0',
 };
 
-const darkColors: ThemeColors = {
+export const darkColors: ThemeColors = {
   background: '#141218',
   surface: '#1D1B20',
   surfaceVariant: '#49454F',
-  primary: '#D0BCFF',
-  onPrimary: '#381E72',
-  primaryContainer: '#4F378B',
-  onPrimaryContainer: '#EADDFF',
+  primary: '#CFA7FF',
+  onPrimary: '#46008B',
+  primaryContainer: '#6500B9',
+  onPrimaryContainer: '#F0E5FF',
   text: '#E6E0E9',
   textMuted: '#CAC4D0',
   border: '#938F99',

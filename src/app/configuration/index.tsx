@@ -5,11 +5,19 @@ import { BibleDrawerMenu } from '../../components/BibleDrawerMenu';
 import { BibleText } from '../../components/BibleText';
 import { useResponsive } from '../../hooks/use-responsive';
 import { useTheme } from '../../hooks/use-theme';
+import { useReaderSettings } from '../../hooks/use-reader-settings';
 
 export default function ConfigurationScreen() {
   const { ms } = useResponsive();
   const { isDarkMode, toggleDarkMode, colors } = useTheme();
+  const { setReaderTheme, readerTheme } = useReaderSettings();
   const [drawerVisible, setDrawerVisible] = useState(false);
+
+  const handleToggle = () => {
+    const nextDark = !isDarkMode;
+    toggleDarkMode(nextDark);
+    setReaderTheme(nextDark ? 'dark' : 'light');
+  };
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -24,7 +32,7 @@ export default function ConfigurationScreen() {
 
       <View style={styles.content}>
         <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-          <TouchableOpacity style={styles.cardHeader} activeOpacity={0.8} onPress={() => toggleDarkMode()}>
+          <TouchableOpacity style={styles.cardHeader} activeOpacity={0.8} onPress={handleToggle}>
             <View style={[styles.iconWrap, { backgroundColor: colors.surfaceVariant }]}>
               <Feather name={isDarkMode ? 'moon' : 'sun'} size={ms(20)} color={colors.primary} />
             </View>
@@ -39,7 +47,7 @@ export default function ConfigurationScreen() {
             <Switch
               style={{ marginLeft: 8 }}
               value={isDarkMode}
-              onValueChange={toggleDarkMode}
+              onValueChange={handleToggle}
               trackColor={{ false: colors.border, true: colors.primaryContainer }}
               thumbColor={isDarkMode ? colors.primary : '#f4f3f4'}
             />
