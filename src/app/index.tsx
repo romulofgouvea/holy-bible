@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Animated, StyleSheet, View, TouchableOpacity } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { Animated, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { BibleModals } from '../components/bible-modals';
 import { TopBar } from '../components/top-bar';
 import { VerseReader } from '../components/verse-reader';
@@ -81,7 +81,7 @@ export default function HomeScreen() {
       setBlinkingVerse(`${targetChapter}-${verseNumber}`);
       setTimeout(() => setBlinkingVerse(null), 1500);
     } catch (error) { }
-    
+
     // Hold isAutoScrolling for longer to avoid onViewableItemsChanged interference
     setTimeout(() => { isAutoScrolling.current = false; }, 1200);
   }, [chapter, setChapter, setBlinkingVerse]);
@@ -162,7 +162,7 @@ export default function HomeScreen() {
           style={[styles.floatingArrow, styles.floatingArrowLeft]}
           onPress={() => navigateChapter(-1)}
         >
-          <Feather name="chevron-left" size={32} color="#008080" />
+          <Feather name="chevron-left" size={24} color="#ffffff" />
         </TouchableOpacity>
 
         {/* Right Floating Navigation Arrow */}
@@ -170,7 +170,7 @@ export default function HomeScreen() {
           style={[styles.floatingArrow, styles.floatingArrowRight]}
           onPress={() => navigateChapter(1)}
         >
-          <Feather name="chevron-right" size={32} color="#008080" />
+          <Feather name="chevron-right" size={24} color="#ffffff" />
         </TouchableOpacity>
       </View>
 
@@ -203,16 +203,16 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    padding: 16,
+    padding: 0, // Removed lateral space
     position: 'relative',
   },
   floatingArrow: {
     position: 'absolute',
-    bottom: 60, // Moved lower
-    width: 60,
-    height: 60,
-    borderRadius: 18,
-    backgroundColor: '#ffffff',
+    bottom: 40, // Slightly lower
+    width: 42,  // Smaller
+    height: 42, // Smaller
+    borderRadius: 14,
+    backgroundColor: '#008080',
     alignItems: 'center',
     justifyContent: 'center',
     elevation: 8,
@@ -222,9 +222,9 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
   },
   floatingArrowLeft: {
-    left: 20,
+    left: 16,
   },
   floatingArrowRight: {
-    right: 20,
+    right: 16,
   }
 });

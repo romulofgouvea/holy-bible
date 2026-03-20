@@ -33,7 +33,7 @@ export const TopBar = React.memo((props: TopBarProps) => {
 const styles = StyleSheet.create({
     topBarRow: {
         flexDirection: 'row',
-        padding: 16,
+        padding: 8,
         backgroundColor: '#008080',
         alignItems: 'center',
         justifyContent: 'flex-start',
@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(255,255,255,0.2)',
         borderRadius: 10,
         paddingHorizontal: 14,
-        paddingVertical: 12,
+        paddingVertical: 8,
         marginHorizontal: 4,
     },
     smallTopBarButton: {

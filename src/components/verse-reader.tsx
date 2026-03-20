@@ -71,6 +71,7 @@ export const VerseReader = React.memo((props: VerseReaderProps) => {
             onViewableItemsChanged={onViewableItemsChanged}
             viewabilityConfig={viewabilityConfig}
             stickySectionHeadersEnabled={false}
+            showsVerticalScrollIndicator={false}
         />
     );
 });
@@ -94,10 +95,10 @@ const styles = StyleSheet.create({
         letterSpacing: 0.5,
     },
     verseRow: {
-        paddingVertical: 8,
-        paddingHorizontal: 12,
-        borderRadius: 8,
-        marginHorizontal: 4,
+        paddingVertical: 10,
+        paddingHorizontal: 16,
+        borderRadius: 0,
+        marginHorizontal: 0,
     },
     highlightedRow: {
         backgroundColor: '#fffacd',
@@ -118,6 +119,6 @@ const styles = StyleSheet.create({
         textAlignVertical: 'top',
     },
     readerContent: {
-        paddingBottom: 24,
+        paddingBottom: 150, // Space at the end for buttons and last text
     },
 });
