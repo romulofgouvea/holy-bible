@@ -7,7 +7,7 @@ export function useBible() {
   const [version, setVersion] = useState(availableVersions[0] || 'NAA');
   const versionBooks = useMemo(() => getBibleData(version), [version]);
 
-  const [book, setBook] = useState('Gênesis');
+  const [book, setBook] = useState('gn');
   const [chapter, setChapter] = useState(1);
   const [verse, setVerse] = useState(1);
 
@@ -95,7 +95,7 @@ export function useBible() {
       const currentBookIndex = versionBooks.findIndex((b: Book) => b.name === currentBookName || b.abbrev === currentBookName);
       if (currentBookIndex >= 0 && currentBookIndex < versionBooks.length - 1) {
         const nextBook = versionBooks[currentBookIndex + 1];
-        nextBookName = nextBook.name || nextBook.abbrev;
+        nextBookName = nextBook.abbrev;
         nextChapter = 1;
       } else {
         return;
@@ -104,7 +104,7 @@ export function useBible() {
       const currentBookIndex = versionBooks.findIndex((b: Book) => b.name === currentBookName || b.abbrev === currentBookName);
       if (currentBookIndex > 0) {
         const prevBook = versionBooks[currentBookIndex - 1];
-        nextBookName = prevBook.name || prevBook.abbrev;
+        nextBookName = prevBook.abbrev;
         nextChapter = prevBook.chapters?.length || 1;
       } else {
         return;

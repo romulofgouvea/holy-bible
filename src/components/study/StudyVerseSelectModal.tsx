@@ -7,13 +7,14 @@ import { BibleText } from '../BibleText';
 type StudyVerseSelectModalProps = {
   visible: boolean;
   onClose: () => void;
+  onBack?: () => void;
   bookName: string;
   chapter: number;
   verses: { verse: number; text: string }[];
   onConfirm: (selectedVerses: number[]) => void;
 };
 
-export function StudyVerseSelectModal({ visible, onClose, bookName, chapter, verses, onConfirm }: StudyVerseSelectModalProps) {
+export function StudyVerseSelectModal({ visible, onClose, onBack, bookName, chapter, verses, onConfirm }: StudyVerseSelectModalProps) {
   const { ms, height } = useResponsive();
   const [selectedNums, setSelectedNums] = useState<Set<number>>(new Set());
 
@@ -39,10 +40,16 @@ export function StudyVerseSelectModal({ visible, onClose, bookName, chapter, ver
       <View style={styles.backdrop} id="study-verse-backdrop">
         <View style={[styles.sheet, { maxHeight: height * 0.85 }]} id="study-verse-sheet">
           <View style={styles.header}>
-            <TouchableOpacity onPress={onClose} style={styles.iconBtn}>
-              <Feather name="arrow-left" size={ms(20)} color="#008080" />
-            </TouchableOpacity>
-            <BibleText style={[styles.title, { fontSize: ms(16) }]}>{bookName} {chapter}</BibleText>
+            {onBack ? (
+              <TouchableOpacity onPress={onBack} style={[styles.headerIconWrap, { backgroundColor: '#f5f5f5' }]}>
+                <Feather name="arrow-left" size={ms(18)} color="#333" />
+              </TouchableOpacity>
+            ) : (
+              <View style={styles.headerIconWrap}>
+                <Feather name="list" size={ms(18)} color="#008080" />
+              </View>
+            )}
+            <BibleText style={[styles.title, { fontSize: ms(18) }]}>{bookName} {chapter}</BibleText>
             <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
               <Feather name="x" size={ms(18)} color="#e74c3c" />
             </TouchableOpacity>
@@ -74,11 +81,11 @@ export function StudyVerseSelectModal({ visible, onClose, bookName, chapter, ver
 
 const styles = StyleSheet.create({
   backdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
-  sheet: { backgroundColor: '#fff', borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 16, flex: 1 },
-  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  iconBtn: { width: 42, height: 42, justifyContent: 'center', alignItems: 'center' },
+  sheet: { backgroundColor: '#fff', borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 8, flex: 1 },
+  header: { flexDirection: 'row', alignItems: 'center', padding: 8 },
+  headerIconWrap: { width: 42, height: 42, borderRadius: 12, backgroundColor: '#e6f3f3', justifyContent: 'center', alignItems: 'center', marginRight: 12 },
   closeBtn: { width: 42, height: 42, justifyContent: 'center', alignItems: 'center', backgroundColor: '#fdeded', borderRadius: 8, marginLeft: 12 },
-  title: { flex: 1, textAlign: 'center', fontWeight: '700', color: '#222' },
+  title: { flex: 1, fontWeight: '700', color: '#008080' },
   verseRow: { flexDirection: 'row', alignItems: 'flex-start', paddingVertical: 12, paddingHorizontal: 8, borderBottomWidth: 1, borderBottomColor: '#f5f5f5', gap: 10 },
   verseRowSelected: { backgroundColor: '#e0f2f1', borderLeftWidth: 3, borderLeftColor: '#008080', paddingLeft: 6 },
   verseNumLabel: { fontWeight: '700', color: '#008080', minWidth: 24, paddingTop: 2 },

@@ -1,8 +1,8 @@
 import { Feather } from '@expo/vector-icons';
 import React from 'react';
 import { Keyboard, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
-import { Block, makeBlock } from '../../hooks/use-studies';
 import { useResponsive } from '../../hooks/use-responsive';
+import { Block, makeBlock } from '../../hooks/use-studies';
 
 type StudyBlockToolbarProps = {
   isFirst: boolean;
@@ -13,6 +13,7 @@ type StudyBlockToolbarProps = {
   onDelete: () => void;
   onClose: () => void;
   onOpenCommands: () => void;
+  onGoToBible?: () => void;
 };
 
 export function useBlockActions(
@@ -55,7 +56,7 @@ export function useBlockActions(
 }
 
 export function StudyBlockToolbar({
-  isFirst, isLast, onAddAfter, onMoveUp, onMoveDown, onDelete, onClose, onOpenCommands
+  isFirst, isLast, onAddAfter, onMoveUp, onMoveDown, onDelete, onClose, onOpenCommands, onGoToBible
 }: StudyBlockToolbarProps) {
   const { ms } = useResponsive();
   return (
@@ -64,6 +65,14 @@ export function StudyBlockToolbar({
         <TouchableOpacity style={styles.toolBtn} onPress={onOpenCommands}>
           <Feather name="command" size={ms(16)} color="#008080" />
         </TouchableOpacity>
+        {onGoToBible && (
+          <>
+            <View style={styles.divider} />
+            <TouchableOpacity style={styles.toolBtn} onPress={onGoToBible}>
+              <Feather name="book-open" size={ms(16)} color="#008080" />
+            </TouchableOpacity>
+          </>
+        )}
         <View style={styles.divider} />
         <TouchableOpacity style={styles.toolBtn} onPress={onAddAfter}>
           <Feather name="plus" size={ms(16)} color="#008080" />

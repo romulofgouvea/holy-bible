@@ -2,6 +2,8 @@ import { Feather } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import React from 'react';
 import { Image, Keyboard, Linking, Platform, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
+import { useRouter } from 'expo-router';
+import { ROUTES } from '../../constants/routes';
 import { useResponsive } from '../../hooks/use-responsive';
 import { Block, makeBlock } from '../../hooks/use-studies';
 import { BibleText } from '../BibleText';
@@ -47,6 +49,7 @@ export function StudyBlock({
   setBlocks, blockRefs, setFullScreenImage,
   addBlockAfter, deleteBlock, moveBlock
 }: StudyBlockProps) {
+  const router = useRouter();
   const { ms } = useResponsive();
   const isFocused = focusedId === item.id;
 
@@ -170,6 +173,11 @@ export function StudyBlock({
           onDelete={() => deleteBlock(item.id)}
           onOpenCommands={() => { setActiveBlockId(item.id); setSlashVisible(true); Keyboard.dismiss(); }}
           onClose={() => { Keyboard.dismiss(); setFocusedId(null); setActiveBlockId(null); setSlashVisible(false); }}
+          onGoToBible={item.type === 'verse' && item.bookName ? () => {
+            const verMatch = item.verseRef?.match(/\(([^)]+)\)$/);
+            const verParam = verMatch ? `&ver=${encodeURIComponent(verMatch[1].toLowerCase())}` : '';
+            router.push(`${ROUTES.BIBLE}?book=${encodeURIComponent(item.bookName)}&ch=${item.chapter}&v=${item.verse}${verParam}` as any);
+          } : undefined}
         />
       )}
     </View>

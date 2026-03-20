@@ -8,13 +8,14 @@ import { BibleText } from './BibleText';
 type BibleNumberModalProps = {
   visible: boolean;
   onClose: () => void;
+  onBack?: () => void;
   items: number[];
   title: string;
   iconName: keyof typeof Feather.glyphMap;
   onSelect: (item: number) => void;
 };
 
-export function BibleNumberModal({ visible, onClose, items, title, iconName, onSelect }: BibleNumberModalProps) {
+export function BibleNumberModal({ visible, onClose, onBack, items, title, iconName, onSelect }: BibleNumberModalProps) {
   const { ms, height, width } = useResponsive();
 
   return (
@@ -23,9 +24,15 @@ export function BibleNumberModal({ visible, onClose, items, title, iconName, onS
         <TouchableWithoutFeedback>
           <View style={[styles.bottomSheet, { height: height * 0.85 }]} id="bible-number-sheet">
             <View style={styles.header}>
-              <View style={styles.headerIconWrap}>
-                <Feather name={iconName} size={ms(18)} color="#008080" />
-              </View>
+              {onBack ? (
+                <TouchableOpacity onPress={onBack} style={[styles.headerIconWrap, { backgroundColor: '#f5f5f5' }]}>
+                  <Feather name="arrow-left" size={ms(18)} color="#333" />
+                </TouchableOpacity>
+              ) : (
+                <View style={styles.headerIconWrap}>
+                  <Feather name={iconName} size={ms(18)} color="#008080" />
+                </View>
+              )}
               <BibleText style={[styles.title, { fontSize: ms(18) }]}>{title}</BibleText>
               <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
                 <Feather name="x" size={ms(18)} color="#e74c3c" />

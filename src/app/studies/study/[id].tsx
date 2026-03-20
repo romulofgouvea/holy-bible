@@ -323,6 +323,7 @@ export default function StudyEditorScreen() {
       <BibleNumberModal
         visible={versePickerVisible && vpStep === 'chapter'}
         onClose={() => setVersePickerVisible(false)}
+        onBack={() => setVpStep('book')}
         title={vpBook?.name ? `Capítulos - ${vpBook.name}` : 'Capítulos'}
         iconName="list"
         items={vpChapters}
@@ -332,6 +333,7 @@ export default function StudyEditorScreen() {
       <StudyVerseSelectModal
         visible={versePickerVisible && vpStep === 'verses'}
         onClose={() => setVersePickerVisible(false)}
+        onBack={() => setVpStep('chapter')}
         bookName={vpBook?.name || ''}
         chapter={vpChapter}
         verses={vpVerses}
@@ -353,13 +355,13 @@ export default function StudyEditorScreen() {
           groups.push(start === end ? `${start}` : `${start}-${end}`);
           const formattedRanges = groups.join(', ');
 
-          const bookDisplayName = vpBook.abbrev || vpBook.name;
+          const bookDisplayName = vpBook.name || vpBook.abbrev;
           const ref = `${bookDisplayName} ${vpChapter}: ${formattedRanges} (${vpVersion.toUpperCase()})`;
           const content = sortedNums.map(n => { const v = vpVerses.find(v => v.verse === n); return `${n} ${v?.text ?? ''}`; }).join('\n');
 
           setBlocks(prev => {
             const idx = prev.findIndex(b => b.id === pendingBlockId);
-            const vb: Block = { id: pendingBlockId, type: 'verse', content, verseRef: ref, bookName: vpBook.name, chapter: vpChapter, verse: sortedNums[0] };
+            const vb: Block = { id: pendingBlockId, type: 'verse', content, verseRef: ref, bookName: vpBook.abbrev, chapter: vpChapter, verse: sortedNums[0] };
             const nb = makeBlock('paragraph');
             const next = [...prev];
             if (idx === -1) return [...next, vb, nb];

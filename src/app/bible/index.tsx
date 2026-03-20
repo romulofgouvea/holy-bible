@@ -8,6 +8,7 @@ import { BibleTopBar } from '../../components/BibleTopBar';
 import { BibleVerseReader } from '../../components/BibleVerseReader';
 import { BibleText } from '../../components/BibleText';
 import { useBible } from '../../hooks/use-bible';
+import { useLocalSearchParams } from 'expo-router';
 
 import { BibleToast } from '../../components/BibleToast';
 import { useToast } from '../../hooks/use-toast';
@@ -34,6 +35,7 @@ export default function BibleScreen() {
 
   const [actionSheetVisible, setActionSheetVisible] = useState(false);
   const [selectedVerses, setSelectedVerses] = useState<SelectedVerse[]>([]);
+  const params = useLocalSearchParams<{ book?: string; ch?: string; v?: string; ver?: string }>();
 
   const [drawerVisible, setDrawerVisible] = useState(false);
 
@@ -73,7 +75,28 @@ export default function BibleScreen() {
         }).start();
       }, 300);
     }
-  }, [isReady, fadeAnim, verse]);
+  }, [isReady, fadeAnim]); // Removed verse from dependencies, scrolling relies on explicit triggers
+
+  useEffect(() => {
+    if (isReady && params.book && params.ch && params.v) {
+      if (params.ver && params.ver.toLowerCase() !== version.toLowerCase()) {
+        setIsChangingVersion(params.ver.toUpperCase());
+        setTimeout(() => {
+          setVersion(params.ver!.toUpperCase());
+          setBook(params.book!);
+          setChapter(Number(params.ch));
+          setVerse(Number(params.v));
+          setIsChangingVersion(null);
+          setTimeout(() => scrollToVerse(Number(params.v), Number(params.ch)), 600);
+        }, 50);
+      } else {
+        setBook(params.book);
+        setChapter(Number(params.ch));
+        setVerse(Number(params.v));
+        setTimeout(() => scrollToVerse(Number(params.v), Number(params.ch)), 600);
+      }
+    }
+  }, [isReady, params.book, params.ch, params.v, params.ver]);
 
   const scrollToVerse = useCallback((verseNumber: number, targetChapter = chapter) => {
     if (targetChapter !== chapter) {
