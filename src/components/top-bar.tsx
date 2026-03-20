@@ -1,5 +1,6 @@
-import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React from 'react';
+import { useResponsive } from '../hooks/use-responsive';
 
 type TopBarProps = {
     version: string;
@@ -14,17 +15,18 @@ type TopBarProps = {
 
 export const TopBar = React.memo((props: TopBarProps) => {
     const { version, bookName, currentChapter, onOpenVersion, onOpenBook, onOpenChapter, onPrevChapter, onNextChapter } = props;
+    const { ms } = useResponsive();
 
     return (
         <View style={styles.topBarRow}>
             <TouchableOpacity style={styles.topBarButton} onPress={onOpenVersion}>
-                <Text style={styles.topBarButtonText}>{version}</Text>
+                <Text style={[styles.topBarButtonText, { fontSize: ms(16) }]}>{version}</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.topBarButton} onPress={onOpenBook}>
-                <Text style={styles.topBarButtonText}>{bookName}</Text>
+                <Text style={[styles.topBarButtonText, { fontSize: ms(16) }]}>{bookName}</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.topBarButton} onPress={onOpenChapter}>
-                <Text style={styles.topBarButtonText}>{currentChapter}</Text>
+                <Text style={[styles.topBarButtonText, { fontSize: ms(16) }]}>{currentChapter}</Text>
             </TouchableOpacity>
         </View>
     );

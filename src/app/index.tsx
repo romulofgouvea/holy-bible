@@ -49,7 +49,6 @@ export default function HomeScreen() {
             });
           } catch (err) { }
         }
-
         Animated.timing(fadeAnim, {
           toValue: 1,
           duration: 600,
@@ -60,12 +59,9 @@ export default function HomeScreen() {
   }, [isReady, fadeAnim, verse]);
 
   const scrollToVerse = useCallback((verseNumber: number, targetChapter = chapter) => {
-    // If the requested chapter is different from current, we need to switch first.
-    // However, if we just came from changeChapter, they should match already.
     if (targetChapter !== chapter) {
       isAutoScrolling.current = true;
       setChapter(targetChapter);
-      // Wait for re-render before scrolling
       setTimeout(() => scrollToVerse(verseNumber, targetChapter), 400);
       return;
     }
@@ -82,24 +78,21 @@ export default function HomeScreen() {
       setTimeout(() => setBlinkingVerse(null), 1500);
     } catch (error) { }
 
-    // Hold isAutoScrolling for longer to avoid onViewableItemsChanged interference
     setTimeout(() => { isAutoScrolling.current = false; }, 1200);
   }, [chapter, setChapter, setBlinkingVerse]);
 
   const navigateChapter = useCallback((delta: number) => {
     isAutoScrolling.current = true;
     changeChapter(delta, (newChapter) => {
-      // When changing chapter, we always scroll to the top of the new chapter
       setTimeout(() => {
         try {
           sectionListRef.current?.scrollToLocation({
             sectionIndex: 0,
             itemIndex: 0,
-            animated: false, // Use false here to avoid the "bounce" during chapter swap
+            animated: false,
             viewPosition: 0,
           });
         } catch (e) { }
-        // Then do a tiny animated scroll or just release the lock
         setTimeout(() => { isAutoScrolling.current = false; }, 1000);
       }, 500);
     });
@@ -157,7 +150,6 @@ export default function HomeScreen() {
           onScrollToIndexFailed={onScrollToIndexFailed}
         />
 
-        {/* Left Floating Navigation Arrow */}
         <TouchableOpacity
           style={[styles.floatingArrow, styles.floatingArrowLeft]}
           onPress={() => navigateChapter(-1)}
@@ -165,7 +157,6 @@ export default function HomeScreen() {
           <Feather name="chevron-left" size={24} color="#ffffff" />
         </TouchableOpacity>
 
-        {/* Right Floating Navigation Arrow */}
         <TouchableOpacity
           style={[styles.floatingArrow, styles.floatingArrowRight]}
           onPress={() => navigateChapter(1)}
@@ -203,14 +194,14 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    padding: 0, // Removed lateral space
+    padding: 0,
     position: 'relative',
   },
   floatingArrow: {
     position: 'absolute',
-    bottom: 40, // Slightly lower
-    width: 42,  // Smaller
-    height: 42, // Smaller
+    bottom: 40,
+    width: 42,
+    height: 42,
     borderRadius: 14,
     backgroundColor: '#008080',
     alignItems: 'center',

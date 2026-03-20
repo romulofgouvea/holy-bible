@@ -1,5 +1,6 @@
-import React, { useMemo, useState } from 'react';
 import { Text, StyleSheet } from 'react-native';
+import React, { useMemo, useState } from 'react';
+import { useResponsive } from '../hooks/use-responsive';
 import { SelectModal } from './select-modal';
 import { Book, availableVersions } from '../data';
 
@@ -32,6 +33,8 @@ export function BibleModals(props: BibleModalsProps) {
     setVersionModalVisible, setBookModalVisible, setChapterModalVisible, setVerseModalVisible,
     onVersionSelect, onBookSelect, onChapterSelect, onVerseSelect
   } = props;
+  const { ms } = useResponsive();
+  const fontSize = ms(14);
 
   const [searchBookQuery, setSearchBookQuery] = useState('');
   const [searchVersionQuery, setSearchVersionQuery] = useState('');
@@ -45,20 +48,22 @@ export function BibleModals(props: BibleModalsProps) {
     setVerseModalVisible(false);
   };
 
+  const normalize = (str: string) => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
   const filteredBooks = useMemo(() => {
-    const query = searchBookQuery.trim().toLowerCase();
+    const query = normalize(searchBookQuery.trim());
     if (!query) return versionBooks;
     return versionBooks.filter((item: Book) => {
-      const abbrev = (item.abbrev || '').toLowerCase();
-      const name = (item.name || '').toLowerCase();
+      const abbrev = normalize(item.abbrev || '');
+      const name = normalize(item.name || '');
       return abbrev.includes(query) || name.includes(query);
     });
   }, [searchBookQuery, versionBooks]);
 
   const filteredVersions = useMemo(() => {
-    const query = searchVersionQuery.trim().toLowerCase();
+    const query = normalize(searchVersionQuery.trim());
     if (!query) return availableVersions;
-    return availableVersions.filter((item) => item.toLowerCase().includes(query));
+    return availableVersions.filter((item) => normalize(item).includes(query));
   }, [searchVersionQuery]);
 
   const chapterNumbers = useMemo(() => Array.from({ length: chapterCount }, (_, i) => i + 1), [chapterCount]);
@@ -97,7 +102,7 @@ export function BibleModals(props: BibleModalsProps) {
         onChangeText={setSearchVersionQuery}
         items={filteredVersions}
         itemKey={(item) => item}
-        renderItem={(item) => <Text style={styles.item}>{item}</Text>}
+        renderItem={(item) => <Text style={[styles.item, { fontSize }]}>{item}</Text>}
         onSelect={(item) => {
           onVersionSelect(item, versionBooks[0]?.name || '');
           setSearchVersionQuery('');
@@ -115,7 +120,7 @@ export function BibleModals(props: BibleModalsProps) {
         onChangeText={setSearchBookQuery}
         items={filteredBooks}
         itemKey={(item) => `${item.abbrev}-${item.name}`}
-        renderItem={(item) => <Text style={styles.item}>{item.abbrev || item.name}</Text>}
+        renderItem={(item) => <Text style={[styles.item, { fontSize }]}>{item.abbrev || item.name}</Text>}
         onSelect={(item) => {
           onBookSelect(item.name || item.abbrev || '');
           setSearchBookQuery('');
@@ -132,13 +137,14 @@ export function BibleModals(props: BibleModalsProps) {
         onChangeText={setSearchChapterQuery}
         items={filteredChapters}
         itemKey={(item) => item.toString()}
-        renderItem={(item) => <Text style={styles.item}>{item}</Text>}
+        renderItem={(item) => <Text style={[styles.item, { fontSize }]}>{item}</Text>}
         onSelect={(num) => {
           onChapterSelect(num);
           setSearchChapterQuery('');
           setChapterModalVisible(false);
           setVerseModalVisible(true);
         }}
+        hideSearch
       />
       <SelectModal
         visible={verseModalVisible}
@@ -149,12 +155,13 @@ export function BibleModals(props: BibleModalsProps) {
         onChangeText={setSearchVerseQuery}
         items={filteredVerses}
         itemKey={(item) => item.toString()}
-        renderItem={(item) => <Text style={styles.item}>{item}</Text>}
+        renderItem={(item) => <Text style={[styles.item, { fontSize }]}>{item}</Text>}
         onSelect={(num) => {
           onVerseSelect(num);
           setSearchVerseQuery('');
           setVerseModalVisible(false);
         }}
+        hideSearch
       />
     </>
   );

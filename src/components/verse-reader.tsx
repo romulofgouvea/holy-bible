@@ -1,5 +1,6 @@
-import React from 'react';
 import { SectionList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React from 'react';
+import { useResponsive } from '../hooks/use-responsive';
 
 type VerseItem = {
     chapter: number;
@@ -33,6 +34,7 @@ export const VerseReader = React.memo((props: VerseReaderProps) => {
         sections, blinkingVerse, highlights, bookAbbrev, 
         onVersePress, onViewableItemsChanged, viewabilityConfig, listRef, onScrollToIndexFailed 
     } = props;
+    const { ms } = useResponsive();
 
     return (
         <SectionList
@@ -44,7 +46,7 @@ export const VerseReader = React.memo((props: VerseReaderProps) => {
             onScrollToIndexFailed={onScrollToIndexFailed}
             renderSectionHeader={({ section: { title } }) => (
                 <View style={styles.chapterHeader}>
-                    <Text style={styles.chapterHeaderText}>{title}</Text>
+                    <Text style={[styles.chapterHeaderText, { fontSize: ms(28) }]}>{title}</Text>
                 </View>
             )}
             renderItem={({ item }) => {
@@ -61,7 +63,10 @@ export const VerseReader = React.memo((props: VerseReaderProps) => {
                             isHighlighted && styles.highlightedRow,
                             isBlinking && styles.blinkingRow
                         ]}>
-                            <Text style={styles.verseText}>{`   ${item.verse} ${item.text}`}</Text>
+                            <Text style={[styles.verseText, { 
+                                fontSize: ms(22),
+                                lineHeight: ms(26)
+                            }]}>{`   ${item.verse} ${item.text}`}</Text>
                         </View>
                     </TouchableOpacity>
                 );
@@ -119,6 +124,6 @@ const styles = StyleSheet.create({
         textAlignVertical: 'top',
     },
     readerContent: {
-        paddingBottom: 150, // Space at the end for buttons and last text
+        paddingBottom: 150,
     },
 });
