@@ -70,7 +70,12 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
                             <Text style={[styles.verseText, {
                                 fontSize: ms(22),
                                 lineHeight: ms(26)
-                            }]}>{`   ${item.verse} ${item.text}`}</Text>
+                            }]}>
+                                <Text style={{ color: '#008080', fontWeight: '700', fontSize: ms(16), marginLeft: 16, marginRight: 8 }}>
+                                    {`${item.verse} `}
+                                </Text>
+                                {item.text}
+                            </Text>
                         </View>
                     </TouchableOpacity>
                 );
