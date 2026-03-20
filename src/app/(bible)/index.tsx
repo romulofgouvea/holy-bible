@@ -8,6 +8,9 @@ import { BibleTopBar } from '../../components/BibleTopBar';
 import { BibleVerseReader } from '../../components/BibleVerseReader';
 import { useBible } from '../../hooks/use-bible';
 
+import { BibleToast } from '../../components/BibleToast';
+import { useToast } from '../../hooks/use-toast';
+
 export default function BibleScreen() {
   const {
     isReady,
@@ -22,8 +25,11 @@ export default function BibleScreen() {
     changeChapter,
     onVersePress: originalOnVersePress,
     toggleHighlight,
+    bulkToggleHighlight,
     highlights
   } = useBible();
+
+  const { toast, opacity, show } = useToast();
 
   const [actionSheetVisible, setActionSheetVisible] = useState(false);
   const [selectedVerses, setSelectedVerses] = useState<SelectedVerse[]>([]);
@@ -229,7 +235,8 @@ export default function BibleScreen() {
         selectedVerses={selectedVerses}
         highlights={highlights}
         onClose={onActionSheetClose}
-        onToggleHighlight={toggleHighlight}
+        onBulkHighlight={bulkToggleHighlight}
+        onShowToast={show}
       />
 
       <BibleDrawerMenu
@@ -238,6 +245,8 @@ export default function BibleScreen() {
         onClose={() => setDrawerVisible(false)}
         onSelectItem={() => setDrawerVisible(false)}
       />
+
+      <BibleToast toast={toast} opacity={opacity} />
     </Animated.View>
   );
 }

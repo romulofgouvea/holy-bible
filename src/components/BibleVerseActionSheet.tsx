@@ -1,9 +1,8 @@
-import { Feather } from '@expo/vector-icons';
+import { Feather, FontAwesome } from '@expo/vector-icons';
 import * as Clipboard from 'expo-clipboard';
 import React from 'react';
 import { Animated, Share, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useResponsive } from '../hooks/use-responsive';
-import { BibleText } from './BibleText';
 
 export type SelectedVerse = {
   chapter: number;
@@ -18,11 +17,12 @@ type VerseActionSheetProps = {
   selectedVerses: SelectedVerse[];
   highlights: Record<string, boolean>;
   onClose: () => void;
-  onToggleHighlight: (verse: SelectedVerse) => void;
+  onBulkHighlight: (verses: SelectedVerse[], forceHighlight: boolean) => void;
+  onShowToast?: (msg: string, type?: 'success' | 'info' | 'warning') => void;
 };
 
 export function BibleVerseActionSheet(props: VerseActionSheetProps) {
-  const { visible, selectedVerses, highlights, onClose, onToggleHighlight } = props;
+  const { visible, selectedVerses, highlights, onClose, onBulkHighlight } = props;
   const { ms } = useResponsive();
   const translateY = React.useRef(new Animated.Value(100)).current;
 
@@ -53,6 +53,8 @@ export function BibleVerseActionSheet(props: VerseActionSheetProps) {
 
   const onCopy = async () => {
     await Clipboard.setStringAsync(buildText());
+    props.onShowToast?.('Copiado para a área de transferência', 'success');
+    onClose();
   };
 
   const onShare = async () => {
@@ -60,20 +62,17 @@ export function BibleVerseActionSheet(props: VerseActionSheetProps) {
   };
 
   const onHighlight = () => {
-    selectedVerses.forEach((v) => onToggleHighlight(v));
+    const newState = !allHighlighted;
+    onBulkHighlight(selectedVerses, newState);
+    props.onShowToast?.(newState ? 'Versículos destacados' : 'Destaque removido', 'success');
+    onClose();
   };
 
-  const iconSize = ms(26);
+  const iconSize = ms(22);
   const iconColor = '#008080';
 
   return (
     <Animated.View style={[styles.bar, { transform: [{ translateY }] }]}>
-      <View style={styles.leftSection}>
-        <BibleText style={[styles.countText, { fontSize: ms(13) }]}>
-          {count} {count === 1 ? 'versículo' : 'versículos'}
-        </BibleText>
-      </View>
-
       <View style={styles.actions}>
         <TouchableOpacity style={styles.iconBtn} onPress={onShare} disabled={count === 0}>
           <Feather name="share-2" size={iconSize} color={count === 0 ? '#ccc' : iconColor} />
@@ -84,17 +83,19 @@ export function BibleVerseActionSheet(props: VerseActionSheetProps) {
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.iconBtn} onPress={onHighlight} disabled={count === 0}>
-          <Feather
-            name="bookmark"
+          <FontAwesome
+            name={allHighlighted ? 'star' : 'star-o'}
             size={iconSize}
-            color={count === 0 ? '#ccc' : allHighlighted ? '#e74c3c' : iconColor}
+            color={count === 0 ? '#ccc' : allHighlighted ? '#f5c518' : iconColor}
           />
         </TouchableOpacity>
 
+      </View>
+      <View style={styles.removeActions}>
         <View style={styles.divider} />
 
         <TouchableOpacity style={styles.iconBtn} onPress={onClose}>
-          <Feather name="x" size={iconSize} color="#888" />
+          <Feather name="x" size={iconSize} color="red" />
         </TouchableOpacity>
       </View>
     </Animated.View>
@@ -111,9 +112,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     backgroundColor: '#fff',
-    paddingHorizontal: 20,
-    paddingVertical: 14,
-    paddingBottom: 28,
+    paddingHorizontal: 8,
+    paddingVertical: 8,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     elevation: 20,
@@ -132,11 +132,17 @@ const styles = StyleSheet.create({
   actions: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'flex-start',
     gap: 4,
   },
+  removeActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 0,
+  },
   iconBtn: {
-    padding: 10,
-    borderRadius: 12,
+    padding: 8,
+    borderRadius: 10,
   },
   divider: {
     width: 1,

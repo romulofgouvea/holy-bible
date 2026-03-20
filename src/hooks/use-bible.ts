@@ -140,6 +140,22 @@ export function useBible() {
     });
   }, [currentBook.abbrev]);
 
+  const bulkToggleHighlight = useCallback((verses: { chapter: number; verse: number; bookAbbrev: string }[], forceHighlight: boolean) => {
+    setHighlights((prev) => {
+      const clone = { ...prev };
+      verses.forEach((item) => {
+        const key = `${item.bookAbbrev}-${item.chapter}-${item.verse}`;
+        if (forceHighlight) {
+          clone[key] = true;
+        } else {
+          delete clone[key];
+        }
+      });
+      AsyncStorage.setItem(STORAGE_KEYS.HIGHLIGHTS, JSON.stringify(clone)).catch(() => { });
+      return clone;
+    });
+  }, []);
+
   const onVersePress = useCallback((item: { chapter: number; verse: number }) => {
     setChapter(item.chapter);
     setVerse(item.verse);
@@ -160,6 +176,7 @@ export function useBible() {
     sectionData,
     changeChapter,
     onVersePress,
-    toggleHighlight
+    toggleHighlight,
+    bulkToggleHighlight
   };
 }
