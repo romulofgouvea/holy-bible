@@ -73,11 +73,11 @@ export function StudyBlock({
       return (
         <View style={styles.imageBlock}>
           {item.uri ? (
-            <TouchableOpacity activeOpacity={0.9} onPress={() => setFullScreenImage(item.uri)} onPressIn={() => { setFocusedId(item.id); setActiveBlockId(item.id); }}>
+            <TouchableOpacity activeOpacity={0.9} onPress={() => setFullScreenImage(item.uri)} onPressIn={() => { setFocusedId(item.id); setActiveBlockId(item.id); Keyboard.dismiss(); }}>
               <Image source={{ uri: item.uri }} style={styles.imagePreview} resizeMode="cover" />
             </TouchableOpacity>
           ) : (
-            <TouchableOpacity style={styles.imagePlaceholder} onPress={() => pickImageAction(item.id, setBlocks)}>
+            <TouchableOpacity style={styles.imagePlaceholder} onPress={() => { Keyboard.dismiss(); pickImageAction(item.id, setBlocks); }}>
               <Feather name="image" size={ms(32)} color="#ccc" />
               <BibleText style={{ color: '#ccc', marginTop: 8 }}>Toque para selecionar imagem</BibleText>
             </TouchableOpacity>
@@ -98,7 +98,7 @@ export function StudyBlock({
 
     if (item.type === 'video') {
       return (
-        <TouchableOpacity style={[styles.videoBlock, { backgroundColor: colors.surfaceVariant }]} activeOpacity={0.8} onPressIn={() => { setFocusedId(item.id); setActiveBlockId(item.id); }}>
+        <TouchableOpacity style={[styles.videoBlock, { backgroundColor: colors.surfaceVariant }]} activeOpacity={0.8} onPressIn={() => { setFocusedId(item.id); setActiveBlockId(item.id); Keyboard.dismiss(); }}>
           <View style={[styles.videoIcon, { backgroundColor: colors.surface }]}><Feather name="video" size={ms(20)} color={colors.primary} /></View>
           <BibleText style={[styles.videoTitle, { fontSize: ms(14), color: colors.text }]} numberOfLines={1}>{item.title || item.url}</BibleText>
           <TouchableOpacity onPress={() => Linking.openURL(item.url)} style={{ padding: 8 }}>
@@ -110,7 +110,7 @@ export function StudyBlock({
 
     if (item.type === 'verse') {
       return (
-        <TouchableOpacity style={[styles.verseBlock, { backgroundColor: readerColors.surface, borderLeftColor: readerColors.primary }]} activeOpacity={0.8} onPressIn={() => { setFocusedId(item.id); setActiveBlockId(item.id); }}>
+        <TouchableOpacity style={[styles.verseBlock, { backgroundColor: readerColors.surface, borderLeftColor: readerColors.primary }]} activeOpacity={0.8} onPressIn={() => { setFocusedId(item.id); setActiveBlockId(item.id); Keyboard.dismiss(); }}>
           <BibleText style={[styles.verseRef, { fontSize: ms(18 * fontSizeMultiplier), marginBottom: 16, color: readerColors.primary }]}>{item.verseRef}</BibleText>
           <BibleText style={[styles.verseText, { fontSize: ms(16 * fontSizeMultiplier), color: readerColors.text }]}>
             {item.content.split('\n').map((line, i, arr) => {

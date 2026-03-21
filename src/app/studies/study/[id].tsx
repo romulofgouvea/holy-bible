@@ -264,7 +264,7 @@ export default function StudyEditorScreen() {
         </View>
       </View>
 
-      <ScrollView style={{ flex: 1, backgroundColor: readerColors.background }} contentContainerStyle={styles.editorContent} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+      <ScrollView style={{ flex: 1, backgroundColor: readerColors.background }} contentContainerStyle={styles.editorContent} keyboardShouldPersistTaps="handled" keyboardDismissMode="interactive" showsVerticalScrollIndicator={false}>
         {blocks.map((item, index) => (
           <StudyBlock
             key={item.id}
@@ -412,7 +412,7 @@ export default function StudyEditorScreen() {
 }
 
 const styles = StyleSheet.create({
-  topBar: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#008080', paddingHorizontal: 8, paddingVertical: 8, gap: 8 },
+  topBar: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#008080', paddingHorizontal: 8, paddingVertical: 8, gap: 8, elevation: 6, shadowColor: '#000', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.25, shadowRadius: 4, zIndex: 10 },
   iconBtn: { width: 38, height: 38, alignItems: 'center', justifyContent: 'center', borderRadius: 10, backgroundColor: 'rgba(255,255,255,0.15)' },
   titleInput: { flex: 1, color: '#fff', fontWeight: '700' },
   editorContent: { padding: 8, paddingBottom: 160, flexGrow: 1 },

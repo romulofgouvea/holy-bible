@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "holy-bible",
+    "name": "Bíblia Online",
     "slug": "holy-bible",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -38,8 +38,7 @@
             "imageWidth": 76
           }
         }
-      ],
-      "expo-sharing"
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

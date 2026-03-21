@@ -40,7 +40,8 @@ export function StudyVerseSelectModal({ visible, onClose, onBack, bookName, chap
   return (
     <Modal visible={visible} transparent animationType="slide">
       <View style={styles.backdrop} id="study-verse-backdrop">
-        <View style={[styles.sheet, { maxHeight: height * 0.85, backgroundColor: colors.surface }]} id="study-verse-sheet">
+        <View style={[styles.sheet, { height: '85%', backgroundColor: colors.surface }]} id="study-verse-sheet">
+          <View style={styles.modalHandle} />
           <View style={styles.header}>
             {onBack ? (
               <TouchableOpacity onPress={onBack} style={[styles.headerIconWrap, { backgroundColor: colors.surfaceVariant }]}>
@@ -57,7 +58,7 @@ export function StudyVerseSelectModal({ visible, onClose, onBack, bookName, chap
             </TouchableOpacity>
           </View>
           <View style={[styles.divider, { backgroundColor: colors.border }]} />
-          <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
+          <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }} bounces={true} overScrollMode="always">
             {verses.map(({ verse, text }) => {
               const selected = selectedNums.has(verse);
               return (
@@ -84,6 +85,7 @@ export function StudyVerseSelectModal({ visible, onClose, onBack, bookName, chap
 const styles = StyleSheet.create({
   backdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
   sheet: { backgroundColor: '#fff', borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 8, flex: 1 },
+  modalHandle: { width: 40, height: 4, backgroundColor: '#e0e0e0', borderRadius: 2, alignSelf: 'center', marginBottom: 4, marginTop: 4 },
   header: { flexDirection: 'row', alignItems: 'center', padding: 8 },
   headerIconWrap: { width: 42, height: 42, borderRadius: 12, backgroundColor: '#e6f3f3', justifyContent: 'center', alignItems: 'center', marginRight: 12 },
   closeBtn: { width: 42, height: 42, justifyContent: 'center', alignItems: 'center', backgroundColor: '#fdeded', borderRadius: 8, marginLeft: 12 },

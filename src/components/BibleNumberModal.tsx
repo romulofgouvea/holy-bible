@@ -24,7 +24,8 @@ export function BibleNumberModal({ visible, onClose, onBack, items, title, iconN
     <Modal visible={visible} animationType="slide" transparent>
       <TouchableOpacity activeOpacity={1} style={styles.modalBackdrop} onPress={onClose} id="bible-number-backdrop">
         <TouchableWithoutFeedback>
-          <View style={[styles.bottomSheet, { height: height * 0.85, backgroundColor: colors.surface }]} id="bible-number-sheet">
+          <View style={[styles.bottomSheet, { height: '85%', backgroundColor: colors.surface }]} id="bible-number-sheet">
+            <View style={styles.modalHandle} />
             <View style={styles.header}>
               {onBack ? (
                 <TouchableOpacity onPress={onBack} style={[styles.headerIconWrap, { backgroundColor: colors.surfaceVariant }]}>
@@ -43,7 +44,7 @@ export function BibleNumberModal({ visible, onClose, onBack, items, title, iconN
 
             <View style={[styles.divider, { backgroundColor: colors.border }]} />
 
-            <ScrollView contentContainerStyle={styles.list} showsVerticalScrollIndicator={false}>
+            <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.list} showsVerticalScrollIndicator={false} bounces={true} overScrollMode="always">
               <View style={styles.gridContainer}>
                 {items.map((item) => {
                   const numCols = width > 600 ? 6 : 4;
@@ -95,6 +96,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15,
     shadowRadius: 16,
   },
+  modalHandle: { width: 40, height: 4, backgroundColor: '#e0e0e0', borderRadius: 2, alignSelf: 'center', marginBottom: 4, marginTop: 4 },
   header: { flexDirection: 'row', alignItems: 'center', padding: 8 },
   headerIconWrap: { width: 42, height: 42, borderRadius: 12, backgroundColor: '#e6f3f3', justifyContent: 'center', alignItems: 'center', marginRight: 12 },
   title: { flex: 1, fontWeight: '700', color: '#008080' },

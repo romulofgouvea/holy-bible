@@ -38,7 +38,8 @@ export function BibleVersionModal({ visible, onClose, onSelect }: BibleVersionMo
     <Modal visible={visible} animationType="slide" transparent>
       <TouchableOpacity activeOpacity={1} style={styles.modalBackdrop} onPress={onClose} id="bible-version-backdrop">
         <TouchableWithoutFeedback>
-          <View style={[styles.bottomSheet, { height: height * 0.85, backgroundColor: colors.surface }]} id="bible-version-sheet">
+          <View style={[styles.bottomSheet, { height: '85%', backgroundColor: colors.surface }]} id="bible-version-sheet">
+            <View style={styles.modalHandle} />
             <View style={styles.header}>
               <View style={[styles.headerIconWrap, { backgroundColor: colors.primaryContainer }]}>
                 <Feather name="book-open" size={ms(18)} color={colors.primary} />
@@ -76,7 +77,7 @@ export function BibleVersionModal({ visible, onClose, onSelect }: BibleVersionMo
 
             <View style={[styles.divider, { backgroundColor: colors.border }]} />
 
-            <ScrollView contentContainerStyle={styles.list} showsVerticalScrollIndicator={false}>
+            <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.list} showsVerticalScrollIndicator={false} bounces={true} overScrollMode="always" keyboardShouldPersistTaps="handled" keyboardDismissMode="interactive">
               {viewMode === 'list' ? (
                 filteredVersions.map((item) => (
                   <BibleListCard
@@ -137,6 +138,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15,
     shadowRadius: 16,
   },
+  modalHandle: { width: 40, height: 4, backgroundColor: '#e0e0e0', borderRadius: 2, alignSelf: 'center', marginBottom: 4, marginTop: 4 },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
