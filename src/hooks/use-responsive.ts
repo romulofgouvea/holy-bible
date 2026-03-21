@@ -4,10 +4,12 @@ export function useResponsive() {
   const { width, height } = useWindowDimensions();
   
   const guidelineBaseWidth = 375;
+  const isTablet = width >= 768;
+  const effectiveWidth = Math.min(width, 500); // Caps scaling on tablets
   
-  const s = (size: number) => (width / guidelineBaseWidth) * size;
+  const s = (size: number) => (effectiveWidth / guidelineBaseWidth) * size;
   
-  const ms = (size: number, factor = 0.5) => {
+  const ms = (size: number, factor = isTablet ? 0.3 : 0.5) => {
     return size + (s(size) - size) * factor;
   };
 

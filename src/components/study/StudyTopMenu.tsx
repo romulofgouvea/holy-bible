@@ -21,7 +21,7 @@ export function StudyTopMenu({ visible, onClose, onExportPDF }: StudyTopMenuProp
         <View style={[styles.menuSheet, { backgroundColor: colors.surface }]}>
           <TouchableOpacity style={styles.menuItem} onPress={onExportPDF}>
             <Feather name="file-text" size={ms(18)} color={colors.primary} />
-            <BibleText style={[styles.menuItemText, { fontSize: ms(15), color: colors.text }]}>Exportar PDF</BibleText>
+            <BibleText style={[styles.menuItemText, { fontSize: ms(15), color: colors.text }]}>Gerar em PDF</BibleText>
           </TouchableOpacity>
         </View>
       </TouchableOpacity>

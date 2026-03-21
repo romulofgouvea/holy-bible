@@ -17,7 +17,7 @@ type SectionType = {
 type VerseReaderProps = {
     sections: SectionType[];
     blinkingVerse: string | null;
-    highlights: Record<string, boolean>;
+    highlights: Record<string, string>;
     selectedKeys: Record<string, boolean>;
     bookAbbrev: string;
     version: string;
@@ -40,20 +40,22 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
     const { ms } = useResponsive();
     const { fontSizeMultiplier, textAlign, readerColors, readerTheme } = useReaderSettings();
 
-    const getHighlightColor = () => {
-        if (readerTheme === 'dark') return 'rgba(255, 215, 0, 0.25)';
-        if (readerTheme === 'sepia') return 'rgba(255, 193, 7, 0.4)';
-        return 'rgba(255, 224, 102, 0.6)';
+    const getHighlightColorValue = (colorId: string) => {
+        const hexes: Record<string, string> = {
+            yellow: readerTheme === 'dark' ? 'rgba(255, 215, 0, 0.25)' : readerTheme === 'sepia' ? 'rgba(255, 193, 7, 0.4)' : 'rgba(253, 224, 71, 0.6)',
+            blue: readerTheme === 'dark' ? 'rgba(59, 130, 246, 0.3)' : readerTheme === 'sepia' ? 'rgba(59, 130, 246, 0.4)' : 'rgba(147, 197, 253, 0.6)',
+            green: readerTheme === 'dark' ? 'rgba(34, 197, 94, 0.25)' : readerTheme === 'sepia' ? 'rgba(34, 197, 94, 0.4)' : 'rgba(134, 239, 172, 0.6)',
+            pink: readerTheme === 'dark' ? 'rgba(236, 72, 153, 0.3)' : readerTheme === 'sepia' ? 'rgba(236, 72, 153, 0.4)' : 'rgba(249, 168, 212, 0.6)',
+        };
+        return hexes[colorId] || hexes.yellow;
     };
-
-    const highlightColor = getHighlightColor();
 
     return (
         <SectionList
             ref={listRef}
             style={[styles.verseList, { backgroundColor: readerColors.background }]}
             sections={sections}
-            extraData={{ blinkingVerse, highlights, selectedKeys, version, readerColors, fontSizeMultiplier, textAlign, highlightColor }}
+            extraData={{ blinkingVerse, highlights, selectedKeys, version, readerColors, fontSizeMultiplier, textAlign }}
             keyExtractor={(item, idx) => `${item.chapter}-${item.verse}-${idx}`}
             onScrollToIndexFailed={onScrollToIndexFailed}
             renderSectionHeader={({ section: { title } }) => (
@@ -63,7 +65,7 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
             )}
             renderItem={({ item }) => {
                 const isBlinking = blinkingVerse === `${item.chapter}-${item.verse}`;
-                const isHighlighted = highlights[`${bookAbbrev}-${item.chapter}-${item.verse}`];
+                const highlightColorId = highlights[`${bookAbbrev}-${item.chapter}-${item.verse}`];
                 const isSelected = selectedKeys[`${bookAbbrev}-${item.chapter}-${item.verse}`];
 
                 return (
@@ -73,7 +75,7 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
                     >
                         <View style={[
                             styles.verseRow,
-                            isHighlighted && [styles.highlightedRow, { backgroundColor: highlightColor }],
+                            highlightColorId && [styles.highlightedRow, { backgroundColor: getHighlightColorValue(highlightColorId) }],
                             isBlinking && [styles.blinkingRow, { backgroundColor: readerColors.primaryContainer }],
                             isSelected && [styles.selectedRow, { backgroundColor: readerColors.surfaceVariant, borderLeftColor: readerColors.primary }],
                         ]}>

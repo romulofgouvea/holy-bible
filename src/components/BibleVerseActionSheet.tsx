@@ -16,11 +16,18 @@ export type SelectedVerse = {
 type VerseActionSheetProps = {
   visible: boolean;
   selectedVerses: SelectedVerse[];
-  highlights: Record<string, boolean>;
+  highlights: Record<string, string>;
   onClose: () => void;
-  onBulkHighlight: (verses: SelectedVerse[], forceHighlight: boolean) => void;
+  onBulkHighlight: (verses: SelectedVerse[], color: string | null) => void;
   onShowToast?: (msg: string, type?: 'success' | 'info' | 'warning') => void;
 };
+
+const HIGHLIGHT_COLORS = [
+  { id: 'yellow', hex: '#fde047' },
+  { id: 'blue', hex: '#93c5fd' },
+  { id: 'green', hex: '#86efac' },
+  { id: 'pink', hex: '#f9a8d4' },
+];
 
 export function BibleVerseActionSheet(props: VerseActionSheetProps) {
   const { visible, selectedVerses, highlights, onClose, onBulkHighlight } = props;
@@ -39,15 +46,14 @@ export function BibleVerseActionSheet(props: VerseActionSheetProps) {
   if (!visible && selectedVerses.length === 0) return null;
 
   const count = selectedVerses.length;
-  const allHighlighted = count > 0 && selectedVerses.every(
-    (v) => highlights[`${v.bookAbbrev}-${v.chapter}-${v.verse}`]
+  const hasAnyHighlight = count > 0 && selectedVerses.some(
+    (v) => !!highlights[`${v.bookAbbrev}-${v.chapter}-${v.verse}`]
   );
 
   const buildText = () => {
     if (count === 0) return '';
     const sorted = [...selectedVerses].sort((a, b) => a.chapter !== b.chapter ? a.chapter - b.chapter : a.verse - b.verse);
 
-    // Check if everything is in the same chapter
     const sameChapter = sorted.every((v) => v.chapter === sorted[0].chapter);
 
     let formattedRanges = '';
@@ -67,7 +73,6 @@ export function BibleVerseActionSheet(props: VerseActionSheetProps) {
       groups.push(start === end ? `${start}` : `${start}-${end}`);
       formattedRanges = groups.join(', ');
     } else {
-      // Fallback for multiple chapters, simple start-end
       formattedRanges = count === 1
         ? `${sorted[0].verse}`
         : `${sorted[0].chapter}:${sorted[0].verse}–${sorted[sorted.length - 1].chapter}:${sorted[sorted.length - 1].verse}`;
@@ -91,11 +96,10 @@ export function BibleVerseActionSheet(props: VerseActionSheetProps) {
     try { await Share.share({ message: buildText() }); } catch (e) { }
   };
 
-  const onHighlight = () => {
-    const newState = !allHighlighted;
-    onBulkHighlight(selectedVerses, newState);
+  const onHighlight = (color: string | null) => {
+    onBulkHighlight(selectedVerses, color);
     const isPlural = selectedVerses.length > 1;
-    const action = newState ? 'marcado' : 'desmarcado';
+    const action = color ? 'marcado' : 'desmarcado';
     props.onShowToast?.(`Versículo${isPlural ? 's' : ''} ${action}${isPlural ? 's' : ''}`, 'success');
     onClose();
   };
@@ -114,14 +118,19 @@ export function BibleVerseActionSheet(props: VerseActionSheetProps) {
           <Feather name="copy" size={iconSize} color={count === 0 ? colors.textMuted : iconColor} />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.iconBtn} onPress={onHighlight} disabled={count === 0}>
-          <FontAwesome
-            name={allHighlighted ? 'star' : 'star-o'}
-            size={iconSize}
-            color={count === 0 ? colors.textMuted : allHighlighted ? '#f5c518' : iconColor}
-          />
-        </TouchableOpacity>
+        <View style={styles.divider} />
 
+        {HIGHLIGHT_COLORS.map(c => (
+          <TouchableOpacity key={c.id} style={{ padding: 6 }} onPress={() => onHighlight(c.id)}>
+            <View style={{ width: ms(24), height: ms(24), borderRadius: ms(12), backgroundColor: c.hex, borderWidth: 1, borderColor: 'rgba(0,0,0,0.1)' }} />
+          </TouchableOpacity>
+        ))}
+
+        {hasAnyHighlight && (
+          <TouchableOpacity style={styles.iconBtn} onPress={() => onHighlight(null)}>
+            <Feather name="slash" size={ms(20)} color="#e74c3c" />
+          </TouchableOpacity>
+        )}
       </View>
       <View style={styles.removeActions}>
         <View style={[styles.divider, { backgroundColor: colors.border }]} />

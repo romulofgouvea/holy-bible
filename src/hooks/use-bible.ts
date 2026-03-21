@@ -15,7 +15,7 @@ export function useBible() {
   const [visibleVerse, setVisibleVerse] = useState(1);
 
   const [blinkingVerse, setBlinkingVerse] = useState<string | null>(null);
-  const [highlights, setHighlights] = useState<Record<string, boolean>>({});
+  const [highlights, setHighlights] = useState<Record<string, string>>({});
 
   const [isReady, setIsReady] = useState(false);
   const isReadyRef = useRef(false);
@@ -39,7 +39,12 @@ export function useBible() {
 
         const savedHighlights = await AsyncStorage.getItem(STORAGE_KEYS.HIGHLIGHTS);
         if (savedHighlights) {
-          setHighlights(JSON.parse(savedHighlights));
+          const parsed = JSON.parse(savedHighlights);
+          const migrated: Record<string, string> = {};
+          for (const key in parsed) {
+             migrated[key] = typeof parsed[key] === 'boolean' && parsed[key] ? 'yellow' : parsed[key];
+          }
+          setHighlights(migrated);
         }
       } catch (e) {
       } finally {
@@ -129,24 +134,24 @@ export function useBible() {
     }
   }, [versionBooks]);
 
-  const toggleHighlight = useCallback((item: { chapterIndex?: number; verseIndex?: number; chapter: number; verse: number }) => {
+  const toggleHighlight = useCallback((item: { chapterIndex?: number; verseIndex?: number; chapter: number; verse: number }, color: string = 'yellow') => {
     setHighlights((prev) => {
       const key = `${currentBook.abbrev}-${item.chapter}-${item.verse}`;
       const clone = { ...prev };
-      if (clone[key]) delete clone[key];
-      else clone[key] = true;
+      if (clone[key] === color) delete clone[key];
+      else clone[key] = color;
       AsyncStorage.setItem(STORAGE_KEYS.HIGHLIGHTS, JSON.stringify(clone)).catch(() => { });
       return clone;
     });
   }, [currentBook.abbrev]);
 
-  const bulkToggleHighlight = useCallback((verses: { chapter: number; verse: number; bookAbbrev: string }[], forceHighlight: boolean) => {
+  const bulkToggleHighlight = useCallback((verses: { chapter: number; verse: number; bookAbbrev: string }[], color: string | null) => {
     setHighlights((prev) => {
       const clone = { ...prev };
       verses.forEach((item) => {
         const key = `${item.bookAbbrev}-${item.chapter}-${item.verse}`;
-        if (forceHighlight) {
-          clone[key] = true;
+        if (color) {
+          clone[key] = color;
         } else {
           delete clone[key];
         }
