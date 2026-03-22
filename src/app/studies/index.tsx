@@ -1,7 +1,7 @@
 import { BibleConfirmModal } from '@/components/BibleConfirmModal';
 import { Feather } from '@expo/vector-icons';
 import * as DocumentPicker from 'expo-document-picker';
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from 'expo-file-system/legacy';
 import { useRouter } from 'expo-router';
 import * as Sharing from 'expo-sharing';
 import React, { useState } from 'react';
@@ -114,8 +114,8 @@ export default function EstudosScreen() {
   );
 
   const renderItem = ({ item }: { item: Study }) => {
-    const firstParaObj = item.blocks?.find(b => b.type === 'paragraph');
-    const firstPara = firstParaObj && 'content' in firstParaObj ? firstParaObj.content : null;
+    const rawText = (item.content || '').replace(/<[^>]+>/g, ' ').trim();
+    const firstPara = rawText.length > 80 ? rawText.substring(0, 80) + '...' : rawText;
     return (
       <TouchableOpacity style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]} onPress={() => router.push(ROUTES.STUDY_EDITOR(item.id) as any)} activeOpacity={0.75}>
         <View style={styles.cardContent}>
@@ -124,8 +124,7 @@ export default function EstudosScreen() {
           </View>
           <View style={styles.cardText}>
             <BibleText style={[styles.cardTitle, { fontSize: ms(16), color: colors.text }]}>{item.title}</BibleText>
-            {!!firstPara && <BibleText style={[styles.cardDesc, { fontSize: ms(12), color: colors.textMuted }]} numberOfLines={2}>{firstPara}</BibleText>}
-            <BibleText style={[styles.cardDate, { fontSize: ms(10), color: colors.border }]}>{item.createdAt}</BibleText>
+            <BibleText style={[styles.cardDate, { fontSize: ms(12), color: colors.border }]}>{item.createdAt}</BibleText>
           </View>
           <TouchableOpacity onPress={() => setStudyToDelete(item.id)} style={[styles.deleteBtn]}>
             <Feather name="trash-2" size={ms(20)} color="#e74c3c" />

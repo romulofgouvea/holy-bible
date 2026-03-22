@@ -81,7 +81,7 @@ export default function BibleScreen() {
         }).start();
       }, 300);
     }
-  }, [isReady, fadeAnim]); // Removed verse from dependencies, scrolling relies on explicit triggers
+  }, [isReady, fadeAnim]);
 
   useEffect(() => {
     if (isReady && params.book && params.ch && params.v) {

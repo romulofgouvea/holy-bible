@@ -16,7 +16,7 @@ export type BibleVersionInfo = {
 export const ALIASES = bibleVersions as BibleVersionInfo[];
 export const availableVersions = ALIASES.map(v => v.sigla);
 
-// Metro bundler magic context to dynamically bundle all adjacent .json files:
+
 // @ts-ignore
 const jsonContext = require.context('.', false, /\.json$/);
 
@@ -39,7 +39,6 @@ export const getBibleData = (sigla: string): Book[] => {
       return [];
     }
     
-    // Normalizes different json structuring out of the box
     if (data.books && Array.isArray(data.books)) return data.books;
     if (Array.isArray(data)) return data;
     
