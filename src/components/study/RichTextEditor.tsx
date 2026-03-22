@@ -92,13 +92,13 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
           line-height: 1.6;
           color: ${readerColors.text || colors.text};
         }
-        font[size="1"] { font-size: 11px; line-height: 1.4; } /* H6 */
-        font[size="2"] { font-size: 13px; line-height: 1.5; } /* H5 */
-        font[size="3"] { font-size: 16px; line-height: 1.6; } /* Normal */
-        font[size="4"] { font-size: 18px; line-height: 1.6; } /* H4 */
-        font[size="5"] { font-size: 20px; line-height: 1.6; } /* H3 */
-        font[size="6"] { font-size: 24px; line-height: 1.6; } /* H2 */
-        font[size="7"] { font-size: 32px; line-height: 1.6; } /* H1 */
+        font[size="1"] { font-size: 11px; line-height: 1.4; }
+        font[size="2"] { font-size: 13px; line-height: 1.5; }
+        font[size="3"] { font-size: 16px; line-height: 1.6; }
+        font[size="4"] { font-size: 24px; line-height: 1.6; }
+        font[size="5"] { font-size: 32px; line-height: 1.6; }
+        font[size="6"] { font-size: 48px; line-height: 1.6; }
+        font[size="7"] { font-size: 64px; line-height: 1.6; }
         ::selection {
           background-color: rgba(0, 128, 128, 0.3);
         }
@@ -179,11 +179,31 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
 
         window.changeFontSize = function(delta) {
           editor.focus();
-          let current = document.queryCommandValue('fontSize');
-          if (!current || current === '') current = '3';
-          let newSize = parseInt(current) + delta;
-          if (newSize < 1) newSize = 1;
-          if (newSize > 7) newSize = 7;
+          
+          var selection = window.getSelection();
+          if (!selection || selection.rangeCount === 0 || selection.isCollapsed) return;
+          
+          var node = selection.anchorNode;
+          var parent = node.nodeType === 3 ? node.parentNode : node;
+          var currentSizeStr = window.getComputedStyle(parent).fontSize;
+          var px = parseInt(currentSizeStr) || 16;
+          
+          var sizes = [11, 13, 16, 24, 32, 48, 64];
+          var currentIndex = 2; // Default is size 3 (16px) -> index 2
+          var minDiff = Infinity;
+          for (var i = 0; i < sizes.length; i++) {
+              var diff = Math.abs(sizes[i] - px);
+              if (diff < minDiff) { 
+                 minDiff = diff; 
+                 currentIndex = i; 
+              }
+          }
+          
+          var newIndex = currentIndex + delta;
+          if (newIndex < 0) newIndex = 0;
+          if (newIndex > 6) newIndex = 6;
+          
+          var newSize = newIndex + 1; // Maps index 0..6 to size 1..7
           document.execCommand('fontSize', false, newSize);
         };
 
