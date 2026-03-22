@@ -15,17 +15,17 @@ export function BibleHeader({ title, leftContent, rightContent, onMenuPress, sho
   return (
     <View style={styles.header}>
       <View style={styles.leftContainer}>
+        {showMenu && (
+          <TouchableOpacity style={styles.menuBtn} onPress={onMenuPress} activeOpacity={0.7}>
+            <Feather name="menu" size={24} color="#fff" />
+          </TouchableOpacity>
+        )}
         {leftContent ? leftContent : (
           title ? <BibleText style={styles.title}>{title}</BibleText> : null
         )}
       </View>
       <View style={styles.rightContainer}>
         {rightContent}
-        {showMenu && (
-          <TouchableOpacity style={styles.menuBtn} onPress={onMenuPress} activeOpacity={0.7}>
-            <Feather name="menu" size={24} color="#fff" />
-          </TouchableOpacity>
-        )}
       </View>
     </View>
   );

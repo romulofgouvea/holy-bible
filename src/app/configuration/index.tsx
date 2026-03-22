@@ -22,12 +22,12 @@ export default function ConfigurationScreen() {
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={[styles.header, { backgroundColor: colors.primary }]}>
+        <TouchableOpacity style={[styles.menuBtn, { marginLeft: 0, marginRight: 8 }]} onPress={() => setDrawerVisible(true)}>
+          <Feather name="menu" size={ms(20)} color={colors.onPrimary} />
+        </TouchableOpacity>
         <BibleText style={[styles.headerTitle, { fontSize: ms(15), color: colors.onPrimary }]}>
           Configurações
         </BibleText>
-        <TouchableOpacity style={styles.menuBtn} onPress={() => setDrawerVisible(true)}>
-          <Feather name="menu" size={ms(20)} color={colors.onPrimary} />
-        </TouchableOpacity>
       </View>
 
       <View style={styles.content}>
@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
   },
   menuBtn: {
     width: 38,

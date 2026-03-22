@@ -137,10 +137,10 @@ export default function EstudosScreen() {
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={[styles.header, { backgroundColor: colors.primary }]}>
-        <BibleText style={[styles.headerTitle, { fontSize: ms(15), color: colors.onPrimary }]}>Estudos</BibleText>
-        <TouchableOpacity style={styles.menuBtn} onPress={() => setDrawerVisible(true)}>
+        <TouchableOpacity style={[styles.menuBtn, { marginLeft: 0, marginRight: 8 }]} onPress={() => setDrawerVisible(true)}>
           <Feather name="menu" size={ms(20)} color={colors.onPrimary} />
         </TouchableOpacity>
+        <BibleText style={[styles.headerTitle, { fontSize: ms(15), color: colors.onPrimary }]}>Estudos</BibleText>
       </View>
 
       <FlatList
@@ -250,7 +250,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
     elevation: 6,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 3 },

@@ -36,7 +36,7 @@ export function BibleDrawerMenu(props: DrawerMenuProps) {
   const { colors } = useTheme();
   const [modalVisible, setModalVisible] = useState(visible);
   const router = useRouter();
-  const translateX = useRef(new Animated.Value(DRAWER_WIDTH)).current;
+  const translateX = useRef(new Animated.Value(-DRAWER_WIDTH)).current;
   const backdropOpacity = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -58,7 +58,7 @@ export function BibleDrawerMenu(props: DrawerMenuProps) {
     } else {
       Animated.parallel([
         Animated.spring(translateX, {
-          toValue: DRAWER_WIDTH,
+          toValue: -DRAWER_WIDTH,
           useNativeDriver: true,
           bounciness: 0,
           speed: 20,
@@ -131,13 +131,13 @@ const styles = StyleSheet.create({
   drawer: {
     position: 'absolute',
     top: 0,
-    right: 0,
+    left: 0,
     bottom: 0,
     width: DRAWER_WIDTH,
     backgroundColor: '#fff',
     elevation: 24,
     shadowColor: '#000',
-    shadowOffset: { width: -4, height: 0 },
+    shadowOffset: { width: 4, height: 0 },
     shadowOpacity: 0.18,
     shadowRadius: 12,
   },

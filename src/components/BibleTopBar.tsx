@@ -26,6 +26,9 @@ export const BibleTopBar = React.memo((props: BibleTopBarProps) => {
     return (
         <View style={[styles.topBarRow, { backgroundColor: colors.primary }]}>
             <View style={styles.leftButtons}>
+                <TouchableOpacity style={[styles.menuButton, { marginLeft: 0, marginRight: 4 }]} onPress={onOpenMenu}>
+                    <Feather name="menu" size={ms(20)} color={colors.onPrimary} />
+                </TouchableOpacity>
                 <TouchableOpacity style={styles.topBarButton} onPress={onOpenVersion}>
                     <BibleText style={[styles.topBarButtonText, { fontSize: ms(15), color: colors.onPrimary }]}>{version}</BibleText>
                 </TouchableOpacity>
@@ -40,9 +43,6 @@ export const BibleTopBar = React.memo((props: BibleTopBarProps) => {
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <TouchableOpacity style={styles.menuButton} onPress={onOpenSettings}>
                     <BibleText style={{ fontWeight: '800', fontSize: ms(16), color: colors.onPrimary }}>Aa</BibleText>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.menuButton} onPress={onOpenMenu}>
-                    <Feather name="menu" size={ms(20)} color={colors.onPrimary} />
                 </TouchableOpacity>
             </View>
         </View>
