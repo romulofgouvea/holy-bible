@@ -146,7 +146,7 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
           }, 200);
         });
 
-        document.addEventListener('selectionchange', function() {
+        function updateFormatState() {
           let left = document.queryCommandState('justifyLeft');
           let center = document.queryCommandState('justifyCenter');
           let right = document.queryCommandState('justifyRight');
@@ -165,16 +165,20 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
             justifyFull: full,
           };
           window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'formatState', data: state }));
-        });
+        }
+
+        document.addEventListener('selectionchange', updateFormatState);
 
         window.execCmd = function(cmd, value) {
           editor.focus();
           document.execCommand(cmd, false, value);
+          setTimeout(updateFormatState, 50);
         };
         
         window.insertHtml = function(html) {
           editor.focus();
           document.execCommand('insertHTML', false, html);
+          setTimeout(updateFormatState, 50);
         };
 
         window.changeFontSize = function(delta) {
