@@ -1,7 +1,7 @@
 import React from 'react';
 import { SectionList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { useResponsive } from '../hooks/use-responsive';
 import { useReaderSettings } from '../hooks/use-reader-settings';
+import { useResponsive } from '../hooks/use-responsive';
 
 type VerseItem = {
     chapter: number;

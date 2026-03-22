@@ -27,17 +27,24 @@ type DrawerMenuProps = {
   onSelectItem: (key: string) => void;
 };
 
-const SCREEN_WIDTH = Dimensions.get('window').width;
-const DRAWER_WIDTH = Math.min(240, SCREEN_WIDTH * 0.72);
-
 export function BibleDrawerMenu(props: DrawerMenuProps) {
   const { visible, activeItem, onClose, onSelectItem } = props;
-  const { ms } = useResponsive();
+  const { ms, width } = useResponsive();
+  const drawerWidth = Math.min(ms(280), width * 0.72);
   const { colors } = useTheme();
   const [modalVisible, setModalVisible] = useState(visible);
   const router = useRouter();
-  const translateX = useRef(new Animated.Value(-DRAWER_WIDTH)).current;
+  
+  // Initialize with -1000 so it starts off-screen and updates gracefully.
+  const translateX = useRef(new Animated.Value(-1000)).current;
   const backdropOpacity = useRef(new Animated.Value(0)).current;
+
+  // Sync translation to dynamic drawerWidth
+  useEffect(() => {
+    if (!visible) {
+      translateX.setValue(-drawerWidth);
+    }
+  }, [drawerWidth]);
 
   useEffect(() => {
     if (visible) {
@@ -58,7 +65,7 @@ export function BibleDrawerMenu(props: DrawerMenuProps) {
     } else {
       Animated.parallel([
         Animated.spring(translateX, {
-          toValue: -DRAWER_WIDTH,
+          toValue: -drawerWidth,
           useNativeDriver: true,
           bounciness: 0,
           speed: 20,
@@ -81,43 +88,43 @@ export function BibleDrawerMenu(props: DrawerMenuProps) {
           <Animated.View style={[styles.backdrop, { opacity: backdropOpacity }]} />
         </TouchableWithoutFeedback>
 
-      <Animated.View style={[styles.drawer, { transform: [{ translateX }], backgroundColor: colors.surface }]}>
-        <View style={[styles.drawerHeader, { backgroundColor: colors.primary }]}>
-          <View style={styles.drawerLogo}>
-            <Feather name="book" size={ms(19)} color={colors.onPrimary} />
+        <Animated.View style={[styles.drawer, { width: drawerWidth, transform: [{ translateX }], backgroundColor: colors.surface }]}>
+          <View style={[styles.drawerHeader, { backgroundColor: colors.primary, paddingTop: ms(24), paddingBottom: ms(20), paddingHorizontal: ms(20) }]}>
+            <View style={[styles.drawerLogo, { width: ms(38), height: ms(38), borderRadius: ms(10), marginRight: ms(10) }]}>
+              <Feather name="book" size={ms(19)} color={colors.onPrimary} />
+            </View>
+            <BibleText style={[styles.drawerTitle, { fontSize: ms(17), color: colors.onPrimary }]}>Bíblia Sagrada</BibleText>
           </View>
-          <BibleText style={[styles.drawerTitle, { fontSize: ms(17), color: colors.onPrimary }]}>Bíblia Sagrada</BibleText>
-        </View>
 
-        <View style={styles.menuList}>
-          {MENU_ITEMS.map((item) => {
-            const isActive = activeItem === item.key;
-            return (
-              <TouchableOpacity
-                key={item.key}
-                style={[styles.menuItem, isActive && { backgroundColor: colors.primaryContainer }]}
-                onPress={() => {
-                  onSelectItem(item.key);
-                  onClose();
-                  setTimeout(() => router.push(item.route as any), 150);
-                }}
-                activeOpacity={0.7}
-              >
-                <View style={[styles.menuIconWrap, isActive && { backgroundColor: colors.primary }, !isActive && { backgroundColor: colors.surfaceVariant }]}>
-                  <Feather name={item.icon} size={ms(18)} color={isActive ? colors.onPrimary : colors.textMuted} />
-                </View>
-                <BibleText style={[styles.menuLabel, { fontSize: ms(15) }, isActive ? { color: colors.onPrimaryContainer, fontWeight: '800' } : { color: colors.text }]}>
-                  {item.label}
-                </BibleText>
-              </TouchableOpacity>
-            );
-          })}
-        </View>
+          <View style={[styles.menuList, { paddingTop: ms(8), paddingHorizontal: ms(8) }]}>
+            {MENU_ITEMS.map((item) => {
+              const isActive = activeItem === item.key;
+              return (
+                <TouchableOpacity
+                  key={item.key}
+                  style={[styles.menuItem, { paddingVertical: ms(9), paddingHorizontal: ms(8), borderRadius: ms(10), marginBottom: ms(6) }, isActive && { backgroundColor: colors.primaryContainer }]}
+                  onPress={() => {
+                    onSelectItem(item.key);
+                    onClose();
+                    setTimeout(() => router.push(item.route as any), 150);
+                  }}
+                  activeOpacity={0.7}
+                >
+                  <View style={[styles.menuIconWrap, { width: ms(38), height: ms(38), borderRadius: ms(10), marginRight: ms(10) }, isActive && { backgroundColor: colors.primary }, !isActive && { backgroundColor: colors.surfaceVariant }]}>
+                    <Feather name={item.icon} size={ms(18)} color={isActive ? colors.onPrimary : colors.textMuted} />
+                  </View>
+                  <BibleText style={[styles.menuLabel, { fontSize: ms(15) }, isActive ? { color: colors.onPrimaryContainer, fontWeight: '800' } : { color: colors.text }]}>
+                    {item.label}
+                  </BibleText>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
 
-        <View style={[styles.drawerFooter, { borderTopColor: colors.border }]}>
-          <BibleText style={[styles.footerText, { fontSize: ms(11), color: colors.textMuted }]}>Stevanini</BibleText>
-        </View>
-      </Animated.View>
+          <View style={[styles.drawerFooter, { borderTopColor: colors.border }]}>
+            <BibleText style={[styles.footerText, { fontSize: ms(11), color: colors.textMuted }]}>Stevanini</BibleText>
+          </View>
+        </Animated.View>
       </View>
     </Modal>
   );
@@ -133,7 +140,6 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     bottom: 0,
-    width: DRAWER_WIDTH,
     backgroundColor: '#fff',
     elevation: 24,
     shadowColor: '#000',

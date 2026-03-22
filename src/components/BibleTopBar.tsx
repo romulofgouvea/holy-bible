@@ -1,4 +1,3 @@
-import { Feather } from '@expo/vector-icons';
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useResponsive } from '../hooks/use-responsive';
@@ -29,19 +28,19 @@ export const BibleTopBar = React.memo((props: BibleTopBarProps) => {
             onMenuPress={onOpenMenu}
             leftContent={
                 <View style={styles.leftButtons}>
-                    <TouchableOpacity style={styles.topBarButton} onPress={onOpenVersion}>
+                    <TouchableOpacity style={[styles.topBarButton, { height: ms(38), paddingHorizontal: ms(12), marginHorizontal: ms(3), borderRadius: ms(10) }]} onPress={onOpenVersion}>
                         <BibleText style={[styles.topBarButtonText, { fontSize: ms(15), color: colors.onPrimary }]}>{version}</BibleText>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.topBarButton} onPress={onOpenBook}>
+                    <TouchableOpacity style={[styles.topBarButton, { height: ms(38), paddingHorizontal: ms(12), marginHorizontal: ms(3), borderRadius: ms(10) }]} onPress={onOpenBook}>
                         <BibleText style={[styles.topBarButtonText, { fontSize: ms(15), color: colors.onPrimary }]}>{bookName}</BibleText>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.topBarButton} onPress={onOpenChapter}>
+                    <TouchableOpacity style={[styles.topBarButton, { height: ms(38), paddingHorizontal: ms(12), marginHorizontal: ms(3), borderRadius: ms(10) }]} onPress={onOpenChapter}>
                         <BibleText style={[styles.topBarButtonText, { fontSize: ms(15), color: colors.onPrimary }]}>{currentChapter}</BibleText>
                     </TouchableOpacity>
                 </View>
             }
             rightContent={
-                <TouchableOpacity style={styles.menuButton} onPress={onOpenSettings}>
+                <TouchableOpacity style={[styles.menuButton, { width: ms(38), height: ms(38), borderRadius: ms(10), marginLeft: ms(4) }]} onPress={onOpenSettings}>
                     <BibleText style={{ fontWeight: '800', fontSize: ms(16), color: colors.onPrimary }}>Aa</BibleText>
                 </TouchableOpacity>
             }
@@ -55,12 +54,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     topBarButton: {
-        height: 38,
         justifyContent: 'center',
         backgroundColor: 'rgba(255,255,255,0.2)',
-        borderRadius: 10,
-        paddingHorizontal: 12,
-        marginHorizontal: 3,
     },
     topBarButtonText: {
         color: '#fff',
@@ -68,12 +63,8 @@ const styles = StyleSheet.create({
         fontSize: 15,
     },
     menuButton: {
-        width: 38,
-        height: 38,
         alignItems: 'center',
         justifyContent: 'center',
-        borderRadius: 10,
         backgroundColor: 'rgba(255,255,255,0.15)',
-        marginLeft: 4,
     },
 });

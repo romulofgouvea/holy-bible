@@ -18,7 +18,7 @@ export function BibleHeader({ title, leftContent, rightContent, onMenuPress, sho
   const { ms } = useResponsive();
 
   return (
-    <View style={[styles.header, { backgroundColor: colors.primary, minHeight: ms(56) }]}>
+    <View style={[styles.header, { backgroundColor: colors.primary, minHeight: ms(56), paddingHorizontal: ms(16), paddingVertical: ms(12) }]}>
       <View style={styles.leftContainer}>
         {showMenu && (
           <TouchableOpacity style={[styles.menuBtn, { width: ms(40), height: ms(40), borderRadius: ms(10), marginRight: ms(8) }]} onPress={onMenuPress} activeOpacity={0.7}>
@@ -39,8 +39,6 @@ export function BibleHeader({ title, leftContent, rightContent, onMenuPress, sho
 const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
-    paddingHorizontal: 8,
-    paddingVertical: 8,
     alignItems: 'center',
     justifyContent: 'space-between',
     elevation: 6,

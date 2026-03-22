@@ -119,7 +119,7 @@ export default function StudyEditorScreen() {
       return `<div class="verse-line"><span class="verse-num">${n}</span> <span class="verse-text">${v?.text ?? ''}</span></div>`;
     }).join('');
 
-    const html = `<blockquote class="bible-verse"><b>${ref}</b>${lines}</blockquote><p><br></p>`;
+    const html = `<br><blockquote class="bible-verse"><div class="verse-title">${ref}</div>${lines}</blockquote><p><br></p>`;
     editorRef.current?.insertVerseHtml(html);
     setVersePickerVisible(false);
   };
@@ -136,7 +136,7 @@ export default function StudyEditorScreen() {
         h1.main-title { color: #008080; font-size: 32px; font-weight: 800; margin-bottom: 8px; border-bottom: 2px solid #e0f2f1; padding-bottom: 12px; }
         .meta { color: #888; font-size: 13px; margin-bottom: 32px; font-weight: 600; }
         .bible-verse { border-left: 4px solid #008080; padding: 16px 24px; background: #f4faf9; border-radius: 8px; margin: 24px 0; page-break-inside: avoid; }
-        .bible-verse b { color: #008080; display: block; margin-bottom: 12px; font-size: 16px; letter-spacing: 0.5px; text-transform: uppercase; }
+        .bible-verse b, .bible-verse .verse-title { color: #008080; display: block; margin-bottom: 12px; font-size: 16px; font-weight: bold; letter-spacing: 0.5px; text-transform: uppercase; }
         .verse-line { margin-bottom: 10px; line-height: 1.7; display: flex; gap: 8px; }
         .verse-num { font-weight: 800; color: #008080; font-size: 12px; margin-top: 2px; }
         .verse-text { font-style: italic; color: #333; flex: 1; }

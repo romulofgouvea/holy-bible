@@ -19,6 +19,7 @@ type Props = {
 
 export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ initialHtml, onChange, onOpenVersePicker }, ref) => {
   const webViewRef = useRef<WebView>(null);
+  const webIframeRef = useRef<any>(null); // For React Native Web iframe
   const { colors } = useTheme();
   const { ms } = useResponsive();
   const { readerColors } = useReaderSettings();
@@ -28,19 +29,28 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
     justifyLeft?: boolean; justifyCenter?: boolean; justifyRight?: boolean; justifyFull?: boolean;
   }>({});
 
+  const injectToEditor = (script: string) => {
+    if (Platform.OS === 'web') {
+      if (webIframeRef.current?.contentWindow) {
+        webIframeRef.current.contentWindow.postMessage(JSON.stringify({ type: 'eval', code: script }), '*');
+      }
+    } else {
+      webViewRef.current?.injectJavaScript(script);
+    }
+  };
+
   React.useImperativeHandle(ref, () => ({
     insertVerseHtml: (html: string) => {
-      webViewRef.current?.injectJavaScript(`window.insertHtml(\`${html}\`); true;`);
+      injectToEditor(`window.insertHtml(\`${html.replace(/`/g, '\\`')}\`); true;`);
     }
   }));
 
   const execDocumentCmd = (cmd: string, val: string | null = null) => {
-    if (Platform.OS === 'web') return;
-    webViewRef.current?.injectJavaScript(`window.execCmd('${cmd}', ${val ? `'${val}'` : 'null'}); true;`);
+    injectToEditor(`window.execCmd('${cmd}', ${val ? `'${val}'` : 'null'}); true;`);
   };
 
   const changeFontSize = (delta: number) => {
-    webViewRef.current?.injectJavaScript(`window.changeFontSize(${delta}); true;`);
+    injectToEditor(`window.changeFontSize(${delta}); true;`);
   };
 
 
@@ -57,12 +67,12 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
       })();
       true;
     `;
-    webViewRef.current.injectJavaScript(js);
+    injectToEditor(js);
   }, [readerColors, colors.text]);
 
   const onMessage = (event: any) => {
     try {
-      const { type, data } = JSON.parse(event.nativeEvent.data);
+      const { type, data } = JSON.parse(event.nativeEvent ? event.nativeEvent.data : event.data);
       if (type === 'contentChanged') {
         onChange(data);
       } else if (type === 'formatState') {
@@ -70,6 +80,13 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
       }
     } catch (e) { }
   };
+
+  useEffect(() => {
+    if (Platform.OS === 'web') {
+      window.addEventListener('message', onMessage);
+      return () => window.removeEventListener('message', onMessage);
+    }
+  }, [onChange]);
 
   const editorHtml = useMemo(() => `
     <!DOCTYPE html>
@@ -115,11 +132,12 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
           border-left: 4px solid #008080;
           border-radius: 8px;
         }
-        .bible-verse b {
+        .bible-verse b, .bible-verse .verse-title {
           color: #008080;
           display: block;
           margin-bottom: 8px;
           font-size: 14px;
+          font-weight: bold;
           text-transform: uppercase;
           letter-spacing: 0.5px;
         }
@@ -142,7 +160,9 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
         editor.addEventListener('input', function() {
           clearTimeout(debounceTimer);
           debounceTimer = setTimeout(() => {
-            window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'contentChanged', data: editor.innerHTML }));
+            const msg = JSON.stringify({ type: 'contentChanged', data: editor.innerHTML });
+            if (window.ReactNativeWebView) window.ReactNativeWebView.postMessage(msg);
+            else window.parent.postMessage(msg, '*');
           }, 200);
         });
 
@@ -164,7 +184,9 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
             justifyRight: right,
             justifyFull: full,
           };
-          window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'formatState', data: state }));
+          const msg = JSON.stringify({ type: 'formatState', data: state });
+          if (window.ReactNativeWebView) window.ReactNativeWebView.postMessage(msg);
+          else window.parent.postMessage(msg, '*');
         }
 
         document.addEventListener('selectionchange', updateFormatState);
@@ -211,6 +233,14 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
           document.execCommand('fontSize', false, newSize);
         };
 
+        window.addEventListener('message', function(event) {
+          try {
+            var msg = JSON.parse(event.data);
+            if (msg.type === 'eval') {
+              eval(msg.code);
+            }
+          } catch(e) {}
+        });
 
       </script>
     </body>
@@ -288,9 +318,12 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
       </View>
 
       {Platform.OS === 'web' ? (
-        <View style={{ flex: 1, padding: 16 }}>
-          <BibleText style={{ color: colors.textMuted }}>O editor rico não é suportado na web.</BibleText>
-        </View>
+        <iframe
+          ref={webIframeRef}
+          srcDoc={editorHtml}
+          style={{ flex: 1, border: 'none', backgroundColor: readerColors.background, width: '100%', minHeight: 600 }}
+          sandbox="allow-scripts allow-same-origin"
+        />
       ) : (
         <WebView
           ref={webViewRef}
