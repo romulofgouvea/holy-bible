@@ -90,13 +90,14 @@ export function BibleVersionModal({ visible, onClose, onSelect }: BibleVersionMo
               ) : (
                 <View style={styles.gridContainer}>
                   {filteredVersions.map((item) => {
-                    const numCols = width > 600 ? 5 : 4;
-                    const itemWidthPercentage = (100 / numCols) - 2;
+                    const availableWidth = width - 32;
+                    const numCols = Math.max(4, Math.floor(availableWidth / ms(72)));
+                    const itemWidth = ((availableWidth - (numCols - 1) * 8) / numCols) - 0.01;
                     return (
                       <BibleGridBlock
                         key={item.sigla}
                         title={item.sigla}
-                        widthPercentage={itemWidthPercentage}
+                        exactWidth={itemWidth}
                         onPress={() => handleSelect(item)}
                       />
                     );

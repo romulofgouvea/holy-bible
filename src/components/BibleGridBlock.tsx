@@ -6,17 +6,22 @@ import { BibleText } from './BibleText';
 
 type BibleGridBlockProps = {
   title: string | number;
-  widthPercentage: number;
+  widthPercentage?: number;
+  exactWidth?: number;
   onPress: () => void;
 };
 
-export function BibleGridBlock({ title, widthPercentage, onPress }: BibleGridBlockProps) {
+export function BibleGridBlock({ title, widthPercentage, exactWidth, onPress }: BibleGridBlockProps) {
   const { ms } = useResponsive();
   const { colors } = useTheme();
   return (
     <TouchableOpacity
       activeOpacity={0.7}
-      style={[styles.gridItem, { width: `${widthPercentage}%`, backgroundColor: colors.surfaceVariant, borderColor: colors.primary }]}
+      style={[
+        styles.gridItem,
+        exactWidth ? { width: exactWidth } : widthPercentage ? { width: `${widthPercentage}%` } : {},
+        { backgroundColor: colors.surfaceVariant, borderColor: colors.primary }
+      ]}
       onPress={onPress}
     >
       <BibleText style={[styles.gridText, { fontSize: ms(16), color: colors.primary }]} numberOfLines={1}>
