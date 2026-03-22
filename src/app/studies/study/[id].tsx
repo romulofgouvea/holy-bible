@@ -16,6 +16,7 @@ import {
 } from 'react-native';
 
 import { BibleBookModal } from '../../../components/BibleBookModal';
+import { BibleHeader } from '../../../components/BibleHeader';
 import { BibleNumberModal } from '../../../components/BibleNumberModal';
 import { BibleVersionModal } from '../../../components/BibleVersionModal';
 import { ReaderSettingsModal } from '../../../components/ReaderSettingsModal';
@@ -167,25 +168,30 @@ export default function StudyEditorScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: readerColors.background }}>
-      <View style={[styles.topBar, { backgroundColor: colors.primary }]}>
-        <TouchableOpacity style={styles.iconBtn} onPress={() => router.canGoBack() ? router.back() : router.replace(ROUTES.STUDIES as any)}>
-          <Feather name="arrow-left" size={ms(20)} color={colors.onPrimary} />
-        </TouchableOpacity>
-        <TextInput
-          style={[styles.titleInput, { fontSize: ms(16), color: colors.onPrimary }, noOutline]}
-          value={title}
-          onChangeText={setTitle}
-          placeholder="Nome do estudo"
-          placeholderTextColor={colors.textMuted}
-          {...({ outlineStyle: 'none' } as any)}
-          underlineColorAndroid="transparent"
-        />
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <TouchableOpacity style={[styles.iconBtn, { marginLeft: 4 }]} onPress={() => setMenuVisible(true)}>
+      <BibleHeader
+        showMenu={false}
+        leftContent={
+          <>
+            <TouchableOpacity style={{ width: ms(40), height: ms(40), borderRadius: ms(10), alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.15)', marginRight: ms(8) }} onPress={() => router.canGoBack() ? router.back() : router.replace(ROUTES.STUDIES as any)}>
+              <Feather name="arrow-left" size={ms(20)} color={colors.onPrimary} />
+            </TouchableOpacity>
+            <TextInput
+              style={[styles.titleInput, { fontSize: ms(16), color: colors.onPrimary }, noOutline]}
+              value={title}
+              onChangeText={setTitle}
+              placeholder="Nome do estudo"
+              placeholderTextColor={colors.textMuted}
+              {...({ outlineStyle: 'none' } as any)}
+              underlineColorAndroid="transparent"
+            />
+          </>
+        }
+        rightContent={
+          <TouchableOpacity style={{ width: ms(40), height: ms(40), borderRadius: ms(10), alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.15)' }} onPress={() => setMenuVisible(true)}>
             <Feather name="more-vertical" size={ms(20)} color={colors.onPrimary} />
           </TouchableOpacity>
-        </View>
-      </View>
+        }
+      />
 
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         {hydrated.current ? (
@@ -258,7 +264,5 @@ export default function StudyEditorScreen() {
 }
 
 const styles = StyleSheet.create({
-  topBar: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#008080', paddingHorizontal: 8, paddingVertical: 8, gap: 8, elevation: 6, shadowColor: '#000', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.25, shadowRadius: 4, zIndex: 10 },
-  iconBtn: { width: 38, height: 38, alignItems: 'center', justifyContent: 'center', borderRadius: 10, backgroundColor: 'rgba(255,255,255,0.15)' },
   titleInput: { flex: 1, color: '#fff', fontWeight: '700' },
 });

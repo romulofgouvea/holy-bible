@@ -17,6 +17,7 @@ import {
   View
 } from 'react-native';
 import { BibleDrawerMenu } from '../../components/BibleDrawerMenu';
+import { BibleHeader } from '../../components/BibleHeader';
 import { BibleText } from '../../components/BibleText';
 import { ROUTES } from '../../constants/routes';
 import { useResponsive } from '../../hooks/use-responsive';
@@ -136,12 +137,7 @@ export default function EstudosScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <View style={[styles.header, { backgroundColor: colors.primary }]}>
-        <TouchableOpacity style={[styles.menuBtn, { marginLeft: 0, marginRight: 8 }]} onPress={() => setDrawerVisible(true)}>
-          <Feather name="menu" size={ms(20)} color={colors.onPrimary} />
-        </TouchableOpacity>
-        <BibleText style={[styles.headerTitle, { fontSize: ms(15), color: colors.onPrimary }]}>Estudos</BibleText>
-      </View>
+      <BibleHeader title="Estudos" onMenuPress={() => setDrawerVisible(true)} />
 
       <FlatList
         data={studies}
@@ -244,29 +240,15 @@ export default function EstudosScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#f8fafa' },
-  header: {
-    backgroundColor: '#008080',
-    paddingHorizontal: 8,
-    paddingVertical: 8,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    elevation: 6,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    zIndex: 10,
+  listContent: {
+    padding: 16,
+    paddingBottom: 100,
+    flexGrow: 1
   },
-  menuBtn: { width: 38, height: 38, alignItems: 'center', justifyContent: 'center', borderRadius: 10, backgroundColor: 'rgba(255,255,255,0.15)', marginLeft: 4 },
-  headerTitle: { color: '#fff', fontWeight: '700', marginHorizontal: 8 },
-  listContent: { padding: 8, paddingTop: 8, flexGrow: 1 },
   emptyContainer: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingTop: 80, gap: 12 },
   emptyTitle: { fontWeight: '700', color: '#555' },
   emptySubtitle: { color: '#aaa', textAlign: 'center', paddingHorizontal: 32 },
   card: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
     borderWidth: 1,
     borderColor: '#0080806e',
     marginBottom: 8,

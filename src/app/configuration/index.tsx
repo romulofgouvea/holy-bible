@@ -2,6 +2,7 @@ import { Feather } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import { StyleSheet, Switch, TouchableOpacity, View } from 'react-native';
 import { BibleDrawerMenu } from '../../components/BibleDrawerMenu';
+import { BibleHeader } from '../../components/BibleHeader';
 import { BibleText } from '../../components/BibleText';
 import { useReaderSettings } from '../../hooks/use-reader-settings';
 import { useResponsive } from '../../hooks/use-responsive';
@@ -21,14 +22,7 @@ export default function ConfigurationScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <View style={[styles.header, { backgroundColor: colors.primary }]}>
-        <TouchableOpacity style={[styles.menuBtn, { marginLeft: 0, marginRight: 8 }]} onPress={() => setDrawerVisible(true)}>
-          <Feather name="menu" size={ms(20)} color={colors.onPrimary} />
-        </TouchableOpacity>
-        <BibleText style={[styles.headerTitle, { fontSize: ms(15), color: colors.onPrimary }]}>
-          Configurações
-        </BibleText>
-      </View>
+      <BibleHeader title="Configurações" onMenuPress={() => setDrawerVisible(true)} />
 
       <View style={styles.content}>
         <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
@@ -68,26 +62,6 @@ export default function ConfigurationScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  header: {
-    paddingHorizontal: 8,
-    paddingVertical: 8,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-  },
-  menuBtn: {
-    width: 38,
-    height: 38,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 10,
-    backgroundColor: 'rgba(255,255,255,0.15)',
-    marginLeft: 4,
-  },
-  headerTitle: {
-    fontWeight: '700',
-    marginHorizontal: 8,
   },
   content: {
     padding: 16,

@@ -1,6 +1,8 @@
 import { Feather } from '@expo/vector-icons';
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { useResponsive } from '../hooks/use-responsive';
+import { useTheme } from '../hooks/use-theme';
 import { BibleText } from './BibleText';
 
 export type BibleHeaderProps = {
@@ -12,16 +14,19 @@ export type BibleHeaderProps = {
 };
 
 export function BibleHeader({ title, leftContent, rightContent, onMenuPress, showMenu = true }: BibleHeaderProps) {
+  const { colors } = useTheme();
+  const { ms } = useResponsive();
+
   return (
-    <View style={styles.header}>
+    <View style={[styles.header, { backgroundColor: colors.primary, minHeight: ms(56) }]}>
       <View style={styles.leftContainer}>
         {showMenu && (
-          <TouchableOpacity style={styles.menuBtn} onPress={onMenuPress} activeOpacity={0.7}>
-            <Feather name="menu" size={24} color="#fff" />
+          <TouchableOpacity style={[styles.menuBtn, { width: ms(40), height: ms(40), borderRadius: ms(10), marginRight: ms(8) }]} onPress={onMenuPress} activeOpacity={0.7}>
+            <Feather name="menu" size={ms(20)} color={colors.onPrimary} />
           </TouchableOpacity>
         )}
         {leftContent ? leftContent : (
-          title ? <BibleText style={styles.title}>{title}</BibleText> : null
+          title ? <BibleText style={[styles.title, { fontSize: ms(16), color: colors.onPrimary }]}>{title}</BibleText> : null
         )}
       </View>
       <View style={styles.rightContainer}>
@@ -34,9 +39,8 @@ export function BibleHeader({ title, leftContent, rightContent, onMenuPress, sho
 const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
-    height: 64,
-    paddingHorizontal: 16,
-    backgroundColor: '#008080',
+    paddingHorizontal: 8,
+    paddingVertical: 8,
     alignItems: 'center',
     justifyContent: 'space-between',
     elevation: 6,
@@ -47,26 +51,22 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   leftContainer: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
   },
   rightContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
   },
   title: {
-    color: '#fff',
     fontFamily: 'Poppins_600SemiBold',
-    fontSize: 20,
+    fontWeight: '700',
     includeFontPadding: false,
   },
   menuBtn: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: 'rgba(255,255,255,0.15)',
   },
 });
