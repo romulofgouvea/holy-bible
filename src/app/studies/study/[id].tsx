@@ -19,6 +19,7 @@ import { BibleBookModal } from '../../../components/BibleBookModal';
 import { BibleHeader } from '../../../components/BibleHeader';
 import { BibleNumberModal } from '../../../components/BibleNumberModal';
 import { BibleVersionModal } from '../../../components/BibleVersionModal';
+import { BibleBottomSheet } from '../../../components/BibleBottomSheet';
 import { ReaderSettingsModal } from '../../../components/ReaderSettingsModal';
 import { RichTextEditor, RichTextEditorRef } from '../../../components/study/RichTextEditor';
 import { StudyTopMenu } from '../../../components/study/StudyTopMenu';
@@ -215,50 +216,52 @@ export default function StudyEditorScreen() {
         onClose={() => setSettingsModalVisible(false)}
       />
 
-      <BibleBookModal
-        visible={versePickerVisible && vpStep === 'book'}
-        onClose={() => setVersePickerVisible(false)}
-        books={versionBooks}
-        versionSigla={vpVersion.toUpperCase()}
-        onVersionPress={() => {
-          setVersePickerVisible(false);
-          setVersionModalVisible(true);
-        }}
-        onSelect={(bookName) => {
-          const b = versionBooks.find((book: Book) => book.name === bookName || book.abbrev === bookName);
-          if (b) { setVpBook(b); setVpChapter(1); setVpStep('chapter'); }
-        }}
-      />
+      <BibleBottomSheet visible={versePickerVisible || versionModalVisible} onClose={() => { setVersePickerVisible(false); setVersionModalVisible(false); }}>
+        <BibleBookModal
+          visible={versePickerVisible && vpStep === 'book'}
+          onClose={() => setVersePickerVisible(false)}
+          books={versionBooks}
+          versionSigla={vpVersion.toUpperCase()}
+          onVersionPress={() => {
+            setVersePickerVisible(false);
+            setVersionModalVisible(true);
+          }}
+          onSelect={(bookName) => {
+            const b = versionBooks.find((book: Book) => book.name === bookName || book.abbrev === bookName);
+            if (b) { setVpBook(b); setVpChapter(1); setVpStep('chapter'); }
+          }}
+        />
 
-      <BibleNumberModal
-        visible={versePickerVisible && vpStep === 'chapter'}
-        onClose={() => setVersePickerVisible(false)}
-        onBack={() => setVpStep('book')}
-        title={vpBook?.name ? `Capítulos - ${vpBook.name}` : 'Capítulos'}
-        iconName="list"
-        items={vpChapters}
-        onSelect={(n: number) => { setVpChapter(n); setVpStep('verses'); }}
-      />
+        <BibleNumberModal
+          visible={versePickerVisible && vpStep === 'chapter'}
+          onClose={() => setVersePickerVisible(false)}
+          onBack={() => setVpStep('book')}
+          title={vpBook?.name ? `Capítulos - ${vpBook.name}` : 'Capítulos'}
+          iconName="list"
+          items={vpChapters}
+          onSelect={(n: number) => { setVpChapter(n); setVpStep('verses'); }}
+        />
 
-      <StudyVerseSelectModal
-        visible={versePickerVisible && vpStep === 'verses'}
-        onClose={() => setVersePickerVisible(false)}
-        onBack={() => setVpStep('chapter')}
-        bookName={vpBook?.name || ''}
-        chapter={vpChapter}
-        verses={vpVerses}
-        onConfirm={onInsertVerseHtml}
-      />
+        <StudyVerseSelectModal
+          visible={versePickerVisible && vpStep === 'verses'}
+          onClose={() => setVersePickerVisible(false)}
+          onBack={() => setVpStep('chapter')}
+          bookName={vpBook?.name || ''}
+          chapter={vpChapter}
+          verses={vpVerses}
+          onConfirm={onInsertVerseHtml}
+        />
 
-      <BibleVersionModal
-        visible={versionModalVisible}
-        onClose={() => { setVersionModalVisible(false); setVersePickerVisible(true); }}
-        onSelect={(v) => {
-          setVpVersion(v.sigla);
-          setVersionModalVisible(false);
-          setVersePickerVisible(true);
-        }}
-      />
+        <BibleVersionModal
+          visible={versionModalVisible}
+          onClose={() => { setVersionModalVisible(false); setVersePickerVisible(!!vpStep); }}
+          onSelect={(v) => {
+            setVpVersion(v.sigla);
+            setVersionModalVisible(false);
+            setVersePickerVisible(true);
+          }}
+        />
+      </BibleBottomSheet>
     </View>
   );
 }

@@ -34,13 +34,11 @@ export function BibleVersionModal({ visible, onClose, onSelect }: BibleVersionMo
     setSearchQuery('');
   };
 
+  if (!visible) return null;
+
   return (
-    <Modal visible={visible} animationType="slide" transparent>
-      <TouchableOpacity activeOpacity={1} style={styles.modalBackdrop} onPress={onClose} id="bible-version-backdrop">
-        <TouchableWithoutFeedback>
-          <View style={[styles.bottomSheet, { height: '85%', backgroundColor: colors.surface }]} id="bible-version-sheet">
-            <View style={styles.modalHandle} />
-            <View style={styles.header}>
+    <View style={{ flex: 1 }}>
+      <View style={styles.header}>
               <View style={[styles.headerIconWrap, { backgroundColor: colors.primaryContainer }]}>
                 <Feather name="book-open" size={ms(18)} color={colors.primary} />
               </View>
@@ -108,16 +106,13 @@ export function BibleVersionModal({ visible, onClose, onSelect }: BibleVersionMo
 
             <View style={[styles.divider, { backgroundColor: colors.border }]} />
 
-            <View style={styles.footer}>
-              <View style={[styles.countPill, { backgroundColor: colors.surfaceVariant, borderColor: colors.primary }]}>
-                <BibleText style={[styles.countNumber, { color: colors.primary }]}>{filteredVersions.length}</BibleText>
-                <BibleText style={[styles.countText, { color: colors.primary }]}> {filteredVersions.length === 1 ? 'versão' : 'versões'}</BibleText>
-              </View>
-            </View>
-          </View>
-        </TouchableWithoutFeedback>
-      </TouchableOpacity>
-    </Modal>
+      <View style={styles.footer}>
+        <View style={[styles.countPill, { backgroundColor: colors.surfaceVariant, borderColor: colors.primary }]}>
+          <BibleText style={[styles.countNumber, { color: colors.primary }]}>{filteredVersions.length}</BibleText>
+          <BibleText style={[styles.countText, { color: colors.primary }]}> {filteredVersions.length === 1 ? 'versão' : 'versões'}</BibleText>
+        </View>
+      </View>
+    </View>
   );
 }
 

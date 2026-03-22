@@ -20,13 +20,11 @@ export function BibleNumberModal({ visible, onClose, onBack, items, title, iconN
   const { ms, height, width } = useResponsive();
   const { colors } = useTheme();
 
+  if (!visible) return null;
+
   return (
-    <Modal visible={visible} animationType="slide" transparent>
-      <TouchableOpacity activeOpacity={1} style={styles.modalBackdrop} onPress={onClose} id="bible-number-backdrop">
-        <TouchableWithoutFeedback>
-          <View style={[styles.bottomSheet, { height: '85%', backgroundColor: colors.surface }]} id="bible-number-sheet">
-            <View style={styles.modalHandle} />
-            <View style={styles.header}>
+    <View style={{ flex: 1 }}>
+      <View style={styles.header}>
               {onBack ? (
                 <TouchableOpacity onPress={onBack} style={[styles.headerIconWrap, { backgroundColor: colors.surfaceVariant }]}>
                   <Feather name="arrow-left" size={ms(18)} color={colors.text} />
@@ -66,16 +64,13 @@ export function BibleNumberModal({ visible, onClose, onBack, items, title, iconN
 
             <View style={[styles.divider, { backgroundColor: colors.border }]} />
 
-            <View style={styles.footer}>
-              <View style={[styles.countPill, { backgroundColor: colors.surfaceVariant, borderColor: colors.primary }]}>
-                <BibleText style={[styles.countNumber, { color: colors.primary }]}>{items.length}</BibleText>
-                <BibleText style={[styles.countText, { color: colors.primary }]}> {`${title.toLowerCase()}`}</BibleText>
-              </View>
-            </View>
-          </View>
-        </TouchableWithoutFeedback>
-      </TouchableOpacity>
-    </Modal>
+      <View style={styles.footer}>
+        <View style={[styles.countPill, { backgroundColor: colors.surfaceVariant, borderColor: colors.primary }]}>
+          <BibleText style={[styles.countNumber, { color: colors.primary }]}>{items.length}</BibleText>
+          <BibleText style={[styles.countText, { color: colors.primary }]}> {`${title.toLowerCase()}`}</BibleText>
+        </View>
+      </View>
+    </View>
   );
 }
 

@@ -37,12 +37,11 @@ export function StudyVerseSelectModal({ visible, onClose, onBack, bookName, chap
     onConfirm(sorted);
   };
 
+  if (!visible) return null;
+
   return (
-    <Modal visible={visible} transparent animationType="slide">
-      <View style={styles.backdrop} id="study-verse-backdrop">
-        <View style={[styles.sheet, { height: '85%', backgroundColor: colors.surface }]} id="study-verse-sheet">
-          <View style={styles.modalHandle} />
-          <View style={styles.header}>
+    <View style={{ flex: 1 }}>
+      <View style={styles.header}>
             {onBack ? (
               <TouchableOpacity onPress={onBack} style={[styles.headerIconWrap, { backgroundColor: colors.surfaceVariant }]}>
                 <Feather name="arrow-left" size={ms(18)} color={colors.text} />
@@ -76,9 +75,7 @@ export function StudyVerseSelectModal({ visible, onClose, onBack, bookName, chap
               {selectedNums.size === 0 ? 'Versículos' : `Inserir ${selectedNums.size} ${selectedNums.size === 1 ? 'versículo' : 'versículos'}`}
             </BibleText>
           </TouchableOpacity>
-        </View>
-      </View>
-    </Modal>
+    </View>
   );
 }
 

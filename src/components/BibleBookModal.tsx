@@ -32,15 +32,12 @@ export function BibleBookModal({ visible, onClose, books, versionSigla, onVersio
     return books.filter((item) => normalize(item.name || '').includes(query) || normalize(item.abbrev || '').includes(query));
   }, [searchQuery, books]);
 
-  return (
-    <Modal visible={visible} animationType="slide" transparent>
-      <TouchableOpacity activeOpacity={1} style={styles.modalBackdrop} onPress={onClose} id="bible-book-backdrop">
-        <TouchableWithoutFeedback>
-          <View style={[styles.bottomSheet, { height: '85%', backgroundColor: colors.surface }]} id="bible-book-sheet">
-            <View style={styles.modalHandle} />
-            <View style={styles.header}>
+  if (!visible) return null;
 
-              <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
+  return (
+    <View style={{ flex: 1 }}>
+      <View style={styles.header}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
                 {versionSigla && onVersionPress ? (
                   <TouchableOpacity activeOpacity={0.7} style={[styles.versionPill, { backgroundColor: colors.primaryContainer }]} onPress={onVersionPress}>
                     <BibleText style={[styles.versionPillText, { fontSize: ms(13), color: colors.primary }]}>{versionSigla}</BibleText>
@@ -129,16 +126,13 @@ export function BibleBookModal({ visible, onClose, books, versionSigla, onVersio
 
             <View style={[styles.divider, { backgroundColor: colors.border }]} />
 
-            <View style={styles.footer}>
-              <View style={[styles.countPill, { backgroundColor: colors.surfaceVariant, borderColor: colors.primary }]}>
-                <BibleText style={[styles.countNumber, { color: colors.primary }]}>{filteredBooks.length}</BibleText>
-                <BibleText style={[styles.countText, { color: colors.primary }]}> {filteredBooks.length === 1 ? 'livro' : 'livros'}</BibleText>
-              </View>
-            </View>
-          </View>
-        </TouchableWithoutFeedback>
-      </TouchableOpacity>
-    </Modal>
+      <View style={styles.footer}>
+        <View style={[styles.countPill, { backgroundColor: colors.surfaceVariant, borderColor: colors.primary }]}>
+          <BibleText style={[styles.countNumber, { color: colors.primary }]}>{filteredBooks.length}</BibleText>
+          <BibleText style={[styles.countText, { color: colors.primary }]}> {filteredBooks.length === 1 ? 'livro' : 'livros'}</BibleText>
+        </View>
+      </View>
+    </View>
   );
 }
 

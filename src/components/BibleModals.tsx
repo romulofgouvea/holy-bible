@@ -4,6 +4,7 @@ import { useResponsive } from '../hooks/use-responsive';
 import { BibleBookModal } from './BibleBookModal';
 import { BibleNumberModal } from './BibleNumberModal';
 import { BibleVersionModal } from './BibleVersionModal';
+import { BibleBottomSheet } from './BibleBottomSheet';
 
 export type BibleModalsProps = {
   versionBooks: Book[];
@@ -44,6 +45,8 @@ export function BibleModals(props: BibleModalsProps) {
     setVerseModalVisible(false);
   };
 
+  const isAnyVisible = versionModalVisible || bookModalVisible || chapterModalVisible || verseModalVisible;
+
   const normalize = (str: string) => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 
 
@@ -64,7 +67,7 @@ export function BibleModals(props: BibleModalsProps) {
   const verseNumbers = useMemo(() => Array.from({ length: verseCount }, (_, i) => i + 1), [verseCount]);
 
   return (
-    <>
+    <BibleBottomSheet visible={isAnyVisible} onClose={closeAllModals}>
       <BibleVersionModal
         visible={versionModalVisible}
         onClose={closeAllModals}
@@ -106,6 +109,6 @@ export function BibleModals(props: BibleModalsProps) {
           setVerseModalVisible(false);
         }}
       />
-    </>
+    </BibleBottomSheet>
   );
 }
