@@ -89,6 +89,10 @@ export function BibleModals(props: BibleModalsProps) {
       <BibleNumberModal
         visible={chapterModalVisible}
         onClose={closeAllModals}
+        onBack={() => {
+          setChapterModalVisible(false);
+          setBookModalVisible(true);
+        }}
         title="Capítulos"
         iconName="list"
         items={chapterNumbers}
@@ -101,6 +105,10 @@ export function BibleModals(props: BibleModalsProps) {
       <BibleNumberModal
         visible={verseModalVisible}
         onClose={closeAllModals}
+        onBack={() => {
+          setVerseModalVisible(false);
+          setChapterModalVisible(true);
+        }}
         title="Versículos"
         iconName="align-left"
         items={verseNumbers}
