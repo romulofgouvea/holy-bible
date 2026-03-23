@@ -14,6 +14,7 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BibleDrawerMenu } from '../../components/BibleDrawerMenu';
 import { BibleHeader } from '../../components/BibleHeader';
 import { BibleText } from '../../components/BibleText';
@@ -31,8 +32,8 @@ export default function EstudosScreen() {
   const [newTitle, setNewTitle] = useState('');
   const [newDescription, setNewDescription] = useState('');
   const [drawerVisible, setDrawerVisible] = useState(false);
-  const [fabMenuVisible, setFabMenuVisible] = useState(false);
   const [studyToDelete, setStudyToDelete] = useState<string | null>(null);
+  const insets = useSafeAreaInsets();
 
   const handleCreate = () => {
     if (!newTitle.trim()) return;
@@ -87,29 +88,14 @@ export default function EstudosScreen() {
         showsVerticalScrollIndicator={false}
       />
 
-      {fabMenuVisible && (
-        <TouchableOpacity style={StyleSheet.absoluteFillObject} activeOpacity={1} onPress={() => setFabMenuVisible(false)}>
-          <View style={styles.fabMenuBackdrop} />
-        </TouchableOpacity>
-      )}
-
-      {fabMenuVisible && (
-        <View style={styles.fabActions}>
-          <TouchableOpacity style={styles.fabActionItem} onPress={() => { setFabMenuVisible(false); setModalVisible(true); }}>
-            <BibleText style={[styles.fabActionLabel, { fontSize: ms(14), color: colors.text, backgroundColor: colors.surface }]}>Novo Estudo</BibleText>
-            <View style={[styles.fabActionIcon, { backgroundColor: colors.primary }]}><Feather name="file-plus" size={ms(20)} color={colors.onPrimary} /></View>
-          </TouchableOpacity>
-        </View>
-      )}
-
-      <TouchableOpacity style={[styles.fab, { backgroundColor: colors.primary }]} onPress={() => setFabMenuVisible(!fabMenuVisible)} activeOpacity={0.85}>
-        <Feather name={fabMenuVisible ? 'x' : 'plus'} size={ms(28)} color={colors.onPrimary} />
+      <TouchableOpacity style={[styles.fab, { backgroundColor: colors.primary }]} onPress={() => setModalVisible(true)} activeOpacity={0.85}>
+        <Feather name="plus" size={ms(28)} color={colors.onPrimary} />
       </TouchableOpacity>
 
       <Modal visible={modalVisible} transparent animationType="slide">
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.modalWrapper}>
           <TouchableOpacity style={styles.modalBackdrop} activeOpacity={1} onPress={() => setModalVisible(false)} />
-          <View style={[styles.modalSheet, { backgroundColor: colors.surface }]}>
+          <View style={[styles.modalSheet, { backgroundColor: colors.surface, paddingBottom: Math.max(32, insets.bottom + 16) }]}>
             <View style={[styles.modalHandle, { backgroundColor: colors.border }]} />
             <BibleText style={[styles.modalTitle, { fontSize: ms(20), color: colors.text }]}>Novo Estudo</BibleText>
             <TextInput
@@ -197,11 +183,6 @@ const styles = StyleSheet.create({
   cardDesc: { color: '#666', lineHeight: 18 },
   cardDate: { color: '#bbb', marginTop: 2 },
   deleteBtn: { width: 38, height: 38, alignItems: 'center', justifyContent: 'center', borderRadius: 10, backgroundColor: 'rgba(231, 76, 60, 0.1)' },
-  fabMenuBackdrop: { flex: 1, backgroundColor: 'rgba(255,255,255,0.8)' },
-  fabActions: { position: 'absolute', bottom: 100, right: 24, alignItems: 'flex-end', gap: 16 },
-  fabActionItem: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  fabActionLabel: { backgroundColor: '#fff', paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20, color: '#333', fontWeight: '700', elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4 },
-  fabActionIcon: { width: 48, height: 48, borderRadius: 24, backgroundColor: '#008080', alignItems: 'center', justifyContent: 'center', elevation: 4, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.2, shadowRadius: 6 },
   fab: {
     position: 'absolute', bottom: 32, right: 24,
     width: 60, height: 60, borderRadius: 30,
