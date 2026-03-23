@@ -17,6 +17,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BibleDrawerMenu } from '../../components/BibleDrawerMenu';
 import { BibleHeader } from '../../components/BibleHeader';
+import { BibleTopMenu } from '../../components/BibleTopMenu';
 import { BibleText } from '../../components/BibleText';
 import { ROUTES } from '../../constants/routes';
 import { useResponsive } from '../../hooks/use-responsive';
@@ -299,20 +300,14 @@ export default function EstudosScreen() {
         onSelectItem={() => { }}
       />
 
-      <Modal visible={headerMenuVisible} transparent animationType="fade">
-        <TouchableOpacity style={{ flex: 1 }} activeOpacity={1} onPress={() => setHeaderMenuVisible(false)}>
-          <View style={{ position: 'absolute', top: 50 + insets.top, right: 16, backgroundColor: colors.surface, borderRadius: 12, elevation: 8, padding: 8, minWidth: 160, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.2, shadowRadius: 8 }}>
-            <TouchableOpacity style={{ padding: 12, borderBottomWidth: 1, borderBottomColor: colors.surfaceVariant, flexDirection: 'row', gap: 12, alignItems: 'center' }} onPress={() => { setHeaderMenuVisible(false); setModalVisible(true); }}>
-              <Feather name="file-plus" size={ms(18)} color={colors.primary} />
-              <BibleText style={{ fontSize: ms(16), color: colors.text, fontWeight: '600' }}>Novo Estudo</BibleText>
-            </TouchableOpacity>
-            <TouchableOpacity style={{ padding: 12, flexDirection: 'row', gap: 12, alignItems: 'center' }} onPress={() => { setHeaderMenuVisible(false); setShowTrash(!showTrash); setSelectedIds(new Set()); }}>
-              <Feather name={showTrash ? "book-open" : "trash"} size={ms(18)} color={colors.primary} />
-              <BibleText style={{ fontSize: ms(16), color: colors.text, fontWeight: '600' }}>{showTrash ? "Ver Estudos" : "Ver Lixeira"}</BibleText>
-            </TouchableOpacity>
-          </View>
-        </TouchableOpacity>
-      </Modal>
+      <BibleTopMenu
+        visible={headerMenuVisible}
+        onClose={() => setHeaderMenuVisible(false)}
+        items={[
+          { icon: 'file-plus', label: 'Novo Estudo', onPress: () => setModalVisible(true) },
+          { icon: showTrash ? 'book-open' : 'trash', label: showTrash ? 'Ver Estudos' : 'Ver Lixeira', onPress: () => { setShowTrash(!showTrash); setSelectedIds(new Set()); } }
+        ]}
+      />
 
       <Modal visible={shareMenuVisible} transparent animationType="fade">
         <TouchableOpacity style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center' }} activeOpacity={1} onPress={() => setShareMenuVisible(false)}>

@@ -1,4 +1,3 @@
-import { BibleText } from '@/components/BibleText';
 import { Feather } from '@expo/vector-icons';
 import * as FileSystem from 'expo-file-system/legacy';
 import * as Print from 'expo-print';
@@ -7,32 +6,32 @@ import * as Sharing from 'expo-sharing';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Alert,
+  DeviceEventEmitter,
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
   TextInput,
   TouchableOpacity,
-  View,
-  DeviceEventEmitter
+  View
 } from 'react-native';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BibleBookModal } from '../../../components/BibleBookModal';
+import { BibleBottomSheet } from '../../../components/BibleBottomSheet';
 import { BibleHeader } from '../../../components/BibleHeader';
 import { BibleNumberModal } from '../../../components/BibleNumberModal';
+import { BibleTopMenu } from '../../../components/BibleTopMenu';
 import { BibleVersionModal } from '../../../components/BibleVersionModal';
-import { BibleBottomSheet } from '../../../components/BibleBottomSheet';
 import { ReaderSettingsModal } from '../../../components/ReaderSettingsModal';
 import { RichTextEditor, RichTextEditorRef } from '../../../components/study/RichTextEditor';
-import { StudyTopMenu } from '../../../components/study/StudyTopMenu';
 import { StudyVerseSelectModal } from '../../../components/study/StudyVerseSelectModal';
 import { ROUTES } from '../../../constants/routes';
+import { STORAGE_KEYS } from '../../../constants/storage';
 import { availableVersions, Book, getBibleData } from '../../../data';
 import { useReaderSettings } from '../../../hooks/use-reader-settings';
 import { useResponsive } from '../../../hooks/use-responsive';
-import { Study, useStudies } from '../../../hooks/use-studies';
+import { useStudies } from '../../../hooks/use-studies';
 import { useTheme } from '../../../hooks/use-theme';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { STORAGE_KEYS } from '../../../constants/storage';
 
 const noOutline = Platform.select({ web: { outline: 'none', outlineWidth: 0 } as any, default: {} });
 
@@ -64,9 +63,9 @@ export default function StudyEditorScreen() {
             const parsed = JSON.parse(pos);
             if (parsed.version) setVpVersion(parsed.version);
           }
-        }).catch(() => {});
+        }).catch(() => { });
       }
-    }).catch(() => {});
+    }).catch(() => { });
 
     const subscription = DeviceEventEmitter.addListener('BibleVersionChanged', (newVersion) => {
       setVpVersion(newVersion);
@@ -227,10 +226,12 @@ export default function StudyEditorScreen() {
         ) : null}
       </KeyboardAvoidingView>
 
-      <StudyTopMenu
+      <BibleTopMenu
         visible={menuVisible}
         onClose={() => setMenuVisible(false)}
-        onExportPDF={exportPDF}
+        items={[
+          { icon: 'file-text', label: 'Exportar em PDF', onPress: exportPDF }
+        ]}
       />
 
       <ReaderSettingsModal
@@ -279,7 +280,7 @@ export default function StudyEditorScreen() {
           onClose={() => { setVersionModalVisible(false); setVersePickerVisible(!!vpStep); }}
           onSelect={(v) => {
             setVpVersion(v.sigla);
-            AsyncStorage.setItem(STORAGE_KEYS.BIBLE_VERSION_GLOBAL, v.sigla).catch(() => {});
+            AsyncStorage.setItem(STORAGE_KEYS.BIBLE_VERSION_GLOBAL, v.sigla).catch(() => { });
             DeviceEventEmitter.emit('BibleVersionChanged', v.sigla);
             setVersionModalVisible(false);
             setVersePickerVisible(true);
