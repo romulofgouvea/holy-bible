@@ -1,4 +1,12 @@
 export const STORAGE_KEYS = {
   LAST_READ: 'bible-last-read',
   HIGHLIGHTS: 'bible-highlights',
+  STUDIES: 'holy-bible-studies',
+  AUTO_BACKUP: 'holy-bible-auto-backup',
+  DARK_MODE: '@bible_dark_mode',
+  FONT_SIZE: '@bible_font_size',
+  TEXT_ALIGN: '@bible_text_align',
+  READER_THEME: '@bible_reader_theme',
+  LAST_ROUTE: 'last_route',
+  LAST_ROUTE_PARAMS: 'last_route_params',
 };

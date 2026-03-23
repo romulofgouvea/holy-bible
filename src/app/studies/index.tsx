@@ -1,9 +1,7 @@
 import { BibleConfirmModal } from '@/components/BibleConfirmModal';
 import { Feather } from '@expo/vector-icons';
-import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system/legacy';
 import { useRouter } from 'expo-router';
-import * as Sharing from 'expo-sharing';
 import React, { useState } from 'react';
 import {
   Alert,
@@ -43,65 +41,6 @@ export default function EstudosScreen() {
     setNewDescription('');
     setModalVisible(false);
     router.push(ROUTES.STUDY_EDITOR(id) as any);
-  };
-
-  const handleBackup = async () => {
-    setFabMenuVisible(false);
-    try {
-      if (studies.length === 0) {
-        Alert.alert('Aviso', 'Não há estudos para exportar.');
-        return;
-      }
-      const json = JSON.stringify(studies, null, 2);
-      if (Platform.OS === 'web') {
-        const blob = new Blob([json], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a'); a.href = url; a.download = `backup_estudos_biblia_${new Date().getTime()}.json`; a.click();
-      } else {
-        const path = `${(FileSystem as any).documentDirectory}backup_estudos_${new Date().getTime()}.json`;
-        await FileSystem.writeAsStringAsync(path, json);
-        await Sharing.shareAsync(path, { mimeType: 'application/json' });
-      }
-    } catch (err) {
-      Alert.alert('Erro', 'Não foi possível criar o arquivo de backup.');
-    }
-  };
-
-  const handleImport = async () => {
-    setFabMenuVisible(false);
-    try {
-      const result = await DocumentPicker.getDocumentAsync({ type: 'application/json' });
-      if (result.canceled) return;
-
-      let raw = '';
-      if (Platform.OS === 'web' && (result.assets[0] as any).file) {
-        raw = await new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = e => resolve(e.target?.result as string);
-          reader.onerror = reject;
-          reader.readAsText((result.assets[0] as any).file);
-        });
-      } else if (Platform.OS === 'web') {
-        raw = await fetch(result.assets[0].uri).then(r => r.text());
-      } else {
-        raw = await FileSystem.readAsStringAsync(result.assets[0].uri);
-      }
-
-      const parsed = JSON.parse(raw);
-      if (!Array.isArray(parsed)) {
-        Alert.alert('Erro', 'Formato de arquivo inválido. É esperado um backup de múltiplos estudos (Array). Se você está tentando importar um único estudo antigo, crie um novo e cole os dados.');
-        return;
-      }
-
-      const importedCount = importBulk(parsed);
-      Alert.alert(
-        'Restauração Concluída',
-        `${importedCount} estudo(s) restaurado(s) com sucesso.\n\n(${parsed.length - importedCount} ignorados pois já existem no app.)`
-      );
-    } catch (err) {
-      console.log('Import err', err);
-      Alert.alert('Erro', 'Não foi possível tratar o arquivo de restauração.');
-    }
   };
 
   const renderEmpty = () => (
@@ -160,16 +99,6 @@ export default function EstudosScreen() {
             <BibleText style={[styles.fabActionLabel, { fontSize: ms(14), color: colors.text, backgroundColor: colors.surface }]}>Novo Estudo</BibleText>
             <View style={[styles.fabActionIcon, { backgroundColor: colors.primary }]}><Feather name="file-plus" size={ms(20)} color={colors.onPrimary} /></View>
           </TouchableOpacity>
-
-          <TouchableOpacity style={styles.fabActionItem} onPress={handleBackup}>
-            <BibleText style={[styles.fabActionLabel, { fontSize: ms(14), color: colors.text, backgroundColor: colors.surface }]}>Fazer Bkp</BibleText>
-            <View style={[styles.fabActionIcon, { backgroundColor: '#3498db' }]}><Feather name="download" size={ms(20)} color="#fff" /></View>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.fabActionItem} onPress={handleImport}>
-            <BibleText style={[styles.fabActionLabel, { fontSize: ms(14), color: colors.text, backgroundColor: colors.surface }]}>Restaurar Bkp</BibleText>
-            <View style={[styles.fabActionIcon, { backgroundColor: '#e74c3c' }]}><Feather name="upload" size={ms(20)} color="#fff" /></View>
-          </TouchableOpacity>
         </View>
       )}
 
@@ -221,6 +150,7 @@ export default function EstudosScreen() {
         title="Excluir estudo"
         message="Tem certeza? Esta ação não pode ser desfeita e todos os blocos do estudo serão perdidos."
         confirmText="Excluir"
+        isDanger={true}
         onCancel={() => setStudyToDelete(null)}
         onConfirm={() => {
           if (studyToDelete) deleteStudy(studyToDelete);

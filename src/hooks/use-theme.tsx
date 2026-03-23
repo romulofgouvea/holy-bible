@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import { STORAGE_KEYS } from '../constants/storage';
 
 export type ThemeColors = {
   background: string;
@@ -55,7 +56,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     (async () => {
       try {
-        const saved = await AsyncStorage.getItem('@bible_dark_mode');
+        const saved = await AsyncStorage.getItem(STORAGE_KEYS.DARK_MODE);
         if (saved !== null) setIsDarkMode(saved === 'true');
       } catch (e) { }
       setLoaded(true);
@@ -66,7 +67,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const nextVal = value !== undefined ? value : !isDarkMode;
     setIsDarkMode(nextVal);
     try {
-      await AsyncStorage.setItem('@bible_dark_mode', String(nextVal));
+      await AsyncStorage.setItem(STORAGE_KEYS.DARK_MODE, String(nextVal));
     } catch (e) { }
   };
 

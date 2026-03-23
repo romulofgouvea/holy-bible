@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useCallback, useEffect, useState } from 'react';
+import { STORAGE_KEYS } from '../constants/storage';
 
 export type Study = {
   id: string;
@@ -8,8 +9,6 @@ export type Study = {
   timestamp?: number;
   content: string;
 };
-
-const STORAGE_KEY = 'holy-bible-studies';
 
 function makeId() {
   return Math.random().toString(36).slice(2) + Date.now().toString(36);
@@ -41,7 +40,7 @@ export function useStudies() {
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    AsyncStorage.getItem(STORAGE_KEY).then((raw) => {
+    AsyncStorage.getItem(STORAGE_KEYS.STUDIES).then((raw) => {
       if (raw) {
         const parsed = JSON.parse(raw);
         const migrated = parsed.map((s: any) => {
@@ -62,7 +61,18 @@ export function useStudies() {
 
   const persist = useCallback((updated: Study[]) => {
     setStudies(updated);
-    AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updated)).catch(() => {});
+    AsyncStorage.setItem(STORAGE_KEYS.STUDIES, JSON.stringify(updated)).catch(() => {});
+
+    AsyncStorage.getItem(STORAGE_KEYS.AUTO_BACKUP).then(val => {
+      if (val === 'true') {
+        const { Platform } = require('react-native');
+        if (Platform.OS !== 'web') {
+          const FileSystem = require('expo-file-system/legacy');
+          const path = `${FileSystem.documentDirectory}backup_estudos_automatico.json`;
+          FileSystem.writeAsStringAsync(path, JSON.stringify(updated, null, 2)).catch(() => {});
+        }
+      }
+    }).catch(() => {});
   }, []);
 
   const createStudy = useCallback((title: string, description?: string) => {

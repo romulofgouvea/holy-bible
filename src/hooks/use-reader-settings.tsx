@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import { STORAGE_KEYS } from '../constants/storage';
 import { darkColors, lightColors, ThemeColors } from './use-theme';
 
 export type ReaderTheme = 'light' | 'dark' | 'sepia';
@@ -39,9 +40,9 @@ export const ReaderSettingsProvider = ({ children }: { children: React.ReactNode
   useEffect(() => {
     (async () => {
       try {
-        const savedFontSize = await AsyncStorage.getItem('@bible_font_size');
-        const savedAlign = await AsyncStorage.getItem('@bible_text_align');
-        const savedTheme = await AsyncStorage.getItem('@bible_reader_theme');
+        const savedFontSize = await AsyncStorage.getItem(STORAGE_KEYS.FONT_SIZE);
+        const savedAlign = await AsyncStorage.getItem(STORAGE_KEYS.TEXT_ALIGN);
+        const savedTheme = await AsyncStorage.getItem(STORAGE_KEYS.READER_THEME);
 
         if (savedFontSize !== null) setFontSizeMultiplierState(Number(savedFontSize));
         if (savedAlign !== null) setTextAlignState(savedAlign as TextAlign);
@@ -53,17 +54,17 @@ export const ReaderSettingsProvider = ({ children }: { children: React.ReactNode
 
   const setFontSizeMultiplier = async (val: number) => {
     setFontSizeMultiplierState(val);
-    try { await AsyncStorage.setItem('@bible_font_size', String(val)); } catch (e) { }
+    try { await AsyncStorage.setItem(STORAGE_KEYS.FONT_SIZE, String(val)); } catch (e) { }
   };
 
   const setTextAlign = async (val: TextAlign) => {
     setTextAlignState(val);
-    try { await AsyncStorage.setItem('@bible_text_align', val); } catch (e) { }
+    try { await AsyncStorage.setItem(STORAGE_KEYS.TEXT_ALIGN, val); } catch (e) { }
   };
 
   const setReaderTheme = async (val: ReaderTheme) => {
     setReaderThemeState(val);
-    try { await AsyncStorage.setItem('@bible_reader_theme', val); } catch (e) { }
+    try { await AsyncStorage.setItem(STORAGE_KEYS.READER_THEME, val); } catch (e) { }
   };
 
   const readerColors = readerTheme === 'sepia' ? sepiaColors : (readerTheme === 'dark' ? darkColors : lightColors);
