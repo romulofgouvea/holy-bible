@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Slot, usePathname, useGlobalSearchParams, useRouter, useRootNavigationState } from 'expo-router';
+import { Slot, useGlobalSearchParams, usePathname, useRootNavigationState, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { ReaderSettingsProvider } from '../hooks/use-reader-settings';
@@ -23,10 +23,10 @@ function useRoutePersistence() {
         const savedParams = await AsyncStorage.getItem('last_route_params');
         if (savedPath && savedPath !== '/') {
           const query = savedParams ? JSON.parse(savedParams) : {};
-          
+
           // Only redirect if we are not already on that path
           if (pathname !== savedPath) {
-             router.replace({ pathname: savedPath as any, params: query });
+            router.replace({ pathname: savedPath as any, params: query });
           }
         }
       } catch (e) {
@@ -40,10 +40,10 @@ function useRoutePersistence() {
 
   useEffect(() => {
     if (isRestored && pathname && pathname !== '/') {
-      AsyncStorage.setItem('last_route', pathname).catch(() => {});
+      AsyncStorage.setItem('last_route', pathname).catch(() => { });
       try {
-        AsyncStorage.setItem('last_route_params', JSON.stringify(params || {})).catch(() => {});
-      } catch (err) {}
+        AsyncStorage.setItem('last_route_params', JSON.stringify(params || {})).catch(() => { });
+      } catch (err) { }
     }
   }, [pathname, params, isRestored]);
 
@@ -55,15 +55,12 @@ function AppLayout() {
   useRoutePersistence();
 
   return (
-    <>
-      <StatusBar style="light" />
-      <SafeAreaView edges={['top']} style={{ flex: 0, backgroundColor: colors.primary, zIndex: 10 }} />
-      <SafeAreaView edges={['left', 'right', 'bottom']} style={{ flex: 1, backgroundColor: '#000000' }}>
-        <View style={{ flex: 1, backgroundColor: colors.background }}>
-          <Slot />
-        </View>
-      </SafeAreaView>
-    </>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#000000' }}>
+      <StatusBar style="light" backgroundColor="black" />
+      <View style={{ flex: 1, backgroundColor: colors.background }}>
+        <Slot />
+      </View>
+    </SafeAreaView>
   );
 }
 

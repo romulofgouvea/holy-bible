@@ -1,5 +1,6 @@
 import React from 'react';
 import { Modal, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../hooks/use-theme';
 
 type BibleBottomSheetProps = {
@@ -10,12 +11,13 @@ type BibleBottomSheetProps = {
 
 export function BibleBottomSheet({ visible, onClose, children }: BibleBottomSheetProps) {
   const { colors } = useTheme();
+  const insets = useSafeAreaInsets();
   
   return (
     <Modal visible={visible} animationType="slide" transparent>
       <TouchableOpacity activeOpacity={1} style={styles.modalBackdrop} onPress={onClose}>
         <TouchableWithoutFeedback>
-          <View style={[styles.bottomSheet, { height: '85%', backgroundColor: colors.surface }]}>
+          <View style={[styles.bottomSheet, { height: '85%', backgroundColor: colors.surface, paddingBottom: Math.max(8, insets.bottom + 8) }]}>
             <View style={styles.modalHandle} />
             {children}
           </View>

@@ -20,7 +20,8 @@
         "backgroundColor": "#008080",
         "foregroundImage": "./assets/images/icon.jpg"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "softwareKeyboardLayoutMode": "resize"
     },
     "web": {
       "output": "static",

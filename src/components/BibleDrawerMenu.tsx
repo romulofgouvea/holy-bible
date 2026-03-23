@@ -1,7 +1,8 @@
 import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
-import { Animated, Dimensions, Modal, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { Animated, Modal, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ROUTES } from '../constants/routes';
 import { useResponsive } from '../hooks/use-responsive';
 import { useTheme } from '../hooks/use-theme';
@@ -34,7 +35,8 @@ export function BibleDrawerMenu(props: DrawerMenuProps) {
   const { colors } = useTheme();
   const [modalVisible, setModalVisible] = useState(visible);
   const router = useRouter();
-  
+  const insets = useSafeAreaInsets();
+
   // Initialize with -1000 so it starts off-screen and updates gracefully.
   const translateX = useRef(new Animated.Value(-1000)).current;
   const backdropOpacity = useRef(new Animated.Value(0)).current;
@@ -89,7 +91,7 @@ export function BibleDrawerMenu(props: DrawerMenuProps) {
         </TouchableWithoutFeedback>
 
         <Animated.View style={[styles.drawer, { width: drawerWidth, transform: [{ translateX }], backgroundColor: colors.surface }]}>
-          <View style={[styles.drawerHeader, { backgroundColor: colors.primary, paddingTop: ms(24), paddingBottom: ms(20), paddingHorizontal: ms(20) }]}>
+          <View style={[styles.drawerHeader, { backgroundColor: colors.primary, paddingTop: Math.max(ms(20), insets.top + ms(16)), paddingBottom: ms(20), paddingHorizontal: ms(20) }]}>
             <View style={[styles.drawerLogo, { width: ms(38), height: ms(38), borderRadius: ms(10), marginRight: ms(10) }]}>
               <Feather name="book" size={ms(19)} color={colors.onPrimary} />
             </View>
@@ -121,9 +123,6 @@ export function BibleDrawerMenu(props: DrawerMenuProps) {
             })}
           </View>
 
-          <View style={[styles.drawerFooter, { borderTopColor: colors.border }]}>
-            <BibleText style={[styles.footerText, { fontSize: ms(11), color: colors.textMuted }]}>Stevanini</BibleText>
-          </View>
         </Animated.View>
       </View>
     </Modal>
@@ -208,7 +207,7 @@ const styles = StyleSheet.create({
     fontWeight: '800',
   },
   drawerFooter: {
-    padding: 16,
+    padding: 8,
     alignItems: 'center',
     borderTopWidth: 1,
     borderTopColor: '#f0f0f0',

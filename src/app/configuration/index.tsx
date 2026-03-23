@@ -7,6 +7,7 @@ import { BibleText } from '../../components/BibleText';
 import { useReaderSettings } from '../../hooks/use-reader-settings';
 import { useResponsive } from '../../hooks/use-responsive';
 import { useTheme } from '../../hooks/use-theme';
+import pkg from '../../../package.json';
 
 export default function ConfigurationScreen() {
   const { ms } = useResponsive();
@@ -46,6 +47,22 @@ export default function ConfigurationScreen() {
               thumbColor={isDarkMode ? colors.primary : '#f4f3f4'}
             />
           </TouchableOpacity>
+        </View>
+
+        <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border, marginTop: 16 }]}>
+          <View style={styles.cardHeader}>
+            <View style={[styles.iconWrap, { backgroundColor: colors.surfaceVariant }]}>
+              <Feather name="info" size={ms(20)} color={colors.primary} />
+            </View>
+            <View style={styles.cardTextContainer}>
+              <BibleText style={[styles.cardTitle, { fontSize: ms(16), color: colors.text }]}>
+                Versão do App
+              </BibleText>
+              <BibleText style={[styles.cardDesc, { fontSize: ms(13), color: colors.textMuted }]}>
+                Atualizado na versão {pkg.version}
+              </BibleText>
+            </View>
+          </View>
         </View>
       </View>
 
