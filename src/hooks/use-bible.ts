@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { DeviceEventEmitter } from 'react-native';
 import { STORAGE_KEYS } from '../constants/storage';
 import { availableVersions, Book, getBibleData } from '../data';
 
@@ -8,6 +9,19 @@ export function useBible() {
   const versionBooks = useMemo(() => getBibleData(version), [version]);
 
   const [book, setBook] = useState('gn');
+
+  useEffect(() => {
+    const subscription = DeviceEventEmitter.addListener('BibleVersionChanged', (newVersion) => {
+      setVersion(newVersion);
+    });
+    return () => subscription.remove();
+  }, []);
+
+  const handleSetVersion = useCallback((v: string) => {
+    setVersion(v);
+    AsyncStorage.setItem(STORAGE_KEYS.BIBLE_VERSION_GLOBAL, v).catch(() => {});
+    DeviceEventEmitter.emit('BibleVersionChanged', v);
+  }, []);
   const [chapter, setChapter] = useState(1);
   const [verse, setVerse] = useState(1);
 
@@ -28,10 +42,19 @@ export function useBible() {
   useEffect(() => {
     const loadState = async () => {
       try {
+        const globalV = await AsyncStorage.getItem(STORAGE_KEYS.BIBLE_VERSION_GLOBAL);
         const savedPos = await AsyncStorage.getItem(STORAGE_KEYS.LAST_READ);
+        
+        if (globalV) {
+          setVersion(globalV);
+        }
+
         if (savedPos) {
           const parsed = JSON.parse(savedPos);
-          if (parsed.version) setVersion(parsed.version);
+          if (!globalV && parsed.version) {
+            setVersion(parsed.version);
+            AsyncStorage.setItem(STORAGE_KEYS.BIBLE_VERSION_GLOBAL, parsed.version).catch(() => {});
+          }
           if (parsed.book) setBook(parsed.book);
           if (parsed.chapter) setChapter(parsed.chapter);
           if (parsed.verse) setVerse(parsed.verse);
@@ -170,7 +193,7 @@ export function useBible() {
 
   return {
     isReady,
-    version, setVersion, versionBooks,
+    version, setVersion: handleSetVersion, versionBooks,
     book, setBook, currentBook,
     chapter, setChapter, chapterCount,
     verse, setVerse,

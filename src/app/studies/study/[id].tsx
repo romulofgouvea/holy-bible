@@ -13,6 +13,7 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  DeviceEventEmitter
 } from 'react-native';
 
 import { BibleBookModal } from '../../../components/BibleBookModal';
@@ -30,6 +31,8 @@ import { useReaderSettings } from '../../../hooks/use-reader-settings';
 import { useResponsive } from '../../../hooks/use-responsive';
 import { Study, useStudies } from '../../../hooks/use-studies';
 import { useTheme } from '../../../hooks/use-theme';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { STORAGE_KEYS } from '../../../constants/storage';
 
 const noOutline = Platform.select({ web: { outline: 'none', outlineWidth: 0 } as any, default: {} });
 
@@ -51,6 +54,25 @@ export default function StudyEditorScreen() {
   const [versionModalVisible, setVersionModalVisible] = useState(false);
   const [vpVersion, setVpVersion] = useState(availableVersions[0]);
   const [vpBook, setVpBook] = useState<Book | null>(null);
+
+  useEffect(() => {
+    AsyncStorage.getItem(STORAGE_KEYS.BIBLE_VERSION_GLOBAL).then(val => {
+      if (val) setVpVersion(val);
+      else {
+        AsyncStorage.getItem(STORAGE_KEYS.LAST_READ).then(pos => {
+          if (pos) {
+            const parsed = JSON.parse(pos);
+            if (parsed.version) setVpVersion(parsed.version);
+          }
+        }).catch(() => {});
+      }
+    }).catch(() => {});
+
+    const subscription = DeviceEventEmitter.addListener('BibleVersionChanged', (newVersion) => {
+      setVpVersion(newVersion);
+    });
+    return () => subscription.remove();
+  }, []);
   const [vpChapter, setVpChapter] = useState(1);
   const [vpStep, setVpStep] = useState<'book' | 'chapter' | 'verses'>('book');
 
@@ -257,6 +279,8 @@ export default function StudyEditorScreen() {
           onClose={() => { setVersionModalVisible(false); setVersePickerVisible(!!vpStep); }}
           onSelect={(v) => {
             setVpVersion(v.sigla);
+            AsyncStorage.setItem(STORAGE_KEYS.BIBLE_VERSION_GLOBAL, v.sigla).catch(() => {});
+            DeviceEventEmitter.emit('BibleVersionChanged', v.sigla);
             setVersionModalVisible(false);
             setVersePickerVisible(true);
           }}

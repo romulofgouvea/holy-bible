@@ -5,6 +5,7 @@ export const STORAGE_KEYS = {
   AUTO_BACKUP: 'holy-bible-auto-backup',
   AUTO_BACKUP_FILE_URI: 'holy-bible-auto-backup-file-uri',
   DARK_MODE: '@bible_dark_mode',
+  BIBLE_VERSION_GLOBAL: 'holy-bible-version-global',
   VIEW_MODE_VERSION: 'holy-bible-view-mode-version',
   VIEW_MODE_BOOK: 'holy-bible-view-mode-book',
   VIEW_MODE_STUDY_VERSE: 'holy-bible-view-mode-study-verse',
