@@ -68,8 +68,16 @@ export function useStudies() {
         const { Platform } = require('react-native');
         if (Platform.OS !== 'web') {
           const FileSystem = require('expo-file-system/legacy');
-          const path = `${FileSystem.documentDirectory}backup_estudos_automatico.json`;
-          FileSystem.writeAsStringAsync(path, JSON.stringify(updated, null, 2)).catch(() => {});
+          if (Platform.OS === 'android') {
+            AsyncStorage.getItem(STORAGE_KEYS.AUTO_BACKUP_FILE_URI).then(fileUri => {
+              if (fileUri) {
+                FileSystem.writeAsStringAsync(fileUri, JSON.stringify(updated, null, 2)).catch(() => {});
+              }
+            }).catch(() => {});
+          } else {
+            const path = `${FileSystem.documentDirectory}backup_estudos_automatico.json`;
+            FileSystem.writeAsStringAsync(path, JSON.stringify(updated, null, 2)).catch(() => {});
+          }
         }
       }
     }).catch(() => {});

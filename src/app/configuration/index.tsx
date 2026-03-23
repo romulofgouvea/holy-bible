@@ -32,13 +32,47 @@ export default function ConfigurationScreen() {
   }, []);
 
   const handleToggleAutoBackup = async (val: boolean) => {
-    setAutoBackup(val);
-    await AsyncStorage.setItem(STORAGE_KEYS.AUTO_BACKUP, val ? 'true' : 'false');
-    if (val && Platform.OS !== 'web' && studies.length > 0) {
+    if (!val) {
+      setAutoBackup(false);
+      await AsyncStorage.setItem(STORAGE_KEYS.AUTO_BACKUP, 'false');
+      return;
+    }
+
+    if (Platform.OS === 'android') {
       try {
-        const path = `${FileSystem.documentDirectory}backup_estudos_automatico.json`;
-        await FileSystem.writeAsStringAsync(path, JSON.stringify(studies, null, 2));
-      } catch (e) { }
+        const permissions = await (FileSystem as any).StorageAccessFramework.requestDirectoryPermissionsAsync();
+        if (permissions.granted) {
+          const fileName = `backup_estudos_automatico`; // .json added automatically or explicitly handled by OS based on MIME
+          const fileUri = await (FileSystem as any).StorageAccessFramework.createFileAsync(permissions.directoryUri, fileName, 'application/json');
+          
+          await AsyncStorage.setItem(STORAGE_KEYS.AUTO_BACKUP_FILE_URI, fileUri);
+          await AsyncStorage.setItem(STORAGE_KEYS.AUTO_BACKUP, 'true');
+          setAutoBackup(true);
+
+          if (studies.length > 0) {
+            try {
+              await (FileSystem as any).writeAsStringAsync(fileUri, JSON.stringify(studies, null, 2));
+            } catch (e) { }
+          }
+          setAlertInfo({ title: 'Sucesso', message: 'Backup automático configurado para a pasta escolhida!' });
+        } else {
+          setAutoBackup(false);
+          await AsyncStorage.setItem(STORAGE_KEYS.AUTO_BACKUP, 'false');
+        }
+      } catch (e) {
+        setAutoBackup(false);
+        await AsyncStorage.setItem(STORAGE_KEYS.AUTO_BACKUP, 'false');
+        setAlertInfo({ title: 'Erro', message: 'Não foi possível configurar a pasta de backup.', isDanger: true });
+      }
+    } else {
+      setAutoBackup(true);
+      await AsyncStorage.setItem(STORAGE_KEYS.AUTO_BACKUP, 'true');
+      if (Platform.OS !== 'web' && studies.length > 0) {
+        try {
+          const path = `${(FileSystem as any).documentDirectory}backup_estudos_automatico.json`;
+          await (FileSystem as any).writeAsStringAsync(path, JSON.stringify(studies, null, 2));
+        } catch (e) { }
+      }
     }
   };
 

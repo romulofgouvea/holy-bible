@@ -3,6 +3,7 @@ export const STORAGE_KEYS = {
   HIGHLIGHTS: 'bible-highlights',
   STUDIES: 'holy-bible-studies',
   AUTO_BACKUP: 'holy-bible-auto-backup',
+  AUTO_BACKUP_FILE_URI: 'holy-bible-auto-backup-file-uri',
   DARK_MODE: '@bible_dark_mode',
   FONT_SIZE: '@bible_font_size',
   TEXT_ALIGN: '@bible_text_align',
