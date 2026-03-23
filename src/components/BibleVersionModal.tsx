@@ -7,6 +7,8 @@ import { BibleGridBlock } from './BibleGridBlock';
 import { BibleListCard } from './BibleListCard';
 import { BibleText } from './BibleText';
 import { useTheme } from '../hooks/use-theme';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { STORAGE_KEYS } from '../constants/storage';
 
 type BibleVersionModalProps = {
   visible: boolean;
@@ -20,6 +22,20 @@ export function BibleVersionModal({ visible, onClose, onSelect }: BibleVersionMo
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchVisible, setIsSearchVisible] = useState(false);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+
+  React.useEffect(() => {
+    if (visible) {
+      setSearchQuery('');
+      AsyncStorage.getItem(STORAGE_KEYS.VIEW_MODE_VERSION).then(val => {
+        if (val === 'list' || val === 'grid') setViewMode(val);
+      }).catch(() => {});
+    }
+  }, [visible]);
+
+  const handleSetViewMode = (mode: 'grid' | 'list') => {
+    setViewMode(mode);
+    AsyncStorage.setItem(STORAGE_KEYS.VIEW_MODE_VERSION, mode).catch(() => {});
+  };
 
   const normalize = (str: string) => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 
@@ -47,10 +63,10 @@ export function BibleVersionModal({ visible, onClose, onSelect }: BibleVersionMo
                 <Feather name="search" size={ms(18)} color={isSearchVisible ? colors.primary : colors.textMuted} />
               </TouchableOpacity>
               <View style={[styles.viewToggles, { backgroundColor: colors.surfaceVariant }]}>
-                <TouchableOpacity onPress={() => setViewMode('grid')} style={[styles.toggleBtn, viewMode === 'grid' && { backgroundColor: colors.surface }]}>
+                <TouchableOpacity onPress={() => handleSetViewMode('grid')} style={[styles.toggleBtn, viewMode === 'grid' && { backgroundColor: colors.surface }]}>
                   <Feather name="grid" size={ms(18)} color={viewMode === 'grid' ? colors.primary : colors.textMuted} />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => setViewMode('list')} style={[styles.toggleBtn, viewMode === 'list' && { backgroundColor: colors.surface }]}>
+                <TouchableOpacity onPress={() => handleSetViewMode('list')} style={[styles.toggleBtn, viewMode === 'list' && { backgroundColor: colors.surface }]}>
                   <Feather name="list" size={ms(18)} color={viewMode === 'list' ? colors.primary : colors.textMuted} />
                 </TouchableOpacity>
               </View>
