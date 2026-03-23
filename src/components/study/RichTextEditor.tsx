@@ -27,6 +27,8 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
   const [formatState, setFormatState] = useState<{
     bold?: boolean; italic?: boolean; underline?: boolean;
     justifyLeft?: boolean; justifyCenter?: boolean; justifyRight?: boolean; justifyFull?: boolean;
+    insertUnorderedList?: boolean; insertOrderedList?: boolean;
+    isTaskList?: boolean;
   }>({});
 
   const injectToEditor = (script: string) => {
@@ -146,6 +148,20 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
           color: #333;
           font-style: italic;
         }
+        ul, ol { padding-left: 24px; margin-top: 8px; margin-bottom: 8px; }
+        li { margin-bottom: 4px; }
+        ul.task-list { list-style: none; padding-left: 28px; }
+        ul.task-list li { position: relative; margin-bottom: 8px; }
+        ul.task-list li::before {
+          content: ''; position: absolute; left: -26px; top: 4px; width: 18px; height: 18px;
+          border: 2px solid #008080; border-radius: 4px; background-color: transparent; cursor: pointer; box-sizing: border-box;
+        }
+        ul.task-list li[data-checked="true"]::before {
+          background-color: #008080;
+          background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>');
+          background-size: 12px; background-repeat: no-repeat; background-position: center;
+        }
+        ul.task-list li[data-checked="true"] { text-decoration: line-through; opacity: 0.6; }
         .verse-line { margin-bottom: 10px; display: flex; gap: 8px; }
         .verse-num { font-weight: 800; color: #008080; font-size: 12px; margin-top: 2px; }
         .verse-text { font-style: italic; color: #333; }
@@ -175,6 +191,14 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
              left = true;
           }
 
+          let isTask = false;
+          let sel1 = window.getSelection();
+          if (sel1 && sel1.rangeCount > 0 && sel1.anchorNode) {
+             let node = sel1.anchorNode;
+             let li = node.nodeType === 3 ? node.parentNode.closest('li') : (node.closest ? node.closest('li') : null);
+             if (li && li.closest('ul.task-list')) isTask = true;
+          }
+
           const state = {
             bold: document.queryCommandState('bold'),
             italic: document.queryCommandState('italic'),
@@ -183,6 +207,9 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
             justifyCenter: center,
             justifyRight: right,
             justifyFull: full,
+            insertUnorderedList: document.queryCommandState('insertUnorderedList'),
+            insertOrderedList: document.queryCommandState('insertOrderedList'),
+            isTaskList: isTask,
           };
           const msg = JSON.stringify({ type: 'formatState', data: state });
           if (window.ReactNativeWebView) window.ReactNativeWebView.postMessage(msg);
@@ -193,7 +220,21 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
 
         window.execCmd = function(cmd, value) {
           editor.focus();
-          document.execCommand(cmd, false, value);
+          
+          let sel = window.getSelection();
+          let node = sel && sel.rangeCount > 0 ? sel.anchorNode : null;
+          let li = node ? (node.nodeType === 3 ? node.parentNode : node).closest('li') : null;
+          let ul = li ? li.closest('ul.task-list') : null;
+
+          if (cmd === 'insertUnorderedList' && ul) {
+            ul.classList.remove('task-list');
+          } else if (cmd === 'insertOrderedList' && ul) {
+            ul.classList.remove('task-list');
+            document.execCommand(cmd, false, value);
+          } else {
+            document.execCommand(cmd, false, value);
+          }
+          
           setTimeout(updateFormatState, 50);
         };
         
@@ -233,6 +274,80 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
           document.execCommand('fontSize', false, newSize);
         };
 
+        window.toggleTaskList = function() {
+          editor.focus();
+          let sel = window.getSelection();
+          if (!sel.rangeCount) return;
+          let node = sel.anchorNode;
+          let li = node ? (node.nodeType === 3 ? node.parentNode : node).closest('li') : null;
+          
+          if (li) {
+             let ul = li.closest('ul');
+             if (ul) {
+               ul.classList.toggle('task-list');
+             } else {
+               let ol = li.closest('ol');
+               if (ol) {
+                  document.execCommand('insertOrderedList', false, null); 
+                  document.execCommand('insertUnorderedList', false, null); 
+                  setTimeout(window.toggleTaskList, 50); 
+                  return;
+               }
+             }
+          } else {
+             document.execCommand('insertUnorderedList', false, null);
+             setTimeout(() => {
+               let sel2 = window.getSelection();
+               let node2 = sel2.anchorNode;
+               let li2 = node2 ? (node2.nodeType === 3 ? node2.parentNode : node2).closest('li') : null;
+               if (li2) {
+                 let ul2 = li2.closest('ul');
+                 if (ul2) ul2.classList.add('task-list');
+                 updateFormatState();
+               }
+             }, 50);
+             return;
+          }
+          setTimeout(updateFormatState, 50);
+        };
+
+        document.addEventListener('click', function(e) {
+          let li = e.target.closest ? e.target.closest('ul.task-list li') : null;
+          if (!li) return;
+          let rect = li.getBoundingClientRect();
+          if (e.clientX < rect.left + 8 && e.clientX > rect.left - 40) {
+              let checked = li.getAttribute('data-checked') === 'true';
+              if (checked) li.removeAttribute('data-checked');
+              else li.setAttribute('data-checked', 'true');
+              
+              e.preventDefault();
+              
+              clearTimeout(debounceTimer);
+              debounceTimer = setTimeout(() => {
+                const msg = JSON.stringify({ type: 'contentChanged', data: editor.innerHTML });
+                if (window.ReactNativeWebView) window.ReactNativeWebView.postMessage(msg);
+                else window.parent.postMessage(msg, '*');
+              }, 100);
+          }
+        });
+
+        editor.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter') {
+             let sel = window.getSelection();
+             let li = sel.anchorNode ? (sel.anchorNode.nodeType === 3 ? sel.anchorNode.parentNode : sel.anchorNode).closest('ul.task-list li') : null;
+             
+             if (li) {
+                 setTimeout(() => {
+                    let newSel = window.getSelection();
+                    let newLi = newSel.anchorNode ? (newSel.anchorNode.nodeType === 3 ? newSel.anchorNode.parentNode : newSel.anchorNode).closest('ul.task-list li') : null;
+                    if (newLi && newLi !== li) {
+                       newLi.removeAttribute('data-checked');
+                    }
+                 }, 10);
+             }
+          }
+        });
+
         window.addEventListener('message', function(event) {
           try {
             var msg = JSON.parse(event.data);
@@ -260,13 +375,13 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
 
           <View style={[styles.rowGroup, { backgroundColor: colors.surfaceVariant }]}>
             <TouchableOpacity style={styles.groupBtn} onPress={() => changeFontSize(-1)}>
-              <Feather name="minus" size={ms(14)} color={colors.text} style={{ marginRight: -4 }} />
               <BibleText style={{ fontWeight: '800', fontSize: ms(14), color: colors.text }}>A</BibleText>
+              <Feather name="minus" size={ms(14)} color={colors.text} style={{ marginRight: -4 }} />
             </TouchableOpacity>
             <View style={[styles.innerDivider, { backgroundColor: colors.border }]} />
             <TouchableOpacity style={styles.groupBtn} onPress={() => changeFontSize(1)}>
-              <Feather name="plus" size={ms(14)} color={colors.text} style={{ marginRight: -4 }} />
               <BibleText style={{ fontWeight: '800', fontSize: ms(16), color: colors.text }}>A</BibleText>
+              <Feather name="plus" size={ms(14)} color={colors.text} style={{ marginRight: -4 }} />
             </TouchableOpacity>
           </View>
 
@@ -281,6 +396,34 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
           <TouchableOpacity style={[styles.toolBtn, formatState.underline && styles.toolBtnActive]} onPress={() => execDocumentCmd('underline')}>
             <Feather name="underline" size={ms(18)} color={formatState.underline ? colors.primary : colors.text} />
           </TouchableOpacity>
+
+          <View style={styles.divider} />
+
+          <View style={[styles.rowGroup, { backgroundColor: colors.surfaceVariant }]}>
+            <TouchableOpacity style={[styles.groupBtn, formatState.insertUnorderedList && !formatState.isTaskList && { backgroundColor: colors.primary }]} onPress={() => execDocumentCmd('insertUnorderedList')}>
+              <Feather name="list" size={ms(18)} color={formatState.insertUnorderedList && !formatState.isTaskList ? colors.onPrimary : colors.text} />
+            </TouchableOpacity>
+            <View style={[styles.innerDivider, { backgroundColor: colors.border }]} />
+            <TouchableOpacity style={[styles.groupBtn, formatState.isTaskList && { backgroundColor: colors.primary }]} onPress={() => injectToEditor(`window.toggleTaskList(); true;`)}>
+              <Feather name="check-square" size={ms(18)} color={formatState.isTaskList ? colors.onPrimary : colors.text} />
+            </TouchableOpacity>
+            <View style={[styles.innerDivider, { backgroundColor: colors.border }]} />
+            <TouchableOpacity style={[styles.groupBtn, formatState.insertOrderedList && { backgroundColor: colors.primary }]} onPress={() => execDocumentCmd('insertOrderedList')}>
+              <BibleText style={{ fontWeight: '800', fontSize: ms(16), color: formatState.insertOrderedList ? colors.onPrimary : colors.text, marginTop: -2 }}>1.</BibleText>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.divider} />
+
+          <View style={[styles.rowGroup, { backgroundColor: colors.surfaceVariant }]}>
+            <TouchableOpacity style={styles.groupBtn} onPress={() => execDocumentCmd('outdent')}>
+              <Feather name="arrow-left" size={ms(16)} color={colors.text} />
+            </TouchableOpacity>
+            <View style={[styles.innerDivider, { backgroundColor: colors.border }]} />
+            <TouchableOpacity style={styles.groupBtn} onPress={() => execDocumentCmd('indent')}>
+              <Feather name="arrow-right" size={ms(16)} color={colors.text} />
+            </TouchableOpacity>
+          </View>
 
           <View style={styles.divider} />
 

@@ -163,6 +163,20 @@ export default function StudyEditorScreen() {
         .verse-num { font-weight: 800; color: #008080; font-size: 12px; margin-top: 2px; }
         .verse-text { font-style: italic; color: #333; flex: 1; }
         img { max-width: 100%; border-radius: 12px; margin: 24px 0; box-shadow: 0 4px 12px rgba(0,0,0,0.1); page-break-inside: avoid; }
+        ul, ol { padding-left: 24px; margin-top: 8px; margin-bottom: 8px; }
+        li { margin-bottom: 4px; }
+        ul.task-list { list-style: none; padding-left: 28px; }
+        ul.task-list li { position: relative; margin-bottom: 8px; }
+        ul.task-list li::before {
+          content: ''; position: absolute; left: -26px; top: 4px; width: 18px; height: 18px;
+          border: 2px solid #008080; border-radius: 4px; background-color: transparent; box-sizing: border-box;
+        }
+        ul.task-list li[data-checked="true"]::before {
+          background-color: #008080;
+          background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>');
+          background-size: 12px; background-repeat: no-repeat; background-position: center;
+        }
+        ul.task-list li[data-checked="true"] { text-decoration: line-through; opacity: 0.6; }
       `;
 
       const htmlDocument = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${study.title}</title><style>${css}</style></head><body>
