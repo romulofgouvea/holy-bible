@@ -8,6 +8,8 @@ export type Study = {
   createdAt: string;
   timestamp?: number;
   content: string;
+  isActive?: boolean;
+  deletedAt?: number;
 };
 
 function makeId() {
@@ -43,11 +45,15 @@ export function useStudies() {
     AsyncStorage.getItem(STORAGE_KEYS.STUDIES).then((raw) => {
       if (raw) {
         const parsed = JSON.parse(raw);
-        const migrated = parsed.map((s: any) => {
+        const now = Date.now();
+        const THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;
+        
+        const migrated = parsed.filter((s: any) => {
+          if (s.isActive === false && s.deletedAt && now - s.deletedAt > THIRTY_DAYS) return false;
+          return true;
+        }).map((s: any) => {
           if (s.blocks && (!s.content || s.content.trim() === '')) {
             s.content = migrateBlocksToHtml(s.blocks);
-            delete s.blocks;
-            return s as Study;
           }
           if (!s.content) s.content = '<p><br></p>';
           delete s.blocks;
@@ -90,6 +96,7 @@ export function useStudies() {
       createdAt: new Date().toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }),
       timestamp: Date.now(),
       content: description ? `<p>${description}</p>` : '<p><br></p>',
+      isActive: true,
     };
     persist([study, ...studies]);
     return study.id;
@@ -109,6 +116,7 @@ export function useStudies() {
         createdAt: s.createdAt || new Date().toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }),
         timestamp: s.timestamp || Date.now(),
         content: s.content,
+        isActive: s.isActive !== false,
       };
     });
     
@@ -127,12 +135,43 @@ export function useStudies() {
   }, [studies, persist]);
 
   const deleteStudy = useCallback((id: string) => {
-    persist(studies.filter((s) => s.id !== id));
+    persist(studies.map((s) => s.id === id ? { ...s, isActive: false, deletedAt: Date.now() } : s));
+  }, [studies, persist]);
+
+  const deleteMultiple = useCallback((ids: string[]) => {
+    const idSet = new Set(ids);
+    persist(studies.map(s => idSet.has(s.id) ? { ...s, isActive: false, deletedAt: Date.now() } : s));
+  }, [studies, persist]);
+
+  const restoreMultiple = useCallback((ids: string[]) => {
+    const idSet = new Set(ids);
+    persist(studies.map(s => idSet.has(s.id) ? { ...s, isActive: true, deletedAt: undefined } : s));
+  }, [studies, persist]);
+
+  const deleteMultiplePermanently = useCallback((ids: string[]) => {
+    const idSet = new Set(ids);
+    persist(studies.filter(s => !idSet.has(s.id)));
   }, [studies, persist]);
 
   const getStudy = useCallback((id: string) => {
     return studies.find((s) => s.id === id);
   }, [studies]);
 
-  return { studies, loaded, createStudy, importBulk, updateStudy, deleteStudy, getStudy };
+  const activeStudies = studies.filter(s => s.isActive !== false);
+  const trashedStudies = studies.filter(s => s.isActive === false);
+
+  return { 
+    studies: activeStudies, 
+    trashedStudies, 
+    allStudies: studies, 
+    loaded, 
+    createStudy, 
+    importBulk, 
+    updateStudy, 
+    deleteStudy, 
+    deleteMultiple, 
+    restoreMultiple, 
+    deleteMultiplePermanently, 
+    getStudy 
+  };
 }
