@@ -2,7 +2,7 @@
   "expo": {
     "name": "Bíblia Online",
     "slug": "holy-bible",
-    "version": "1.0.3",
+    "version": "1.0.5",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "holybible",
@@ -18,7 +18,7 @@
       "package": "br.com.stevanini.holybible",
       "adaptiveIcon": {
         "backgroundColor": "#008080",
-        "foregroundImage": "./assets/images/icon.png"
+        "foregroundImage": "./assets/images/adaptive-icon.png"
       },
       "predictiveBackGestureEnabled": false,
       "softwareKeyboardLayoutMode": "resize"
