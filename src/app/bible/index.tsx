@@ -4,7 +4,7 @@ import { ReaderSettingsModal } from '@/components/ReaderSettingsModal';
 import { Feather } from '@expo/vector-icons';
 import { useLocalSearchParams } from 'expo-router';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Animated, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Animated, Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { BibleDrawerMenu } from '../../components/BibleDrawerMenu';
 import { BibleText } from '../../components/BibleText';
 import { BibleTopBar } from '../../components/BibleTopBar';
@@ -57,6 +57,15 @@ export default function BibleScreen() {
   const isAutoScrolling = useRef(false);
   const targetScrollIndex = useRef({ sectionIndex: 0, itemIndex: 0 });
   const initialScrollDone = useRef(false);
+
+  // Sync state → browser URL bar (web only).
+  // Uses history.replaceState so the router is NOT triggered — no navigation, no loop.
+  useEffect(() => {
+    if (!isReady || Platform.OS !== 'web' || typeof window === 'undefined') return;
+    const abbrev = (currentBook.abbrev || book).toLowerCase();
+    const url = `/bible/${version.toLowerCase()}/${abbrev}/${chapter}`;
+    window.history.replaceState(null, '', url);
+  }, [version, currentBook.abbrev, chapter, isReady]);
 
   useEffect(() => {
     if (isReady && !initialScrollDone.current) {

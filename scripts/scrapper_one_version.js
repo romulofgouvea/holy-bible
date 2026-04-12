@@ -3,8 +3,21 @@ const https = require('https');
 const cheerio = require('cheerio');
 
 // CONFIGURAÇÃO
-const VERSION = 'acf'; // Altere para 'acf' se quiser raspar a ACF
-const TARGET_FILE = 'src/data/ACF.json'; // Arquivo JSON a ser atualizado
+const VERSION = 'acf';
+const TARGET_FILE = 'src/data/ACF.json';
+
+// const VERSION = 'ara'; 
+// const TARGET_FILE = 'src/data/ARA.json';
+
+// const VERSION = 'naa'; 
+// const TARGET_FILE = 'src/data/NAA.json';
+
+// const VERSION = 'nvi'; 
+// const TARGET_FILE = 'src/data/NVI.json';
+
+// const VERSION = 'nvt'; 
+// const TARGET_FILE = 'src/data/NVT.json';
+
 const PROGRESS_FILE = `scripts/scrapper_progress_${VERSION}.json`;
 
 const fetchHtml = (url) => new Promise((resolve, reject) => {
