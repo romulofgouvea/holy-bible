@@ -123,6 +123,9 @@ export function BibleDrawerMenu(props: DrawerMenuProps) {
             })}
           </View>
 
+          <View style={[styles.drawerFooter]}>
+            <BibleText style={[styles.footerText, { fontSize: ms(12) }]}>{require('../../package.json').version}</BibleText>
+          </View>
         </Animated.View>
       </View>
     </Modal>

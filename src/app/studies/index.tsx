@@ -37,11 +37,10 @@ export default function EstudosScreen() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [headerMenuVisible, setHeaderMenuVisible] = useState(false);
   const [shareMenuVisible, setShareMenuVisible] = useState(false);
-  const [showTrash, setShowTrash] = useState(false);
   const insets = useSafeAreaInsets();
 
-  const { deleteMultiple, restoreMultiple, deleteMultiplePermanently, trashedStudies, studies, createStudy, deleteStudy, importBulk } = useStudies();
-  const currentStudies = showTrash ? trashedStudies : studies;
+  const { deleteMultiple, studies, createStudy, deleteStudy, importBulk } = useStudies();
+  const currentStudies = studies;
 
   const isSelectionMode = selectedIds.size > 0;
 
@@ -57,7 +56,7 @@ export default function EstudosScreen() {
   const exportBackup = async (ids: Set<string>) => {
     setShareMenuVisible(false);
     try {
-      const selectedStudies = showTrash ? trashedStudies.filter(s => ids.has(s.id)) : studies.filter(s => ids.has(s.id));
+      const selectedStudies = studies.filter(s => ids.has(s.id));
       if (selectedStudies.length === 0) return;
       const Sharing = require('expo-sharing');
       const safeTitle = selectedStudies.length === 1 ? selectedStudies[0].title.replace(/[^a-zA-Z0-9]/g, '_') : 'backup_estudos';
@@ -71,7 +70,7 @@ export default function EstudosScreen() {
   const exportPDFs = async (ids: Set<string>) => {
     setShareMenuVisible(false);
     try {
-      const selectedStudies = showTrash ? trashedStudies.filter(s => ids.has(s.id)) : studies.filter(s => ids.has(s.id));
+      const selectedStudies = studies.filter(s => ids.has(s.id));
       if (selectedStudies.length === 0) return;
 
       const css = `
@@ -159,8 +158,8 @@ export default function EstudosScreen() {
 
     return (
       <TouchableOpacity
-        style={[styles.card, { backgroundColor: isSelected ? colors.primaryContainer : (showTrash ? '#fff0f0' : colors.surface), borderColor: isSelected ? colors.primary : (showTrash ? '#ffcdd2' : colors.border) }]}
-        onPress={() => isSelectionMode ? toggleSelection(item.id) : (showTrash ? toggleSelection(item.id) : router.push(ROUTES.STUDY_EDITOR(item.id) as any))}
+        style={[styles.card, { backgroundColor: isSelected ? colors.primaryContainer : colors.surface, borderColor: isSelected ? colors.primary : colors.border }]}
+        onPress={() => isSelectionMode ? toggleSelection(item.id) : router.push(ROUTES.STUDY_EDITOR(item.id) as any)}
         onLongPress={() => toggleSelection(item.id)}
         activeOpacity={0.75}
       >
@@ -173,15 +172,12 @@ export default function EstudosScreen() {
             )}
           </TouchableOpacity>
           <View style={styles.cardText}>
-            <BibleText style={[styles.cardTitle, { fontSize: ms(16), color: showTrash ? '#d32f2f' : colors.text }]}>{item.title}</BibleText>
+            <BibleText style={[styles.cardTitle, { fontSize: ms(16), color: colors.text }]}>{item.title}</BibleText>
             <BibleText style={[styles.cardDate, { fontSize: ms(12), color: colors.border }]}>{item.createdAt}</BibleText>
           </View>
           {!isSelectionMode && (
-            <TouchableOpacity onPress={() => {
-              if (showTrash) restoreMultiple([item.id]);
-              else setStudyToDelete(item.id);
-            }} style={[styles.deleteBtn, showTrash && { backgroundColor: colors.primaryContainer }]}>
-              <Feather name={showTrash ? "corner-up-left" : "trash-2"} size={ms(18)} color={showTrash ? colors.primary : "#e74c3c"} />
+            <TouchableOpacity onPress={() => setStudyToDelete(item.id)} style={styles.deleteBtn}>
+              <Feather name="trash-2" size={ms(18)} color="#e74c3c" />
             </TouchableOpacity>
           )}
         </View>
@@ -202,18 +198,9 @@ export default function EstudosScreen() {
           }
           rightContent={
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
-              {showTrash ? (
-                <TouchableOpacity onPress={() => {
-                  restoreMultiple(Array.from(selectedIds));
-                  setSelectedIds(new Set());
-                }}>
-                  <Feather name="corner-up-left" size={ms(20)} color={colors.onPrimary} />
-                </TouchableOpacity>
-              ) : (
-                <TouchableOpacity onPress={() => setShareMenuVisible(true)}>
-                  <Feather name="share-2" size={ms(20)} color={colors.onPrimary} />
-                </TouchableOpacity>
-              )}
+              <TouchableOpacity onPress={() => setShareMenuVisible(true)}>
+                <Feather name="share-2" size={ms(20)} color={colors.onPrimary} />
+              </TouchableOpacity>
               <TouchableOpacity onPress={() => setMultiDeleteVisible(true)}>
                 <Feather name="trash-2" size={ms(20)} color={colors.onPrimary} />
               </TouchableOpacity>
@@ -221,7 +208,7 @@ export default function EstudosScreen() {
           }
         />
       ) : (
-        <BibleHeader title={showTrash ? "Lixeira" : "Estudos"} onMenuPress={() => setDrawerVisible(true)} rightContent={
+        <BibleHeader title="Estudos" onMenuPress={() => setDrawerVisible(true)} rightContent={
           <TouchableOpacity onPress={() => setHeaderMenuVisible(true)} style={{ padding: 4 }}>
             <Feather name="more-vertical" size={ms(24)} color={colors.onPrimary} />
           </TouchableOpacity>
@@ -278,15 +265,14 @@ export default function EstudosScreen() {
 
       <BibleConfirmModal
         visible={!!studyToDelete}
-        title={showTrash ? "Excluir Permanentemente" : "Mover para lixeira"}
-        message={showTrash ? "Tem certeza? Esta ação não pode ser desfeita e todos os blocos do estudo serão perdidos." : "O estudo ficará na lixeira por 30 dias e depois será excluído permanentemente. Você pode recuperá-lo a qualquer momento nesse período."}
+        title="Mover para lixeira"
+        message="O estudo ficará na lixeira por 30 dias e depois será excluído permanentemente. Você pode recuperá-lo a qualquer momento nesse período."
         confirmText="Excluir"
         isDanger={true}
         onCancel={() => setStudyToDelete(null)}
         onConfirm={() => {
           if (studyToDelete) {
-            if (showTrash) deleteMultiplePermanently([studyToDelete]);
-            else deleteStudy(studyToDelete);
+            deleteStudy(studyToDelete);
           }
           setStudyToDelete(null);
         }}
@@ -294,14 +280,13 @@ export default function EstudosScreen() {
 
       <BibleConfirmModal
         visible={multiDeleteVisible}
-        title={showTrash ? "Excluir estudos selecionados permanentemente" : "Excluir estudos selecionados"}
-        message={showTrash ? `Deseja apagar definitivamente ${selectedIds.size} estudo(s)?` : `Deseja mover ${selectedIds.size} estudo(s) para a lixeira?`}
+        title="Excluir estudos selecionados"
+        message={`Deseja mover ${selectedIds.size} estudo(s) para a lixeira?`}
         confirmText="Excluir"
         isDanger={true}
         onCancel={() => setMultiDeleteVisible(false)}
         onConfirm={() => {
-          if (showTrash) deleteMultiplePermanently(Array.from(selectedIds));
-          else deleteMultiple(Array.from(selectedIds));
+          deleteMultiple(Array.from(selectedIds));
           setSelectedIds(new Set());
           setMultiDeleteVisible(false);
         }}
@@ -319,7 +304,7 @@ export default function EstudosScreen() {
         onClose={() => setHeaderMenuVisible(false)}
         items={[
           { icon: 'file-plus', label: 'Novo Estudo', onPress: () => setModalVisible(true) },
-          { icon: showTrash ? 'book-open' : 'trash', label: showTrash ? 'Ver Estudos' : 'Ver Lixeira', onPress: () => { setShowTrash(!showTrash); setSelectedIds(new Set()); } }
+          { icon: 'trash', label: 'Lixeira', onPress: () => router.push('/configuration/trash' as any) }
         ]}
       />
 

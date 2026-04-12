@@ -5,7 +5,7 @@ import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
 import React, { useEffect, useState } from 'react';
 import { Alert, Platform, StyleSheet, Switch, TouchableOpacity, View } from 'react-native';
-import pkg from '../../../package.json';
+import { useRouter } from 'expo-router';
 import { BibleConfirmModal } from '../../components/BibleConfirmModal';
 import { BibleDrawerMenu } from '../../components/BibleDrawerMenu';
 import { BibleHeader } from '../../components/BibleHeader';
@@ -22,6 +22,7 @@ export default function ConfigurationScreen() {
   const { setReaderTheme, readerTheme } = useReaderSettings();
   const [drawerVisible, setDrawerVisible] = useState(false);
   const { studies, importBulk } = useStudies();
+  const router = useRouter();
   const [autoBackup, setAutoBackup] = useState(false);
   const [alertInfo, setAlertInfo] = useState<{ title: string; message: string; isDanger?: boolean } | null>(null);
 
@@ -152,6 +153,7 @@ export default function ConfigurationScreen() {
       <BibleHeader title="Configurações" onMenuPress={() => setDrawerVisible(true)} />
 
       <View style={styles.content}>
+        <BibleText style={{ marginLeft: 8, marginBottom: 8, fontSize: ms(14), fontWeight: '700', color: colors.textMuted }}>APARÊNCIA</BibleText>
         <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
           <TouchableOpacity style={styles.cardHeader} activeOpacity={0.8} onPress={handleToggle}>
             <View style={[styles.iconWrap, { backgroundColor: colors.surfaceVariant }]}>
@@ -175,7 +177,25 @@ export default function ConfigurationScreen() {
           </TouchableOpacity>
         </View>
 
-        <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border, marginTop: 16 }]}>
+        <BibleText style={{ marginTop: 24, marginLeft: 8, marginBottom: 8, fontSize: ms(14), fontWeight: '700', color: colors.textMuted }}>GERENCIAMENTO</BibleText>
+        <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+          <TouchableOpacity style={styles.cardHeader} activeOpacity={0.8} onPress={() => router.push('/configuration/trash' as any)}>
+            <View style={[styles.iconWrap, { backgroundColor: colors.surfaceVariant }]}>
+              <Feather name="trash-2" size={ms(20)} color={colors.primary} />
+            </View>
+            <View style={styles.cardTextContainer}>
+              <BibleText style={[styles.cardTitle, { fontSize: ms(16), color: colors.text }]}>
+                Lixeira de Estudos
+              </BibleText>
+              <BibleText style={[styles.cardDesc, { fontSize: ms(13), color: colors.textMuted }]}>
+                Gerencie estudos excluídos ou restaure-os
+              </BibleText>
+            </View>
+          </TouchableOpacity>
+        </View>
+
+        <BibleText style={{ marginTop: 24, marginLeft: 8, marginBottom: 8, fontSize: ms(14), fontWeight: '700', color: colors.textMuted }}>BACKUP E RESTAURAÇÃO</BibleText>
+        <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
           <TouchableOpacity style={styles.cardHeader} activeOpacity={0.8} onPress={() => handleToggleAutoBackup(!autoBackup)}>
             <View style={[styles.iconWrap, { backgroundColor: colors.surfaceVariant }]}>
               <Feather name="save" size={ms(20)} color={colors.primary} />
@@ -196,9 +216,9 @@ export default function ConfigurationScreen() {
               thumbColor={autoBackup ? colors.primary : '#f4f3f4'}
             />
           </TouchableOpacity>
-        </View>
 
-        <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border, marginTop: 16 }]}>
+          <View style={{ height: 1, backgroundColor: colors.border, marginLeft: 70 }} />
+
           <TouchableOpacity style={styles.cardHeader} activeOpacity={0.8} onPress={handleManualBackup}>
             <View style={[styles.iconWrap, { backgroundColor: colors.surfaceVariant }]}>
               <Feather name="download" size={ms(20)} color={colors.primary} />
@@ -212,9 +232,9 @@ export default function ConfigurationScreen() {
               </BibleText>
             </View>
           </TouchableOpacity>
-        </View>
 
-        <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border, marginTop: 16 }]}>
+          <View style={{ height: 1, backgroundColor: colors.border, marginLeft: 70 }} />
+
           <TouchableOpacity style={styles.cardHeader} activeOpacity={0.8} onPress={handleImport}>
             <View style={[styles.iconWrap, { backgroundColor: colors.surfaceVariant }]}>
               <Feather name="upload" size={ms(20)} color={colors.primary} />
@@ -228,22 +248,6 @@ export default function ConfigurationScreen() {
               </BibleText>
             </View>
           </TouchableOpacity>
-        </View>
-
-        <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border, marginTop: 16 }]}>
-          <View style={styles.cardHeader}>
-            <View style={[styles.iconWrap, { backgroundColor: colors.surfaceVariant }]}>
-              <Feather name="info" size={ms(20)} color={colors.primary} />
-            </View>
-            <View style={styles.cardTextContainer}>
-              <BibleText style={[styles.cardTitle, { fontSize: ms(16), color: colors.text }]}>
-                Versão do App
-              </BibleText>
-              <BibleText style={[styles.cardDesc, { fontSize: ms(13), color: colors.textMuted }]}>
-                Atualizado na versão {pkg.version}
-              </BibleText>
-            </View>
-          </View>
         </View>
       </View>
 

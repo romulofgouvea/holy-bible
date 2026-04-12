@@ -3,11 +3,11 @@ const https = require('https');
 const cheerio = require('cheerio');
 
 // CONFIGURAÇÃO
-const VERSION = 'acf';
-const TARGET_FILE = 'src/data/ACF.json';
+// const VERSION = 'acf';
+// const TARGET_FILE = 'src/data/ACF.json';
 
-// const VERSION = 'ara'; 
-// const TARGET_FILE = 'src/data/ARA.json';
+const VERSION = 'ara';
+const TARGET_FILE = 'src/data/ARA.json';
 
 // const VERSION = 'naa'; 
 // const TARGET_FILE = 'src/data/NAA.json';
