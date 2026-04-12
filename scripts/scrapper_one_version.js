@@ -3,11 +3,11 @@ const https = require('https');
 const cheerio = require('cheerio');
 
 // CONFIGURAÇÃO
-// const VERSION = 'acf';
-// const TARGET_FILE = 'src/data/ACF.json';
+const VERSION = 'acf';
+const TARGET_FILE = 'src/data/ACF.json';
 
-const VERSION = 'ara';
-const TARGET_FILE = 'src/data/ARA.json';
+// const VERSION = 'ara';
+// const TARGET_FILE = 'src/data/ARA.json';
 
 // const VERSION = 'naa'; 
 // const TARGET_FILE = 'src/data/NAA.json';
@@ -39,70 +39,74 @@ const fetchHtml = (url) => new Promise((resolve, reject) => {
             reject(new Error(`Status ${res.statusCode}`));
             return;
         }
-        let chunks = [];
-        res.on('data', chunk => chunks.push(chunk));
-        res.on('end', () => resolve(Buffer.concat(chunks).toString('utf8')));
+        let data = '';
+        res.on('data', chunk => data += chunk);
+        res.on('end', () => resolve(data));
     }).on('error', reject);
 });
 
 const delay = ms => new Promise(r => setTimeout(r, ms));
 
-function fixEncodingErrors(scrapedVerse, localVerse) {
-    if (!localVerse || !scrapedVerse.includes('')) return scrapedVerse;
+function sanitizeVerse(verseText, localVerse) {
+    if (!verseText) return '';
+    let sanitized = verseText;
 
-    let scrapedWords = scrapedVerse.split(' ');
-    let localWords = localVerse.split(' ');
+    // 1. Limpeza de espaços (invisíveis, extras e antes de pontuação)
+    sanitized = sanitized.replace(/[\xA0\u200B-\u200D\uFEFF]/g, ' ');
+    sanitized = sanitized.replace(/\s+/g, ' ').trim();
+    sanitized = sanitized.replace(/\s+([.,:;!?”’])/g, '$1');
 
-    if (scrapedWords.length === localWords.length) {
-        for (let i = 0; i < scrapedWords.length; i++) {
-            if (scrapedWords[i].includes('')) {
-                scrapedWords[i] = localWords[i];
+    // 2. Correção de Erros de Codificação (\ufffd)
+    if (localVerse && sanitized.includes('\ufffd')) {
+        let scrapedWords = sanitized.split(' ');
+        let localWords = localVerse.split(' ');
+
+        if (scrapedWords.length === localWords.length) {
+            for (let i = 0; i < scrapedWords.length; i++) {
+                if (scrapedWords[i].includes('\ufffd')) {
+                    scrapedWords[i] = localWords[i];
+                }
+            }
+            sanitized = scrapedWords.join(' ');
+        } else {
+            let fixedVerse = sanitized;
+            const errorWordsMatches = [...sanitized.matchAll(/\S*\ufffd\S*/g)];
+            for (const match of errorWordsMatches) {
+                const errorWord = match[0];
+                const wordIndex = scrapedWords.indexOf(errorWord);
+                if (wordIndex !== -1 && localWords[wordIndex]) {
+                    fixedVerse = fixedVerse.replace(errorWord, localWords[wordIndex]);
+                }
+            }
+            sanitized = fixedVerse.includes('\ufffd') ? localVerse : fixedVerse;
+        }
+    }
+
+    // 3. Preservação das Aspas Locais (Smart Quotes vs Retas)
+    if (localVerse) {
+        let normalizedScraped = sanitized.replace(/["“”]/g, '"').replace(/['‘’]/g, "'");
+        let normalizedLocal = localVerse.replace(/["“”]/g, '"').replace(/['‘’]/g, "'");
+
+        if (normalizedScraped === normalizedLocal) {
+            sanitized = localVerse;
+        } else {
+            let scrapedQuotes = sanitized.match(/["“”]/g) || [];
+            let localQuotes = localVerse.match(/["“”]/g) || [];
+            if (scrapedQuotes.length === localQuotes.length && scrapedQuotes.length > 0) {
+                let quoteIndex = 0;
+                sanitized = sanitized.replace(/["“”]/g, () => localQuotes[quoteIndex++]);
+            }
+
+            let scrapedSingleQuotes = sanitized.match(/['‘’]/g) || [];
+            let localSingleQuotes = localVerse.match(/['‘’]/g) || [];
+            if (scrapedSingleQuotes.length === localSingleQuotes.length && scrapedSingleQuotes.length > 0) {
+                let singleQuoteIndex = 0;
+                sanitized = sanitized.replace(/['‘’]/g, () => localSingleQuotes[singleQuoteIndex++]);
             }
         }
-        return scrapedWords.join(' ');
     }
 
-    let fixedVerse = scrapedVerse;
-    const errorWordsMatches = [...scrapedVerse.matchAll(/\S*\S*/g)];
-
-    for (const match of errorWordsMatches) {
-        const errorWord = match[0];
-        const wordIndex = scrapedWords.indexOf(errorWord);
-        if (wordIndex !== -1 && localWords[wordIndex]) {
-            fixedVerse = fixedVerse.replace(errorWord, localWords[wordIndex]);
-        }
-    }
-
-    return fixedVerse;
-}
-
-function preserveLocalQuotes(scrapedVerse, localVerse) {
-    if (!localVerse) return scrapedVerse;
-
-    let normalizedScraped = scrapedVerse.replace(/["“”]/g, '"').replace(/['‘’]/g, "'");
-    let normalizedLocal = localVerse.replace(/["“”]/g, '"').replace(/['‘’]/g, "'");
-
-    if (normalizedScraped === normalizedLocal) {
-        return localVerse;
-    }
-
-    let scrapedQuotes = scrapedVerse.match(/["“”]/g) || [];
-    let localQuotes = localVerse.match(/["“”]/g) || [];
-
-    if (scrapedQuotes.length === localQuotes.length && scrapedQuotes.length > 0) {
-        let quoteIndex = 0;
-        scrapedVerse = scrapedVerse.replace(/["“”]/g, () => localQuotes[quoteIndex++]);
-    }
-
-    let scrapedSingleQuotes = scrapedVerse.match(/['‘’]/g) || [];
-    let localSingleQuotes = localVerse.match(/['‘’]/g) || [];
-
-    if (scrapedSingleQuotes.length === localSingleQuotes.length && scrapedSingleQuotes.length > 0) {
-        let singleQuoteIndex = 0;
-        scrapedVerse = scrapedVerse.replace(/['‘’]/g, () => localSingleQuotes[singleQuoteIndex++]);
-    }
-
-    return scrapedVerse;
+    return sanitized;
 }
 
 async function main() {
@@ -179,12 +183,10 @@ async function main() {
             const maxVerse = Math.max(0, ...Object.keys(versesMap).map(Number));
             const newChapter = [];
             for (let i = 1; i <= maxVerse; i++) {
-                let scrapedVerse = versesMap[i] ? versesMap[i].join(' ').replace(/\s+/g, ' ').trim() : '';
+                let rawScrapedVerse = versesMap[i] ? versesMap[i].join(' ') : '';
                 let localVerse = book.chapters[c][i - 1] || '';
 
-                scrapedVerse = fixEncodingErrors(scrapedVerse, localVerse);
-
-                newChapter[i - 1] = preserveLocalQuotes(scrapedVerse, localVerse);
+                newChapter[i - 1] = sanitizeVerse(rawScrapedVerse, localVerse);
             }
 
             if (newChapter.length > 0) {
