@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Slot, useGlobalSearchParams, usePathname, useRootNavigationState, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
-import { View } from 'react-native';
+import { Platform, View } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { STORAGE_KEYS } from '../constants/storage';
 import { ReaderSettingsProvider } from '../hooks/use-reader-settings';
@@ -54,6 +54,12 @@ function useRoutePersistence() {
 function AppLayout() {
   const { colors } = useTheme();
   useRoutePersistence();
+
+  useEffect(() => {
+    if (Platform.OS === 'web') {
+      document.title = 'Bíblia Online';
+    }
+  }, []);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#000000' }}>
