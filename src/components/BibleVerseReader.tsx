@@ -1,5 +1,6 @@
 import React from 'react';
 import { SectionList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ALIASES } from '../data';
 import { useReaderSettings } from '../hooks/use-reader-settings';
 import { useResponsive } from '../hooks/use-responsive';
 
@@ -94,6 +95,24 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
                     </TouchableOpacity>
                 );
             }}
+            renderSectionFooter={() => {
+                const versionInfo = ALIASES.find(v => v.sigla === version);
+                const copyright = (versionInfo as any)?.copyright;
+                if (!copyright) return null;
+                return (
+                    <View style={[
+                        styles.copyrightCard,
+                        { backgroundColor: readerColors.surfaceVariant, borderLeftColor: readerColors.primary }
+                    ]}>
+                        <Text style={[styles.copyrightTitle, { color: readerColors.primary }]}>
+                            {versionInfo?.name} ({versionInfo?.sigla})
+                        </Text>
+                        <Text style={[styles.copyrightText, { color: readerColors.textMuted }]}>
+                            {copyright}
+                        </Text>
+                    </View>
+                );
+            }}
             contentContainerStyle={styles.readerContent}
             initialNumToRender={20}
             onViewableItemsChanged={onViewableItemsChanged}
@@ -153,5 +172,24 @@ const styles = StyleSheet.create({
     },
     readerContent: {
         paddingBottom: 150,
+    },
+    copyrightCard: {
+        marginHorizontal: 16,
+        marginTop: 24,
+        marginBottom: 16,
+        padding: 16,
+        borderRadius: 12,
+        borderLeftWidth: 4,
+    },
+    copyrightTitle: {
+        fontSize: 13,
+        fontWeight: '700',
+        marginBottom: 6,
+        letterSpacing: 0.3,
+    },
+    copyrightText: {
+        fontSize: 11,
+        lineHeight: 17,
+        opacity: 0.75,
     },
 });

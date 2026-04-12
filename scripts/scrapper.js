@@ -3,9 +3,7 @@ const https = require('https');
 const cheerio = require('cheerio');
 
 // CONFIGURAÇÃO
-const VERSION = 'ara'; // Altere para 'acf' se quiser raspar a ACF
-const TARGET_FILE = 'src/data/ARA.json'; // Arquivo JSON a ser atualizado
-const PROGRESS_FILE = `scripts/scrapper_progress_${VERSION}.json`;
+const VERSIONS_FILE = 'src/data/bible-versions.json';
 
 const fetchHtml = (url) => new Promise((resolve, reject) => {
     https.get(url, {
@@ -26,13 +24,42 @@ const fetchHtml = (url) => new Promise((resolve, reject) => {
             reject(new Error(`Status ${res.statusCode}`));
             return;
         }
-        let data = '';
-        res.on('data', chunk => data += chunk);
-        res.on('end', () => resolve(data));
+        let chunks = [];
+        res.on('data', chunk => chunks.push(chunk));
+        res.on('end', () => resolve(Buffer.concat(chunks).toString('utf8')));
     }).on('error', reject);
 });
 
 const delay = ms => new Promise(r => setTimeout(r, ms));
+
+function fixEncodingErrors(scrapedVerse, localVerse) {
+    if (!localVerse || !scrapedVerse.includes('')) return scrapedVerse;
+
+    let scrapedWords = scrapedVerse.split(' ');
+    let localWords = localVerse.split(' ');
+
+    if (scrapedWords.length === localWords.length) {
+        for (let i = 0; i < scrapedWords.length; i++) {
+            if (scrapedWords[i].includes('')) {
+                scrapedWords[i] = localWords[i];
+            }
+        }
+        return scrapedWords.join(' ');
+    }
+
+    let fixedVerse = scrapedVerse;
+    const errorWordsMatches = [...scrapedVerse.matchAll(/\S*\S*/g)];
+
+    for (const match of errorWordsMatches) {
+        const errorWord = match[0];
+        const wordIndex = scrapedWords.indexOf(errorWord);
+        if (wordIndex !== -1 && localWords[wordIndex]) {
+            fixedVerse = fixedVerse.replace(errorWord, localWords[wordIndex]);
+        }
+    }
+
+    return fixedVerse;
+}
 
 function preserveLocalQuotes(scrapedVerse, localVerse) {
     if (!localVerse) return scrapedVerse;
@@ -63,8 +90,20 @@ function preserveLocalQuotes(scrapedVerse, localVerse) {
     return scrapedVerse;
 }
 
-async function main() {
-    console.log(`Carregando ${TARGET_FILE}...`);
+async function scrapeVersion(sigla) {
+    const VERSION = sigla.toLowerCase();
+    const TARGET_FILE = `src/data/${sigla}.json`;
+    const PROGRESS_FILE = `scripts/scrapper_progress_${VERSION}.json`;
+
+    if (!fs.existsSync(TARGET_FILE)) {
+        console.log(`\n[!] Arquivo ${TARGET_FILE} não encontrado. Pulando versão ${sigla}...`);
+        return true;
+    }
+
+    console.log(`\n======================================================`);
+    console.log(` Iniciando scrap para a versão: ${sigla}`);
+    console.log(`======================================================`);
+
     const bibleStruct = JSON.parse(fs.readFileSync(TARGET_FILE, 'utf8'));
 
     let changedCount = 0;
@@ -74,9 +113,13 @@ async function main() {
 
     if (fs.existsSync(PROGRESS_FILE)) {
         const prog = JSON.parse(fs.readFileSync(PROGRESS_FILE, 'utf8'));
+        if (prog.completed) {
+            console.log(`Versão ${sigla} já foi concluída anteriormente. Pulando...`);
+            return true;
+        }
         startBookIndex = prog.bookIndex || 0;
         startChapterIndex = prog.chapterIndex || 0;
-        console.log(`Retomando scrap a partir do Livro Index ${startBookIndex}, Capítulo ${startChapterIndex + 1}...`);
+        console.log(`Retomando scrap de ${sigla} a partir do Livro Index ${startBookIndex}, Capítulo ${startChapterIndex + 1}...`);
     }
 
     for (let b = startBookIndex; b < bibleStruct.length; b++) {
@@ -113,9 +156,9 @@ async function main() {
             }
 
             if (!success) {
-                console.log(`\n[!] Processo abortado. Muitas falhas em ${url}.`);
+                console.log(`\n[!] Processo abortado na versão ${sigla}. Muitas falhas em ${url}.`);
                 console.log(`O progresso foi salvo. Rode o script novamente para continuar de onde parou.\n`);
-                return;
+                return false;
             }
 
             const $ = cheerio.load(html);
@@ -139,6 +182,9 @@ async function main() {
             for (let i = 1; i <= maxVerse; i++) {
                 let scrapedVerse = versesMap[i] ? versesMap[i].join(' ').replace(/\s+/g, ' ').trim() : '';
                 let localVerse = book.chapters[c][i - 1] || '';
+
+                scrapedVerse = fixEncodingErrors(scrapedVerse, localVerse);
+
                 newChapter[i - 1] = preserveLocalQuotes(scrapedVerse, localVerse);
             }
 
@@ -169,8 +215,25 @@ async function main() {
     }
 
     // FIM
-    if (fs.existsSync(PROGRESS_FILE)) fs.unlinkSync(PROGRESS_FILE);
-    console.log(`Scrap concluído! ${changedCount} capítulos precisaram de ajuste nos versículos.`);
+    fs.writeFileSync(PROGRESS_FILE, JSON.stringify({ completed: true }, null, 2));
+    console.log(`\nScrap da versão ${sigla} concluído! ${changedCount} capítulos precisaram de ajuste nos versículos.`);
+    return true;
+}
+
+async function main() {
+    console.log(`Carregando lista de versões de ${VERSIONS_FILE}...`);
+    const versions = JSON.parse(fs.readFileSync(VERSIONS_FILE, 'utf8'));
+    
+    for (const v of versions) {
+        if (!v.sigla) continue;
+        const success = await scrapeVersion(v.sigla);
+        if (!success) {
+            console.log(`\n[!] Interrompendo o lote devido a um erro na versão ${v.sigla}.`);
+            return;
+        }
+    }
+    
+    console.log(`\n🎉 Atualização de todas as versões finalizada!`);
 }
 
 main();

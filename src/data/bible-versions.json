@@ -3,19 +3,22 @@
     "name": "Almeida Corrigida e Fiel",
     "sigla": "ACF",
     "year": 1994,
-    "publisher": "SBTB"
+    "publisher": "SBTB",
+    "copyright": "Almeida Corrigida Fiel | acf ©️ 1994, 1995, 2007, 2011 Sociedade Bíblica Trinitariana do Brasil (SBTB). Todos os direitos reservados. Texto bíblico utilizado com autorização. Saiba mais sobre a SBTB. A Missão da SBTB é: Uma cópia da Bíblia Fiel ®️ para cada pessoa. Ajude-nos a cumprir nossa Missão!"
   },
   {
     "name": "Almeida Revista e Atualizada",
     "sigla": "ARA",
     "year": 1993,
-    "publisher": "SBB"
+    "publisher": "SBB",
+    "copyright": "Almeida Revista e Atualizada© Copyright © 1993 Sociedade Bíblica do Brasil. Todos os direitos reservados. Texto bíblico utilizado com autorização. Saiba mais sobre a Sociedade Bíblica do Brasil www.sbb.org.br. A Sociedade Bíblica do Brasil trabalha para que a Bíblia esteja, efetivamente, ao alcance de todos e seja lida por todos. A SBB é uma entidade sem fins lucrativos, dedicada a promover o desenvolvimento integral do ser humano. Você também pode ajudar a Causa da Bíblia!"
   },
   {
-    "name": "King James Atualizada",
-    "sigla": "KJA",
-    "year": 1999,
-    "publisher": "Abba Press"
+    "name": "Nova Almeida Atualizada",
+    "sigla": "NAA",
+    "year": 2017,
+    "publisher": "SBB",
+    "copyright": "Nova Almeida Atualizada© Copyright © 2017 Sociedade Bíblica do Brasil. Todos os direitos reservados. Texto bíblico utilizado com autorização. Saiba mais sobre a Sociedade Bíblica do Brasil www.sbb.org.br. A Sociedade Bíblica do Brasil trabalha para que a Bíblia esteja, efetivamente, ao alcance de todos e seja lida por todos. A SBB é uma entidade sem fins lucrativos, dedicada a promover o desenvolvimento integral do ser humano. Você também pode ajudar a Causa da Bíblia!"
   },
   {
     "name": "Nova Versão Internacional",
@@ -27,18 +30,7 @@
     "name": "Nova Versão Transformadora",
     "sigla": "NVT",
     "year": 2016,
-    "publisher": "Mundo Cristão"
-  },
-  {
-    "name": "King James Fiel",
-    "sigla": "KJF",
-    "year": 1611,
-    "publisher": "BVBooks"
-  },
-  {
-    "name": "Nova Almeida Atualizada",
-    "sigla": "NAA",
-    "year": 2017,
-    "publisher": "SBB"
+    "publisher": "Mundo Cristão",
+    "copyright": "Copyright© 2017 por Editora Mundo Cristão. Todos os direitos reservados em língua portuguesa. A Nova Versão Transformadora (NVT) e seu logotipo são marcas registradas. Usados com permissão."
   }
 ]

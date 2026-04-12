@@ -45,3 +45,5 @@ app-example
 tsc_errors.*
 *.log
 log.*
+
+scripts/scrapper_progress_*.json

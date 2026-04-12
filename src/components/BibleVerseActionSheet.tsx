@@ -1,4 +1,4 @@
-import { Feather, FontAwesome } from '@expo/vector-icons';
+import { Feather } from '@expo/vector-icons';
 import * as Clipboard from 'expo-clipboard';
 import React from 'react';
 import { Animated, Share, StyleSheet, TouchableOpacity, View } from 'react-native';
@@ -85,7 +85,7 @@ export function BibleVerseActionSheet(props: VerseActionSheetProps) {
       : `${sorted[0].bookName} ${formattedRanges}`;
 
     const body = sorted.map((v) => `${v.verse} ${v.text}`).join('\n');
-    return `${header}\n\n${body}`;
+    return `${header}\n${body}`;
   };
 
   const onCopy = async () => {
