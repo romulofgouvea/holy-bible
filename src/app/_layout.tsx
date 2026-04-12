@@ -1,10 +1,10 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Slot, useGlobalSearchParams, usePathname, useRootNavigationState, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { STORAGE_KEYS } from '../constants/storage';
 import { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { STORAGE_KEYS } from '../constants/storage';
 import { ReaderSettingsProvider } from '../hooks/use-reader-settings';
 import { ThemeProvider, useTheme } from '../hooks/use-theme';
 

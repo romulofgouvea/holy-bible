@@ -1,20 +1,20 @@
 import { BibleModals } from '@/components/BibleModals';
-import { ReaderSettingsModal } from '@/components/ReaderSettingsModal';
 import { BibleVerseActionSheet, SelectedVerse } from '@/components/BibleVerseActionSheet';
+import { ReaderSettingsModal } from '@/components/ReaderSettingsModal';
 import { Feather } from '@expo/vector-icons';
+import { useLocalSearchParams } from 'expo-router';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Animated, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { BibleDrawerMenu } from '../../components/BibleDrawerMenu';
+import { BibleText } from '../../components/BibleText';
 import { BibleTopBar } from '../../components/BibleTopBar';
 import { BibleVerseReader } from '../../components/BibleVerseReader';
-import { BibleText } from '../../components/BibleText';
 import { useBible } from '../../hooks/use-bible';
-import { useLocalSearchParams } from 'expo-router';
 
 import { BibleToast } from '../../components/BibleToast';
-import { useToast } from '../../hooks/use-toast';
-import { useTheme } from '../../hooks/use-theme';
 import { useReaderSettings } from '../../hooks/use-reader-settings';
+import { useTheme } from '../../hooks/use-theme';
+import { useToast } from '../../hooks/use-toast';
 
 export default function BibleScreen() {
   const {
@@ -49,7 +49,7 @@ export default function BibleScreen() {
   const [chapterModalVisible, setChapterModalVisible] = useState(false);
   const [verseModalVisible, setVerseModalVisible] = useState(false);
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
-  
+
   const [isChangingVersion, setIsChangingVersion] = useState<string | null>(null);
 
   const fadeAnim = useRef(new Animated.Value(0)).current;

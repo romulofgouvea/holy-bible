@@ -19,7 +19,7 @@ export function useBible() {
 
   const handleSetVersion = useCallback((v: string) => {
     setVersion(v);
-    AsyncStorage.setItem(STORAGE_KEYS.BIBLE_VERSION_GLOBAL, v).catch(() => {});
+    AsyncStorage.setItem(STORAGE_KEYS.BIBLE_VERSION_GLOBAL, v).catch(() => { });
     DeviceEventEmitter.emit('BibleVersionChanged', v);
   }, []);
   const [chapter, setChapter] = useState(1);
@@ -44,7 +44,7 @@ export function useBible() {
       try {
         const globalV = await AsyncStorage.getItem(STORAGE_KEYS.BIBLE_VERSION_GLOBAL);
         const savedPos = await AsyncStorage.getItem(STORAGE_KEYS.LAST_READ);
-        
+
         if (globalV) {
           setVersion(globalV);
         }
@@ -53,7 +53,7 @@ export function useBible() {
           const parsed = JSON.parse(savedPos);
           if (!globalV && parsed.version) {
             setVersion(parsed.version);
-            AsyncStorage.setItem(STORAGE_KEYS.BIBLE_VERSION_GLOBAL, parsed.version).catch(() => {});
+            AsyncStorage.setItem(STORAGE_KEYS.BIBLE_VERSION_GLOBAL, parsed.version).catch(() => { });
           }
           if (parsed.book) setBook(parsed.book);
           if (parsed.chapter) setChapter(parsed.chapter);
@@ -65,7 +65,7 @@ export function useBible() {
           const parsed = JSON.parse(savedHighlights);
           const migrated: Record<string, string> = {};
           for (const key in parsed) {
-             migrated[key] = typeof parsed[key] === 'boolean' && parsed[key] ? 'yellow' : parsed[key];
+            migrated[key] = typeof parsed[key] === 'boolean' && parsed[key] ? 'yellow' : parsed[key];
           }
           setHighlights(migrated);
         }
@@ -115,7 +115,7 @@ export function useBible() {
 
   const changeChapter = useCallback((delta: number, onChapterChanged?: (newChapter: number) => void) => {
     const { book: currentBookName, chapter: currentChapter, chapterCount: currentChapterCount } = currentState.current;
-    
+
     let nextChapter = currentChapter + delta;
     let nextBookName = currentBookName;
 
@@ -146,12 +146,12 @@ export function useBible() {
       currentState.current.chapterCount = targetBookObj?.chapters?.length || 1;
       setBook(nextBookName);
     }
-    
+
     setChapter(nextChapter);
     setVerse(1);
     setVisibleChapter(nextChapter);
     setVisibleVerse(1);
-    
+
     if (onChapterChanged) {
       onChapterChanged(nextChapter);
     }
