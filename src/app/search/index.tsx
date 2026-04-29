@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useBible } from '../../hooks/use-bible';
 import { useResponsive } from '../../hooks/use-responsive';
 import { useTheme } from '../../hooks/use-theme';
@@ -59,6 +59,7 @@ export default function SearchScreen() {
   const { ms } = useResponsive();
   const { colors } = useTheme();
   const router = useRouter();
+  const params = useLocalSearchParams<{ query?: string; from?: string }>();
   const { versionBooks, currentBook, chapter } = useBible();
 
   const [query, setQuery] = useState('');
@@ -83,7 +84,13 @@ export default function SearchScreen() {
           AsyncStorage.getItem(STORAGE_SEARCH_HISTORY),
         ]);
         if (savedScope) setScope(savedScope as SearchScope);
-        if (savedQuery) setQuery(savedQuery);
+        
+        if (params.query) {
+          setQuery(params.query);
+        } else if (savedQuery) {
+          setQuery(savedQuery);
+        }
+
         if (savedHistory) setHistory(JSON.parse(savedHistory));
       } catch (e) { }
       setLoaded(true);
@@ -179,11 +186,13 @@ export default function SearchScreen() {
     runSearch(q, scope);
   };
 
+  const initialSearchRun = useRef(false);
   useEffect(() => {
-    if (loaded && query.trim().length >= 2) {
+    if (loaded && query.trim().length >= 2 && !initialSearchRun.current) {
+      initialSearchRun.current = true;
       runSearch(query, scope, true);
     }
-  }, [loaded, runSearch]);
+  }, [loaded, query, scope, runSearch]);
 
   const handleChangeScope = (sc: SearchScope) => {
     setScope(sc);
@@ -225,7 +234,21 @@ export default function SearchScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <BibleHeader title="Pesquisar" onMenuPress={() => setDrawerVisible(true)} />
+      <BibleHeader 
+        title="Pesquisar" 
+        showMenu={params.from !== 'bible'} 
+        onMenuPress={() => setDrawerVisible(true)}
+        leftContent={params.from === 'bible' ? (
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <TouchableOpacity onPress={() => router.back()} style={{ marginRight: 16 }}>
+              <Feather name="arrow-left" size={ms(24)} color={colors.onPrimary} />
+            </TouchableOpacity>
+            <BibleText style={{ fontSize: ms(16), color: colors.onPrimary, fontFamily: 'Poppins_600SemiBold', fontWeight: '700' }}>
+              Pesquisar
+            </BibleText>
+          </View>
+        ) : undefined} 
+      />
 
       <View style={[styles.searchContainer, { backgroundColor: colors.surface, borderBottomColor: colors.border }]}>
         <View style={[styles.searchBox, { backgroundColor: colors.surfaceVariant, borderColor: colors.border }]}>

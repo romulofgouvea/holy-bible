@@ -234,7 +234,7 @@ export default function BibleScreen() {
         onNextChapter={() => navigateChapter(1)}
         onOpenMenu={() => setDrawerVisible(true)}
         onOpenSettings={() => setSettingsModalVisible(true)}
-        onOpenSearch={() => router.push('/search')}
+        onOpenSearch={() => router.push('/search?from=bible')}
       />
 
       <View style={styles.content}>
