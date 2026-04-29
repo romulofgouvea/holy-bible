@@ -27,7 +27,8 @@ import { RichTextEditor, RichTextEditorRef } from '../../../components/study/Ric
 import { StudyVerseSelectModal } from '../../../components/study/StudyVerseSelectModal';
 import { ROUTES } from '../../../constants/routes';
 import { STORAGE_KEYS } from '../../../constants/storage';
-import { availableVersions, Book, getBibleData } from '../../../data';
+import { getBibleData, availableVersions, Book } from '../../../data';
+import { BibleSkeleton } from '../../../components/BibleSkeleton';
 import { useReaderSettings } from '../../../hooks/use-reader-settings';
 import { useResponsive } from '../../../hooks/use-responsive';
 import { useStudies } from '../../../hooks/use-studies';
@@ -111,7 +112,11 @@ export default function StudyEditorScreen() {
       updateStudy(id, htmlContent, title);
     }, 1000);
     return () => { if (saveTimeout.current) clearTimeout(saveTimeout.current); };
-  }, [htmlContent, title]);
+  }, [htmlContent, title, id, updateStudy]);
+
+  if (!loaded) {
+    return <BibleSkeleton />;
+  }
 
   const openVersePicker = () => {
     setVpStep('book');

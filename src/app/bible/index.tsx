@@ -12,6 +12,7 @@ import { BibleVerseReader } from '../../components/BibleVerseReader';
 import { useBible } from '../../hooks/use-bible';
 
 import { BibleToast } from '../../components/BibleToast';
+import { BibleSkeleton } from '../../components/BibleSkeleton';
 import { DonateModal } from '../../components/DonateModal';
 import { useReaderSettings } from '../../hooks/use-reader-settings';
 import { useTheme } from '../../hooks/use-theme';
@@ -222,7 +223,11 @@ export default function BibleScreen() {
   });
 
   return (
-    <Animated.View style={[styles.page, { opacity: fadeAnim, backgroundColor: colors.background }]}>
+    <View style={{ flex: 1, backgroundColor: colors.background }}>
+      <Animated.View style={[StyleSheet.absoluteFill, { zIndex: 1, opacity: fadeAnim.interpolate({ inputRange: [0, 1], outputRange: [1, 0] }), pointerEvents: isReady ? 'none' : 'auto' }]}>
+        <BibleSkeleton />
+      </Animated.View>
+      <Animated.View style={[styles.page, { opacity: fadeAnim, backgroundColor: 'transparent', zIndex: 2 }]}>
       <BibleTopBar
         version={version}
         bookName={currentBook.name}
@@ -329,7 +334,8 @@ export default function BibleScreen() {
       <BibleToast toast={toast} opacity={opacity} />
 
       <DonateModal visible={donateVisible} onClose={() => setDonateVisible(false)} />
-    </Animated.View>
+      </Animated.View>
+    </View>
   );
 }
 

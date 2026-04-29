@@ -16,6 +16,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BibleDrawerMenu } from '../../components/BibleDrawerMenu';
+import { BibleSkeleton } from '../../components/BibleSkeleton';
 import { BibleHeader } from '../../components/BibleHeader';
 import { BibleText } from '../../components/BibleText';
 import { BibleTopMenu } from '../../components/BibleTopMenu';
@@ -41,8 +42,12 @@ export default function EstudosScreen() {
   const [donateVisible, setDonateVisible] = useState(false);
   const insets = useSafeAreaInsets();
 
-  const { deleteMultiple, studies, createStudy, deleteStudy, importBulk } = useStudies();
+  const { deleteMultiple, studies, createStudy, deleteStudy, importBulk, loaded } = useStudies();
   const currentStudies = studies;
+
+  if (!loaded) {
+    return <BibleSkeleton />;
+  }
 
   const isSelectionMode = selectedIds.size > 0;
 

@@ -10,6 +10,7 @@ import {
   View,
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { BibleSkeleton } from '../../components/BibleSkeleton';
 import { useBible } from '../../hooks/use-bible';
 import { useResponsive } from '../../hooks/use-responsive';
 import { useTheme } from '../../hooks/use-theme';
@@ -231,6 +232,10 @@ export default function SearchScreen() {
   const showTooShort = query.trim().length > 0 && query.trim().length < 2;
   const showNoResults = !searching && query.trim().length >= 2 && results.length === 0;
   const showResults = !searching && results.length > 0;
+
+  if (!loaded || !versionBooks) {
+    return <BibleSkeleton />;
+  }
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
