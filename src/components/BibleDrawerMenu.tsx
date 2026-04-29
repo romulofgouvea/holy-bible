@@ -90,7 +90,7 @@ export function BibleDrawerMenu(props: DrawerMenuProps) {
       key: 'donate',
       label: 'Fazer uma Doação',
       icon: 'heart',
-      tint: '#E91E63',
+      tint: colors.primary,
       onPress: onOpenDonate,
     },
   ];
@@ -152,9 +152,14 @@ export function BibleDrawerMenu(props: DrawerMenuProps) {
             <View style={[styles.drawerLogo, { width: ms(38), height: ms(38), borderRadius: ms(10), marginRight: ms(10) }]}>
               <Feather name="book" size={ms(19)} color={colors.onPrimary} />
             </View>
-            <BibleText style={[styles.drawerTitle, { fontSize: ms(17), color: colors.onPrimary }]} numberOfLines={1}>
-              Bíblia Sagrada
-            </BibleText>
+            <View style={{ flex: 1, justifyContent: 'center' }}>
+              <BibleText style={[styles.drawerTitle, { fontSize: ms(17), color: colors.onPrimary }]} numberOfLines={1}>
+                Bíblia Sagrada
+              </BibleText>
+              <BibleText style={{ fontSize: ms(12), color: colors.onPrimary, opacity: 0.75, marginTop: -2 }}>
+                v{require('../../package.json').version}
+              </BibleText>
+            </View>
           </View>
 
           <View style={[styles.menuList, { paddingTop: ms(8), paddingHorizontal: ms(8) }]}>
@@ -164,11 +169,6 @@ export function BibleDrawerMenu(props: DrawerMenuProps) {
           <View style={[styles.bottomSection, { paddingHorizontal: ms(8), paddingBottom: Math.max(ms(16), insets.bottom + ms(8)) }]}>
             <View style={[styles.divider, { backgroundColor: colors.border }]} />
             {BOTTOM_ITEMS.map(renderItem)}
-            <View style={styles.versionRow}>
-              <BibleText style={[styles.footerText, { fontSize: ms(11), color: colors.textMuted }]}>
-                v{require('../../package.json').version}
-              </BibleText>
-            </View>
           </View>
         </Animated.View>
       </View>

@@ -34,8 +34,8 @@ export function DonateModal({ visible, onClose }: Props) {
       <View style={styles.overlay}>
         <View style={[styles.card, { backgroundColor: colors.surface }]}>
 
-          <View style={[styles.heartCircle, { backgroundColor: '#fce4ec' }]}>
-            <Feather name="heart" size={ms(36)} color="#E91E63" />
+          <View style={[styles.heartCircle, { backgroundColor: colors.primaryContainer }]}>
+            <Feather name="heart" size={ms(36)} color={colors.primary} />
           </View>
 
           <BibleText style={[styles.title, { color: colors.text, fontSize: ms(20) }]}>
@@ -48,8 +48,8 @@ export function DonateModal({ visible, onClose }: Props) {
 
           <View style={[styles.pixBox, { backgroundColor: colors.surfaceVariant, borderColor: colors.border }]}>
             <View style={styles.pixLabelRow}>
-              <View style={[styles.pixBadge, { backgroundColor: '#00B894' }]}>
-                <BibleText style={styles.pixBadgeText}>PIX</BibleText>
+              <View style={[styles.pixBadge, { backgroundColor: colors.primary }]}>
+                <BibleText style={[styles.pixBadgeText, { color: colors.background }]}>PIX</BibleText>
               </View>
               <BibleText style={[styles.pixLabel, { color: colors.textMuted, fontSize: ms(12) }]}>
                 Chave (e-mail)
@@ -61,12 +61,12 @@ export function DonateModal({ visible, onClose }: Props) {
             </BibleText>
 
             <TouchableOpacity
-              style={[styles.copyBtn, { backgroundColor: copied ? '#00B894' : colors.primary }]}
+              style={[styles.copyBtn, { backgroundColor: copied ? colors.primaryContainer : colors.primary }]}
               onPress={handleCopy}
               activeOpacity={0.8}
             >
-              <Feather name={copied ? 'check' : 'copy'} size={ms(15)} color="#fff" />
-              <BibleText style={[styles.copyBtnText, { fontSize: ms(13) }]}>
+              <Feather name={copied ? 'check' : 'copy'} size={ms(15)} color={copied ? colors.primary : colors.background} />
+              <BibleText style={[styles.copyBtnText, { fontSize: ms(13), color: copied ? colors.primary : colors.background }]}>
                 {copied ? 'Copiado!' : 'Copiar chave'}
               </BibleText>
             </TouchableOpacity>
@@ -147,7 +147,6 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
   },
   pixBadgeText: {
-    color: '#fff',
     fontWeight: '800',
     fontSize: 11,
     letterSpacing: 1,
@@ -170,7 +169,6 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   copyBtnText: {
-    color: '#fff',
     fontWeight: '700',
   },
   thanks: {
