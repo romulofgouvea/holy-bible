@@ -187,6 +187,7 @@ export default function SearchScreen() {
     setQuery(q);
     saveQuery(q);
     runSearch(q, scope);
+    router.setParams({ query: q });
   };
 
   const initialSearchRun = useRef(false);
@@ -215,6 +216,7 @@ export default function SearchScreen() {
     saveQuery(term);
     addToHistory(term);
     runSearch(term, scope, true);
+    router.setParams({ query: term });
   };
 
   const handleNavigate = (r: SearchResult) => {
@@ -227,6 +229,7 @@ export default function SearchScreen() {
     saveQuery('');
     setResults([]);
     inputRef.current?.focus();
+    router.setParams({ query: '' });
   };
 
   const showHistory = query.trim().length === 0 && history.length > 0;
