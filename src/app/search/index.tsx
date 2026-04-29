@@ -317,13 +317,14 @@ export default function SearchScreen() {
           data={history}
           keyExtractor={(item) => item}
           keyboardShouldPersistTaps="handled"
+          contentContainerStyle={{ padding: 16, gap: 8 }}
           ListHeaderComponent={
-            <View style={[styles.historyHeader, { borderBottomColor: colors.border }]}>
-              <BibleText style={[styles.historyTitle, { color: colors.textMuted, fontSize: ms(12) }]}>
-                HISTÓRICO
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+              <BibleText style={{ fontWeight: '800', color: colors.textMuted, fontSize: ms(12), letterSpacing: 0.5 }}>
+                BUSCAS RECENTES
               </BibleText>
-              <TouchableOpacity onPress={clearHistory}>
-                <BibleText style={[{ color: colors.primary, fontSize: ms(12), fontWeight: '700' }]}>
+              <TouchableOpacity onPress={clearHistory} style={{ paddingHorizontal: 10, paddingVertical: 4, backgroundColor: colors.surfaceVariant, borderRadius: 12 }}>
+                <BibleText style={{ color: colors.primary, fontSize: ms(11), fontWeight: '700' }}>
                   Limpar
                 </BibleText>
               </TouchableOpacity>
@@ -331,14 +332,17 @@ export default function SearchScreen() {
           }
           renderItem={({ item }) => (
             <TouchableOpacity
-              style={[styles.historyItem, { borderBottomColor: colors.border }]}
+              style={[styles.resultCard, { borderColor: colors.border, backgroundColor: colors.surface, flexDirection: 'row', alignItems: 'center', paddingVertical: 10 }]}
               onPress={() => handleHistorySelect(item)}
+              activeOpacity={0.7}
             >
-              <Feather name="clock" size={ms(16)} color={colors.textMuted} style={{ marginRight: 12 }} />
+              <View style={{ width: ms(32), height: ms(32), borderRadius: ms(10), backgroundColor: colors.surfaceVariant, alignItems: 'center', justifyContent: 'center', marginRight: 12 }}>
+                <Feather name="clock" size={ms(14)} color={colors.textMuted} />
+              </View>
               <BibleText style={[styles.historyText, { color: colors.text, fontSize: ms(15), flex: 1 }]}>
                 {item}
               </BibleText>
-              <TouchableOpacity onPress={() => removeFromHistory(item)} style={{ padding: 4 }}>
+              <TouchableOpacity onPress={() => removeFromHistory(item)} style={{ padding: 6, backgroundColor: colors.surfaceVariant, borderRadius: 20 }}>
                 <Feather name="x" size={ms(14)} color={colors.textMuted} />
               </TouchableOpacity>
             </TouchableOpacity>
