@@ -1,0 +1,330 @@
+{
+  "oldTestament": [
+    {
+      "group": "Pentateuco",
+      "label": "Pentateuco",
+      "books": [
+        {
+          "abbrev": "Gn",
+          "name": "Gênesis"
+        },
+        {
+          "abbrev": "Êx",
+          "name": "Êxodo"
+        },
+        {
+          "abbrev": "Lv",
+          "name": "Levítico"
+        },
+        {
+          "abbrev": "Nm",
+          "name": "Números"
+        },
+        {
+          "abbrev": "Dt",
+          "name": "Deuteronômio"
+        }
+      ]
+    },
+    {
+      "group": "Históricos",
+      "label": "Livros Históricos",
+      "books": [
+        {
+          "abbrev": "Js",
+          "name": "Josué"
+        },
+        {
+          "abbrev": "Jz",
+          "name": "Juízes"
+        },
+        {
+          "abbrev": "Rt",
+          "name": "Rute"
+        },
+        {
+          "abbrev": "1Sm",
+          "name": "1 Samuel"
+        },
+        {
+          "abbrev": "2Sm",
+          "name": "2 Samuel"
+        },
+        {
+          "abbrev": "1Rs",
+          "name": "1 Reis"
+        },
+        {
+          "abbrev": "2Rs",
+          "name": "2 Reis"
+        },
+        {
+          "abbrev": "1Cr",
+          "name": "1 Crônicas"
+        },
+        {
+          "abbrev": "2Cr",
+          "name": "2 Crônicas"
+        },
+        {
+          "abbrev": "Ed",
+          "name": "Esdras"
+        },
+        {
+          "abbrev": "Ne",
+          "name": "Neemias"
+        },
+        {
+          "abbrev": "Et",
+          "name": "Ester"
+        }
+      ]
+    },
+    {
+      "group": "Poéticos",
+      "label": "Livros Poéticos",
+      "books": [
+        {
+          "abbrev": "Jó",
+          "name": "Jó"
+        },
+        {
+          "abbrev": "Sl",
+          "name": "Salmos"
+        },
+        {
+          "abbrev": "Pv",
+          "name": "Provérbios"
+        },
+        {
+          "abbrev": "Ec",
+          "name": "Eclesiastes"
+        },
+        {
+          "abbrev": "Ct",
+          "name": "Cânticos"
+        }
+      ]
+    },
+    {
+      "group": "Profetas Maiores",
+      "label": "Profetas Maiores",
+      "books": [
+        {
+          "abbrev": "Is",
+          "name": "Isaías"
+        },
+        {
+          "abbrev": "Jr",
+          "name": "Jeremias"
+        },
+        {
+          "abbrev": "Lm",
+          "name": "Lamentações"
+        },
+        {
+          "abbrev": "Ez",
+          "name": "Ezequiel"
+        },
+        {
+          "abbrev": "Dn",
+          "name": "Daniel"
+        }
+      ]
+    },
+    {
+      "group": "Profetas Menores",
+      "label": "Profetas Menores",
+      "books": [
+        {
+          "abbrev": "Os",
+          "name": "Oséias"
+        },
+        {
+          "abbrev": "Jl",
+          "name": "Joel"
+        },
+        {
+          "abbrev": "Am",
+          "name": "Amós"
+        },
+        {
+          "abbrev": "Ob",
+          "name": "Obadias"
+        },
+        {
+          "abbrev": "Jn",
+          "name": "Jonas"
+        },
+        {
+          "abbrev": "Mq",
+          "name": "Miquéias"
+        },
+        {
+          "abbrev": "Na",
+          "name": "Naum"
+        },
+        {
+          "abbrev": "Hc",
+          "name": "Habacuque"
+        },
+        {
+          "abbrev": "Sf",
+          "name": "Sofonias"
+        },
+        {
+          "abbrev": "Ag",
+          "name": "Ageu"
+        },
+        {
+          "abbrev": "Zc",
+          "name": "Zacarias"
+        },
+        {
+          "abbrev": "Ml",
+          "name": "Malaquias"
+        }
+      ]
+    }
+  ],
+  "newTestament": [
+    {
+      "group": "Evangelhos",
+      "label": "Evangelhos",
+      "books": [
+        {
+          "abbrev": "Mt",
+          "name": "Mateus"
+        },
+        {
+          "abbrev": "Mc",
+          "name": "Marcos"
+        },
+        {
+          "abbrev": "Lc",
+          "name": "Lucas"
+        },
+        {
+          "abbrev": "Jo",
+          "name": "João"
+        }
+      ]
+    },
+    {
+      "group": "Histórico",
+      "label": "Histórico",
+      "books": [
+        {
+          "abbrev": "At",
+          "name": "Atos dos Apóstolos"
+        }
+      ]
+    },
+    {
+      "group": "Cartas Paulinas",
+      "label": "Cartas Paulinas",
+      "books": [
+        {
+          "abbrev": "Rm",
+          "name": "Romanos"
+        },
+        {
+          "abbrev": "1Co",
+          "name": "1 Coríntios"
+        },
+        {
+          "abbrev": "2Co",
+          "name": "2 Coríntios"
+        },
+        {
+          "abbrev": "Gl",
+          "name": "Gálatas"
+        },
+        {
+          "abbrev": "Ef",
+          "name": "Efésios"
+        },
+        {
+          "abbrev": "Fp",
+          "name": "Filipenses"
+        },
+        {
+          "abbrev": "Cl",
+          "name": "Colossenses"
+        },
+        {
+          "abbrev": "1Ts",
+          "name": "1 Tessalonicenses"
+        },
+        {
+          "abbrev": "2Ts",
+          "name": "2 Tessalonicenses"
+        },
+        {
+          "abbrev": "1Tm",
+          "name": "1 Timóteo"
+        },
+        {
+          "abbrev": "2Tm",
+          "name": "2 Timóteo"
+        },
+        {
+          "abbrev": "Tt",
+          "name": "Tito"
+        },
+        {
+          "abbrev": "Fm",
+          "name": "Filemon"
+        }
+      ]
+    },
+    {
+      "group": "Cartas Gerais",
+      "label": "Cartas Gerais",
+      "books": [
+        {
+          "abbrev": "Hb",
+          "name": "Hebreus"
+        },
+        {
+          "abbrev": "Tg",
+          "name": "Tiago"
+        },
+        {
+          "abbrev": "1Pe",
+          "name": "1 Pedro"
+        },
+        {
+          "abbrev": "2Pe",
+          "name": "2 Pedro"
+        },
+        {
+          "abbrev": "1Jo",
+          "name": "1 João"
+        },
+        {
+          "abbrev": "2Jo",
+          "name": "2 João"
+        },
+        {
+          "abbrev": "3Jo",
+          "name": "3 João"
+        },
+        {
+          "abbrev": "Jd",
+          "name": "Judas"
+        }
+      ]
+    },
+    {
+      "group": "Profético",
+      "label": "Profético",
+      "books": [
+        {
+          "abbrev": "Ap",
+          "name": "Apocalipse"
+        }
+      ]
+    }
+  ]
+}
