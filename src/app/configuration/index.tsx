@@ -1,4 +1,4 @@
-﻿import { Feather } from '@expo/vector-icons';
+import { Feather } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system/legacy';
@@ -11,6 +11,7 @@ import { BibleDrawerMenu } from '../../components/BibleDrawerMenu';
 import { BibleHeader } from '../../components/BibleHeader';
 import { BibleText } from '../../components/BibleText';
 import { STORAGE_KEYS } from '../../constants/storage';
+import { DonateModal } from '../../components/DonateModal';
 import { useReaderSettings } from '../../hooks/use-reader-settings';
 import { useResponsive } from '../../hooks/use-responsive';
 import { useStudies } from '../../hooks/use-studies';
@@ -24,6 +25,7 @@ export default function ConfigurationScreen() {
   const { studies, importBulk } = useStudies();
   const router = useRouter();
   const [autoBackup, setAutoBackup] = useState(false);
+  const [donateVisible, setDonateVisible] = useState(false);
   const [alertInfo, setAlertInfo] = useState<{ title: string; message: string; isDanger?: boolean } | null>(null);
 
   useEffect(() => {
@@ -307,6 +309,7 @@ export default function ConfigurationScreen() {
         activeItem="configuration"
         onClose={() => setDrawerVisible(false)}
         onSelectItem={() => { }}
+        onOpenDonate={() => { setDrawerVisible(false); setTimeout(() => setDonateVisible(true), 250); }}
       />
 
       <BibleConfirmModal
@@ -317,6 +320,9 @@ export default function ConfigurationScreen() {
         isDanger={alertInfo?.isDanger}
         onConfirm={() => setAlertInfo(null)}
       />
+
+      <DonateModal visible={donateVisible} onClose={() => setDonateVisible(false)} />
+
     </View>
   );
 }

@@ -2,7 +2,7 @@ import { BibleModals } from '@/components/BibleModals';
 import { BibleVerseActionSheet, SelectedVerse } from '@/components/BibleVerseActionSheet';
 import { ReaderSettingsModal } from '@/components/ReaderSettingsModal';
 import { Feather } from '@expo/vector-icons';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Animated, Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { BibleDrawerMenu } from '../../components/BibleDrawerMenu';
@@ -12,7 +12,7 @@ import { BibleVerseReader } from '../../components/BibleVerseReader';
 import { useBible } from '../../hooks/use-bible';
 
 import { BibleToast } from '../../components/BibleToast';
-import { BibleSearchModal } from '../../components/BibleSearchModal';
+import { DonateModal } from '../../components/DonateModal';
 import { useReaderSettings } from '../../hooks/use-reader-settings';
 import { useTheme } from '../../hooks/use-theme';
 import { useToast } from '../../hooks/use-toast';
@@ -41,7 +41,8 @@ export default function BibleScreen() {
 
   const [actionSheetVisible, setActionSheetVisible] = useState(false);
   const [selectedVerses, setSelectedVerses] = useState<SelectedVerse[]>([]);
-  const params = useLocalSearchParams<{ book?: string; ch?: string; v?: string; ver?: string }>();
+  const params = useLocalSearchParams<{ book?: string; ch?: string; v?: string; ver?: string; openSearch?: string }>();
+  const router = useRouter();
 
   const [drawerVisible, setDrawerVisible] = useState(false);
 
@@ -50,7 +51,7 @@ export default function BibleScreen() {
   const [chapterModalVisible, setChapterModalVisible] = useState(false);
   const [verseModalVisible, setVerseModalVisible] = useState(false);
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
-  const [searchModalVisible, setSearchModalVisible] = useState(false);
+  const [donateVisible, setDonateVisible] = useState(false);
 
   const [isChangingVersion, setIsChangingVersion] = useState<string | null>(null);
 
@@ -105,7 +106,7 @@ export default function BibleScreen() {
           setVerse(Number(params.v));
           setIsChangingVersion(null);
           setTimeout(() => scrollToVerse(Number(params.v), Number(params.ch)), 600);
-        }, 50);
+        }, 300);
       } else {
         setBook(params.book);
         setChapter(Number(params.ch));
@@ -233,7 +234,7 @@ export default function BibleScreen() {
         onNextChapter={() => navigateChapter(1)}
         onOpenMenu={() => setDrawerVisible(true)}
         onOpenSettings={() => setSettingsModalVisible(true)}
-        onOpenSearch={() => setSearchModalVisible(true)}
+        onOpenSearch={() => router.push('/search')}
       />
 
       <View style={styles.content}>
@@ -322,27 +323,12 @@ export default function BibleScreen() {
         activeItem="bible"
         onClose={() => setDrawerVisible(false)}
         onSelectItem={() => setDrawerVisible(false)}
+        onOpenDonate={() => { setDrawerVisible(false); setTimeout(() => setDonateVisible(true), 250); }}
       />
 
       <BibleToast toast={toast} opacity={opacity} />
 
-      {searchModalVisible && (
-        <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 100 }}>
-          <BibleSearchModal
-            visible={searchModalVisible}
-            onClose={() => setSearchModalVisible(false)}
-            books={versionBooks}
-            currentBookAbbrev={currentBook.abbrev}
-            currentChapter={chapter}
-            onNavigate={(bookAbbrev, ch, v) => {
-              setBook(bookAbbrev);
-              setChapter(ch);
-              setVerse(v);
-              setTimeout(() => scrollToVerse(v, ch), 600);
-            }}
-          />
-        </View>
-      )}
+      <DonateModal visible={donateVisible} onClose={() => setDonateVisible(false)} />
     </Animated.View>
   );
 }

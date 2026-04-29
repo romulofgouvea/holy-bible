@@ -1,4 +1,4 @@
-﻿import { BibleConfirmModal } from '@/components/BibleConfirmModal';
+import { BibleConfirmModal } from '@/components/BibleConfirmModal';
 import { Feather } from '@expo/vector-icons';
 import * as FileSystem from 'expo-file-system/legacy';
 import { useRouter } from 'expo-router';
@@ -19,6 +19,7 @@ import { BibleDrawerMenu } from '../../components/BibleDrawerMenu';
 import { BibleHeader } from '../../components/BibleHeader';
 import { BibleText } from '../../components/BibleText';
 import { BibleTopMenu } from '../../components/BibleTopMenu';
+import { DonateModal } from '../../components/DonateModal';
 import { ROUTES } from '../../constants/routes';
 import { useResponsive } from '../../hooks/use-responsive';
 import { Study, useStudies } from '../../hooks/use-studies';
@@ -37,6 +38,7 @@ export default function EstudosScreen() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [headerMenuVisible, setHeaderMenuVisible] = useState(false);
   const [shareMenuVisible, setShareMenuVisible] = useState(false);
+  const [donateVisible, setDonateVisible] = useState(false);
   const insets = useSafeAreaInsets();
 
   const { deleteMultiple, studies, createStudy, deleteStudy, importBulk } = useStudies();
@@ -297,6 +299,7 @@ export default function EstudosScreen() {
         activeItem="studies"
         onClose={() => setDrawerVisible(false)}
         onSelectItem={() => { }}
+        onOpenDonate={() => { setDrawerVisible(false); setTimeout(() => setDonateVisible(true), 250); }}
       />
 
       <BibleTopMenu
@@ -326,6 +329,8 @@ export default function EstudosScreen() {
           </View>
         </TouchableOpacity>
       </Modal>
+
+      <DonateModal visible={donateVisible} onClose={() => setDonateVisible(false)} />
     </View>
   );
 }

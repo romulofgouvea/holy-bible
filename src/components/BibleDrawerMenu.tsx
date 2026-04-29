@@ -1,4 +1,4 @@
-﻿import { Feather } from '@expo/vector-icons';
+import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import { Animated, Modal, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
@@ -12,24 +12,21 @@ type MenuItem = {
   key: string;
   label: string;
   icon: React.ComponentProps<typeof Feather>['name'];
-  route: string;
+  route?: string;
+  onPress?: () => void;
+  tint?: string;
 };
-
-const MENU_ITEMS: MenuItem[] = [
-  { key: 'bible', label: 'Bíblia', icon: 'book-open', route: ROUTES.BIBLE },
-  { key: 'studies', label: 'Estudos', icon: 'edit-3', route: ROUTES.STUDIES },
-  { key: 'configuration', label: 'Configurações', icon: 'settings', route: ROUTES.CONFIGURATION },
-];
 
 type DrawerMenuProps = {
   visible: boolean;
   activeItem: string;
   onClose: () => void;
   onSelectItem: (key: string) => void;
+  onOpenDonate?: () => void;
 };
 
 export function BibleDrawerMenu(props: DrawerMenuProps) {
-  const { visible, activeItem, onClose, onSelectItem } = props;
+  const { visible, activeItem, onClose, onSelectItem, onOpenDonate } = props;
   const { ms, width } = useResponsive();
   const drawerWidth = Math.min(ms(280), width * 0.72);
   const { colors } = useTheme();
@@ -81,6 +78,68 @@ export function BibleDrawerMenu(props: DrawerMenuProps) {
     }
   }, [visible]);
 
+  const MENU_ITEMS: MenuItem[] = [
+    { key: 'bible', label: 'Bíblia', icon: 'book-open', route: ROUTES.BIBLE },
+    { key: 'studies', label: 'Estudos', icon: 'edit-3', route: ROUTES.STUDIES },
+    { key: 'search', label: 'Pesquisar', icon: 'search', route: ROUTES.SEARCH },
+    { key: 'configuration', label: 'Configurações', icon: 'settings', route: ROUTES.CONFIGURATION },
+  ];
+
+  const BOTTOM_ITEMS: MenuItem[] = [
+    {
+      key: 'donate',
+      label: 'Fazer uma Doação',
+      icon: 'heart',
+      tint: '#E91E63',
+      onPress: onOpenDonate,
+    },
+  ];
+
+  const handlePress = (item: MenuItem) => {
+    onSelectItem(item.key);
+    onClose();
+    if (item.onPress) {
+      setTimeout(() => item.onPress!(), 150);
+    } else if (item.route) {
+      setTimeout(() => router.push(item.route as any), 150);
+    }
+  };
+
+  const renderItem = (item: MenuItem) => {
+    const isActive = activeItem === item.key;
+    const tintColor = item.tint || colors.primary;
+    return (
+      <TouchableOpacity
+        key={item.key}
+        style={[
+          styles.menuItem,
+          { paddingVertical: ms(9), paddingHorizontal: ms(8), borderRadius: ms(10), marginBottom: ms(4) },
+          isActive && { backgroundColor: colors.primaryContainer },
+        ]}
+        onPress={() => handlePress(item)}
+        activeOpacity={0.7}
+      >
+        <View style={[
+          styles.menuIconWrap,
+          { width: ms(38), height: ms(38), borderRadius: ms(10), marginRight: ms(10) },
+          isActive ? { backgroundColor: tintColor } : { backgroundColor: colors.surfaceVariant },
+        ]}>
+          <Feather name={item.icon} size={ms(18)} color={isActive ? colors.onPrimary : (item.tint || colors.textMuted)} />
+        </View>
+        <BibleText
+          style={[
+            styles.menuLabel,
+            { fontSize: ms(15) },
+            isActive ? { color: colors.onPrimaryContainer, fontWeight: '800' } : { color: item.tint || colors.text },
+          ]}
+          numberOfLines={1}
+        >
+          {item.label}
+        </BibleText>
+      </TouchableOpacity>
+    );
+  };
+
   return (
     <Modal visible={modalVisible} transparent animationType="none">
       <View style={StyleSheet.absoluteFill}>
@@ -89,40 +148,27 @@ export function BibleDrawerMenu(props: DrawerMenuProps) {
         </TouchableWithoutFeedback>
 
         <Animated.View style={[styles.drawer, { width: drawerWidth, transform: [{ translateX }], backgroundColor: colors.surface }]}>
-          <View style={[styles.drawerHeader, { backgroundColor: colors.primary, paddingTop: Math.max(ms(20), insets.top + ms(16)), paddingBottom: ms(20), paddingHorizontal: ms(20) }]}>
+          <View style={[styles.drawerHeader, { backgroundColor: colors.primary, paddingTop: Math.max(ms(20), insets.top + ms(16)), paddingBottom: ms(20), paddingHorizontal: ms(16) }]}>
             <View style={[styles.drawerLogo, { width: ms(38), height: ms(38), borderRadius: ms(10), marginRight: ms(10) }]}>
               <Feather name="book" size={ms(19)} color={colors.onPrimary} />
             </View>
-            <BibleText style={[styles.drawerTitle, { fontSize: ms(17), color: colors.onPrimary }]}>Bíblia Sagrada</BibleText>
+            <BibleText style={[styles.drawerTitle, { fontSize: ms(17), color: colors.onPrimary }]} numberOfLines={1}>
+              Bíblia Sagrada
+            </BibleText>
           </View>
 
           <View style={[styles.menuList, { paddingTop: ms(8), paddingHorizontal: ms(8) }]}>
-            {MENU_ITEMS.map((item) => {
-              const isActive = activeItem === item.key;
-              return (
-                <TouchableOpacity
-                  key={item.key}
-                  style={[styles.menuItem, { paddingVertical: ms(9), paddingHorizontal: ms(8), borderRadius: ms(10), marginBottom: ms(6) }, isActive && { backgroundColor: colors.primaryContainer }]}
-                  onPress={() => {
-                    onSelectItem(item.key);
-                    onClose();
-                    setTimeout(() => router.push(item.route as any), 150);
-                  }}
-                  activeOpacity={0.7}
-                >
-                  <View style={[styles.menuIconWrap, { width: ms(38), height: ms(38), borderRadius: ms(10), marginRight: ms(10) }, isActive && { backgroundColor: colors.primary }, !isActive && { backgroundColor: colors.surfaceVariant }]}>
-                    <Feather name={item.icon} size={ms(18)} color={isActive ? colors.onPrimary : colors.textMuted} />
-                  </View>
-                  <BibleText style={[styles.menuLabel, { fontSize: ms(15) }, isActive ? { color: colors.onPrimaryContainer, fontWeight: '800' } : { color: colors.text }]}>
-                    {item.label}
-                  </BibleText>
-                </TouchableOpacity>
-              );
-            })}
+            {MENU_ITEMS.map(renderItem)}
           </View>
 
-          <View style={[styles.drawerFooter]}>
-            <BibleText style={[styles.footerText, { fontSize: ms(12) }]}>{require('../../package.json').version}</BibleText>
+          <View style={[styles.bottomSection, { paddingHorizontal: ms(8), paddingBottom: Math.max(ms(16), insets.bottom + ms(8)) }]}>
+            <View style={[styles.divider, { backgroundColor: colors.border }]} />
+            {BOTTOM_ITEMS.map(renderItem)}
+            <View style={styles.versionRow}>
+              <BibleText style={[styles.footerText, { fontSize: ms(11), color: colors.textMuted }]}>
+                v{require('../../package.json').version}
+              </BibleText>
+            </View>
           </View>
         </Animated.View>
       </View>
@@ -140,7 +186,6 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     bottom: 0,
-    backgroundColor: '#fff',
     elevation: 24,
     shadowColor: '#000',
     shadowOffset: { width: 4, height: 0 },
@@ -150,71 +195,48 @@ const styles = StyleSheet.create({
   drawerHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#008080',
-    paddingHorizontal: 16,
-    paddingTop: 44,
-    paddingBottom: 20,
-    gap: 10,
+    gap: 0,
   },
   drawerLogo: {
-    width: 38,
-    height: 38,
-    borderRadius: 10,
     backgroundColor: 'rgba(255,255,255,0.2)',
     alignItems: 'center',
     justifyContent: 'center',
+    flexShrink: 0,
   },
   drawerTitle: {
     flex: 1,
-    color: '#fff',
     fontWeight: '800',
     letterSpacing: 0.3,
   },
   menuList: {
     flex: 1,
-    paddingTop: 8,
-    paddingHorizontal: 8,
-    gap: 2,
   },
   menuItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 9,
-    paddingHorizontal: 8,
-    borderRadius: 10,
-    gap: 10,
-  },
-  menuItemActive: {
-    backgroundColor: '#e6f3f3',
+    gap: 0,
   },
   menuIconWrap: {
-    width: 38,
-    height: 38,
-    borderRadius: 10,
-    backgroundColor: '#f5f5f5',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  menuIconWrapActive: {
-    backgroundColor: '#c8e6e6',
+    flexShrink: 0,
   },
   menuLabel: {
     fontWeight: '600',
-    color: '#333',
     flex: 1,
   },
-  menuLabelActive: {
-    color: '#008080',
-    fontWeight: '800',
+  bottomSection: {
+    gap: 4,
   },
-  drawerFooter: {
-    padding: 8,
+  divider: {
+    height: 1,
+    marginBottom: 8,
+  },
+  versionRow: {
     alignItems: 'center',
-    borderTopWidth: 1,
-    borderTopColor: '#f0f0f0',
+    paddingTop: 4,
   },
   footerText: {
-    color: '#bbb',
     fontWeight: '600',
   },
 });

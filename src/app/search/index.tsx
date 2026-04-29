@@ -9,10 +9,15 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { Book } from '../data';
-import { useResponsive } from '../hooks/use-responsive';
-import { useTheme } from '../hooks/use-theme';
-import { BibleText } from './BibleText';
+import { useRouter } from 'expo-router';
+import { useBible } from '../../hooks/use-bible';
+import { useResponsive } from '../../hooks/use-responsive';
+import { useTheme } from '../../hooks/use-theme';
+import { BibleText } from '../../components/BibleText';
+import { BibleHeader } from '../../components/BibleHeader';
+import { BibleDrawerMenu } from '../../components/BibleDrawerMenu';
+import { DonateModal } from '../../components/DonateModal';
+import { Book } from '../../data';
 
 export type SearchScope = 'bible' | 'book' | 'chapter';
 
@@ -22,15 +27,6 @@ export type SearchResult = {
   chapter: number;
   verse: number;
   text: string;
-};
-
-type Props = {
-  visible: boolean;
-  onClose: () => void;
-  books: Book[];
-  currentBookAbbrev: string;
-  currentChapter: number;
-  onNavigate: (bookAbbrev: string, chapter: number, verse: number) => void;
 };
 
 const SCOPES: { key: SearchScope; label: string }[] = [
@@ -59,9 +55,11 @@ function HighlightText({ text, query, primaryColor }: { text: string; query: str
   );
 }
 
-export function BibleSearchModal({ visible, onClose, books, currentBookAbbrev, currentChapter, onNavigate }: Props) {
+export default function SearchScreen() {
   const { ms } = useResponsive();
   const { colors } = useTheme();
+  const router = useRouter();
+  const { versionBooks, currentBook, chapter } = useBible();
 
   const [query, setQuery] = useState('');
   const [scope, setScope] = useState<SearchScope>('bible');
@@ -69,6 +67,9 @@ export function BibleSearchModal({ visible, onClose, books, currentBookAbbrev, c
   const [results, setResults] = useState<SearchResult[]>([]);
   const [history, setHistory] = useState<string[]>([]);
   const [loaded, setLoaded] = useState(false);
+  
+  const [drawerVisible, setDrawerVisible] = useState(false);
+  const [donateVisible, setDonateVisible] = useState(false);
 
   const searchTimeout = useRef<any>(null);
   const inputRef = useRef<TextInput>(null);
@@ -120,10 +121,7 @@ export function BibleSearchModal({ visible, onClose, books, currentBookAbbrev, c
     try { await AsyncStorage.removeItem(STORAGE_SEARCH_HISTORY); } catch (e) { }
   };
 
-  const currentBook = useMemo(
-    () => books.find(b => b.abbrev === currentBookAbbrev) || books[0],
-    [books, currentBookAbbrev]
-  );
+  const activeBook = currentBook || versionBooks?.[0];
 
   const runSearch = useCallback((q: string, sc: SearchScope, immediate = false) => {
     clearTimeout(searchTimeout.current);
@@ -139,12 +137,17 @@ export function BibleSearchModal({ visible, onClose, books, currentBookAbbrev, c
       const found: SearchResult[] = [];
 
       const booksToSearch = sc === 'bible'
-        ? books
-        : currentBook ? [currentBook] : books;
+        ? versionBooks
+        : activeBook ? [activeBook] : versionBooks;
+
+      if (!booksToSearch) {
+        setSearching(false);
+        return;
+      }
 
       for (const book of booksToSearch) {
         const chaptersToSearch = sc === 'chapter'
-          ? [{ idx: currentChapter - 1, verses: book.chapters[currentChapter - 1] || [] }]
+          ? [{ idx: chapter - 1, verses: book.chapters[chapter - 1] || [] }]
           : book.chapters.map((verses, idx) => ({ idx, verses }));
 
         for (const { idx, verses } of chaptersToSearch) {
@@ -168,19 +171,19 @@ export function BibleSearchModal({ visible, onClose, books, currentBookAbbrev, c
       setResults(found);
       setSearching(false);
     }, delay);
-  }, [books, currentBook, currentChapter]);
-
-  useEffect(() => {
-    if (loaded && query.trim().length >= 2) {
-      runSearch(query, scope, true);
-    }
-  }, [loaded]);
+  }, [versionBooks, activeBook, chapter]);
 
   const handleChangeQuery = (q: string) => {
     setQuery(q);
     saveQuery(q);
     runSearch(q, scope);
   };
+
+  useEffect(() => {
+    if (loaded && query.trim().length >= 2) {
+      runSearch(query, scope, true);
+    }
+  }, [loaded, runSearch]);
 
   const handleChangeScope = (sc: SearchScope) => {
     setScope(sc);
@@ -204,12 +207,7 @@ export function BibleSearchModal({ visible, onClose, books, currentBookAbbrev, c
 
   const handleNavigate = (r: SearchResult) => {
     addToHistory(query.trim());
-    onNavigate(r.bookAbbrev, r.chapter, r.verse);
-    onClose();
-  };
-
-  const handleClose = () => {
-    onClose();
+    router.push({ pathname: '/bible', params: { book: r.bookAbbrev, ch: r.chapter, v: r.verse } } as any);
   };
 
   const handleClearQuery = () => {
@@ -219,8 +217,6 @@ export function BibleSearchModal({ visible, onClose, books, currentBookAbbrev, c
     inputRef.current?.focus();
   };
 
-  if (!visible) return null;
-
   const showHistory = query.trim().length === 0 && history.length > 0;
   const showEmpty = query.trim().length === 0 && history.length === 0;
   const showTooShort = query.trim().length > 0 && query.trim().length < 2;
@@ -229,11 +225,9 @@ export function BibleSearchModal({ visible, onClose, books, currentBookAbbrev, c
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <View style={[styles.header, { backgroundColor: colors.surface, borderBottomColor: colors.border }]}>
-        <TouchableOpacity onPress={handleClose} style={styles.backBtn}>
-          <Feather name="arrow-left" size={ms(22)} color={colors.primary} />
-        </TouchableOpacity>
+      <BibleHeader title="Pesquisar" onMenuPress={() => setDrawerVisible(true)} />
 
+      <View style={[styles.searchContainer, { backgroundColor: colors.surface, borderBottomColor: colors.border }]}>
         <View style={[styles.searchBox, { backgroundColor: colors.surfaceVariant, borderColor: colors.border }]}>
           <Feather name="search" size={ms(18)} color={colors.primary} style={{ marginRight: 8 }} />
           <TextInput
@@ -255,20 +249,20 @@ export function BibleSearchModal({ visible, onClose, books, currentBookAbbrev, c
             </TouchableOpacity>
           )}
         </View>
-      </View>
 
-      <View style={[styles.scopeRow, { backgroundColor: colors.surface, borderBottomColor: colors.border }]}>
-        {SCOPES.map(s => (
-          <TouchableOpacity
-            key={s.key}
-            style={[styles.scopeBtn, scope === s.key && { borderBottomColor: colors.primary, borderBottomWidth: 2 }]}
-            onPress={() => handleChangeScope(s.key)}
-          >
-            <BibleText style={[styles.scopeLabel, { color: scope === s.key ? colors.primary : colors.textMuted, fontSize: ms(13) }]}>
-              {s.label}
-            </BibleText>
-          </TouchableOpacity>
-        ))}
+        <View style={[styles.scopeRow]}>
+          {SCOPES.map(s => (
+            <TouchableOpacity
+              key={s.key}
+              style={[styles.scopeBtn, scope === s.key && { borderBottomColor: colors.primary, borderBottomWidth: 2 }]}
+              onPress={() => handleChangeScope(s.key)}
+            >
+              <BibleText style={[styles.scopeLabel, { color: scope === s.key ? colors.primary : colors.textMuted, fontSize: ms(13) }]}>
+                {s.label}
+              </BibleText>
+            </TouchableOpacity>
+          ))}
+        </View>
       </View>
 
       {searching ? (
@@ -362,26 +356,32 @@ export function BibleSearchModal({ visible, onClose, books, currentBookAbbrev, c
           )}
         />
       ) : null}
+
+      <BibleDrawerMenu
+        visible={drawerVisible}
+        activeItem="search"
+        onClose={() => setDrawerVisible(false)}
+        onSelectItem={() => { }}
+        onOpenDonate={() => { setDrawerVisible(false); setTimeout(() => setDonateVisible(true), 250); }}
+      />
+      
+      <DonateModal visible={donateVisible} onClose={() => setDonateVisible(false)} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  searchContainer: {
     paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingTop: 12,
     borderBottomWidth: 1,
-    gap: 8,
+    gap: 12,
   },
-  backBtn: { padding: 4 },
   searchBox: {
-    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    height: 42,
+    height: 46,
     borderRadius: 12,
     borderWidth: 1,
     paddingHorizontal: 12,
@@ -389,7 +389,7 @@ const styles = StyleSheet.create({
   input: { flex: 1, height: '100%' },
   scopeRow: {
     flexDirection: 'row',
-    borderBottomWidth: 1,
+    marginTop: 4,
   },
   scopeBtn: {
     flex: 1,
