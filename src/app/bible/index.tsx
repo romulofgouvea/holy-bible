@@ -38,7 +38,7 @@ export default function BibleScreen() {
 
   const { toast, opacity, show } = useToast();
   const { colors } = useTheme();
-  const { readerColors } = useReaderSettings();
+  const { readerColors, readerTheme } = useReaderSettings();
 
   const [actionSheetVisible, setActionSheetVisible] = useState(false);
   const [selectedVerses, setSelectedVerses] = useState<SelectedVerse[]>([]);
@@ -265,21 +265,28 @@ export default function BibleScreen() {
         )}
 
         {!actionSheetVisible && (
-          <>
-            <TouchableOpacity
-              style={[styles.floatingArrow, styles.floatingArrowLeft, { backgroundColor: readerColors.primary }]}
-              onPress={() => navigateChapter(-1)}
-            >
-              <Feather name="chevron-left" size={24} color={readerColors.onPrimary} />
-            </TouchableOpacity>
+          (() => {
+            const isSepia = readerTheme === 'sepia';
+            const arrowBg = isSepia ? readerColors.primary : colors.primary;
+            const arrowColor = isSepia ? readerColors.onPrimary : colors.onPrimary;
+            return (
+              <>
+                <TouchableOpacity
+                  style={[styles.floatingArrow, styles.floatingArrowLeft, { backgroundColor: arrowBg }]}
+                  onPress={() => navigateChapter(-1)}
+                >
+                  <Feather name="chevron-left" size={24} color={arrowColor} />
+                </TouchableOpacity>
 
-            <TouchableOpacity
-              style={[styles.floatingArrow, styles.floatingArrowRight, { backgroundColor: readerColors.primary }]}
-              onPress={() => navigateChapter(1)}
-            >
-              <Feather name="chevron-right" size={24} color={readerColors.onPrimary} />
-            </TouchableOpacity>
-          </>
+                <TouchableOpacity
+                  style={[styles.floatingArrow, styles.floatingArrowRight, { backgroundColor: arrowBg }]}
+                  onPress={() => navigateChapter(1)}
+                >
+                  <Feather name="chevron-right" size={24} color={arrowColor} />
+                </TouchableOpacity>
+              </>
+            );
+          })()
         )}
       </View>
 
