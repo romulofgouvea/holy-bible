@@ -151,7 +151,7 @@ export default function StudyEditorScreen() {
     setVersePickerVisible(false);
   };
 
-  const exportPDF = useCallback(async () => {
+  const exportPDF = async () => {
     setMenuVisible(false);
     const study = getStudy(id);
     if (!study) return;
@@ -205,7 +205,7 @@ export default function StudyEditorScreen() {
         await Sharing.shareAsync(newUri, { mimeType: 'application/pdf', UTI: 'com.adobe.pdf' });
       }
     } catch (e: any) { Alert.alert('Erro na geração de PDF', String(e?.message || e)); }
-  }, [id, getStudy, htmlContent]);
+  };
 
   return (
     <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
