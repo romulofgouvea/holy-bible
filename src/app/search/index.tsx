@@ -87,7 +87,7 @@ export default function SearchScreen() {
         
         if (params.query) {
           setQuery(params.query);
-        } else if (savedQuery) {
+        } else if (params.from === 'bible' && savedQuery) {
           setQuery(savedQuery);
         }
 
