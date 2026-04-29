@@ -104,6 +104,7 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
         #editor {
           min-height: 100%;
           padding: 16px;
+          padding-bottom: 120px;
           outline: none;
           font-size: ${ms(16)}px;
           line-height: 1.6;
@@ -236,10 +237,46 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
           setTimeout(updateFormatState, 50);
         };
         
-        window.insertHtml = function(html) {
+        function ensureTrailingParagraph() {
+          var last = editor.lastElementChild;
+          if (!last || last.nodeName !== 'P' || last.innerHTML === '' || last.innerHTML === '<br>') return;
+          var p = document.createElement('p');
+          p.innerHTML = '<br>';
+          editor.appendChild(p);
+        }
+
+        function moveCursorToTrailingParagraph() {
+          ensureTrailingParagraph();
+          var last = editor.lastElementChild;
+          if (!last) return;
+          var range = document.createRange();
+          range.setStart(last, 0);
+          range.collapse(true);
+          var sel = window.getSelection();
+          sel.removeAllRanges();
+          sel.addRange(range);
           editor.focus();
+        }
+
+        var guardObserver = new MutationObserver(function() {
+          var last = editor.lastElementChild;
+          if (last && last.nodeName !== 'P') {
+            var p = document.createElement('p');
+            p.innerHTML = '<br>';
+            editor.appendChild(p);
+          }
+        });
+        guardObserver.observe(editor, { childList: true });
+
+        ensureTrailingParagraph();
+
+        window.insertHtml = function(html) {
+          moveCursorToTrailingParagraph();
           document.execCommand('insertHTML', false, html);
-          setTimeout(updateFormatState, 50);
+          setTimeout(function() {
+            moveCursorToTrailingParagraph();
+            updateFormatState();
+          }, 80);
         };
 
         window.changeFontSize = function(delta) {
