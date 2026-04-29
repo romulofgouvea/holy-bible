@@ -1,4 +1,4 @@
-import { Feather } from '@expo/vector-icons';
+﻿import { Feather } from '@expo/vector-icons';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Platform, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { WebView } from 'react-native-webview';
@@ -19,7 +19,7 @@ type Props = {
 
 export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ initialHtml, onChange, onOpenVersePicker }, ref) => {
   const webViewRef = useRef<WebView>(null);
-  const webIframeRef = useRef<any>(null); // For React Native Web iframe
+  const webIframeRef = useRef<any>(null);
   const { colors } = useTheme();
   const { ms } = useResponsive();
   const { readerColors } = useReaderSettings();
@@ -54,8 +54,6 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
   const changeFontSize = (delta: number) => {
     injectToEditor(`window.changeFontSize(${delta}); true;`);
   };
-
-
 
   useEffect(() => {
     if (!webViewRef.current) return;
@@ -158,7 +156,7 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
         }
         ul.task-list li[data-checked="true"]::before {
           background-color: #008080;
-          background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>');
+          background-image: url('data:image/svg+xml;utf8,<svg xmlns="http:
           background-size: 12px; background-repeat: no-repeat; background-position: center;
         }
         ul.task-list li[data-checked="true"] { text-decoration: line-through; opacity: 0.6; }
@@ -256,7 +254,7 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
           var px = parseInt(currentSizeStr) || 16;
           
           var sizes = [11, 13, 16, 24, 32, 48, 64];
-          var currentIndex = 2; // Default is size 3 (16px) -> index 2
+          var currentIndex = 2;
           var minDiff = Infinity;
           for (var i = 0; i < sizes.length; i++) {
               var diff = Math.abs(sizes[i] - px);
@@ -270,7 +268,7 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
           if (newIndex < 0) newIndex = 0;
           if (newIndex > 6) newIndex = 6;
           
-          var newSize = newIndex + 1; // Maps index 0..6 to size 1..7
+          var newSize = newIndex + 1;
           document.execCommand('fontSize', false, newSize);
         };
 
@@ -354,8 +352,7 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
             if (msg.type === 'eval') {
               eval(msg.code);
             }
-          } catch(e) {}
-        });
+          } catch(e)        });
 
       </script>
     </body>

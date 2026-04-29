@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Text as RNText, TextProps, StyleSheet } from 'react-native';
 
 export function BibleText(props: TextProps) {

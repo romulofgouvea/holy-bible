@@ -1,4 +1,4 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
+﻿import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Slot, useGlobalSearchParams, usePathname, useRootNavigationState, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
@@ -25,7 +25,6 @@ function useRoutePersistence() {
         if (savedPath && savedPath !== '/') {
           const query = savedParams ? JSON.parse(savedParams) : {};
 
-          // Only redirect if we are not already on that path
           if (pathname !== savedPath) {
             router.replace({ pathname: savedPath as any, params: query });
           }

@@ -1,4 +1,4 @@
-import { BibleConfirmModal } from '@/components/BibleConfirmModal';
+﻿import { BibleConfirmModal } from '@/components/BibleConfirmModal';
 import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';

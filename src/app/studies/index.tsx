@@ -1,4 +1,4 @@
-import { BibleConfirmModal } from '@/components/BibleConfirmModal';
+﻿import { BibleConfirmModal } from '@/components/BibleConfirmModal';
 import { Feather } from '@expo/vector-icons';
 import * as FileSystem from 'expo-file-system/legacy';
 import { useRouter } from 'expo-router';
@@ -17,8 +17,8 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BibleDrawerMenu } from '../../components/BibleDrawerMenu';
 import { BibleHeader } from '../../components/BibleHeader';
-import { BibleTopMenu } from '../../components/BibleTopMenu';
 import { BibleText } from '../../components/BibleText';
+import { BibleTopMenu } from '../../components/BibleTopMenu';
 import { ROUTES } from '../../constants/routes';
 import { useResponsive } from '../../hooks/use-responsive';
 import { Study, useStudies } from '../../hooks/use-studies';

@@ -1,4 +1,4 @@
-import { BibleModals } from '@/components/BibleModals';
+﻿import { BibleModals } from '@/components/BibleModals';
 import { BibleVerseActionSheet, SelectedVerse } from '@/components/BibleVerseActionSheet';
 import { ReaderSettingsModal } from '@/components/ReaderSettingsModal';
 import { Feather } from '@expo/vector-icons';
@@ -58,8 +58,6 @@ export default function BibleScreen() {
   const targetScrollIndex = useRef({ sectionIndex: 0, itemIndex: 0 });
   const initialScrollDone = useRef(false);
 
-  // Sync state → browser URL bar (web only).
-  // Uses history.replaceState so the router is NOT triggered — no navigation, no loop.
   useEffect(() => {
     if (!isReady || Platform.OS !== 'web' || typeof window === 'undefined') return;
     const abbrev = (currentBook.abbrev || book).toLowerCase();

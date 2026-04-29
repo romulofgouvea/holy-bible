@@ -1,4 +1,4 @@
-import { Feather } from '@expo/vector-icons';
+﻿import { Feather } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
@@ -27,7 +27,6 @@ const ALL_OT_ABBREVS = new Set(
   (bibleBooks.oldTestament as GroupEntry[]).flatMap(g => g.books.map(b => b.abbrev))
 );
 
-// Build abbrev -> name map from the static JSON
 const ABBREV_TO_NAME: Record<string, string> = {};
 [...(bibleBooks.oldTestament as GroupEntry[]), ...(bibleBooks.newTestament as GroupEntry[])].forEach(g => {
   g.books.forEach(b => {
@@ -58,13 +57,11 @@ export function BibleBookModal({ visible, onClose, books, versionSigla, onVersio
 
   const normalize = (str: string) => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 
-  // Enrich books with name from the static JSON when possible
   const enrichedBooks = useMemo(() => books.map(b => ({
     ...b,
     name: ABBREV_TO_NAME[b.abbrev] || b.name,
   })), [books]);
 
-  // Total filtered count for footer
   const filteredBooks = useMemo(() => {
     const query = normalize(searchQuery.trim());
     if (!query) return enrichedBooks;
@@ -73,7 +70,6 @@ export function BibleBookModal({ visible, onClose, books, versionSigla, onVersio
     );
   }, [searchQuery, enrichedBooks]);
 
-  // Grouped structure: OT groups + NT groups, each filtered
   const groupedSections = useMemo(() => {
     const query = normalize(searchQuery.trim());
 
@@ -94,7 +90,6 @@ export function BibleBookModal({ visible, onClose, books, versionSigla, onVersio
     ];
   }, [searchQuery, enrichedBooks]);
 
-  // For grid mode: flat list with section headers injected
   const availableWidth = width - 32;
   const numCols = Math.max(4, Math.floor(availableWidth / ms(72)));
   const itemWidth = ((availableWidth - (numCols - 1) * 8) / numCols) - 0.01;
@@ -189,12 +184,9 @@ export function BibleBookModal({ visible, onClose, books, versionSigla, onVersio
 
           return (
             <View key={`section-${sIdx}`}>
-              {/* Testament header */}
               {showTestamentHeader && (
                 section.testament === 'AT' ? testamentHeaderOT : testamentHeaderNT
               )}
-
-              {/* Group label */}
               <View style={styles.groupLabelRow}>
                 <View style={[styles.groupLabelLine, { backgroundColor: colors.border }]} />
                 <BibleText style={[styles.groupLabel, { color: colors.textMuted, fontSize: ms(10) }]}>
@@ -202,8 +194,6 @@ export function BibleBookModal({ visible, onClose, books, versionSigla, onVersio
                 </BibleText>
                 <View style={[styles.groupLabelLine, { backgroundColor: colors.border }]} />
               </View>
-
-              {/* Books */}
               {viewMode === 'list' ? (
                 <View style={styles.listGroup}>
                   {section.books.map((item, index) => (

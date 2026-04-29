@@ -1,4 +1,4 @@
-import { Feather } from '@expo/vector-icons';
+﻿import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import { Animated, Modal, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
@@ -37,11 +37,9 @@ export function BibleDrawerMenu(props: DrawerMenuProps) {
   const router = useRouter();
   const insets = useSafeAreaInsets();
 
-  // Initialize with -1000 so it starts off-screen and updates gracefully.
   const translateX = useRef(new Animated.Value(-1000)).current;
   const backdropOpacity = useRef(new Animated.Value(0)).current;
 
-  // Sync translation to dynamic drawerWidth
   useEffect(() => {
     if (!visible) {
       translateX.setValue(-drawerWidth);

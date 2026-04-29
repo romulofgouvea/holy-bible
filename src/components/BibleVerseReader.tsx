@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { SectionList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { ALIASES } from '../data';
 import { useReaderSettings } from '../hooks/use-reader-settings';

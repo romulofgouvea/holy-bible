@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+﻿import React, { useMemo } from 'react';
 import { Book } from '../data';
 import { useResponsive } from '../hooks/use-responsive';
 import { BibleBookModal } from './BibleBookModal';
@@ -48,8 +48,6 @@ export function BibleModals(props: BibleModalsProps) {
   const isAnyVisible = versionModalVisible || bookModalVisible || chapterModalVisible || verseModalVisible;
 
   const normalize = (str: string) => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-
-
 
   const chapterNumbers = useMemo(() => Array.from({ length: chapterCount }, (_, i) => i + 1), [chapterCount]);
 

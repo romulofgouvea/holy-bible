@@ -1,4 +1,4 @@
-import bibleVersions from './bible-versions.json';
+﻿import bibleVersions from './bible-versions.json';
 
 export type Book = {
   abbrev: string;
@@ -15,7 +15,6 @@ export type BibleVersionInfo = {
 
 export const ALIASES = bibleVersions as BibleVersionInfo[];
 export const availableVersions = ALIASES.map(v => v.sigla);
-
 
 // @ts-ignore
 const jsonContext = require.context('.', false, /\.json$/);

@@ -1,4 +1,4 @@
-import { useWindowDimensions } from 'react-native';
+﻿import { useWindowDimensions } from 'react-native';
 
 export function useResponsive() {
   const { width, height } = useWindowDimensions();
@@ -6,8 +6,7 @@ export function useResponsive() {
   const guidelineBaseWidth = 375;
   const isWeb = typeof window !== 'undefined' && window.navigator && window.navigator.userAgent;
   const isTablet = width >= 768 || isWeb;
-  
-  // Limit extreme scaling, creating a 1.2x global zoom compared to 500px mobile logic
+
   const effectiveWidth = isTablet ? Math.min(width, 680) : Math.min(width, 500);
 
   const s = (size: number) => (effectiveWidth / guidelineBaseWidth) * size;

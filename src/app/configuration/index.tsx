@@ -1,10 +1,10 @@
-import { Feather } from '@expo/vector-icons';
+﻿import { Feather } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
 import React, { useEffect, useState } from 'react';
-import { Alert, Platform, StyleSheet, Switch, TouchableOpacity, View } from 'react-native';
+import { Platform, ScrollView, StyleSheet, Switch, TouchableOpacity, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { BibleConfirmModal } from '../../components/BibleConfirmModal';
 import { BibleDrawerMenu } from '../../components/BibleDrawerMenu';
@@ -14,11 +14,11 @@ import { STORAGE_KEYS } from '../../constants/storage';
 import { useReaderSettings } from '../../hooks/use-reader-settings';
 import { useResponsive } from '../../hooks/use-responsive';
 import { useStudies } from '../../hooks/use-studies';
-import { useTheme } from '../../hooks/use-theme';
+import { useTheme, type ColorThemeKey } from '../../hooks/use-theme';
 
 export default function ConfigurationScreen() {
   const { ms } = useResponsive();
-  const { isDarkMode, toggleDarkMode, colors } = useTheme();
+  const { isDarkMode, toggleDarkMode, colors, colorTheme, setColorTheme, colorThemes } = useTheme();
   const { setReaderTheme, readerTheme } = useReaderSettings();
   const [drawerVisible, setDrawerVisible] = useState(false);
   const { studies, importBulk } = useStudies();
@@ -43,7 +43,7 @@ export default function ConfigurationScreen() {
       try {
         const permissions = await (FileSystem as any).StorageAccessFramework.requestDirectoryPermissionsAsync();
         if (permissions.granted) {
-          const fileName = `backup_estudos_automatico`; // .json added automatically or explicitly handled by OS based on MIME
+          const fileName = `backup_estudos_automatico`;
           const fileUri = await (FileSystem as any).StorageAccessFramework.createFileAsync(permissions.directoryUri, fileName, 'application/json');
           
           await AsyncStorage.setItem(STORAGE_KEYS.AUTO_BACKUP_FILE_URI, fileUri);
@@ -152,9 +152,10 @@ export default function ConfigurationScreen() {
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <BibleHeader title="Configurações" onMenuPress={() => setDrawerVisible(true)} />
 
-      <View style={styles.content}>
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <BibleText style={{ marginLeft: 8, marginBottom: 8, fontSize: ms(14), fontWeight: '700', color: colors.textMuted }}>APARÊNCIA</BibleText>
         <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+
           <TouchableOpacity style={styles.cardHeader} activeOpacity={0.8} onPress={handleToggle}>
             <View style={[styles.iconWrap, { backgroundColor: colors.surfaceVariant }]}>
               <Feather name={isDarkMode ? 'moon' : 'sun'} size={ms(20)} color={colors.primary} />
@@ -175,6 +176,56 @@ export default function ConfigurationScreen() {
               thumbColor={isDarkMode ? colors.primary : '#f4f3f4'}
             />
           </TouchableOpacity>
+
+          <View style={{ height: 1, backgroundColor: colors.border, marginLeft: 70 }} />
+
+          <View style={[styles.cardHeader, { flexDirection: 'column', alignItems: 'flex-start', gap: 12 }]}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+              <View style={[styles.iconWrap, { backgroundColor: colors.surfaceVariant }]}>
+                <Feather name="droplet" size={ms(20)} color={colors.primary} />
+              </View>
+              <View style={styles.cardTextContainer}>
+                <BibleText style={[styles.cardTitle, { fontSize: ms(16), color: colors.text }]}>
+                  Cor do Aplicativo
+                </BibleText>
+                <BibleText style={[styles.cardDesc, { fontSize: ms(13), color: colors.textMuted }]}>
+                  Escolha a paleta de cores do app
+                </BibleText>
+              </View>
+            </View>
+
+            <View style={styles.swatchGrid}>
+              {colorThemes.map((theme) => {
+                const swatchColor = isDarkMode ? theme.swatchDark : theme.swatch;
+                const isActive = colorTheme === theme.key;
+                return (
+                  <TouchableOpacity
+                    key={theme.key}
+                    activeOpacity={0.8}
+                    onPress={() => setColorTheme(theme.key)}
+                    style={[
+                      styles.swatchItem,
+                      { borderColor: isActive ? swatchColor : colors.border },
+                      isActive && { borderWidth: 2.5, backgroundColor: colors.surfaceVariant },
+                    ]}
+                  >
+                    <View style={[styles.swatchDot, { backgroundColor: swatchColor }]}>
+                      {isActive && (
+                        <Feather name="check" size={ms(14)} color="#fff" />
+                      )}
+                    </View>
+                    <BibleText style={[
+                      styles.swatchLabel,
+                      { fontSize: ms(11), color: isActive ? swatchColor : colors.textMuted },
+                      isActive && { fontWeight: '800' },
+                    ]}>
+                      {theme.label}
+                    </BibleText>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          </View>
         </View>
 
         <BibleText style={{ marginTop: 24, marginLeft: 8, marginBottom: 8, fontSize: ms(14), fontWeight: '700', color: colors.textMuted }}>GERENCIAMENTO</BibleText>
@@ -249,7 +300,7 @@ export default function ConfigurationScreen() {
             </View>
           </TouchableOpacity>
         </View>
-      </View>
+      </ScrollView>
 
       <BibleDrawerMenu
         visible={drawerVisible}
@@ -276,7 +327,7 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 16,
-    flex: 1,
+    paddingBottom: 32,
   },
   card: {
     borderRadius: 16,
@@ -310,5 +361,34 @@ const styles = StyleSheet.create({
   },
   cardDesc: {
     lineHeight: 18,
+  },
+
+  swatchGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
+    width: '100%',
+  },
+  swatchItem: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    paddingVertical: 10,
+    paddingHorizontal: 8,
+    borderRadius: 14,
+    borderWidth: 1.5,
+    minWidth: 68,
+    flex: 1,
+  },
+  swatchDot: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  swatchLabel: {
+    fontWeight: '600',
+    textAlign: 'center',
   },
 });
