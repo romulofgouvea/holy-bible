@@ -1,4 +1,4 @@
-﻿import { BibleModals } from '@/components/BibleModals';
+import { BibleModals } from '@/components/BibleModals';
 import { BibleVerseActionSheet, SelectedVerse } from '@/components/BibleVerseActionSheet';
 import { ReaderSettingsModal } from '@/components/ReaderSettingsModal';
 import { Feather } from '@expo/vector-icons';
@@ -12,6 +12,7 @@ import { BibleVerseReader } from '../../components/BibleVerseReader';
 import { useBible } from '../../hooks/use-bible';
 
 import { BibleToast } from '../../components/BibleToast';
+import { BibleSearchModal } from '../../components/BibleSearchModal';
 import { useReaderSettings } from '../../hooks/use-reader-settings';
 import { useTheme } from '../../hooks/use-theme';
 import { useToast } from '../../hooks/use-toast';
@@ -49,6 +50,7 @@ export default function BibleScreen() {
   const [chapterModalVisible, setChapterModalVisible] = useState(false);
   const [verseModalVisible, setVerseModalVisible] = useState(false);
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
+  const [searchModalVisible, setSearchModalVisible] = useState(false);
 
   const [isChangingVersion, setIsChangingVersion] = useState<string | null>(null);
 
@@ -220,6 +222,7 @@ export default function BibleScreen() {
         onNextChapter={() => navigateChapter(1)}
         onOpenMenu={() => setDrawerVisible(true)}
         onOpenSettings={() => setSettingsModalVisible(true)}
+        onOpenSearch={() => setSearchModalVisible(true)}
       />
 
       <View style={styles.content}>
@@ -311,6 +314,24 @@ export default function BibleScreen() {
       />
 
       <BibleToast toast={toast} opacity={opacity} />
+
+      {searchModalVisible && (
+        <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 100 }}>
+          <BibleSearchModal
+            visible={searchModalVisible}
+            onClose={() => setSearchModalVisible(false)}
+            books={versionBooks}
+            currentBookAbbrev={currentBook.abbrev}
+            currentChapter={chapter}
+            onNavigate={(bookAbbrev, ch, v) => {
+              setBook(bookAbbrev);
+              setChapter(ch);
+              setVerse(v);
+              setTimeout(() => scrollToVerse(v, ch), 600);
+            }}
+          />
+        </View>
+      )}
     </Animated.View>
   );
 }
