@@ -1,4 +1,4 @@
-﻿import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Slot, useGlobalSearchParams, usePathname, useRootNavigationState, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
@@ -16,36 +16,8 @@ function useRoutePersistence() {
   const [isRestored, setIsRestored] = useState(false);
 
   useEffect(() => {
-    if (!navigationState?.key || isRestored) return;
-
-    const restoreRoute = async () => {
-      try {
-        const savedPath = await AsyncStorage.getItem(STORAGE_KEYS.LAST_ROUTE);
-        const savedParams = await AsyncStorage.getItem(STORAGE_KEYS.LAST_ROUTE_PARAMS);
-        if (savedPath && savedPath !== '/') {
-          const query = savedParams ? JSON.parse(savedParams) : {};
-
-          if (pathname !== savedPath) {
-            router.replace({ pathname: savedPath as any, params: query });
-          }
-        }
-      } catch (e) {
-      } finally {
-        setIsRestored(true);
-      }
-    };
-
-    restoreRoute();
-  }, [navigationState?.key, isRestored]);
-
-  useEffect(() => {
-    if (isRestored && pathname && pathname !== '/') {
-      AsyncStorage.setItem(STORAGE_KEYS.LAST_ROUTE, pathname).catch(() => { });
-      try {
-        AsyncStorage.setItem(STORAGE_KEYS.LAST_ROUTE_PARAMS, JSON.stringify(params || {})).catch(() => { });
-      } catch (err) { }
-    }
-  }, [pathname, params, isRestored]);
+    setIsRestored(true);
+  }, []);
 
   return isRestored;
 }
