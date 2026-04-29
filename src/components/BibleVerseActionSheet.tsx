@@ -1,4 +1,4 @@
-﻿import { Feather } from '@expo/vector-icons';
+import { Feather } from '@expo/vector-icons';
 import * as Clipboard from 'expo-clipboard';
 import React from 'react';
 import { Animated, Share, StyleSheet, TouchableOpacity, View } from 'react-native';
@@ -110,7 +110,7 @@ export function BibleVerseActionSheet(props: VerseActionSheetProps) {
   const iconColor = colors.primary;
 
   return (
-    <Animated.View style={[styles.bar, { transform: [{ translateY }], backgroundColor: colors.surface, paddingBottom: Math.max(8, insets.bottom + 8) }]} id="bible-verse-action-sheet">
+    <Animated.View style={[styles.bar, { transform: [{ translateY }], backgroundColor: colors.surface, paddingBottom: 16 }]} id="bible-verse-action-sheet">
       <View style={styles.actions}>
         <TouchableOpacity style={styles.iconBtn} onPress={onShare} disabled={count === 0}>
           <Feather name="share-2" size={iconSize} color={count === 0 ? colors.textMuted : iconColor} />
