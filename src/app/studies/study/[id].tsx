@@ -1,4 +1,4 @@
-﻿import { Feather } from '@expo/vector-icons';
+import { Feather } from '@expo/vector-icons';
 import * as FileSystem from 'expo-file-system/legacy';
 import * as Print from 'expo-print';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -39,7 +39,7 @@ export default function StudyEditorScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { getStudy, updateStudy, loaded } = useStudies();
   const { ms } = useResponsive();
-  const { colors } = useTheme();
+  const { colors, isDarkMode } = useTheme();
   const { readerColors } = useReaderSettings();
   const router = useRouter();
 
@@ -203,7 +203,7 @@ export default function StudyEditorScreen() {
   }, [id, getStudy, htmlContent]);
 
   return (
-    <View style={{ flex: 1, backgroundColor: readerColors.background }}>
+    <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
       <BibleHeader
         showMenu={false}
         leftContent={

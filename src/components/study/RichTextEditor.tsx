@@ -1,4 +1,4 @@
-﻿import { Feather } from '@expo/vector-icons';
+import { Feather } from '@expo/vector-icons';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Platform, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { WebView } from 'react-native-webview';
@@ -59,7 +59,7 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
     if (!webViewRef.current) return;
     const js = `
       (function() {
-        document.body.style.backgroundColor = '${readerColors.background}';
+        document.body.style.backgroundColor = '#FFFFFF';
         var editorEl = document.getElementById('editor');
         if (editorEl) {
           editorEl.style.color = '${readerColors.text || colors.text}';
@@ -97,7 +97,7 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
         html, body {
           margin: 0; padding: 0; 
           height: 100%;
-          background-color: ${readerColors.background};
+          background-color: #FFFFFF;
           font-family: -apple-system, sans-serif;
           -webkit-touch-callout: none;
         }
@@ -156,7 +156,7 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
         }
         ul.task-list li[data-checked="true"]::before {
           background-color: #008080;
-          background-image: url('data:image/svg+xml;utf8,<svg xmlns="http:
+          background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>');
           background-size: 12px; background-repeat: no-repeat; background-position: center;
         }
         ul.task-list li[data-checked="true"] { text-decoration: line-through; opacity: 0.6; }
@@ -352,7 +352,8 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
             if (msg.type === 'eval') {
               eval(msg.code);
             }
-          } catch(e)        });
+          } catch(e) { }
+        });
 
       </script>
     </body>
@@ -481,7 +482,7 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
         <iframe
           ref={webIframeRef}
           srcDoc={editorHtml}
-          style={{ flex: 1, border: 'none', backgroundColor: readerColors.background, width: '100%', minHeight: 600 }}
+          style={{ flex: 1, border: 'none', backgroundColor: '#FFFFFF', width: '100%', minHeight: 600 }}
           sandbox="allow-scripts allow-same-origin"
         />
       ) : (
@@ -490,7 +491,7 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
           source={{ html: editorHtml }}
           originWhitelist={['*']}
           onMessage={onMessage}
-          style={{ flex: 1, backgroundColor: readerColors.background }}
+          style={{ flex: 1, backgroundColor: '#FFFFFF' }}
           hideKeyboardAccessoryView={true}
           keyboardDisplayRequiresUserAction={false}
           bounces={false}
