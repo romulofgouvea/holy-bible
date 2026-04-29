@@ -59,6 +59,8 @@ export default function BibleScreen() {
   const isAutoScrolling = useRef(false);
   const targetScrollIndex = useRef({ sectionIndex: 0, itemIndex: 0 });
   const initialScrollDone = useRef(false);
+  const chapterRef = useRef(chapter);
+  useEffect(() => { chapterRef.current = chapter; }, [chapter]);
 
   useEffect(() => {
     if (!isReady || Platform.OS !== 'web' || typeof window === 'undefined') return;
@@ -113,28 +115,37 @@ export default function BibleScreen() {
     }
   }, [isReady, params.book, params.ch, params.v, params.ver]);
 
-  const scrollToVerse = useCallback((verseNumber: number, targetChapter = chapter) => {
-    if (targetChapter !== chapter) {
+  const scrollToVerse = useCallback((verseNumber: number, targetChapter?: number) => {
+    const resolvedChapter = targetChapter ?? chapterRef.current;
+
+    if (resolvedChapter !== chapterRef.current) {
       isAutoScrolling.current = true;
-      setChapter(targetChapter);
-      setTimeout(() => scrollToVerse(verseNumber, targetChapter), 400);
+      setChapter(resolvedChapter);
+      setTimeout(() => {
+        const sectionIndex = 0;
+        const itemIndex = Math.max(0, verseNumber - 1);
+        targetScrollIndex.current = { sectionIndex, itemIndex };
+        try {
+          sectionListRef.current?.scrollToLocation({ sectionIndex, itemIndex, animated: true, viewPosition: 0 });
+          setBlinkingVerse(`${resolvedChapter}-${verseNumber}`);
+          setTimeout(() => setBlinkingVerse(null), 1500);
+        } catch (error) { }
+        setTimeout(() => { isAutoScrolling.current = false; }, 1200);
+      }, 500);
       return;
     }
 
     const sectionIndex = 0;
     const itemIndex = Math.max(0, verseNumber - 1);
-
     isAutoScrolling.current = true;
     targetScrollIndex.current = { sectionIndex, itemIndex };
-
     try {
       sectionListRef.current?.scrollToLocation({ sectionIndex, itemIndex, animated: true, viewPosition: 0 });
-      setBlinkingVerse(`${targetChapter}-${verseNumber}`);
+      setBlinkingVerse(`${resolvedChapter}-${verseNumber}`);
       setTimeout(() => setBlinkingVerse(null), 1500);
     } catch (error) { }
-
     setTimeout(() => { isAutoScrolling.current = false; }, 1200);
-  }, [chapter, setChapter, setBlinkingVerse]);
+  }, [setChapter, setBlinkingVerse]);
 
   const navigateChapter = useCallback((delta: number) => {
     isAutoScrolling.current = true;
@@ -289,7 +300,7 @@ export default function BibleScreen() {
         }}
         onBookSelect={(b) => { setBook(b); setChapter(1); setVerse(1); }}
         onChapterSelect={(c) => { setChapter(c); setVerse(1); }}
-        onVerseSelect={(v) => { setVerse(v); setTimeout(() => scrollToVerse(v, chapter), 300); }}
+        onVerseSelect={(v) => { setVerse(v); setTimeout(() => scrollToVerse(v, chapterRef.current), 300); }}
       />
 
       <BibleVerseActionSheet
