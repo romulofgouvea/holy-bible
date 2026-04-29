@@ -1,4 +1,4 @@
-﻿import { Feather } from '@expo/vector-icons';
+import { Feather } from '@expo/vector-icons';
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useResponsive } from '../hooks/use-responsive';
@@ -11,22 +11,25 @@ export type BibleHeaderProps = {
   rightContent?: React.ReactNode;
   onMenuPress?: () => void;
   showMenu?: boolean;
+  backgroundColor?: string;
+  contentColor?: string;
+  menuBtnBackgroundColor?: string;
 };
 
-export function BibleHeader({ title, leftContent, rightContent, onMenuPress, showMenu = true }: BibleHeaderProps) {
+export function BibleHeader({ title, leftContent, rightContent, onMenuPress, showMenu = true, backgroundColor, contentColor, menuBtnBackgroundColor }: BibleHeaderProps) {
   const { colors } = useTheme();
   const { ms } = useResponsive();
 
   return (
-    <View style={[styles.header, { backgroundColor: colors.primary, minHeight: ms(56), paddingHorizontal: ms(16), paddingVertical: ms(12) }]}>
+    <View style={[styles.header, { backgroundColor: backgroundColor || colors.primary, minHeight: ms(56), paddingHorizontal: ms(16), paddingVertical: ms(12) }]}>
       <View style={styles.leftContainer}>
         {showMenu && (
-          <TouchableOpacity style={[styles.menuBtn, { width: ms(40), height: ms(40), borderRadius: ms(10), marginRight: ms(8) }]} onPress={onMenuPress} activeOpacity={0.7}>
-            <Feather name="menu" size={ms(20)} color={colors.onPrimary} />
+          <TouchableOpacity style={[styles.menuBtn, { backgroundColor: menuBtnBackgroundColor || 'rgba(255,255,255,0.15)', width: ms(40), height: ms(40), borderRadius: ms(10), marginRight: ms(8) }]} onPress={onMenuPress} activeOpacity={0.7}>
+            <Feather name="menu" size={ms(20)} color={contentColor || colors.onPrimary} />
           </TouchableOpacity>
         )}
         {leftContent ? leftContent : (
-          title ? <BibleText style={[styles.title, { fontSize: ms(16), color: colors.onPrimary }]}>{title}</BibleText> : null
+          title ? <BibleText style={[styles.title, { fontSize: ms(16), color: contentColor || colors.onPrimary }]}>{title}</BibleText> : null
         )}
       </View>
       <View style={styles.rightContainer}>

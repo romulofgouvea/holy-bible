@@ -6,6 +6,7 @@ import { useTheme } from '../hooks/use-theme';
 import { BibleHeader } from './BibleHeader';
 import { BibleText } from './BibleText';
 import { BibleTopMenu } from './BibleTopMenu';
+import { useReaderSettings } from '../hooks/use-reader-settings';
 
 export type BibleTopBarProps = {
     version: string;
@@ -25,31 +26,40 @@ export const BibleTopBar = React.memo((props: BibleTopBarProps) => {
     const { version, bookName, currentChapter, onOpenVersion, onOpenBook, onOpenChapter, onPrevChapter, onNextChapter, onOpenMenu, onOpenSettings, onOpenSearch } = props;
     const { ms } = useResponsive();
     const { colors } = useTheme();
+    const { readerTheme } = useReaderSettings();
     const [dotsMenuVisible, setDotsMenuVisible] = useState(false);
+
+    const isSepia = readerTheme === 'sepia';
+    const headerBg = isSepia ? '#f4e4c1' : colors.primary;
+    const headerContent = isSepia ? '#5f4b32' : colors.onPrimary;
+    const btnBg = isSepia ? 'rgba(95, 75, 50, 0.08)' : 'rgba(255,255,255,0.15)';
 
     return (
         <>
             <BibleHeader
+                backgroundColor={headerBg}
+                contentColor={headerContent}
+                menuBtnBackgroundColor={btnBg}
                 onMenuPress={onOpenMenu}
                 leftContent={
                     <View style={styles.leftButtons}>
-                        <TouchableOpacity style={[styles.topBarButton, { height: ms(38), paddingHorizontal: ms(12), marginHorizontal: ms(3), borderRadius: ms(10) }]} onPress={onOpenVersion}>
-                            <BibleText style={[styles.topBarButtonText, { fontSize: ms(15), color: colors.onPrimary }]}>{version}</BibleText>
+                        <TouchableOpacity style={[styles.topBarButton, { backgroundColor: btnBg, height: ms(38), paddingHorizontal: ms(12), marginHorizontal: ms(3), borderRadius: ms(10) }]} onPress={onOpenVersion}>
+                            <BibleText style={[styles.topBarButtonText, { fontSize: ms(15), color: headerContent }]}>{version}</BibleText>
                         </TouchableOpacity>
-                        <TouchableOpacity style={[styles.topBarButton, { height: ms(38), paddingHorizontal: ms(12), marginHorizontal: ms(3), borderRadius: ms(10) }]} onPress={onOpenBook}>
-                            <BibleText style={[styles.topBarButtonText, { fontSize: ms(15), color: colors.onPrimary }]}>{bookName}</BibleText>
+                        <TouchableOpacity style={[styles.topBarButton, { backgroundColor: btnBg, height: ms(38), paddingHorizontal: ms(12), marginHorizontal: ms(3), borderRadius: ms(10) }]} onPress={onOpenBook}>
+                            <BibleText style={[styles.topBarButtonText, { fontSize: ms(15), color: headerContent }]}>{bookName}</BibleText>
                         </TouchableOpacity>
-                        <TouchableOpacity style={[styles.topBarButton, { height: ms(38), paddingHorizontal: ms(12), marginHorizontal: ms(3), borderRadius: ms(10) }]} onPress={onOpenChapter}>
-                            <BibleText style={[styles.topBarButtonText, { fontSize: ms(15), color: colors.onPrimary }]}>{currentChapter}</BibleText>
+                        <TouchableOpacity style={[styles.topBarButton, { backgroundColor: btnBg, height: ms(38), paddingHorizontal: ms(12), marginHorizontal: ms(3), borderRadius: ms(10) }]} onPress={onOpenChapter}>
+                            <BibleText style={[styles.topBarButtonText, { fontSize: ms(15), color: headerContent }]}>{currentChapter}</BibleText>
                         </TouchableOpacity>
                     </View>
                 }
                 rightContent={
                     <TouchableOpacity
-                        style={[styles.menuButton, { width: ms(38), height: ms(38), borderRadius: ms(10), marginLeft: ms(4) }]}
+                        style={[styles.menuButton, { backgroundColor: btnBg, width: ms(38), height: ms(38), borderRadius: ms(10), marginLeft: ms(4) }]}
                         onPress={() => setDotsMenuVisible(true)}
                     >
-                        <Feather name="more-vertical" size={ms(20)} color={colors.onPrimary} />
+                        <Feather name="more-vertical" size={ms(20)} color={headerContent} />
                     </TouchableOpacity>
                 }
             />

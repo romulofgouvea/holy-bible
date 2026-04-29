@@ -21,7 +21,6 @@ import { BibleDrawerMenu } from '../../components/BibleDrawerMenu';
 import { DonateModal } from '../../components/DonateModal';
 import { Book } from '../../data';
 
-const noOutline = Platform.select({ web: { outline: 'none', outlineWidth: 0 } as any, default: {} });
 
 export type SearchScope = 'bible' | 'book' | 'chapter';
 
@@ -263,7 +262,7 @@ export default function SearchScreen() {
           <Feather name="search" size={ms(18)} color={colors.primary} style={{ marginRight: 8 }} />
           <TextInput
             ref={inputRef}
-            style={[styles.input, noOutline, { fontSize: ms(15), color: colors.text }]}
+            style={[styles.input, Platform.select({ web: { outline: 'none', outlineWidth: 0 } as any, default: {} }), { fontSize: ms(15), color: colors.text }]}
             placeholder="Pesquisar na Bíblia..."
             placeholderTextColor={colors.textMuted}
             value={query}
