@@ -6,6 +6,7 @@ import {
   FlatList,
   Platform,
   StyleSheet,
+  Text,
   TextInput,
   TouchableOpacity,
   View
@@ -17,6 +18,7 @@ import { BibleSkeleton } from '../../components/BibleSkeleton';
 import { BibleText } from '../../components/BibleText';
 import { DonateModal } from '../../components/DonateModal';
 import { useBible } from '../../hooks/use-bible';
+import { useReaderSettings } from '../../hooks/use-reader-settings';
 import { useResponsive } from '../../hooks/use-responsive';
 import { useTheme } from '../../hooks/use-theme';
 import { handleSmartBack } from '../../utils/navigation';
@@ -37,24 +39,29 @@ const STORAGE_SEARCH_QUERY = '@bible:search_query';
 const STORAGE_SEARCH_HISTORY = '@bible:search_history';
 const MAX_HISTORY = 20;
 
-function HighlightText({ text, query, colors }: { text: string; query: string; colors: any }) {
-  if (!query.trim()) return <BibleText style={[styles.verseText, { color: colors.onBackground }]}>{text}</BibleText>;
+function HighlightText({ text, query, colors, fontSizeMultiplier, ms, readerFontFamily }: { text: string; query: string; colors: any; fontSizeMultiplier: number; ms: (v: number) => number; readerFontFamily: string }) {
+  const baseSize = 20;
+  const currentSize = ms(baseSize * fontSizeMultiplier);
+  const currentLineHeight = ms(28 * fontSizeMultiplier);
+
+  if (!query.trim()) return <Text style={[styles.verseText, { color: colors.onBackground, fontSize: currentSize, lineHeight: currentLineHeight, fontFamily: readerFontFamily }]}>{text}</Text>;
   const idx = text.toLowerCase().indexOf(query.toLowerCase());
-  if (idx === -1) return <BibleText style={[styles.verseText, { color: colors.onBackground }]}>{text}</BibleText>;
+  if (idx === -1) return <Text style={[styles.verseText, { color: colors.onBackground, fontSize: currentSize, lineHeight: currentLineHeight, fontFamily: readerFontFamily }]}>{text}</Text>;
   return (
-    <BibleText style={[styles.verseText, { color: colors.onBackground }]}>
+    <Text style={[styles.verseText, { color: colors.onBackground, fontSize: currentSize, lineHeight: currentLineHeight, fontFamily: readerFontFamily }]}>
       {text.slice(0, idx)}
-      <BibleText style={[styles.verseText, { backgroundColor: colors.primary, color: colors.onPrimary, fontWeight: '700', borderRadius: 4, paddingHorizontal: 2 }]}>
+      <Text style={[styles.verseText, { backgroundColor: colors.primary, color: colors.onPrimary, fontWeight: '700', borderRadius: 4, paddingHorizontal: 2, fontSize: currentSize, lineHeight: currentLineHeight, fontFamily: readerFontFamily }]}>
         {text.slice(idx, idx + query.length)}
-      </BibleText>
+      </Text>
       {text.slice(idx + query.length)}
-    </BibleText>
+    </Text>
   );
 }
 
 export default function SearchScreen() {
   const { ms } = useResponsive();
   const { colors } = useTheme();
+  const { fontSizeMultiplier, readerFontFamily } = useReaderSettings();
   const router = useRouter();
   const pathname = usePathname();
   const params = useLocalSearchParams<{ query?: string; from?: string }>();
@@ -388,13 +395,13 @@ export default function SearchScreen() {
               style={[styles.resultCard, { backgroundColor: colors.surface, borderColor: colors.border }]}
               onPress={() => handleNavigate(item)}
             >
-              <View style={[styles.refBadge, { backgroundColor: colors.primary }]}>
-                <BibleText style={[styles.refText, { color: colors.onPrimary, fontSize: ms(11) }]}>
+              <View style={[styles.refBadge, { backgroundColor: colors.primary, paddingVertical: ms(2) }]}>
+                <BibleText style={[styles.refText, { color: colors.onPrimary, fontSize: ms(11 * fontSizeMultiplier) }]}>
                   {item.bookName} {item.chapter}:{item.verse}
                 </BibleText>
               </View>
               <View style={{ flex: 1, marginTop: 6 }}>
-                <HighlightText text={item.text} query={query.trim()} colors={colors} />
+                <HighlightText text={item.text} query={query.trim()} colors={colors} fontSizeMultiplier={fontSizeMultiplier} ms={ms} readerFontFamily={readerFontFamily} />
               </View>
             </TouchableOpacity>
           )}

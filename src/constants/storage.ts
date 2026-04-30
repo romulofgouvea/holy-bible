@@ -1,4 +1,4 @@
-﻿export const STORAGE_KEYS = {
+export const STORAGE_KEYS = {
   LAST_READ: 'bible-last-read',
   HIGHLIGHTS: 'bible-highlights',
   STUDIES: 'holy-bible-studies',
@@ -12,6 +12,7 @@
   FONT_SIZE: '@bible_font_size',
   TEXT_ALIGN: '@bible_text_align',
   READER_THEME: '@bible_reader_theme',
+  READER_FONT: '@bible_reader_font',
   APP_COLOR_THEME: '@bible_app_color_theme',
   LAST_ROUTE: 'last_route',
   LAST_ROUTE_PARAMS: 'last_route_params',

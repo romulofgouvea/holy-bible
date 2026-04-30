@@ -42,7 +42,7 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
     } = props;
     const { ms } = useResponsive();
     const { colors } = useTheme();
-    const { fontSizeMultiplier, textAlign, readerColors, readerTheme } = useReaderSettings();
+    const { fontSizeMultiplier, textAlign, readerColors, readerTheme, readerFontFamily } = useReaderSettings();
 
     const getHighlightColorValue = (colorId: string) => {
         const h = VERSE_HIGHLIGHTS.find(v => v.id === colorId);
@@ -84,7 +84,8 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
                                 fontSize: ms(20 * fontSizeMultiplier),
                                 lineHeight: ms(28 * fontSizeMultiplier),
                                 color: readerColors.onBackground,
-                                textAlign: textAlign as any
+                                textAlign: textAlign as any,
+                                fontFamily: readerFontFamily
                             }]}>
                                 <Text style={{ color: primaryColor, fontWeight: '700', fontSize: ms(16 * fontSizeMultiplier), marginLeft: 16, marginRight: 8 }}>
                                     {`${item.verse} `}

@@ -1,6 +1,6 @@
 import { Feather } from '@expo/vector-icons';
 import React from 'react';
-import { Modal, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { Modal, Platform, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { useReaderSettings } from '../hooks/use-reader-settings';
 import { useResponsive } from '../hooks/use-responsive';
 import { useTheme } from '../hooks/use-theme';
@@ -9,7 +9,7 @@ import { BibleText } from './BibleText';
 export function ReaderSettingsModal({ visible, onClose }: { visible: boolean; onClose: () => void }) {
   const { ms } = useResponsive();
   const { colors, toggleDarkMode } = useTheme();
-  const { fontSizeMultiplier, setFontSizeMultiplier, textAlign, setTextAlign, readerTheme, setReaderTheme } = useReaderSettings();
+  const { fontSizeMultiplier, setFontSizeMultiplier, textAlign, setTextAlign, readerTheme, setReaderTheme, readerFont, setReaderFont } = useReaderSettings();
 
   const handleSetTheme = (theme: 'light' | 'dark' | 'sepia') => {
     setReaderTheme(theme);
@@ -64,6 +64,19 @@ export function ReaderSettingsModal({ visible, onClose }: { visible: boolean; on
             <View style={[styles.divider, { backgroundColor: colors.border }]} />
             <TouchableOpacity style={[styles.actionBtn, readerTheme === 'sepia' && { backgroundColor: colors.primary }]} onPress={() => handleSetTheme('sepia')}>
               <BibleText style={[{ color: readerTheme === 'sepia' ? colors.onPrimary : colors.onSurface, fontWeight: '700' }]}>Leitura</BibleText>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <View style={styles.section}>
+          <BibleText style={[styles.sectionTitle, { color: colors.textMuted }]}>Fonte</BibleText>
+          <View style={[styles.row, { backgroundColor: colors.surfaceHighlight }]}>
+            <TouchableOpacity style={[styles.actionBtn, readerFont === 'poppins' && { backgroundColor: colors.primary }]} onPress={() => setReaderFont('poppins')}>
+              <BibleText style={[{ color: readerFont === 'poppins' ? colors.onPrimary : colors.onSurface, fontWeight: '700' }]}>Poppins</BibleText>
+            </TouchableOpacity>
+            <View style={[styles.divider, { backgroundColor: colors.border }]} />
+            <TouchableOpacity style={[styles.actionBtn, readerFont === 'monospace' && { backgroundColor: colors.primary }]} onPress={() => setReaderFont('monospace')}>
+              <BibleText style={[{ color: readerFont === 'monospace' ? colors.onPrimary : colors.onSurface, fontWeight: '700', fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace' }]}>Mono</BibleText>
             </TouchableOpacity>
           </View>
         </View>

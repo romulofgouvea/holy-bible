@@ -23,7 +23,7 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
   const webIframeRef = useRef<any>(null);
   const { colors: themeColors, colorTheme } = useTheme();
   const { ms } = useResponsive();
-  const { readerColors, readerTheme } = useReaderSettings();
+  const { readerColors, readerTheme, readerFontFamily } = useReaderSettings();
 
   // When sepia is active use the light palette for editor UI
   const colors = useMemo(() => {
@@ -76,7 +76,7 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
   }));
 
   useEffect(() => {
-    if (!webViewRef.current) return;
+    if (!webViewRef.current && Platform.OS !== 'web') return;
     const js = `
       (function() {
         document.body.style.backgroundColor = '${colors.background}';
@@ -84,12 +84,13 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
         if (editorEl) {
           editorEl.style.color = '${readerColors.onBackground || colors.onBackground}';
           editorEl.style.backgroundColor = '${colors.background}';
+          editorEl.style.fontFamily = "${readerFontFamily === 'Poppins_400Regular' ? "'Poppins_400Regular', sans-serif" : readerFontFamily}";
         }
       })();
       true;
     `;
     injectToEditor(js);
-  }, [readerColors, colors]);
+  }, [readerColors, colors, readerFontFamily]);
 
   const onMessage = (event: any) => {
     try {
