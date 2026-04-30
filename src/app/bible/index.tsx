@@ -227,21 +227,21 @@ export default function BibleScreen() {
       <Animated.View style={[StyleSheet.absoluteFill, { zIndex: 1, opacity: fadeAnim.interpolate({ inputRange: [0, 1], outputRange: [1, 0] }), pointerEvents: isReady ? 'none' : 'auto' }]}>
         <BibleSkeleton />
       </Animated.View>
-      <Animated.View style={[styles.page, { opacity: fadeAnim, backgroundColor: 'transparent', zIndex: 2 }]}>
-        <BibleTopBar
-          version={version}
-          bookName={currentBook.name}
-          currentChapter={visibleChapter}
-          onOpenVersion={() => setVersionModalVisible(true)}
-          onOpenBook={() => setBookModalVisible(true)}
-          onOpenChapter={() => setChapterModalVisible(true)}
-          onPrevChapter={() => navigateChapter(-1)}
-          onNextChapter={() => navigateChapter(1)}
-          onOpenMenu={() => setDrawerVisible(true)}
-          onOpenSettings={() => setSettingsModalVisible(true)}
-          onOpenSearch={() => router.push('/search?from=bible')}
-        />
+      <BibleTopBar
+        version={version}
+        bookName={currentBook.name}
+        currentChapter={visibleChapter}
+        onOpenVersion={() => setVersionModalVisible(true)}
+        onOpenBook={() => setBookModalVisible(true)}
+        onOpenChapter={() => setChapterModalVisible(true)}
+        onPrevChapter={() => navigateChapter(-1)}
+        onNextChapter={() => navigateChapter(1)}
+        onOpenMenu={() => setDrawerVisible(true)}
+        onOpenSettings={() => setSettingsModalVisible(true)}
+        onOpenSearch={() => router.push('/search?from=bible')}
+      />
 
+      <Animated.View style={{ flex: 1, opacity: fadeAnim }}>
         <View style={styles.content}>
           {isChangingVersion ? (
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -282,6 +282,7 @@ export default function BibleScreen() {
             </>
           )}
         </View>
+      </Animated.View>
 
         <BibleModals
           versionBooks={versionBooks}
@@ -334,7 +335,6 @@ export default function BibleScreen() {
         <BibleToast toast={toast} opacity={opacity} />
 
         <DonateModal visible={donateVisible} onClose={() => setDonateVisible(false)} />
-      </Animated.View>
     </View>
   );
 }
