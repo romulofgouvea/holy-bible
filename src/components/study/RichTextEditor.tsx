@@ -7,6 +7,7 @@ import { useReaderSettings } from '../../hooks/use-reader-settings';
 import { useResponsive } from '../../hooks/use-responsive';
 import { useTheme } from '../../hooks/use-theme';
 import { BibleText } from '../BibleText';
+import { impactLight, selectionHaptic } from '../../utils/haptics';
 
 export type RichTextEditorRef = {
   insertVerseHtml: (html: string) => void;
@@ -47,14 +48,17 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
   }>({});
 
   const execDocumentCmd = (cmd: string, value?: string) => {
+    selectionHaptic();
     injectToEditor(`window.execCmd('${cmd}', ${value ? `'${value}'` : 'null'}); true;`);
   };
 
   const changeFontSize = (delta: number) => {
+    impactLight();
     injectToEditor(`window.changeFontSize(${delta}); true;`);
   };
 
   const applyHighlight = (color: string) => {
+    selectionHaptic();
     // HiliteColor for background highlighting
     execDocumentCmd('hiliteColor', color);
   };

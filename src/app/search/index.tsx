@@ -21,6 +21,7 @@ import { useBible } from '../../hooks/use-bible';
 import { useReaderSettings } from '../../hooks/use-reader-settings';
 import { useResponsive } from '../../hooks/use-responsive';
 import { useTheme } from '../../hooks/use-theme';
+import { impactLight, selectionHaptic } from '../../utils/haptics';
 import { handleSmartBack } from '../../utils/navigation';
 
 
@@ -71,7 +72,7 @@ const SearchResultItem = React.memo(({ item, query, colors, fontSizeMultiplier, 
     onPress={() => onPress(item)}
   >
     <View style={[styles.refBadge, { backgroundColor: colors.primary, paddingVertical: ms(2) }]}>
-      <BibleText style={[styles.refText, { color: colors.onPrimary, fontSize: ms(11 * fontSizeMultiplier) }]}>
+      <BibleText variant="reading" style={[styles.refText, { color: colors.onPrimary, fontSize: ms(11 * fontSizeMultiplier) }]}>
         {item.bookName} {item.chapter}:{item.verse}
       </BibleText>
     </View>
@@ -157,6 +158,7 @@ export default function SearchScreen() {
   };
 
   const clearHistory = async () => {
+    impactLight();
     setHistory([]);
     try { await AsyncStorage.removeItem(STORAGE_SEARCH_HISTORY); } catch (e) { }
   };
@@ -240,6 +242,7 @@ export default function SearchScreen() {
   };
 
   const handleHistorySelect = (term: string) => {
+    selectionHaptic();
     setQuery(term);
     saveQuery(term);
     addToHistory(term);
@@ -248,6 +251,7 @@ export default function SearchScreen() {
   };
 
   const handleNavigate = (r: SearchResult) => {
+    impactLight();
     addToHistory(query.trim());
     router.push({ pathname: '/bible', params: { book: r.bookAbbrev, ch: r.chapter, v: r.verse, ver: version } } as any);
   };

@@ -5,6 +5,7 @@ import { useReaderSettings } from '../hooks/use-reader-settings';
 import { useResponsive } from '../hooks/use-responsive';
 import { useTheme } from '../hooks/use-theme';
 import { BibleText } from './BibleText';
+import { impactLight, selectionHaptic } from '../utils/haptics';
 
 export function ReaderSettingsModal({ visible, onClose }: { visible: boolean; onClose: () => void }) {
   const { ms } = useResponsive();
@@ -12,6 +13,7 @@ export function ReaderSettingsModal({ visible, onClose }: { visible: boolean; on
   const { fontSizeMultiplier, setFontSizeMultiplier, textAlign, setTextAlign, readerTheme, setReaderTheme, readerFont, setReaderFont } = useReaderSettings();
 
   const handleSetTheme = (theme: 'light' | 'dark' | 'sepia') => {
+    selectionHaptic();
     setReaderTheme(theme);
     toggleDarkMode(theme === 'dark');
   };
@@ -27,11 +29,11 @@ export function ReaderSettingsModal({ visible, onClose }: { visible: boolean; on
         <View style={styles.section}>
           <BibleText style={[styles.sectionTitle, { color: colors.textMuted }]}>Tamanho da Fonte</BibleText>
           <View style={[styles.row, { backgroundColor: colors.surfaceHighlight }]}>
-            <TouchableOpacity style={styles.actionBtn} onPress={() => setFontSizeMultiplier(Math.max(0.7, fontSizeMultiplier - 0.1))}>
+            <TouchableOpacity style={styles.actionBtn} onPress={() => { impactLight(); setFontSizeMultiplier(Math.max(0.7, fontSizeMultiplier - 0.1)); }}>
               <BibleText style={[{ fontSize: ms(16), color: colors.onSurface, fontWeight: '700' }]}>A-</BibleText>
             </TouchableOpacity>
             <View style={[styles.divider, { backgroundColor: colors.border }]} />
-            <TouchableOpacity style={styles.actionBtn} onPress={() => setFontSizeMultiplier(Math.min(2.0, fontSizeMultiplier + 0.1))}>
+            <TouchableOpacity style={styles.actionBtn} onPress={() => { impactLight(); setFontSizeMultiplier(Math.min(2.0, fontSizeMultiplier + 0.1)); }}>
               <BibleText style={[{ fontSize: ms(20), color: colors.onSurface, fontWeight: '700' }]}>A+</BibleText>
             </TouchableOpacity>
           </View>
@@ -42,7 +44,7 @@ export function ReaderSettingsModal({ visible, onClose }: { visible: boolean; on
           <View style={[styles.row, { backgroundColor: colors.surfaceHighlight }]}>
             {['left', 'center', 'right', 'justify'].map((align, idx) => (
               <React.Fragment key={align}>
-                <TouchableOpacity style={[styles.actionBtn, textAlign === align && { backgroundColor: colors.primary }]} onPress={() => setTextAlign(align as any)}>
+                <TouchableOpacity style={[styles.actionBtn, textAlign === align && { backgroundColor: colors.primary }]} onPress={() => { impactLight(); setTextAlign(align as any); }}>
                   <Feather name={`align-${align}` as any} size={ms(18)} color={textAlign === align ? colors.onPrimary : colors.onSurface} />
                 </TouchableOpacity>
                 {idx < 3 && <View style={[styles.divider, { backgroundColor: colors.border }]} />}
@@ -71,11 +73,11 @@ export function ReaderSettingsModal({ visible, onClose }: { visible: boolean; on
         <View style={styles.section}>
           <BibleText style={[styles.sectionTitle, { color: colors.textMuted }]}>Fonte</BibleText>
           <View style={[styles.row, { backgroundColor: colors.surfaceHighlight }]}>
-            <TouchableOpacity style={[styles.actionBtn, readerFont === 'poppins' && { backgroundColor: colors.primary }]} onPress={() => setReaderFont('poppins')}>
+            <TouchableOpacity style={[styles.actionBtn, readerFont === 'poppins' && { backgroundColor: colors.primary }]} onPress={() => { selectionHaptic(); setReaderFont('poppins'); }}>
               <BibleText style={[{ color: readerFont === 'poppins' ? colors.onPrimary : colors.onSurface, fontWeight: '700' }]}>Poppins</BibleText>
             </TouchableOpacity>
             <View style={[styles.divider, { backgroundColor: colors.border }]} />
-            <TouchableOpacity style={[styles.actionBtn, readerFont === 'monospace' && { backgroundColor: colors.primary }]} onPress={() => setReaderFont('monospace')}>
+            <TouchableOpacity style={[styles.actionBtn, readerFont === 'monospace' && { backgroundColor: colors.primary }]} onPress={() => { selectionHaptic(); setReaderFont('monospace'); }}>
               <BibleText style={[{ color: readerFont === 'monospace' ? colors.onPrimary : colors.onSurface, fontWeight: '700', fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace' }]}>Mono</BibleText>
             </TouchableOpacity>
           </View>

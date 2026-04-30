@@ -6,6 +6,7 @@ import { BibleText } from './BibleText';
 import { useReaderSettings } from '../hooks/use-reader-settings';
 import { useResponsive } from '../hooks/use-responsive';
 import { useTheme } from '../hooks/use-theme';
+import { impactLight } from '../utils/haptics';
 
 type VerseItem = {
     chapter: number;
@@ -72,7 +73,7 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
 
                 return (
                     <TouchableOpacity
-                        onPress={() => onVersePress(item)}
+                        onPress={() => { impactLight(); onVersePress(item); }}
                         activeOpacity={0.7}
                     >
                         <View style={[

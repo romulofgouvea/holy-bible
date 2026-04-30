@@ -18,6 +18,7 @@ import { useReaderSettings } from '../../hooks/use-reader-settings';
 import { useResponsive } from '../../hooks/use-responsive';
 import { useStudies } from '../../hooks/use-studies';
 import { useTheme } from '../../hooks/use-theme';
+import { impactLight, selectionHaptic } from '../../utils/haptics';
 
 export default function ConfigurationScreen() {
   const { ms } = useResponsive();
@@ -147,6 +148,7 @@ export default function ConfigurationScreen() {
   };
 
   const handleToggle = () => {
+    impactLight();
     const nextDark = !isDarkMode;
     toggleDarkMode(nextDark);
     setReaderTheme(nextDark ? 'dark' : 'light');
@@ -204,7 +206,10 @@ export default function ConfigurationScreen() {
                     <TouchableOpacity
                       key={theme.key}
                       activeOpacity={0.8}
-                      onPress={() => setColorTheme(theme.key as ColorThemeKey)}
+                      onPress={() => {
+                        selectionHaptic();
+                        setColorTheme(theme.key as ColorThemeKey);
+                      }}
                       style={[
                         styles.swatchItem,
                         {
