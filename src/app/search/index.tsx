@@ -287,14 +287,14 @@ export default function SearchScreen() {
         onMenuPress={() => setDrawerVisible(true)}
         leftContent={
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <TouchableOpacity style={[styles.navBtn, { backgroundColor: btnBg }]} onPress={() => setVersionModalVisible(true)}>
-              <BibleText style={[styles.navBtnText, { color: btnText }]}>{version}</BibleText>
+            <TouchableOpacity style={{ backgroundColor: btnBg, height: ms(38), paddingHorizontal: ms(12), marginHorizontal: ms(3), borderRadius: ms(10), justifyContent: 'center' }} onPress={() => setVersionModalVisible(true)}>
+              <BibleText style={{ color: btnText, fontSize: ms(15), fontWeight: '700' }}>{version}</BibleText>
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.navBtn, { backgroundColor: btnBg }]} onPress={() => setBookModalVisible(true)}>
-              <BibleText style={[styles.navBtnText, { color: btnText }]}>{currentBook.name}</BibleText>
+            <TouchableOpacity style={{ backgroundColor: btnBg, height: ms(38), paddingHorizontal: ms(12), marginHorizontal: ms(3), borderRadius: ms(10), justifyContent: 'center' }} onPress={() => setBookModalVisible(true)}>
+              <BibleText style={{ color: btnText, fontSize: ms(15), fontWeight: '700' }}>{currentBook.name}</BibleText>
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.navBtn, { backgroundColor: btnBg }]} onPress={() => setChapterModalVisible(true)}>
-              <BibleText style={[styles.navBtnText, { color: btnText }]}>{chapter}</BibleText>
+            <TouchableOpacity style={{ backgroundColor: btnBg, height: ms(38), paddingHorizontal: ms(12), marginHorizontal: ms(3), borderRadius: ms(10), justifyContent: 'center' }} onPress={() => setChapterModalVisible(true)}>
+              <BibleText style={{ color: btnText, fontSize: ms(15), fontWeight: '700' }}>{chapter}</BibleText>
             </TouchableOpacity>
           </View>
         }
