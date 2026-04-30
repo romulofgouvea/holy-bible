@@ -15,22 +15,35 @@ export function BibleBottomSheet({ visible, onClose, children }: BibleBottomShee
 
   return (
     <Modal visible={visible} animationType="slide" transparent>
-      <TouchableOpacity activeOpacity={1} style={[styles.modalBackdrop, { backgroundColor: colors.overlay }]} onPress={onClose}>
-        <TouchableWithoutFeedback>
-          <View style={[styles.bottomSheet, { height: '85%', backgroundColor: colors.surface, paddingBottom: Math.max(8, insets.bottom + 8), shadowColor: colors.shadow }]}>
-            <View style={[styles.modalHandle, { backgroundColor: colors.primary }]} />
-            {children}
-          </View>
+      <View style={styles.modalContainer}>
+        <TouchableWithoutFeedback onPress={onClose}>
+          <View style={[styles.backdrop, { backgroundColor: colors.overlay }]} />
         </TouchableWithoutFeedback>
-      </TouchableOpacity>
+        
+        <View style={[
+          styles.bottomSheet, 
+          { 
+            height: '85%', 
+            backgroundColor: colors.surface, 
+            paddingBottom: Math.max(8, insets.bottom + 8), 
+            shadowColor: colors.shadow 
+          }
+        ]}>
+          <View style={[styles.modalHandle, { backgroundColor: colors.primary }]} />
+          {children}
+        </View>
+      </View>
     </Modal>
   );
 }
 
 const styles = StyleSheet.create({
-  modalBackdrop: {
+  modalContainer: {
     flex: 1,
     justifyContent: 'flex-end',
+  },
+  backdrop: {
+    ...StyleSheet.absoluteFillObject,
   },
   bottomSheet: {
     width: '100%',
