@@ -40,17 +40,17 @@ export const BibleSelectModal = React.memo(function BibleSelectModal<T>(props: S
         <TouchableWithoutFeedback>
           <View style={[styles.modalContentBig, { backgroundColor: colors.surface, shadowColor: colors.shadow }]}>
             <View style={styles.modalHeader}>
-              <BibleText style={[styles.modalTitle, { fontSize: ms(20), color: colors.onPrimary }]}>{title}</BibleText>
+              <BibleText style={[styles.modalTitle, { fontSize: ms(20), color: colors.onSurface, fontWeight: '700' }]}>{title}</BibleText>
               <TouchableOpacity onPress={onClose}>
-                <Feather name="x" size={ms(24)} color={colors.onPrimary} />
+                <Feather name="x" size={ms(24)} color={colors.onSurface} />
               </TouchableOpacity>
             </View>
 
             {!hideSearch && (
-              <View style={[styles.searchContainer, { backgroundColor: colors.primary }]}>
-                <Feather name="search" size={ms(20)} color={colors.textMuted} style={styles.searchIcon} />
+              <View style={[styles.searchContainer, { backgroundColor: colors.surfaceHighlight }]}>
+                <Feather name="search" size={ms(20)} color={colors.primary} style={styles.searchIcon} />
                 <TextInput
-                  style={[styles.searchInput, { fontSize: ms(16), color: colors.onPrimary }]}
+                  style={[styles.searchInput, { fontSize: ms(16), color: colors.onSurface }]}
                   placeholder={placeholder}
                   placeholderTextColor={colors.textMuted}
                   value={value}

@@ -51,7 +51,7 @@ export function BibleTopMenu({ visible, onClose, items }: BibleTopMenuProps) {
                 gap: 12,
                 alignItems: 'center',
                 borderBottomWidth: index < items.length - 1 ? 1 : 0,
-                borderBottomColor: colors.primary
+                borderBottomColor: colors.border
               }}
               onPress={() => {
                 onClose();
@@ -59,7 +59,7 @@ export function BibleTopMenu({ visible, onClose, items }: BibleTopMenuProps) {
               }}
             >
               <Feather name={item.icon} size={ms(18)} color={item.iconColor || colors.primary} />
-              <BibleText style={{ fontSize: ms(16), color: item.color || colors.onPrimary, fontWeight: '600' }}>
+              <BibleText style={{ fontSize: ms(16), color: item.color || colors.onSurface, fontWeight: '600' }}>
                 {item.label}
               </BibleText>
             </TouchableOpacity>
