@@ -401,9 +401,13 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
     <View style={{ flex: 1 }}>
       <View style={[styles.toolbar, { backgroundColor: colors.surface, borderBottomColor: colors.border }]}>
         <ScrollView horizontal showsHorizontalScrollIndicator={true} persistentScrollbar={true} keyboardShouldPersistTaps="always" style={{ flex: 1 }} contentContainerStyle={{ paddingHorizontal: 8, alignItems: 'center', paddingRight: 40 }}>
-          <TouchableOpacity style={[styles.toolBtn, { backgroundColor: '#e6f3f3', marginRight: 12 }]} onPress={onOpenVersePicker}>
-            <Feather name="book-open" size={ms(18)} color="#008080" />
-            <BibleText style={{ fontSize: ms(12), color: '#008080', fontWeight: '700', marginLeft: 6 }}>Bíblia</BibleText>
+          <TouchableOpacity 
+            style={[styles.toolBtn, { backgroundColor: colors.primary + '1A', marginRight: 12 }, Platform.select({ web: { outlineStyle: 'none' } as any, default: {} })]} 
+            onPress={onOpenVersePicker}
+            activeOpacity={0.7}
+          >
+            <Feather name="book-open" size={ms(18)} color={colors.primary} />
+            <BibleText style={{ fontSize: ms(12), color: colors.primary, fontWeight: '700', marginLeft: 6 }}>Bíblia</BibleText>
           </TouchableOpacity>
 
           <View style={styles.divider} />

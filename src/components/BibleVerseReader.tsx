@@ -1,8 +1,9 @@
-﻿import React from 'react';
+import React from 'react';
 import { SectionList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { ALIASES } from '../data';
 import { useReaderSettings } from '../hooks/use-reader-settings';
 import { useResponsive } from '../hooks/use-responsive';
+import { useTheme } from '../hooks/use-theme';
 
 type VerseItem = {
     chapter: number;
@@ -39,6 +40,7 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
         onVersePress, onViewableItemsChanged, viewabilityConfig, listRef, onScrollToIndexFailed
     } = props;
     const { ms } = useResponsive();
+    const { colors } = useTheme();
     const { fontSizeMultiplier, textAlign, readerColors, readerTheme } = useReaderSettings();
 
     const getHighlightColorValue = (colorId: string) => {
@@ -68,6 +70,7 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
                 const isBlinking = blinkingVerse === `${item.chapter}-${item.verse}`;
                 const highlightColorId = highlights[`${bookAbbrev}-${item.chapter}-${item.verse}`];
                 const isSelected = selectedKeys[`${bookAbbrev}-${item.chapter}-${item.verse}`];
+                const primaryColor = readerTheme === 'sepia' ? readerColors.primary : colors.primary;
 
                 return (
                     <TouchableOpacity
@@ -78,7 +81,7 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
                             styles.verseRow,
                             highlightColorId && [styles.highlightedRow, { backgroundColor: getHighlightColorValue(highlightColorId) }],
                             isBlinking && [styles.blinkingRow, { backgroundColor: readerColors.primaryContainer }],
-                            isSelected && [styles.selectedRow, { backgroundColor: readerColors.surfaceVariant, borderLeftColor: readerColors.primary }],
+                            isSelected && [styles.selectedRow, { backgroundColor: primaryColor + '1A', borderLeftColor: primaryColor }],
                         ]}>
                             <Text style={[styles.verseText, {
                                 fontSize: ms(22 * fontSizeMultiplier),
@@ -86,7 +89,7 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
                                 color: readerColors.text,
                                 textAlign: textAlign as any
                             }]}>
-                                <Text style={{ color: readerColors.primary, fontWeight: '700', fontSize: ms(16 * fontSizeMultiplier), marginLeft: 16, marginRight: 8 }}>
+                                <Text style={{ color: primaryColor, fontWeight: '700', fontSize: ms(16 * fontSizeMultiplier), marginLeft: 16, marginRight: 8 }}>
                                     {`${item.verse} `}
                                 </Text>
                                 {item.text}
@@ -99,12 +102,13 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
                 const versionInfo = ALIASES.find(v => v.sigla === version);
                 const copyright = (versionInfo as any)?.copyright;
                 if (!copyright) return null;
+                const primaryColor = readerTheme === 'sepia' ? readerColors.primary : colors.primary;
                 return (
                     <View style={[
                         styles.copyrightCard,
-                        { backgroundColor: readerColors.surfaceVariant, borderLeftColor: readerColors.primary }
+                        { backgroundColor: primaryColor + '1A', borderLeftColor: primaryColor }
                     ]}>
-                        <Text style={[styles.copyrightTitle, { color: readerColors.primary }]}>
+                        <Text style={[styles.copyrightTitle, { color: primaryColor }]}>
                             {versionInfo?.name} ({versionInfo?.sigla})
                         </Text>
                         <Text style={[styles.copyrightText, { color: readerColors.textMuted }]}>

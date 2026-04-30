@@ -176,6 +176,7 @@ export default function ConfigurationScreen() {
               onValueChange={handleToggle}
               trackColor={{ false: colors.border, true: colors.primaryContainer }}
               thumbColor={isDarkMode ? colors.primary : '#f4f3f4'}
+              {...({ activeThumbColor: colors.primary } as any)}
             />
           </TouchableOpacity>
 
@@ -267,6 +268,7 @@ export default function ConfigurationScreen() {
               onValueChange={handleToggleAutoBackup}
               trackColor={{ false: colors.border, true: colors.primaryContainer }}
               thumbColor={autoBackup ? colors.primary : '#f4f3f4'}
+              {...({ activeThumbColor: colors.primary } as any)}
             />
           </TouchableOpacity>
 

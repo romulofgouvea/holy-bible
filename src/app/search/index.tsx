@@ -1,25 +1,24 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Feather } from '@expo/vector-icons';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
+  Platform,
   StyleSheet,
   TextInput,
   TouchableOpacity,
   View,
-  Platform,
 } from 'react-native';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { BibleDrawerMenu } from '../../components/BibleDrawerMenu';
+import { BibleHeader } from '../../components/BibleHeader';
 import { BibleSkeleton } from '../../components/BibleSkeleton';
+import { BibleText } from '../../components/BibleText';
+import { DonateModal } from '../../components/DonateModal';
 import { useBible } from '../../hooks/use-bible';
 import { useResponsive } from '../../hooks/use-responsive';
 import { useTheme } from '../../hooks/use-theme';
-import { BibleText } from '../../components/BibleText';
-import { BibleHeader } from '../../components/BibleHeader';
-import { BibleDrawerMenu } from '../../components/BibleDrawerMenu';
-import { DonateModal } from '../../components/DonateModal';
-import { Book } from '../../data';
 
 
 export type SearchScope = 'bible' | 'book' | 'chapter';
@@ -34,8 +33,8 @@ export type SearchResult = {
 
 const SCOPES: { key: SearchScope; label: string }[] = [
   { key: 'bible', label: 'Bíblia toda' },
-  { key: 'book', label: 'Livro' },
-  { key: 'chapter', label: 'Capítulo' },
+  { key: 'book', label: 'Livro Atual' },
+  { key: 'chapter', label: 'Capítulo Atual' },
 ];
 
 const STORAGE_SEARCH_SCOPE = '@bible:search_scope';
@@ -71,7 +70,7 @@ export default function SearchScreen() {
   const [results, setResults] = useState<SearchResult[]>([]);
   const [history, setHistory] = useState<string[]>([]);
   const [loaded, setLoaded] = useState(false);
-  
+
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [donateVisible, setDonateVisible] = useState(false);
 
@@ -87,7 +86,7 @@ export default function SearchScreen() {
           AsyncStorage.getItem(STORAGE_SEARCH_HISTORY),
         ]);
         if (savedScope) setScope(savedScope as SearchScope);
-        
+
         if (params.query) {
           setQuery(params.query);
         } else if (params.from === 'bible' && savedQuery) {
@@ -244,9 +243,9 @@ export default function SearchScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <BibleHeader 
-        title="Pesquisar" 
-        showMenu={params.from !== 'bible'} 
+      <BibleHeader
+        title="Pesquisar"
+        showMenu={params.from !== 'bible'}
         onMenuPress={() => setDrawerVisible(true)}
         leftContent={params.from === 'bible' ? (
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -257,7 +256,7 @@ export default function SearchScreen() {
               Pesquisar
             </BibleText>
           </View>
-        ) : undefined} 
+        ) : undefined}
       />
 
       <View style={[styles.searchContainer, { backgroundColor: colors.surface, borderBottomColor: colors.border }]}>
@@ -401,7 +400,7 @@ export default function SearchScreen() {
         onSelectItem={() => { }}
         onOpenDonate={() => { setDrawerVisible(false); setTimeout(() => setDonateVisible(true), 250); }}
       />
-      
+
       <DonateModal visible={donateVisible} onClose={() => setDonateVisible(false)} />
     </View>
   );
