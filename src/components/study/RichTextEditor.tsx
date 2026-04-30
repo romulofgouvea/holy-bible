@@ -422,9 +422,9 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
   return (
     <View style={{ flex: 1 }}>
       <View style={[styles.toolbar, { backgroundColor: colors.surface, borderBottomColor: colors.border }]}>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} keyboardShouldPersistTaps="always" style={{ flex: 1 }} contentContainerStyle={{ paddingHorizontal: 8, alignItems: 'center' }}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} keyboardShouldPersistTaps="always" style={{ flex: 1 }} contentContainerStyle={{ paddingLeft: 8, paddingRight: 40, alignItems: 'center' }}>
           <TouchableOpacity
-            style={[styles.toolBtn, { backgroundColor: colors.primary + '20', marginRight: 12 }, Platform.select({ web: { outlineStyle: 'none' } as any, default: {} })]}
+            style={[styles.toolBtn, { backgroundColor: colors.primary + '20', marginRight: 4 }, Platform.select({ web: { outlineStyle: 'none' } as any, default: {} })]}
             onPress={onOpenVersePicker}
             activeOpacity={0.7}
           >
@@ -432,7 +432,7 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
             <BibleText style={{ fontSize: ms(12), color: colors.primary, fontWeight: '700', marginLeft: 6 }}>Bíblia</BibleText>
           </TouchableOpacity>
 
-          <View style={styles.divider} />
+          <View style={[styles.divider, { backgroundColor: colors.border }]} />
           <View style={[styles.rowGroup, { backgroundColor: colors.surfaceHighlight }]}>
             <TouchableOpacity style={styles.groupBtn} onPress={() => changeFontSize(-1)}>
               <BibleText style={{ fontWeight: '800', fontSize: ms(14), color: colors.onSurface }}>A</BibleText>
@@ -445,7 +445,7 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
             </TouchableOpacity>
           </View>
 
-          <View style={styles.divider} />
+          <View style={[styles.divider, { backgroundColor: colors.border }]} />
 
           <View style={[styles.rowGroup, { backgroundColor: colors.surfaceHighlight }]}>
             <TouchableOpacity style={[styles.groupBtn, formatState.bold && { backgroundColor: colors.primary }]} onPress={() => execDocumentCmd('bold')}>
@@ -461,7 +461,7 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
             </TouchableOpacity>
           </View>
 
-          <View style={styles.divider} />
+          <View style={[styles.divider, { backgroundColor: colors.border }]} />
 
           <View style={[styles.rowGroup, { backgroundColor: colors.surfaceHighlight }]}>
             <TouchableOpacity style={[styles.groupBtn, formatState.insertUnorderedList && !formatState.isTaskList && { backgroundColor: colors.primary }]} onPress={() => execDocumentCmd('insertUnorderedList')}>
@@ -477,7 +477,7 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
             </TouchableOpacity>
           </View>
 
-          <View style={styles.divider} />
+          <View style={[styles.divider, { backgroundColor: colors.border }]} />
 
           <View style={[styles.rowGroup, { backgroundColor: colors.surfaceHighlight }]}>
             <TouchableOpacity style={styles.groupBtn} onPress={() => execDocumentCmd('outdent')}>
@@ -489,7 +489,7 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
             </TouchableOpacity>
           </View>
 
-          <View style={styles.divider} />
+          <View style={[styles.divider, { backgroundColor: colors.border }]} />
 
           <View style={[styles.rowGroup, { backgroundColor: colors.surfaceHighlight }]}>
             <TouchableOpacity style={[styles.groupBtn, formatState.justifyLeft && { backgroundColor: colors.primary }]} onPress={() => execDocumentCmd('justifyLeft')}>
@@ -509,7 +509,7 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
             </TouchableOpacity>
           </View>
 
-          <View style={styles.divider} />
+          <View style={[styles.divider, { backgroundColor: colors.border }]} />
 
           <View style={[styles.rowGroup, { backgroundColor: colors.surfaceHighlight }]}>
             {VERSE_HIGHLIGHTS.map((h, i) => (
@@ -527,8 +527,9 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
 
         </ScrollView>
 
-        <View style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: 24, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.surface, opacity: 0.9 }} pointerEvents="none">
-          <Feather name="chevron-right" size={20} color={colors.primary} />
+        <View style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: 32, justifyContent: 'center', alignItems: 'flex-end', paddingRight: 4 }} pointerEvents="none">
+          <View style={{ position: 'absolute', right: 0, top: 0, bottom: 0, left: 0, backgroundColor: colors.surface + '80' }} />
+          <Feather name="chevron-right" size={16} color={colors.primary} />
         </View>
       </View>
 
@@ -557,7 +558,7 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
 
 const styles = StyleSheet.create({
   toolbar: { flexDirection: 'row', height: 48, borderBottomWidth: 1, elevation: 3, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 2, zIndex: 5 },
-  toolBtn: { flexDirection: 'row', paddingHorizontal: 10, paddingVertical: 6, marginHorizontal: 2, borderRadius: 6, alignItems: 'center', justifyContent: 'center', minWidth: 36, height: 36 },
+  toolBtn: { flexDirection: 'row', paddingHorizontal: 10, paddingVertical: 6, borderRadius: 6, alignItems: 'center', justifyContent: 'center', minWidth: 36, height: 36 },
   toolBtnActive: {},
   divider: { width: 1, height: 24, marginHorizontal: 6 },
   colorBtn: { width: 24, height: 24, borderRadius: 12, marginHorizontal: 4, borderWidth: 1 },
