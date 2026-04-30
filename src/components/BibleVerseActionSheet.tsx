@@ -4,6 +4,7 @@ import React from 'react';
 import { Animated, Share, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { VERSE_HIGHLIGHTS as HIGHLIGHT_COLORS } from '../constants/colors';
+import { BibleButton } from './BibleButton';
 import { useResponsive } from '../hooks/use-responsive';
 import { useTheme } from '../hooks/use-theme';
 
@@ -132,9 +133,13 @@ export function BibleVerseActionSheet(props: VerseActionSheetProps) {
       <View style={styles.removeActions}>
         <View style={[styles.divider, { backgroundColor: colors.border }]} />
 
-        <TouchableOpacity style={styles.iconBtn} onPress={onClose}>
-          <Feather name="x" size={iconSize} color={colors.error} />
-        </TouchableOpacity>
+        <BibleButton
+          label="Limpar Seleção"
+          variant="ghost"
+          size="sm"
+          onPress={onClose}
+          style={styles.clearBtn}
+        />
       </View>
     </Animated.View>
   );
@@ -183,5 +188,8 @@ const styles = StyleSheet.create({
     width: 1,
     height: 28,
     marginHorizontal: 4,
+  },
+  clearBtn: {
+    marginLeft: 8,
   },
 });

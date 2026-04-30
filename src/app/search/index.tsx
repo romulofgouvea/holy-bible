@@ -16,6 +16,7 @@ import { BibleHeader } from '../../components/BibleHeader';
 import { BibleModals } from '../../components/BibleModals';
 import { BibleSkeleton } from '../../components/BibleSkeleton';
 import { BibleText } from '../../components/BibleText';
+import { EmptyState } from '../../components/EmptyState';
 import { DonateModal } from '../../components/DonateModal';
 import { useBible } from '../../hooks/use-bible';
 import { useReaderSettings } from '../../hooks/use-reader-settings';
@@ -392,21 +393,19 @@ export default function SearchScreen() {
           )}
         />
       ) : showTooShort ? (
-        <View style={styles.centerBox}>
-          <BibleText style={[styles.hint, { color: colors.textMuted, fontSize: ms(14) }]}>
-            Digite ao menos 2 caracteres
-          </BibleText>
-        </View>
+        <EmptyState 
+          title="Pesquisa"
+          description="Digite ao menos 2 caracteres para pesquisar"
+          icon="search"
+        />
       ) : showNoResults ? (
-        <View style={styles.centerBox}>
-          <Feather name="search" size={ms(40)} color={colors.border} />
-          <BibleText style={[styles.hint, { color: colors.textMuted, fontSize: ms(15), marginTop: 12 }]}>
-            Nenhum resultado encontrado
-          </BibleText>
-          <BibleText style={[styles.hint, { color: colors.textMuted, fontSize: ms(13), marginTop: 4 }]}>
-            "{query.trim()}"
-          </BibleText>
-        </View>
+        <EmptyState 
+          title="Sem resultados"
+          description={`Nenhum versículo encontrado para "${query.trim()}"`}
+          icon="slash"
+          actionLabel="Limpar Busca"
+          onAction={handleClearQuery}
+        />
       ) : showResults ? (
         <FlatList
           data={results}

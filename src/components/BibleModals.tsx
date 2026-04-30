@@ -1,10 +1,11 @@
 import React, { useMemo } from 'react';
 import { Book } from '../data';
 import { useResponsive } from '../hooks/use-responsive';
-import { BibleBookModal } from './BibleBookModal';
-import { BibleNumberModal } from './BibleNumberModal';
-import { BibleVersionModal } from './BibleVersionModal';
 import { BibleBottomSheet } from './BibleBottomSheet';
+import { VersionPicker } from './modals/VersionPicker';
+import { BookPicker } from './modals/BookPicker';
+import { NumberPicker } from './modals/NumberPicker';
+import { selectionHaptic } from '../utils/haptics';
 
 export type BibleModalsProps = {
   versionBooks: Book[];
@@ -38,7 +39,6 @@ export function BibleModals(props: BibleModalsProps) {
     skipVerseSelection = false
   } = props;
   const { ms } = useResponsive();
-  const fontSize = ms(14);
 
   const closeAllModals = () => {
     setVersionModalVisible(false);
@@ -49,76 +49,77 @@ export function BibleModals(props: BibleModalsProps) {
 
   const isAnyVisible = versionModalVisible || bookModalVisible || chapterModalVisible || verseModalVisible;
 
-  const normalize = (str: string) => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-
   const chapterNumbers = useMemo(() => Array.from({ length: chapterCount }, (_, i) => i + 1), [chapterCount]);
 
-  const allVerses = useMemo(() => {
-    const verses: { chapter: number; verse: number; text: string }[] = [];
-    currentBook?.chapters?.forEach((chapterData, chapterIndex) => {
-      chapterData.forEach((verseText, verseIndex) => {
-        verses.push({ chapter: chapterIndex + 1, verse: verseIndex + 1, text: verseText });
-      });
-    });
-    return verses;
-  }, [currentBook]);
+  const verseCount = useMemo(() => {
+    if (!currentBook?.chapters || !currentBook.chapters[chapter - 1]) return 1;
+    return currentBook.chapters[chapter - 1].length;
+  }, [currentBook, chapter]);
 
-  const verseCount = allVerses.filter((item) => item.chapter === chapter).length || 1;
   const verseNumbers = useMemo(() => Array.from({ length: verseCount }, (_, i) => i + 1), [verseCount]);
 
   return (
     <BibleBottomSheet visible={isAnyVisible} onClose={closeAllModals}>
-      <BibleVersionModal
-        visible={versionModalVisible}
-        onClose={closeAllModals}
-        onSelect={(v) => {
-          onVersionSelect(v.sigla, '');
-          setVersionModalVisible(false);
-        }}
-      />
-      <BibleBookModal
-        visible={bookModalVisible}
-        onClose={closeAllModals}
-        books={versionBooks}
-        onSelect={(bookName) => {
-          onBookSelect(bookName);
-          setBookModalVisible(false);
-          setChapterModalVisible(true);
-        }}
-      />
-      <BibleNumberModal
-        visible={chapterModalVisible}
-        onClose={closeAllModals}
-        onBack={() => {
-          setChapterModalVisible(false);
-          setBookModalVisible(true);
-        }}
-        title="Capítulos"
-        iconName="list"
-        items={chapterNumbers}
-        onSelect={(num) => {
-          onChapterSelect(num);
-          setChapterModalVisible(false);
-          if (!skipVerseSelection) {
-            setVerseModalVisible(true);
-          }
-        }}
-      />
-      <BibleNumberModal
-        visible={verseModalVisible}
-        onClose={closeAllModals}
-        onBack={() => {
-          setVerseModalVisible(false);
-          setChapterModalVisible(true);
-        }}
-        title="Versículos"
-        iconName="align-left"
-        items={verseNumbers}
-        onSelect={(num) => {
-          onVerseSelect(num);
-          setVerseModalVisible(false);
-        }}
-      />
+      {versionModalVisible && (
+        <VersionPicker
+          onClose={closeAllModals}
+          onSelect={(v) => {
+            selectionHaptic();
+            onVersionSelect(v, '');
+            setVersionModalVisible(false);
+          }}
+        />
+      )}
+      {bookModalVisible && (
+        <BookPicker
+          books={versionBooks}
+          onClose={closeAllModals}
+          onSelect={(name) => {
+            selectionHaptic();
+            onBookSelect(name);
+            setBookModalVisible(false);
+            setChapterModalVisible(true);
+          }}
+        />
+      )}
+      {chapterModalVisible && (
+        <NumberPicker
+          title="Capítulos"
+          items={chapterNumbers}
+          activeNumber={chapter}
+          onClose={closeAllModals}
+          onBack={() => {
+            setChapterModalVisible(false);
+            setBookModalVisible(true);
+          }}
+          onSelect={(num) => {
+            selectionHaptic();
+            onChapterSelect(num);
+            setChapterModalVisible(false);
+            if (skipVerseSelection) {
+              onVerseSelect(1);
+            } else {
+              setVerseModalVisible(true);
+            }
+          }}
+        />
+      )}
+      {verseModalVisible && (
+        <NumberPicker
+          title="Versículos"
+          items={verseNumbers}
+          onClose={closeAllModals}
+          onBack={() => {
+            setVerseModalVisible(false);
+            setChapterModalVisible(true);
+          }}
+          onSelect={(num) => {
+            selectionHaptic();
+            onVerseSelect(num);
+            setVerseModalVisible(false);
+          }}
+        />
+      )}
     </BibleBottomSheet>
   );
 }

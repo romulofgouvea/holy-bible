@@ -121,15 +121,15 @@ export function BibleDrawerMenu(props: DrawerMenuProps) {
         <View style={[
           styles.menuIconWrap,
           { width: ms(38), height: ms(38), borderRadius: ms(10), marginRight: ms(10) },
-          isActive ? { backgroundColor: colors.onSurface } : { backgroundColor: colors.surfaceHighlight },
+          isActive ? { backgroundColor: colors.onPrimary + '40' } : { backgroundColor: colors.surfaceHighlight },
         ]}>
-          <Feather name={item.icon} size={ms(18)} color={isActive ? colors.primary : (item.tint || colors.onSurface)} />
+          <Feather name={item.icon} size={ms(18)} color={isActive ? colors.onPrimary : (item.tint || colors.onSurface)} />
         </View>
         <BibleText
           style={[
             styles.menuLabel,
             { fontSize: ms(15) },
-            isActive ? { color: colors.onSurface, fontWeight: '800' } : { color: item.tint || colors.onSurface },
+            isActive ? { color: colors.onPrimary, fontWeight: '800' } : { color: item.tint || colors.onSurface },
           ]}
           numberOfLines={1}
         >

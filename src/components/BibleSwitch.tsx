@@ -1,0 +1,71 @@
+import React, { useEffect, useRef } from 'react';
+import { Animated, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { useTheme } from '../hooks/use-theme';
+import { useResponsive } from '../hooks/use-responsive';
+import { impactLight } from '../utils/haptics';
+
+interface BibleSwitchProps {
+  value: boolean;
+  onValueChange: (value: boolean) => void;
+}
+
+export function BibleSwitch({ value, onValueChange }: BibleSwitchProps) {
+  const { colors } = useTheme();
+  const { ms } = useResponsive();
+  
+  const translateX = useRef(new Animated.Value(value ? ms(20) : ms(2))).current;
+
+  useEffect(() => {
+    Animated.spring(translateX, {
+      toValue: value ? ms(20) : ms(2),
+      useNativeDriver: true,
+      bounciness: 4,
+    }).start();
+  }, [value, ms]);
+
+  return (
+    <TouchableOpacity 
+      activeOpacity={0.9} 
+      onPress={() => {
+        impactLight();
+        onValueChange(!value);
+      }}
+      style={[
+        styles.track,
+        { 
+          width: ms(44), 
+          height: ms(26), 
+          borderRadius: ms(13),
+          backgroundColor: value ? colors.primary : colors.border,
+        }
+      ]}
+    >
+      <Animated.View 
+        style={[
+          styles.thumb,
+          {
+            width: ms(22),
+            height: ms(22),
+            borderRadius: ms(11),
+            backgroundColor: '#FFFFFF',
+            transform: [{ translateX }],
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 1 },
+            shadowOpacity: 0.2,
+            shadowRadius: 1,
+            elevation: 2,
+          }
+        ]}
+      />
+    </TouchableOpacity>
+  );
+}
+
+const styles = StyleSheet.create({
+  track: {
+    justifyContent: 'center',
+  },
+  thumb: {
+    position: 'absolute',
+  },
+});

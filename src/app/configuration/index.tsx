@@ -6,10 +6,11 @@ import * as FileSystem from 'expo-file-system/legacy';
 import { useRouter } from 'expo-router';
 import * as Sharing from 'expo-sharing';
 import React, { useEffect, useState } from 'react';
-import { Platform, ScrollView, StyleSheet, Switch, TouchableOpacity, View } from 'react-native';
+import { Platform, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { BibleConfirmModal } from '../../components/BibleConfirmModal';
 import { BibleDrawerMenu } from '../../components/BibleDrawerMenu';
 import { BibleHeader } from '../../components/BibleHeader';
+import { BibleSwitch } from '../../components/BibleSwitch';
 import { BibleText } from '../../components/BibleText';
 import { DonateModal } from '../../components/DonateModal';
 import { ThemedIcon } from '../../components/ThemedIcon';
@@ -18,7 +19,13 @@ import { useReaderSettings } from '../../hooks/use-reader-settings';
 import { useResponsive } from '../../hooks/use-responsive';
 import { useStudies } from '../../hooks/use-studies';
 import { useTheme } from '../../hooks/use-theme';
+import { SettingsItem } from '../../components/SettingsItem';
 import { impactLight, selectionHaptic } from '../../utils/haptics';
+
+const COLOR_THEME_OPTIONS = Object.entries(COLOR_THEMES).map(([key, value]) => ({ 
+  key, 
+  ...value 
+}));
 
 export default function ConfigurationScreen() {
   const { ms } = useResponsive();
@@ -161,26 +168,18 @@ export default function ConfigurationScreen() {
       <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <BibleText style={{ marginLeft: 8, marginBottom: 8, fontSize: ms(14), fontWeight: '700', color: colors.textMuted }}>APARÊNCIA</BibleText>
         <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border, shadowColor: colors.shadow }]}>
-
-          <TouchableOpacity style={styles.cardHeader} activeOpacity={0.8} onPress={handleToggle}>
-            <ThemedIcon name={isDarkMode ? 'moon' : 'sun'} />
-            <View style={styles.cardTextContainer}>
-              <BibleText style={[styles.cardTitle, { fontSize: ms(16), color: colors.onBackground }]}>
-                Modo Escuro
-              </BibleText>
-              <BibleText style={[styles.cardDesc, { fontSize: ms(13), color: colors.textMuted }]}>
-                Ative o tema noturno no app
-              </BibleText>
-            </View>
-            <Switch
-              style={{ marginLeft: 8 }}
-              value={isDarkMode}
-              onValueChange={handleToggle}
-              trackColor={{ false: colors.border, true: colors.secondary }}
-              thumbColor={isDarkMode ? colors.primary : '#f4f3f4'}
-              {...({ activeThumbColor: colors.primary } as any)}
-            />
-          </TouchableOpacity>
+          <SettingsItem 
+            label="Modo Escuro"
+            description="Ative o tema noturno no app"
+            icon={isDarkMode ? 'moon' : 'sun'}
+            onPress={handleToggle}
+            rightElement={
+              <BibleSwitch
+                value={isDarkMode}
+                onValueChange={handleToggle}
+              />
+            }
+          />
 
           <View style={{ height: 1, backgroundColor: colors.border, marginLeft: 70 }} />
 
@@ -198,110 +197,87 @@ export default function ConfigurationScreen() {
             </View>
 
             <View style={styles.swatchGrid}>
-              {Object.entries(COLOR_THEMES).map(([key, value]) => ({ key, ...value }))
-                .map((theme) => {
-                  const swatchColor = theme.swatch;
-                  const isActive = colorTheme === theme.key;
-                  return (
-                    <TouchableOpacity
-                      key={theme.key}
-                      activeOpacity={0.8}
-                      onPress={() => {
-                        selectionHaptic();
-                        setColorTheme(theme.key as ColorThemeKey);
-                      }}
-                      style={[
-                        styles.swatchItem,
-                        {
-                          borderColor: isActive ? swatchColor : colors.border,
-                          backgroundColor: isActive ? swatchColor + '15' : colors.surfaceHighlight
-                        },
-                        isActive && { borderWidth: 2, borderColor: swatchColor },
-                      ]}
-                    >
-                      <View style={[styles.swatchDot, { backgroundColor: swatchColor }]}>
-                        {isActive && (
-                          <Feather name="check" size={ms(14)} color={colors.onPrimary} />
-                        )}
-                      </View>
-                      <BibleText style={[
-                        styles.swatchLabel,
-                        { fontSize: ms(11), color: isActive ? swatchColor : colors.textMuted },
-                        isActive && { fontWeight: '800' },
-                      ]}>
-                        {theme.label}
-                      </BibleText>
-                    </TouchableOpacity>
-                  );
-                })}
+              {COLOR_THEME_OPTIONS.map((theme) => {
+                const isActive = colorTheme === theme.key;
+                const swatchColor = theme.swatch;
+                return (
+                  <TouchableOpacity
+                    key={theme.key}
+                    activeOpacity={0.8}
+                    onPress={() => {
+                      selectionHaptic();
+                      setColorTheme(theme.key as ColorThemeKey);
+                    }}
+                    style={[
+                      styles.swatchItem,
+                      {
+                        borderColor: isActive ? swatchColor : colors.border,
+                        backgroundColor: isActive ? swatchColor + '15' : colors.surfaceHighlight
+                      },
+                      isActive && { borderWidth: 2, borderColor: swatchColor },
+                    ]}
+                  >
+                    <View style={[styles.swatchDot, { backgroundColor: swatchColor }]}>
+                      {isActive && (
+                        <Feather name="check" size={ms(14)} color={colors.onPrimary} />
+                      )}
+                    </View>
+                    <BibleText style={[
+                      styles.swatchLabel,
+                      { fontSize: ms(11), color: isActive ? swatchColor : colors.textMuted },
+                      isActive && { fontWeight: '800' },
+                    ]}>
+                      {theme.label}
+                    </BibleText>
+                  </TouchableOpacity>
+                );
+              })}
             </View>
           </View>
         </View>
 
         <BibleText style={{ marginTop: 24, marginLeft: 8, marginBottom: 8, fontSize: ms(14), fontWeight: '700', color: colors.textMuted }}>GERENCIAMENTO</BibleText>
         <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border, shadowColor: colors.shadow }]}>
-          <TouchableOpacity style={styles.cardHeader} activeOpacity={0.8} onPress={() => router.push('/configuration/trash' as any)}>
-            <ThemedIcon name="trash-2" />
-            <View style={styles.cardTextContainer}>
-              <BibleText style={[styles.cardTitle, { fontSize: ms(16), color: colors.onBackground }]}>
-                Lixeira de Estudos
-              </BibleText>
-              <BibleText style={[styles.cardDesc, { fontSize: ms(13), color: colors.textMuted }]}>
-                Gerencie estudos excluídos ou restaure-os
-              </BibleText>
-            </View>
-          </TouchableOpacity>
+          <SettingsItem 
+            label="Lixeira de Estudos"
+            description="Gerencie estudos excluídos ou restaure-os"
+            icon="trash-2"
+            onPress={() => router.push('/configuration/trash' as any)}
+          />
         </View>
 
         <BibleText style={{ marginTop: 24, marginLeft: 8, marginBottom: 8, fontSize: ms(14), fontWeight: '700', color: colors.textMuted }}>BACKUP E RESTAURAÇÃO</BibleText>
         <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border, shadowColor: colors.shadow }]}>
-          <TouchableOpacity style={styles.cardHeader} activeOpacity={0.8} onPress={() => handleToggleAutoBackup(!autoBackup)}>
-            <ThemedIcon name="save" />
-            <View style={styles.cardTextContainer}>
-              <BibleText style={[styles.cardTitle, { fontSize: ms(16), color: colors.onBackground }]}>
-                Backup Automático
-              </BibleText>
-              <BibleText style={[styles.cardDesc, { fontSize: ms(13), color: colors.textMuted }]}>
-                Salvar estudos na pasta do App
-              </BibleText>
-            </View>
-            <Switch
-              style={{ marginLeft: 8 }}
-              value={autoBackup}
-              onValueChange={handleToggleAutoBackup}
-              trackColor={{ false: colors.border, true: colors.secondary }}
-              thumbColor={autoBackup ? colors.primary : '#f4f3f4'}
-              {...({ activeThumbColor: colors.primary } as any)}
-            />
-          </TouchableOpacity>
+          <SettingsItem 
+            label="Backup Automático"
+            description="Salvar estudos na pasta do App"
+            icon="save"
+            onPress={() => handleToggleAutoBackup(!autoBackup)}
+            rightElement={
+              <BibleSwitch
+                value={autoBackup}
+                onValueChange={handleToggleAutoBackup}
+              />
+            }
+          />
 
           <View style={{ height: 1, backgroundColor: colors.border, marginLeft: 70 }} />
 
-          <TouchableOpacity style={styles.cardHeader} activeOpacity={0.8} onPress={handleManualBackup}>
-            <ThemedIcon name="download" />
-            <View style={styles.cardTextContainer}>
-              <BibleText style={[styles.cardTitle, { fontSize: ms(16), color: colors.onBackground }]}>
-                Exportar Backup
-              </BibleText>
-              <BibleText style={[styles.cardDesc, { fontSize: ms(13), color: colors.textMuted }]}>
-                Salvar ou compartilhar o arquivo de backup
-              </BibleText>
-            </View>
-          </TouchableOpacity>
+          <SettingsItem 
+            label="Exportar Backup"
+            description="Salvar ou compartilhar o arquivo de backup"
+            icon="download"
+            onPress={handleManualBackup}
+          />
 
           <View style={{ height: 1, backgroundColor: colors.border, marginLeft: 70 }} />
 
-          <TouchableOpacity style={styles.cardHeader} activeOpacity={0.8} onPress={handleImport}>
-            <ThemedIcon name="upload" />
-            <View style={styles.cardTextContainer}>
-              <BibleText style={[styles.cardTitle, { fontSize: ms(16), color: colors.onBackground }]}>
-                Restaurar do Backup
-              </BibleText>
-              <BibleText style={[styles.cardDesc, { fontSize: ms(13), color: colors.textMuted }]}>
-                Importar arquivo de backup com todos os seus estudos
-              </BibleText>
-            </View>
-          </TouchableOpacity>
+          <SettingsItem 
+            label="Restaurar do Backup"
+            description="Importar arquivo de backup com todos os seus estudos"
+            icon="upload"
+            onPress={handleImport}
+          />
         </View>
       </ScrollView>
 
@@ -365,9 +341,10 @@ const styles = StyleSheet.create({
   swatchGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 10,
+    justifyContent: 'space-between',
+    marginTop: 12,
+    rowGap: 10,
     width: '100%',
-    paddingTop: 4,
   },
   swatchItem: {
     alignItems: 'center',
@@ -376,13 +353,13 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 14,
     borderWidth: 1.5,
-    width: '22.5%',
+    width: '31.5%',
     minHeight: 80,
   },
   swatchDot: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: 20,
+    height: 20,
+    borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
   },
