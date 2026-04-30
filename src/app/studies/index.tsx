@@ -165,7 +165,11 @@ export default function EstudosScreen() {
 
     return (
       <TouchableOpacity
-        style={[styles.card, { backgroundColor: isSelected ? colors.primaryVariant : colors.surface, borderColor: isSelected ? colors.primary : colors.border }]}
+        style={[styles.card, {
+          backgroundColor: isSelected ? colors.primary + '20' : colors.surface,
+          borderColor: isSelected ? colors.primary : colors.border,
+          borderWidth: isSelected ? 2 : 1
+        }]}
         onPress={() => isSelectionMode ? toggleSelection(item.id) : router.push(ROUTES.STUDY_EDITOR(item.id) as any)}
         onLongPress={() => toggleSelection(item.id)}
         activeOpacity={0.75}
@@ -198,11 +202,9 @@ export default function EstudosScreen() {
         <BibleHeader
           title={`${selectedIds.size} selecionado${selectedIds.size > 1 ? 's' : ''}`}
           showMenu={false}
-          leftContent={
-            <TouchableOpacity onPress={() => setSelectedIds(new Set())} style={{ padding: 8 }}>
-              <Feather name="x" size={ms(22)} color={colors.onPrimary} />
-            </TouchableOpacity>
-          }
+          showBack={true}
+          backIcon="x"
+          onBack={() => setSelectedIds(new Set())}
           rightContent={
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
               <TouchableOpacity onPress={() => setShareMenuVisible(true)}>

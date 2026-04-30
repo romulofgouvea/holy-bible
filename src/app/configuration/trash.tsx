@@ -58,8 +58,9 @@ export default function TrashScreen() {
         style={[
           styles.card,
           {
-            backgroundColor: isSelected ? colors.primaryVariant : colors.background,
-            borderColor: isSelected ? colors.primary : colors.error,
+            backgroundColor: isSelected ? colors.primary + '20' : colors.surface,
+            borderColor: isSelected ? colors.primary : colors.error + '40',
+            borderWidth: isSelected ? 2 : 1
           }
         ]}
         onPress={() => toggleSelection(item.id)}
@@ -69,16 +70,16 @@ export default function TrashScreen() {
         <View style={styles.cardContent}>
           <TouchableOpacity
             onPress={() => toggleSelection(item.id)}
-            style={[styles.cardIcon, { backgroundColor: isSelected ? colors.primary : colors.error }]}
+            style={[styles.cardIcon, { backgroundColor: isSelected ? colors.primary : colors.error + '20' }]}
           >
             <Feather
               name={isSelected ? "check" : "trash-2"}
               size={ms(18)}
-              color={colors.onPrimary}
+              color={isSelected ? colors.onPrimary : colors.error}
             />
           </TouchableOpacity>
           <View style={styles.cardText}>
-            <BibleText style={[styles.cardTitle, { fontSize: ms(16), color: colors.onBackground }]}>{item.title}</BibleText>
+            <BibleText style={[styles.cardTitle, { fontSize: ms(16), color: colors.onSurface, fontWeight: '600' }]}>{item.title}</BibleText>
             <BibleText style={[styles.cardDate, { fontSize: ms(12), color: colors.textMuted }]}>{item.createdAt}</BibleText>
           </View>
         </View>
@@ -92,11 +93,9 @@ export default function TrashScreen() {
         <BibleHeader
           title={selectedIds.size === 0 ? "Lixeira" : `${selectedIds.size} selecionado${selectedIds.size > 1 ? 's' : ''}`}
           showMenu={false}
-          leftContent={
-            <TouchableOpacity onPress={() => setSelectedIds(new Set())} style={{ padding: 8 }}>
-              <Feather name="x" size={ms(22)} color={colors.onPrimary} />
-            </TouchableOpacity>
-          }
+          showBack={true}
+          backIcon="x"
+          onBack={() => setSelectedIds(new Set())}
           rightContent={
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
               <TouchableOpacity onPress={() => {
@@ -112,11 +111,12 @@ export default function TrashScreen() {
           }
         />
       ) : (
-        <BibleHeader title="Lixeira de Estudos" showMenu={false} leftContent={
-          <TouchableOpacity onPress={() => handleSmartBack(pathname)} style={{ padding: 4 }}>
-            <Feather name="arrow-left" size={ms(24)} color={colors.onPrimary} />
-          </TouchableOpacity>
-        } />
+        <BibleHeader
+          title="Lixeira de Estudos"
+          showMenu={false}
+          showBack={true}
+          onBack={() => handleSmartBack(pathname)}
+        />
       )}
 
       <FlatList

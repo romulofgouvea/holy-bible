@@ -1,10 +1,8 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Slot, useGlobalSearchParams, usePathname, useRootNavigationState, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { Platform, View } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import { STORAGE_KEYS } from '../constants/storage';
 import { ReaderSettingsProvider } from '../hooks/use-reader-settings';
 import { ThemeProvider, useTheme } from '../hooks/use-theme';
 
@@ -33,8 +31,8 @@ function AppLayout() {
   }, []);
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: colors.systemBar }}>
-      <StatusBar style="light" backgroundColor={colors.systemBar} />
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.primaryVariant }}>
+      <StatusBar style="light" backgroundColor={colors.primaryVariant} />
       <View style={{ flex: 1, backgroundColor: colors.background }}>
         <Slot />
       </View>

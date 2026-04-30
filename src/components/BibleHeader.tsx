@@ -11,12 +11,27 @@ export type BibleHeaderProps = {
   rightContent?: React.ReactNode;
   onMenuPress?: () => void;
   showMenu?: boolean;
+  onBack?: () => void;
+  showBack?: boolean;
+  backIcon?: keyof typeof Feather.glyphMap;
   backgroundColor?: string;
   contentColor?: string;
   menuBtnBackgroundColor?: string;
 };
 
-export function BibleHeader({ title, leftContent, rightContent, onMenuPress, showMenu = true, backgroundColor, contentColor, menuBtnBackgroundColor }: BibleHeaderProps) {
+export function BibleHeader({
+  title,
+  leftContent,
+  rightContent,
+  onMenuPress,
+  showMenu = true,
+  onBack,
+  showBack = false,
+  backIcon = 'arrow-left',
+  backgroundColor,
+  contentColor,
+  menuBtnBackgroundColor
+}: BibleHeaderProps) {
   const { colors } = useTheme();
   const { ms } = useResponsive();
 
@@ -25,12 +40,17 @@ export function BibleHeader({ title, leftContent, rightContent, onMenuPress, sho
       <View style={styles.leftContainer}>
         {showMenu && (
           <TouchableOpacity style={[styles.menuBtn, { backgroundColor: menuBtnBackgroundColor || colors.onPrimary, width: ms(40), height: ms(40), borderRadius: ms(10), marginRight: ms(8) }]} onPress={onMenuPress} activeOpacity={0.7}>
-            <Feather name="menu" size={ms(20)} color={contentColor || colors.primary} />
+            <Feather name="menu" size={ms(20)} color={colors.primary} />
+          </TouchableOpacity>
+        )}
+        {showBack && (
+          <TouchableOpacity style={[styles.menuBtn, { backgroundColor: menuBtnBackgroundColor || colors.onPrimary, width: ms(40), height: ms(40), borderRadius: ms(10), marginRight: ms(8) }]} onPress={onBack} activeOpacity={0.7}>
+            <Feather name={backIcon} size={ms(22)} color={colors.primary} />
           </TouchableOpacity>
         )}
         {leftContent}
         {title && (
-          <BibleText style={[styles.title, { fontSize: ms(16), color: contentColor || colors.onPrimary, marginLeft: leftContent ? ms(8) : 0 }]}>
+          <BibleText style={[styles.title, { fontSize: ms(16), color: contentColor || colors.onPrimary, marginLeft: (leftContent || showMenu || showBack) ? ms(8) : 0 }]} numberOfLines={1}>
             {title}
           </BibleText>
         )}

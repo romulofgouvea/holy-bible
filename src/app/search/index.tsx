@@ -248,17 +248,9 @@ export default function SearchScreen() {
       <BibleHeader
         title="Pesquisar"
         showMenu={params.from !== 'bible'}
+        showBack={params.from === 'bible'}
+        onBack={() => handleSmartBack(pathname)}
         onMenuPress={() => setDrawerVisible(true)}
-        leftContent={params.from === 'bible' ? (
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <TouchableOpacity onPress={() => handleSmartBack(pathname)} style={{ marginRight: 16 }}>
-              <Feather name="arrow-left" size={ms(24)} color={colors.onPrimary} />
-            </TouchableOpacity>
-            <BibleText style={{ fontSize: ms(16), color: colors.onPrimary, fontFamily: 'Poppins_600SemiBold', fontWeight: '700' }}>
-              Pesquisar
-            </BibleText>
-          </View>
-        ) : undefined}
       />
 
       <View style={[styles.searchContainer, { backgroundColor: colors.background, borderBottomColor: colors.border }]}>

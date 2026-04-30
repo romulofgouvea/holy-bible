@@ -222,27 +222,25 @@ export default function StudyEditorScreen() {
     <View style={{ flex: 1, backgroundColor: colors.background }}>
       <BibleHeader
         showMenu={false}
+        showBack={true}
+        onBack={() => handleSmartBack(pathname)}
         backgroundColor={colors.primary}
         contentColor={colors.onPrimary}
+        menuBtnBackgroundColor={colors.onPrimary}
         leftContent={
-          <>
-            <TouchableOpacity style={{ width: ms(40), height: ms(40), borderRadius: ms(10), alignItems: 'center', justifyContent: 'center', backgroundColor: colors.primary, marginRight: ms(8) }} onPress={() => handleSmartBack(pathname)}>
-              <Feather name="arrow-left" size={ms(20)} color={colors.onPrimary} />
-            </TouchableOpacity>
-            <TextInput
-              style={[styles.titleInput, { fontSize: ms(16), color: colors.onPrimary }, noOutline]}
-              value={title}
-              onChangeText={setTitle}
-              placeholder="Nome do estudo"
-              placeholderTextColor={colors.onPrimary}
-              {...({ outlineStyle: 'none' } as any)}
-              underlineColorAndroid="transparent"
-            />
-          </>
+          <TextInput
+            style={[styles.titleInput, { flex: 1, fontSize: ms(16), color: colors.onPrimary }, noOutline]}
+            value={title}
+            onChangeText={setTitle}
+            placeholder="Nome do estudo"
+            placeholderTextColor={colors.onPrimary + '80'}
+            {...({ outlineStyle: 'none' } as any)}
+            underlineColorAndroid="transparent"
+          />
         }
         rightContent={
-          <TouchableOpacity style={{ width: ms(40), height: ms(40), borderRadius: ms(10), alignItems: 'center', justifyContent: 'center', backgroundColor: colors.primary }} onPress={() => setMenuVisible(true)}>
-            <Feather name="more-vertical" size={ms(20)} color={colors.onPrimary} />
+          <TouchableOpacity style={{ width: ms(40), height: ms(40), borderRadius: ms(10), alignItems: 'center', justifyContent: 'center', backgroundColor: colors.onPrimary }} onPress={() => setMenuVisible(true)}>
+            <Feather name="more-vertical" size={ms(20)} color={colors.primary} />
           </TouchableOpacity>
         }
       />

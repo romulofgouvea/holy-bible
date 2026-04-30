@@ -27,7 +27,7 @@ export function BibleNumberModal({ visible, onClose, onBack, items, title, iconN
       <View style={styles.header}>
         {onBack ? (
           <TouchableOpacity onPress={onBack} style={[styles.headerIconWrap, { backgroundColor: colors.primary }]}>
-            <Feather name="arrow-left" size={ms(18)} color={colors.onSurface} />
+            <Feather name="arrow-left" size={ms(18)} color={colors.onPrimary} />
           </TouchableOpacity>
         ) : (
           <View style={[styles.headerIconWrap, { backgroundColor: colors.primary + '15' }]}>
