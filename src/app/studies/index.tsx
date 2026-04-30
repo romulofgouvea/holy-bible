@@ -175,12 +175,12 @@ export default function EstudosScreen() {
             {isSelected ? (
               <Feather name="check" size={ms(18)} color={colors.onPrimary} />
             ) : (
-              <Feather name="book-open" size={ms(18)} color={colors.primary} />
+              <Feather name="book-open" size={ms(18)} color={colors.accent} />
             )}
           </TouchableOpacity>
           <View style={styles.cardText}>
             <BibleText style={[styles.cardTitle, { fontSize: ms(16), color: colors.text }]}>{item.title}</BibleText>
-            <BibleText style={[styles.cardDate, { fontSize: ms(12), color: colors.border }]}>{item.createdAt}</BibleText>
+            <BibleText style={[styles.cardDate, { fontSize: ms(12), color: colors.textMuted }]}>{item.createdAt}</BibleText>
           </View>
           {!isSelectionMode && (
             <TouchableOpacity onPress={() => setStudyToDelete(item.id)} style={styles.deleteBtn}>

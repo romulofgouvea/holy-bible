@@ -1,4 +1,4 @@
-﻿import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { STORAGE_KEYS } from '../constants/storage';
 import { darkColors, lightColors, ThemeColors } from './use-theme';
@@ -11,6 +11,8 @@ export const sepiaColors: ThemeColors = {
   surface: '#E1D6BD',
   surfaceVariant: '#D8CCB2',
   primary: '#5C4033',
+  systemBar: '#4A3B32',
+  accent: '#7A6354',
   onPrimary: '#EAE0C8',
   primaryContainer: '#D8CCB2',
   onPrimaryContainer: '#3E2A1F',

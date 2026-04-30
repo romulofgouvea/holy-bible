@@ -1,4 +1,4 @@
-﻿import { BibleConfirmModal } from '@/components/BibleConfirmModal';
+import { BibleConfirmModal } from '@/components/BibleConfirmModal';
 import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
@@ -65,7 +65,7 @@ export default function TrashScreen() {
             {isSelected ? (
               <Feather name="check" size={ms(18)} color={colors.onPrimary} />
             ) : (
-              <Feather name="trash-2" size={ms(18)} color={colors.primary} />
+              <Feather name="trash-2" size={ms(18)} color={colors.accent} />
             )}
           </TouchableOpacity>
           <View style={styles.cardText}>
@@ -74,7 +74,7 @@ export default function TrashScreen() {
           </View>
           {!isSelectionMode && (
             <TouchableOpacity onPress={() => restoreMultiple([item.id])} style={[styles.deleteBtn, { backgroundColor: colors.primaryContainer }]}>
-              <Feather name="corner-up-left" size={ms(18)} color={colors.primary} />
+              <Feather name="corner-up-left" size={ms(18)} color={colors.accent} />
             </TouchableOpacity>
           )}
         </View>

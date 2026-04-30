@@ -336,7 +336,7 @@ export default function SearchScreen() {
               activeOpacity={0.7}
             >
               <View style={{ width: ms(32), height: ms(32), borderRadius: ms(10), backgroundColor: colors.surfaceVariant, alignItems: 'center', justifyContent: 'center', marginRight: 12 }}>
-                <Feather name="clock" size={ms(14)} color={colors.textMuted} />
+                <Feather name="clock" size={ms(14)} color={colors.accent} />
               </View>
               <BibleText style={[styles.historyText, { color: colors.text, fontSize: ms(15), flex: 1 }]}>
                 {item}

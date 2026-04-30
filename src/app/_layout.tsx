@@ -33,8 +33,8 @@ function AppLayout() {
   }, []);
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#000000' }}>
-      <StatusBar style="light" backgroundColor="black" />
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.systemBar }}>
+      <StatusBar style="light" backgroundColor={colors.systemBar} />
       <View style={{ flex: 1, backgroundColor: colors.background }}>
         <Slot />
       </View>

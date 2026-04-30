@@ -160,7 +160,7 @@ export default function ConfigurationScreen() {
 
           <TouchableOpacity style={styles.cardHeader} activeOpacity={0.8} onPress={handleToggle}>
             <View style={[styles.iconWrap, { backgroundColor: colors.surfaceVariant }]}>
-              <Feather name={isDarkMode ? 'moon' : 'sun'} size={ms(20)} color={colors.primary} />
+              <Feather name={isDarkMode ? 'moon' : 'sun'} size={ms(20)} color={colors.accent} />
             </View>
             <View style={styles.cardTextContainer}>
               <BibleText style={[styles.cardTitle, { fontSize: ms(16), color: colors.text }]}>
@@ -185,7 +185,7 @@ export default function ConfigurationScreen() {
           <View style={[styles.cardHeader, { flexDirection: 'column', alignItems: 'flex-start', gap: 12 }]}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
               <View style={[styles.iconWrap, { backgroundColor: colors.surfaceVariant }]}>
-                <Feather name="droplet" size={ms(20)} color={colors.primary} />
+                <Feather name="droplet" size={ms(20)} color={colors.accent} />
               </View>
               <View style={styles.cardTextContainer}>
                 <BibleText style={[styles.cardTitle, { fontSize: ms(16), color: colors.text }]}>
@@ -235,7 +235,7 @@ export default function ConfigurationScreen() {
         <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
           <TouchableOpacity style={styles.cardHeader} activeOpacity={0.8} onPress={() => router.push('/configuration/trash' as any)}>
             <View style={[styles.iconWrap, { backgroundColor: colors.surfaceVariant }]}>
-              <Feather name="trash-2" size={ms(20)} color={colors.primary} />
+              <Feather name="trash-2" size={ms(20)} color={colors.accent} />
             </View>
             <View style={styles.cardTextContainer}>
               <BibleText style={[styles.cardTitle, { fontSize: ms(16), color: colors.text }]}>
@@ -252,7 +252,7 @@ export default function ConfigurationScreen() {
         <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
           <TouchableOpacity style={styles.cardHeader} activeOpacity={0.8} onPress={() => handleToggleAutoBackup(!autoBackup)}>
             <View style={[styles.iconWrap, { backgroundColor: colors.surfaceVariant }]}>
-              <Feather name="save" size={ms(20)} color={colors.primary} />
+              <Feather name="save" size={ms(20)} color={colors.accent} />
             </View>
             <View style={styles.cardTextContainer}>
               <BibleText style={[styles.cardTitle, { fontSize: ms(16), color: colors.text }]}>
@@ -276,7 +276,7 @@ export default function ConfigurationScreen() {
 
           <TouchableOpacity style={styles.cardHeader} activeOpacity={0.8} onPress={handleManualBackup}>
             <View style={[styles.iconWrap, { backgroundColor: colors.surfaceVariant }]}>
-              <Feather name="download" size={ms(20)} color={colors.primary} />
+              <Feather name="download" size={ms(20)} color={colors.accent} />
             </View>
             <View style={styles.cardTextContainer}>
               <BibleText style={[styles.cardTitle, { fontSize: ms(16), color: colors.text }]}>
@@ -292,7 +292,7 @@ export default function ConfigurationScreen() {
 
           <TouchableOpacity style={styles.cardHeader} activeOpacity={0.8} onPress={handleImport}>
             <View style={[styles.iconWrap, { backgroundColor: colors.surfaceVariant }]}>
-              <Feather name="upload" size={ms(20)} color={colors.primary} />
+              <Feather name="upload" size={ms(20)} color={colors.accent} />
             </View>
             <View style={styles.cardTextContainer}>
               <BibleText style={[styles.cardTitle, { fontSize: ms(16), color: colors.text }]}>

@@ -7,6 +7,8 @@ export type ThemeColors = {
   surface: string;
   surfaceVariant: string;
   primary: string;
+  systemBar: string;
+  accent: string;
   onPrimary: string;
   primaryContainer: string;
   onPrimaryContainer: string;
@@ -17,11 +19,11 @@ export type ThemeColors = {
 
 export type ColorThemeKey =
   | 'teal'
-  | 'blue'
-  | 'yellow'
+  | 'gray'
   | 'purple'
-  | 'red'
-  | 'gray';
+  | 'blue'
+  | 'orange'
+  | 'green';
 
 export type ColorThemeMeta = {
   key: ColorThemeKey;
@@ -32,191 +34,169 @@ export type ColorThemeMeta = {
   dark: ThemeColors;
 };
 
-export const COLOR_THEMES: ColorThemeMeta[] = [
 
+const DARK_BASE = {
+  background: '#252728',
+  surface: '#333536',
+  surfaceVariant: '#424446',
+  text: '#F5F5F5',
+  textMuted: '#A0A5AA',
+  border: '#4A4C4E',
+};
+
+
+const LIGHT_BASE = {
+  background: '#F0F2F5',
+  surface: '#FFFFFF',
+  surfaceVariant: '#E4E6E9',
+  text: '#1C1E21',
+  textMuted: '#606770',
+  border: '#CCD0D5',
+};
+
+export const COLOR_THEMES: ColorThemeMeta[] = [
   {
     key: 'teal',
-    label: 'Verde',
+    label: 'Teal',
     swatch: '#008080',
     swatchDark: '#4DB6AC',
     light: {
-      background: '#F0F2F5',
-      surface: '#FFFFFF',
-      surfaceVariant: '#E4E6EB',
+      ...LIGHT_BASE,
       primary: '#008080',
+      systemBar: '#004D40',
+      accent: '#4DB6AC',
       onPrimary: '#FFFFFF',
-      primaryContainer: '#E0F2F1',
+      primaryContainer: '#B2DFDB',
       onPrimaryContainer: '#004D40',
-      text: '#1C1E21',
-      textMuted: '#65676B',
-      border: '#CED0D4',
     },
     dark: {
-      background: '#18191A',
-      surface: '#242526',
-      surfaceVariant: '#3A3B3C',
-      primary: '#4DB6AC',
-      onPrimary: '#00332E',
+      ...DARK_BASE,
+      primary: '#008080',
+      systemBar: '#004D40',
+      accent: '#4DB6AC',
+      onPrimary: '#FFFFFF',
       primaryContainer: '#004D40',
       onPrimaryContainer: '#B2DFDB',
-      text: '#E4E6EB',
-      textMuted: '#B0B3B8',
-      border: '#3E4042',
     },
   },
-
+  {
+    key: 'gray',
+    label: 'Cinza',
+    swatch: '#606770',
+    swatchDark: '#A0A7B0',
+    light: {
+      ...LIGHT_BASE,
+      primary: '#606770',
+      systemBar: '#394047',
+      accent: '#A0A7B0',
+      onPrimary: '#FFFFFF',
+      primaryContainer: '#E4E6E9',
+      onPrimaryContainer: '#1C1E21',
+    },
+    dark: {
+      ...DARK_BASE,
+      primary: '#A0A7B0',
+      systemBar: '#394047',
+      accent: '#a4b0c1ff',
+      onPrimary: '#FFFFFF',
+      primaryContainer: '#1C1E21',
+      onPrimaryContainer: '#E4E6E9',
+    },
+  },
+  {
+    key: 'purple',
+    label: 'Roxo',
+    swatch: '#820AD1',
+    swatchDark: '#B768FF',
+    light: {
+      ...LIGHT_BASE,
+      primary: '#820AD1',
+      systemBar: '#4406A1',
+      accent: '#B768FF',
+      onPrimary: '#FFFFFF',
+      primaryContainer: '#E6CFFF',
+      onPrimaryContainer: '#280066',
+    },
+    dark: {
+      ...DARK_BASE,
+      primary: '#820AD1',
+      systemBar: '#4406A1',
+      accent: '#B768FF',
+      onPrimary: '#FFFFFF',
+      primaryContainer: '#280066',
+      onPrimaryContainer: '#E6CFFF',
+    },
+  },
   {
     key: 'blue',
     label: 'Azul',
     swatch: '#1877F2',
-    swatchDark: '#4A9FF5',
+    swatchDark: '#73A5F8',
     light: {
-      background: '#F0F2F5',
-      surface: '#FFFFFF',
-      surfaceVariant: '#E7F0FD',
+      ...LIGHT_BASE,
       primary: '#1877F2',
+      systemBar: '#0A57C2',
+      accent: '#73A5F8',
       onPrimary: '#FFFFFF',
-      primaryContainer: '#D9EAFF',
-      onPrimaryContainer: '#0A3D91',
-      text: '#1C1E21',
-      textMuted: '#65676B',
-      border: '#C8D3E0',
+      primaryContainer: '#D0E3FC',
+      onPrimaryContainer: '#053170',
     },
     dark: {
-      background: '#18191A',
-      surface: '#242526',
-      surfaceVariant: '#1D2F4A',
-      primary: '#4A9FF5',
-      onPrimary: '#002E6E',
-      primaryContainer: '#0A3D91',
-      onPrimaryContainer: '#D9EAFF',
-      text: '#E4E6EB',
-      textMuted: '#B0B3B8',
-      border: '#2A3A4E',
+      ...DARK_BASE,
+      primary: '#1877F2',
+      systemBar: '#0A57C2',
+      accent: '#73A5F8',
+      onPrimary: '#FFFFFF',
+      primaryContainer: '#053170',
+      onPrimaryContainer: '#D0E3FC',
     },
   },
-
   {
-    key: 'yellow',
-    label: 'Amarelo',
-    swatch: '#F5A623',
-    swatchDark: '#FFD23F',
+    key: 'orange',
+    label: 'Laranja',
+    swatch: '#f37321',
+    swatchDark: '#FFA76B',
     light: {
-      background: '#FFFBF0',
-      surface: '#FFFFFF',
-      surfaceVariant: '#FFF3C4',
-      primary: '#C97B00',
+      ...LIGHT_BASE,
+      primary: '#f37321',
+      systemBar: '#B84F0E',
+      accent: '#FFA76B',
       onPrimary: '#FFFFFF',
-      primaryContainer: '#FFEEBB',
-      onPrimaryContainer: '#6B4200',
-      text: '#1C1E21',
-      textMuted: '#7A6840',
-      border: '#E8D8A0',
+      primaryContainer: '#FFE3D1',
+      onPrimaryContainer: '#521D00',
     },
     dark: {
-      background: '#1A1700',
-      surface: '#242100',
-      surfaceVariant: '#2E2A00',
-      primary: '#FFD23F',
-      onPrimary: '#3D2E00',
-      primaryContainer: '#5C4600',
-      onPrimaryContainer: '#FFE78F',
-      text: '#F5EFDA',
-      textMuted: '#B8AB80',
-      border: '#3A3300',
+      ...DARK_BASE,
+      primary: '#f37321',
+      systemBar: '#B84F0E',
+      accent: '#FFA76B',
+      onPrimary: '#FFFFFF',
+      primaryContainer: '#521D00',
+      onPrimaryContainer: '#FFE3D1',
     },
   },
-
   {
-    key: 'purple',
-    label: 'Roxo',
-    swatch: '#8A05BE',
-    swatchDark: '#C77DFF',
+    key: 'green',
+    label: 'Verde',
+    swatch: '#1DB954',
+    swatchDark: '#5EEA8F',
     light: {
-      background: '#F5F0FB',
-      surface: '#FFFFFF',
-      surfaceVariant: '#EEE1FA',
-      primary: '#8A05BE',
+      ...LIGHT_BASE,
+      primary: '#1DB954',
+      systemBar: '#10853B',
+      accent: '#5EEA8F',
       onPrimary: '#FFFFFF',
-      primaryContainer: '#E8CEFF',
-      onPrimaryContainer: '#450065',
-      text: '#1C1E21',
-      textMuted: '#6B5A7B',
-      border: '#D4BCEC',
+      primaryContainer: '#D1F4DB',
+      onPrimaryContainer: '#0B5222',
     },
     dark: {
-      background: '#180A20',
-      surface: '#22112E',
-      surfaceVariant: '#311840',
-      primary: '#C77DFF',
-      onPrimary: '#3C0065',
-      primaryContainer: '#5A009A',
-      onPrimaryContainer: '#ECDCFF',
-      text: '#EDE0F5',
-      textMuted: '#B8A0C8',
-      border: '#3E2050',
-    },
-  },
-
-  {
-    key: 'red',
-    label: 'Vermelho',
-    swatch: '#E31937',
-    swatchDark: '#FF6B7A',
-    light: {
-      background: '#FBF0F1',
-      surface: '#FFFFFF',
-      surfaceVariant: '#FAE0E3',
-      primary: '#C8102E',
+      ...DARK_BASE,
+      primary: '#1DB954',
+      systemBar: '#10853B',
+      accent: '#5EEA8F',
       onPrimary: '#FFFFFF',
-      primaryContainer: '#FFD9DC',
-      onPrimaryContainer: '#6D0015',
-      text: '#1C1E21',
-      textMuted: '#7A5A5C',
-      border: '#E8C0C3',
-    },
-    dark: {
-      background: '#200A0C',
-      surface: '#2A1014',
-      surfaceVariant: '#3A1518',
-      primary: '#FF6B7A',
-      onPrimary: '#5C0010',
-      primaryContainer: '#8B001A',
-      onPrimaryContainer: '#FFDADC',
-      text: '#F5E0E2',
-      textMuted: '#C8A0A3',
-      border: '#4A1A1E',
-    },
-  },
-
-  {
-    key: 'gray',
-    label: 'Cinza',
-    swatch: '#607080',
-    swatchDark: '#9EAFC0',
-    light: {
-      background: '#EDEEF0',
-      surface: '#FFFFFF',
-      surfaceVariant: '#E0E3E8',
-      primary: '#455A6A',
-      onPrimary: '#FFFFFF',
-      primaryContainer: '#D0DBE5',
-      onPrimaryContainer: '#1C2D3A',
-      text: '#1C1E21',
-      textMuted: '#60686F',
-      border: '#C5CBD2',
-    },
-    dark: {
-      background: '#141618',
-      surface: '#1E2124',
-      surfaceVariant: '#2C3036',
-      primary: '#9EAFC0',
-      onPrimary: '#1A2A36',
-      primaryContainer: '#2A3A48',
-      onPrimaryContainer: '#C8D8E8',
-      text: '#E0E4EA',
-      textMuted: '#8A9199',
-      border: '#363C42',
+      primaryContainer: '#0B5222',
+      onPrimaryContainer: '#D1F4DB',
     },
   },
 ];
