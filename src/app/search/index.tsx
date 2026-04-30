@@ -39,22 +39,22 @@ const STORAGE_SEARCH_QUERY = '@bible:search_query';
 const STORAGE_SEARCH_HISTORY = '@bible:search_history';
 const MAX_HISTORY = 20;
 
-function HighlightText({ text, query, colors, fontSizeMultiplier, ms, readerFontFamily }: { text: string; query: string; colors: any; fontSizeMultiplier: number; ms: (v: number) => number; readerFontFamily: string }) {
+function HighlightText({ text, query, colors, fontSizeMultiplier, ms }: { text: string; query: string; colors: any; fontSizeMultiplier: number; ms: (v: number) => number }) {
   const baseSize = 20;
   const currentSize = ms(baseSize * fontSizeMultiplier);
   const currentLineHeight = ms(28 * fontSizeMultiplier);
 
-  if (!query.trim()) return <Text style={[styles.verseText, { color: colors.onBackground, fontSize: currentSize, lineHeight: currentLineHeight, fontFamily: readerFontFamily }]}>{text}</Text>;
+  if (!query.trim()) return <BibleText variant="reading" style={[styles.verseText, { color: colors.onBackground, fontSize: currentSize, lineHeight: currentLineHeight }]}>{text}</BibleText>;
   const idx = text.toLowerCase().indexOf(query.toLowerCase());
-  if (idx === -1) return <Text style={[styles.verseText, { color: colors.onBackground, fontSize: currentSize, lineHeight: currentLineHeight, fontFamily: readerFontFamily }]}>{text}</Text>;
+  if (idx === -1) return <BibleText variant="reading" style={[styles.verseText, { color: colors.onBackground, fontSize: currentSize, lineHeight: currentLineHeight }]}>{text}</BibleText>;
   return (
-    <Text style={[styles.verseText, { color: colors.onBackground, fontSize: currentSize, lineHeight: currentLineHeight, fontFamily: readerFontFamily }]}>
+    <BibleText variant="reading" style={[styles.verseText, { color: colors.onBackground, fontSize: currentSize, lineHeight: currentLineHeight }]}>
       {text.slice(0, idx)}
-      <Text style={[styles.verseText, { backgroundColor: colors.primary, color: colors.onPrimary, fontWeight: '700', borderRadius: 4, paddingHorizontal: 2, fontSize: currentSize, lineHeight: currentLineHeight, fontFamily: readerFontFamily }]}>
+      <BibleText variant="reading" style={[styles.verseText, { backgroundColor: colors.primary, color: colors.onPrimary, fontWeight: '700', borderRadius: 4, paddingHorizontal: 2, fontSize: currentSize, lineHeight: currentLineHeight }]}>
         {text.slice(idx, idx + query.length)}
-      </Text>
+      </BibleText>
       {text.slice(idx + query.length)}
-    </Text>
+    </BibleText>
   );
 }
 
@@ -295,21 +295,23 @@ export default function SearchScreen() {
           )}
         </View>
 
-        <View style={[styles.scopeRow]}>
+        <View style={[styles.segmentedControl, { backgroundColor: colors.surface, borderColor: colors.border }]}>
           {[
             { key: 'bible' as SearchScope, label: `Bíblia: ${version}` },
             { key: 'book' as SearchScope, label: `Livro: ${currentBook.name}` },
             { key: 'chapter' as SearchScope, label: `Capítulo: ${chapter}` },
-          ].map(s => (
-            <TouchableOpacity
-              key={s.key}
-              style={[styles.scopeBtn, scope === s.key && { borderBottomColor: colors.primary, borderBottomWidth: 2 }]}
-              onPress={() => handleChangeScope(s.key)}
-            >
-              <BibleText style={[styles.scopeLabel, { color: scope === s.key ? colors.primary : colors.textMuted, fontSize: ms(13) }]}>
-                {s.label}
-              </BibleText>
-            </TouchableOpacity>
+          ].map((s, idx) => (
+            <React.Fragment key={s.key}>
+              {idx > 0 && <View style={{ width: 1, backgroundColor: colors.border, marginVertical: 8 }} />}
+              <TouchableOpacity
+                style={[styles.segmentItem, scope === s.key && { backgroundColor: colors.primary }]}
+                onPress={() => handleChangeScope(s.key)}
+              >
+                <BibleText style={[styles.scopeLabel, { color: scope === s.key ? colors.onPrimary : colors.primary, fontSize: ms(11) }]} numberOfLines={1}>
+                  {s.label}
+                </BibleText>
+              </TouchableOpacity>
+            </React.Fragment>
           ))}
         </View>
       </View>
@@ -401,7 +403,7 @@ export default function SearchScreen() {
                 </BibleText>
               </View>
               <View style={{ flex: 1, marginTop: 6 }}>
-                <HighlightText text={item.text} query={query.trim()} colors={colors} fontSizeMultiplier={fontSizeMultiplier} ms={ms} readerFontFamily={readerFontFamily} />
+                <HighlightText text={item.text} query={query.trim()} colors={colors} fontSizeMultiplier={fontSizeMultiplier} ms={ms} />
               </View>
             </TouchableOpacity>
           )}
@@ -464,14 +466,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
   input: { flex: 1, height: '100%' },
-  scopeRow: {
+  segmentedControl: {
     flexDirection: 'row',
     marginTop: 4,
+    marginBottom: 8,
+    borderRadius: 12,
+    borderWidth: 1,
+    overflow: 'hidden',
+    height: 40,
   },
-  scopeBtn: {
+  segmentItem: {
     flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: 10,
+    paddingHorizontal: 4,
   },
   scopeLabel: { fontWeight: '700' },
   centerBox: {

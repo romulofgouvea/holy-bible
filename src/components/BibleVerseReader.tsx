@@ -1,7 +1,8 @@
 import { VERSE_HIGHLIGHTS } from '@/constants/colors';
 import React from 'react';
-import { SectionList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SectionList, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { ALIASES } from '../data';
+import { BibleText } from './BibleText';
 import { useReaderSettings } from '../hooks/use-reader-settings';
 import { useResponsive } from '../hooks/use-responsive';
 import { useTheme } from '../hooks/use-theme';
@@ -59,7 +60,7 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
             onScrollToIndexFailed={onScrollToIndexFailed}
             renderSectionHeader={({ section: { title } }) => (
                 <View style={[styles.chapterHeader, { backgroundColor: readerColors.background }]}>
-                    <Text style={[styles.chapterHeaderText, { fontSize: ms(28 * fontSizeMultiplier), color: readerColors.onBackground }]}>{title}</Text>
+                    <BibleText style={[styles.chapterHeaderText, { fontSize: ms(28 * fontSizeMultiplier), color: readerColors.onBackground }]}>{title}</BibleText>
                 </View>
             )}
             renderItem={({ item }) => {
@@ -80,18 +81,20 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
                             isBlinking && [styles.blinkingRow, { backgroundColor: primaryLow }],
                             isSelected && [styles.selectedRow, { backgroundColor: primaryLow, borderLeftColor: primaryColor }],
                         ]}>
-                            <Text style={[styles.verseText, {
-                                fontSize: ms(20 * fontSizeMultiplier),
-                                lineHeight: ms(28 * fontSizeMultiplier),
-                                color: readerColors.onBackground,
-                                textAlign: textAlign as any,
-                                fontFamily: readerFontFamily
-                            }]}>
-                                <Text style={{ color: primaryColor, fontWeight: '700', fontSize: ms(16 * fontSizeMultiplier), marginLeft: 16, marginRight: 8 }}>
+                            <BibleText 
+                                variant="reading"
+                                style={[styles.verseText, {
+                                    fontSize: ms(20 * fontSizeMultiplier),
+                                    lineHeight: ms(28 * fontSizeMultiplier),
+                                    color: readerColors.onBackground,
+                                    textAlign: textAlign as any,
+                                }]}
+                            >
+                                <BibleText style={{ color: primaryColor, fontWeight: '700', fontSize: ms(16 * fontSizeMultiplier), marginLeft: 16, marginRight: 8 }}>
                                     {`${item.verse} `}
-                                </Text>
+                                </BibleText>
                                 {item.text}
-                            </Text>
+                            </BibleText>
                         </View>
                     </TouchableOpacity>
                 );
@@ -107,12 +110,12 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
                         styles.copyrightCard,
                         { backgroundColor: primaryLow, borderLeftColor: primaryColor }
                     ]}>
-                        <Text style={[styles.copyrightTitle, { color: primaryColor }]}>
+                        <BibleText style={[styles.copyrightTitle, { color: primaryColor }]}>
                             {versionInfo?.name} ({versionInfo?.sigla})
-                        </Text>
-                        <Text style={[styles.copyrightText, { color: readerColors.onBackground, opacity: 0.6 }]}>
+                        </BibleText>
+                        <BibleText style={[styles.copyrightText, { color: readerColors.onBackground, opacity: 0.6 }]}>
                             {copyright}
-                        </Text>
+                        </BibleText>
                     </View>
                 );
             }}

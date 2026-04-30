@@ -1,12 +1,20 @@
-﻿import React from 'react';
+import React from 'react';
 import { Text as RNText, TextProps, StyleSheet } from 'react-native';
 
-export function BibleText(props: TextProps) {
-  const { style, ...rest } = props;
-  const flatStyle = StyleSheet.flatten(style) || {};
-  let fontFamily = 'Poppins_400Regular';
+import { useReaderSettings } from '../hooks/use-reader-settings';
 
-  if (flatStyle.fontWeight) {
+interface BibleTextProps extends TextProps {
+  variant?: 'ui' | 'reading';
+}
+
+export function BibleText(props: BibleTextProps) {
+  const { style, variant = 'ui', ...rest } = props;
+  const { readerFontFamily } = useReaderSettings();
+  const flatStyle = StyleSheet.flatten(style) || {};
+  
+  let fontFamily = variant === 'reading' ? readerFontFamily : 'Poppins_400Regular';
+
+  if (variant === 'ui' && flatStyle.fontWeight) {
     const weight = String(flatStyle.fontWeight);
     if (weight === '500') fontFamily = 'Poppins_500Medium';
     else if (weight === '600') fontFamily = 'Poppins_600SemiBold';
