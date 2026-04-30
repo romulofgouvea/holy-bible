@@ -14,7 +14,7 @@ export function BibleBottomSheet({ visible, onClose, children }: BibleBottomShee
   const insets = useSafeAreaInsets();
 
   return (
-    <Modal visible={visible} animationType="slide" transparent>
+    <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
       <View style={styles.modalContainer}>
         <TouchableWithoutFeedback onPress={onClose}>
           <View style={[styles.backdrop, { backgroundColor: colors.overlay }]} />

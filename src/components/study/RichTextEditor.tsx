@@ -6,8 +6,8 @@ import { WebView } from 'react-native-webview';
 import { useReaderSettings } from '../../hooks/use-reader-settings';
 import { useResponsive } from '../../hooks/use-responsive';
 import { useTheme } from '../../hooks/use-theme';
-import { BibleText } from '../BibleText';
 import { impactLight, selectionHaptic } from '../../utils/haptics';
+import { BibleText } from '../BibleText';
 
 export type RichTextEditorRef = {
   insertVerseHtml: (html: string) => void;
@@ -45,6 +45,8 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
     justifyLeft?: boolean; justifyCenter?: boolean; justifyRight?: boolean; justifyFull?: boolean;
     insertUnorderedList?: boolean; insertOrderedList?: boolean;
     isTaskList?: boolean;
+    hiliteColor?: string;
+    fontSize?: string;
   }>({});
 
   const execDocumentCmd = (cmd: string, value?: string) => {
@@ -236,6 +238,8 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
             insertUnorderedList: document.queryCommandState('insertUnorderedList'),
             insertOrderedList: document.queryCommandState('insertOrderedList'),
             isTaskList: isTask,
+            hiliteColor: document.queryCommandValue('hiliteColor'),
+            fontSize: document.queryCommandValue('fontSize'),
           };
           const msg = JSON.stringify({ type: 'formatState', data: state });
           if (window.ReactNativeWebView) window.ReactNativeWebView.postMessage(msg);

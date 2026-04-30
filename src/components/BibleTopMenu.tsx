@@ -26,7 +26,7 @@ export function BibleTopMenu({ visible, onClose, items }: BibleTopMenuProps) {
   const insets = useSafeAreaInsets();
 
   return (
-    <Modal visible={visible} transparent animationType="fade">
+    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <TouchableOpacity style={{ flex: 1, backgroundColor: 'transparent' }} activeOpacity={1} onPress={onClose}>
         <View style={{
           position: 'absolute',

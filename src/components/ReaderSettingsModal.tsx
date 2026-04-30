@@ -4,8 +4,8 @@ import { Modal, Platform, StyleSheet, TouchableOpacity, TouchableWithoutFeedback
 import { useReaderSettings } from '../hooks/use-reader-settings';
 import { useResponsive } from '../hooks/use-responsive';
 import { useTheme } from '../hooks/use-theme';
-import { BibleText } from './BibleText';
 import { impactLight, selectionHaptic } from '../utils/haptics';
+import { BibleText } from './BibleText';
 
 export function ReaderSettingsModal({ visible, onClose }: { visible: boolean; onClose: () => void }) {
   const { ms } = useResponsive();

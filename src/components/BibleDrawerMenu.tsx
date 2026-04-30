@@ -112,16 +112,16 @@ export function BibleDrawerMenu(props: DrawerMenuProps) {
         key={item.key}
         style={[
           styles.menuItem,
-          { paddingVertical: ms(9), paddingHorizontal: ms(8), borderRadius: ms(10), marginBottom: ms(4) },
-          isActive && { backgroundColor: colors.primary },
+          { paddingVertical: ms(9), paddingHorizontal: ms(8), borderRadius: ms(12), marginBottom: ms(4) },
+          isActive && { backgroundColor: colors.primary + '15' },
         ]}
         onPress={() => handlePress(item)}
         activeOpacity={0.7}
       >
         <View style={[
           styles.menuIconWrap,
-          { width: ms(38), height: ms(38), borderRadius: ms(10), marginRight: ms(10) },
-          isActive ? { backgroundColor: colors.onPrimary + '40' } : { backgroundColor: colors.surfaceHighlight },
+          { width: ms(38), height: ms(38), borderRadius: ms(10), marginRight: ms(12) },
+          isActive ? { backgroundColor: colors.primary } : { backgroundColor: colors.surfaceHighlight },
         ]}>
           <Feather name={item.icon} size={ms(18)} color={isActive ? colors.onPrimary : (item.tint || colors.onSurface)} />
         </View>
@@ -129,7 +129,7 @@ export function BibleDrawerMenu(props: DrawerMenuProps) {
           style={[
             styles.menuLabel,
             { fontSize: ms(15) },
-            isActive ? { color: colors.onPrimary, fontWeight: '800' } : { color: item.tint || colors.onSurface },
+            isActive ? { color: colors.primary, fontWeight: '800' } : { color: item.tint || colors.onSurface },
           ]}
           numberOfLines={1}
         >
@@ -140,7 +140,7 @@ export function BibleDrawerMenu(props: DrawerMenuProps) {
   };
 
   return (
-    <Modal visible={modalVisible} transparent animationType="none">
+    <Modal visible={modalVisible} transparent animationType="none" onRequestClose={onClose}>
       <View style={StyleSheet.absoluteFill}>
         <TouchableWithoutFeedback onPress={onClose}>
           <Animated.View style={[styles.backdrop, { opacity: backdropOpacity, backgroundColor: colors.overlay }]} />
