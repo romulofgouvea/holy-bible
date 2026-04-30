@@ -4,9 +4,9 @@ import React from 'react';
 import { Animated, Share, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { VERSE_HIGHLIGHTS as HIGHLIGHT_COLORS } from '../constants/colors';
-import { BibleButton } from './BibleButton';
 import { useResponsive } from '../hooks/use-responsive';
 import { useTheme } from '../hooks/use-theme';
+import { BibleButton } from './BibleButton';
 
 export type SelectedVerse = {
   chapter: number;
@@ -134,7 +134,7 @@ export function BibleVerseActionSheet(props: VerseActionSheetProps) {
         <View style={[styles.divider, { backgroundColor: colors.border }]} />
 
         <BibleButton
-          label="Limpar Seleção"
+          label="Limpar"
           variant="ghost"
           size="sm"
           onPress={onClose}
