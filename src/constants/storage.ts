@@ -14,6 +14,7 @@ export const STORAGE_KEYS = {
   READER_THEME: '@bible_reader_theme',
   READER_FONT: '@bible_reader_font',
   APP_COLOR_THEME: '@bible_app_color_theme',
+  HAPTICS_ENABLED: '@bible_haptics_enabled',
   LAST_ROUTE: 'last_route',
   LAST_ROUTE_PARAMS: 'last_route_params',
 };

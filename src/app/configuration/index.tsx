@@ -29,7 +29,7 @@ const COLOR_THEME_OPTIONS = Object.entries(COLOR_THEMES).map(([key, value]) => (
 
 export default function ConfigurationScreen() {
   const { ms } = useResponsive();
-  const { isDarkMode, toggleDarkMode, colors, colorTheme, setColorTheme } = useTheme();
+  const { isDarkMode, toggleDarkMode, colors, colorTheme, setColorTheme, hapticsEnabled, toggleHaptics } = useTheme();
   const { setReaderTheme, readerTheme } = useReaderSettings();
   const [drawerVisible, setDrawerVisible] = useState(false);
   const { studies, importBulk } = useStudies();
@@ -177,6 +177,21 @@ export default function ConfigurationScreen() {
               <BibleSwitch
                 value={isDarkMode}
                 onValueChange={handleToggle}
+              />
+            }
+          />
+
+          <View style={{ height: 1, backgroundColor: colors.border, marginLeft: 70 }} />
+
+          <SettingsItem 
+            label="Vibração"
+            description="Feedback tátil ao tocar nos itens"
+            icon="smartphone"
+            onPress={() => toggleHaptics()}
+            rightElement={
+              <BibleSwitch
+                value={hapticsEnabled}
+                onValueChange={toggleHaptics}
               />
             }
           />

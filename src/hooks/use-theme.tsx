@@ -9,6 +9,7 @@ import {
   getSupportColors,
   ThemeColors
 } from '../constants/colors';
+import { setHapticsGlobal } from '../utils/haptics';
 
 export { ColorThemeKey, ThemeColors };
 
@@ -26,6 +27,8 @@ type ThemeContextType = {
   colors: ThemeColors & ReturnType<typeof getSupportColors>;
   colorTheme: ColorThemeKey;
   setColorTheme: (key: ColorThemeKey) => void;
+  hapticsEnabled: boolean;
+  toggleHaptics: (value?: boolean) => void;
 };
 
 const ThemeContext = createContext<ThemeContextType | null>(null);
@@ -33,21 +36,36 @@ const ThemeContext = createContext<ThemeContextType | null>(null);
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [colorTheme, setColorThemeState] = useState<ColorThemeKey>('teal');
+  const [hapticsEnabled, setHapticsEnabled] = useState(true);
 
   useEffect(() => {
     (async () => {
       try {
-        const [savedDark, savedTheme] = await Promise.all([
+        const [savedDark, savedTheme, savedHaptics] = await Promise.all([
           AsyncStorage.getItem(STORAGE_KEYS.DARK_MODE),
           AsyncStorage.getItem(STORAGE_KEYS.APP_COLOR_THEME),
+          AsyncStorage.getItem(STORAGE_KEYS.HAPTICS_ENABLED),
         ]);
         if (savedDark !== null) setIsDarkMode(savedDark === 'true');
+        if (savedHaptics !== null) setHapticsEnabled(savedHaptics === 'true');
         if (savedTheme && Object.keys(COLOR_THEMES).includes(savedTheme)) {
           setColorThemeState(savedTheme as ColorThemeKey);
         }
       } catch (e) { }
     })();
   }, []);
+
+  useEffect(() => {
+    setHapticsGlobal(hapticsEnabled);
+  }, [hapticsEnabled]);
+
+  const toggleHaptics = async (value?: boolean) => {
+    const nextVal = value !== undefined ? value : !hapticsEnabled;
+    setHapticsEnabled(nextVal);
+    try {
+      await AsyncStorage.setItem(STORAGE_KEYS.HAPTICS_ENABLED, String(nextVal));
+    } catch (e) { }
+  };
 
   const toggleDarkMode = async (value?: boolean) => {
     const nextVal = value !== undefined ? value : !isDarkMode;
@@ -78,7 +96,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       toggleDarkMode,
       colors,
       colorTheme,
-      setColorTheme
+      setColorTheme,
+      hapticsEnabled,
+      toggleHaptics
     }}>
       {children}
     </ThemeContext.Provider>
