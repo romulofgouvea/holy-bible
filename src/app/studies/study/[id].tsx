@@ -226,7 +226,6 @@ export default function StudyEditorScreen() {
         onBack={() => handleSmartBack(pathname)}
         backgroundColor={colors.primary}
         contentColor={colors.onPrimary}
-        menuBtnBackgroundColor={colors.onPrimary + '4D'}
         leftContent={
           <TextInput
             style={[styles.titleInput, { flex: 1, fontSize: ms(16), color: colors.onPrimary }, noOutline]}
@@ -239,7 +238,7 @@ export default function StudyEditorScreen() {
           />
         }
         rightContent={
-          <TouchableOpacity style={{ width: ms(40), height: ms(40), borderRadius: ms(10), alignItems: 'center', justifyContent: 'center', backgroundColor: colors.onPrimary + '4D' }} onPress={() => setMenuVisible(true)}>
+          <TouchableOpacity style={{ width: ms(40), height: ms(40), borderRadius: ms(10), alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent' }} onPress={() => setMenuVisible(true)}>
             <Feather name="more-vertical" size={ms(20)} color={colors.onPrimary} />
           </TouchableOpacity>
         }

@@ -40,7 +40,7 @@ export const BibleTopBar = React.memo((props: BibleTopBarProps) => {
             <BibleHeader
                 backgroundColor={headerBg}
                 contentColor={headerContent}
-                menuBtnBackgroundColor={btnBg}
+                menuBtnBackgroundColor="transparent"
                 onMenuPress={onOpenMenu}
                 leftContent={
                     <View style={styles.leftButtons}>
@@ -57,10 +57,10 @@ export const BibleTopBar = React.memo((props: BibleTopBarProps) => {
                 }
                 rightContent={
                     <TouchableOpacity
-                        style={[styles.menuButton, { backgroundColor: btnBg, width: ms(38), height: ms(38), borderRadius: ms(10), marginLeft: ms(4), alignItems: 'center', justifyContent: 'center' }]}
+                        style={[styles.menuButton, { backgroundColor: 'transparent', width: ms(38), height: ms(38), borderRadius: ms(10), marginLeft: ms(4), alignItems: 'center', justifyContent: 'center' }]}
                         onPress={() => setDotsMenuVisible(true)}
                     >
-                        <Feather name="more-vertical" size={ms(20)} color={btnText} />
+                        <Feather name="more-vertical" size={ms(20)} color={headerContent} />
                     </TouchableOpacity>
                 }
             />
