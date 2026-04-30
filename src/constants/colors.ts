@@ -57,8 +57,8 @@ export const getSupportColors = (colors: ThemeColors, isDarkMode: boolean) => ({
 });
 
 const DARK_BASE = {
-  background: '#3d3d3d',
-  surface: '#2d2d2d',
+  background: '#2d2d2d',
+  surface: '#3d3d3d',
   error: '#FF5252',
   onBackground: '#FFFFFF',
   onSurface: '#FFFFFF',

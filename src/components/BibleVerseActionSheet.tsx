@@ -3,9 +3,9 @@ import * as Clipboard from 'expo-clipboard';
 import React from 'react';
 import { Animated, Share, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { VERSE_HIGHLIGHTS as HIGHLIGHT_COLORS } from '../constants/colors';
 import { useResponsive } from '../hooks/use-responsive';
 import { useTheme } from '../hooks/use-theme';
-import { VERSE_HIGHLIGHTS as HIGHLIGHT_COLORS } from '../constants/colors';
 
 export type SelectedVerse = {
   chapter: number;
@@ -105,7 +105,7 @@ export function BibleVerseActionSheet(props: VerseActionSheetProps) {
   const iconColor = colors.primary;
 
   return (
-    <Animated.View style={[styles.bar, { transform: [{ translateY }], backgroundColor: colors.surface, paddingBottom: 16, shadowColor: colors.shadow }]} id="bible-verse-action-sheet">
+    <Animated.View style={[styles.bar, { transform: [{ translateY }], backgroundColor: colors.surface, shadowColor: colors.shadow }]} id="bible-verse-action-sheet">
       <View style={styles.actions}>
         <TouchableOpacity style={styles.iconBtn} onPress={onShare} disabled={count === 0}>
           <Feather name="share-2" size={iconSize} color={count === 0 ? colors.textMuted : iconColor} />

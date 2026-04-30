@@ -107,7 +107,6 @@ export function BibleDrawerMenu(props: DrawerMenuProps) {
 
   const renderItem = (item: MenuItem) => {
     const isActive = activeItem === item.key;
-    const tintColor = item.tint || colors.primary;
     return (
       <TouchableOpacity
         key={item.key}
@@ -122,7 +121,7 @@ export function BibleDrawerMenu(props: DrawerMenuProps) {
         <View style={[
           styles.menuIconWrap,
           { width: ms(38), height: ms(38), borderRadius: ms(10), marginRight: ms(10) },
-          isActive ? { backgroundColor: colors.onPrimary } : { backgroundColor: colors.surfaceHighlight },
+          isActive ? { backgroundColor: colors.onSurface } : { backgroundColor: colors.surfaceHighlight },
         ]}>
           <Feather name={item.icon} size={ms(18)} color={isActive ? colors.primary : (item.tint || colors.onSurface)} />
         </View>
@@ -130,7 +129,7 @@ export function BibleDrawerMenu(props: DrawerMenuProps) {
           style={[
             styles.menuLabel,
             { fontSize: ms(15) },
-            isActive ? { color: colors.onPrimary, fontWeight: '800' } : { color: item.tint || colors.onSurface },
+            isActive ? { color: colors.onSurface, fontWeight: '800' } : { color: item.tint || colors.onSurface },
           ]}
           numberOfLines={1}
         >
@@ -147,7 +146,7 @@ export function BibleDrawerMenu(props: DrawerMenuProps) {
           <Animated.View style={[styles.backdrop, { opacity: backdropOpacity, backgroundColor: colors.overlay }]} />
         </TouchableWithoutFeedback>
 
-        <Animated.View style={[styles.drawer, { width: drawerWidth, transform: [{ translateX }], backgroundColor: colors.background, shadowColor: colors.shadow }]}>
+        <Animated.View style={[styles.drawer, { width: drawerWidth, transform: [{ translateX }], backgroundColor: colors.surface, shadowColor: colors.shadow }]}>
           <View style={[styles.drawerHeader, { backgroundColor: colors.primary, paddingTop: Math.max(ms(20), insets.top + ms(16)), paddingBottom: ms(20), paddingHorizontal: ms(16) }]}>
             <View style={[styles.drawerLogo, { width: ms(38), height: ms(38), borderRadius: ms(10), marginRight: ms(10), backgroundColor: colors.surfaceHighlight }]}>
               <Feather name="book" size={ms(19)} color={colors.onPrimary} />
