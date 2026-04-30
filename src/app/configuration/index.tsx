@@ -210,8 +210,11 @@ export default function ConfigurationScreen() {
                       onPress={() => setColorTheme(theme.key as ColorThemeKey)}
                       style={[
                         styles.swatchItem,
-                        { borderColor: isActive ? swatchColor : colors.border },
-                        isActive && { borderWidth: 2.5, backgroundColor: colors.background },
+                        { 
+                          borderColor: isActive ? swatchColor : colors.border,
+                          backgroundColor: isActive ? swatchColor + '15' : colors.surfaceHighlight 
+                        },
+                        isActive && { borderWidth: 2, borderColor: swatchColor },
                       ]}
                     >
                       <View style={[styles.swatchDot, { backgroundColor: swatchColor }]}>

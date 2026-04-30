@@ -49,17 +49,17 @@ export const VERSE_HIGHLIGHTS = [
  * These can be used alongside the 12 theme colors
  */
 export const getSupportColors = (colors: ThemeColors, isDarkMode: boolean) => ({
-  border: isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
+  border: isDarkMode ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.1)',
   shadow: '#000000',
-  overlay: isDarkMode ? 'rgba(0,0,0,0.7)' : 'rgba(0,0,0,0.5)',
-  textMuted: isDarkMode ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.6)',
-  surfaceHighlight: isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)',
+  overlay: isDarkMode ? 'rgba(0,0,0,0.85)' : 'rgba(0,0,0,0.5)',
+  textMuted: isDarkMode ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.6)',
+  surfaceHighlight: isDarkMode ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.05)',
 });
 
 const DARK_BASE = {
-  background: '#3b3b3f',
-  surface: '#1E1E1E',
-  error: '#CF6679',
+  background: '#3d3d3d',
+  surface: '#2d2d2d',
+  error: '#FF5252',
   onBackground: '#FFFFFF',
   onSurface: '#FFFFFF',
   onError: '#FFFFFF',
