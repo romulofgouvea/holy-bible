@@ -39,13 +39,13 @@ export function BibleHeader({
     <View style={[styles.header, { backgroundColor: backgroundColor || colors.primary, minHeight: ms(56), paddingHorizontal: ms(16), paddingVertical: ms(12), shadowColor: colors.shadow }]}>
       <View style={styles.leftContainer}>
         {showMenu && (
-          <TouchableOpacity style={[styles.menuBtn, { backgroundColor: menuBtnBackgroundColor || colors.onPrimary, width: ms(40), height: ms(40), borderRadius: ms(10), marginRight: ms(8) }]} onPress={onMenuPress} activeOpacity={0.7}>
-            <Feather name="menu" size={ms(20)} color={colors.primary} />
+          <TouchableOpacity style={[styles.menuBtn, { backgroundColor: menuBtnBackgroundColor || (colors.onPrimary + '4D'), width: ms(40), height: ms(40), borderRadius: ms(10), marginRight: ms(8) }]} onPress={onMenuPress} activeOpacity={0.7}>
+            <Feather name="menu" size={ms(20)} color={contentColor || colors.onPrimary} />
           </TouchableOpacity>
         )}
         {showBack && (
-          <TouchableOpacity style={[styles.menuBtn, { backgroundColor: menuBtnBackgroundColor || colors.onPrimary, width: ms(40), height: ms(40), borderRadius: ms(10), marginRight: ms(8) }]} onPress={onBack} activeOpacity={0.7}>
-            <Feather name={backIcon} size={ms(22)} color={colors.primary} />
+          <TouchableOpacity style={[styles.menuBtn, { backgroundColor: menuBtnBackgroundColor || (colors.onPrimary + '4D'), width: ms(40), height: ms(40), borderRadius: ms(10), marginRight: ms(8) }]} onPress={onBack} activeOpacity={0.7}>
+            <Feather name={backIcon} size={ms(22)} color={contentColor || colors.onPrimary} />
           </TouchableOpacity>
         )}
         {leftContent}

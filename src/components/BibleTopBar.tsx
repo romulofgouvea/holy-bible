@@ -32,8 +32,8 @@ export const BibleTopBar = React.memo((props: BibleTopBarProps) => {
     const isSepia = readerTheme === 'sepia';
     const headerBg = isSepia ? readerColors.primary : colors.primary;
     const headerContent = isSepia ? readerColors.onPrimary : colors.onPrimary;
-    const btnBg = colors.onPrimary;
-    const btnText = colors.primary;
+    const btnBg = colors.onPrimary + '4D';
+    const btnText = colors.onPrimary;
 
     return (
         <>
