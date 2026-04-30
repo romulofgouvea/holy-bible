@@ -1,25 +1,26 @@
+import { COLOR_THEMES, ColorThemeKey } from '@/constants/colors';
 import { Feather } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system/legacy';
+import { useRouter } from 'expo-router';
 import * as Sharing from 'expo-sharing';
 import React, { useEffect, useState } from 'react';
 import { Platform, ScrollView, StyleSheet, Switch, TouchableOpacity, View } from 'react-native';
-import { useRouter } from 'expo-router';
 import { BibleConfirmModal } from '../../components/BibleConfirmModal';
 import { BibleDrawerMenu } from '../../components/BibleDrawerMenu';
 import { BibleHeader } from '../../components/BibleHeader';
 import { BibleText } from '../../components/BibleText';
-import { STORAGE_KEYS } from '../../constants/storage';
 import { DonateModal } from '../../components/DonateModal';
+import { STORAGE_KEYS } from '../../constants/storage';
 import { useReaderSettings } from '../../hooks/use-reader-settings';
 import { useResponsive } from '../../hooks/use-responsive';
 import { useStudies } from '../../hooks/use-studies';
-import { useTheme, type ColorThemeKey } from '../../hooks/use-theme';
+import { useTheme } from '../../hooks/use-theme';
 
 export default function ConfigurationScreen() {
   const { ms } = useResponsive();
-  const { isDarkMode, toggleDarkMode, colors, colorTheme, setColorTheme, colorThemes } = useTheme();
+  const { isDarkMode, toggleDarkMode, colors, colorTheme, setColorTheme } = useTheme();
   const { setReaderTheme, readerTheme } = useReaderSettings();
   const [drawerVisible, setDrawerVisible] = useState(false);
   const { studies, importBulk } = useStudies();
@@ -47,7 +48,7 @@ export default function ConfigurationScreen() {
         if (permissions.granted) {
           const fileName = `backup_estudos_automatico`;
           const fileUri = await (FileSystem as any).StorageAccessFramework.createFileAsync(permissions.directoryUri, fileName, 'application/json');
-          
+
           await AsyncStorage.setItem(STORAGE_KEYS.AUTO_BACKUP_FILE_URI, fileUri);
           await AsyncStorage.setItem(STORAGE_KEYS.AUTO_BACKUP, 'true');
           setAutoBackup(true);
@@ -159,11 +160,11 @@ export default function ConfigurationScreen() {
         <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border, shadowColor: colors.shadow }]}>
 
           <TouchableOpacity style={styles.cardHeader} activeOpacity={0.8} onPress={handleToggle}>
-            <View style={[styles.iconWrap, { backgroundColor: colors.surfaceVariant }]}>
-              <Feather name={isDarkMode ? 'moon' : 'sun'} size={ms(20)} color={colors.accent} />
+            <View style={[styles.iconWrap, { backgroundColor: colors.primary }]}>
+              <Feather name={isDarkMode ? 'moon' : 'sun'} size={ms(20)} color={colors.onPrimary} />
             </View>
             <View style={styles.cardTextContainer}>
-              <BibleText style={[styles.cardTitle, { fontSize: ms(16), color: colors.text }]}>
+              <BibleText style={[styles.cardTitle, { fontSize: ms(16), color: colors.onBackground }]}>
                 Modo Escuro
               </BibleText>
               <BibleText style={[styles.cardDesc, { fontSize: ms(13), color: colors.textMuted }]}>
@@ -174,7 +175,7 @@ export default function ConfigurationScreen() {
               style={{ marginLeft: 8 }}
               value={isDarkMode}
               onValueChange={handleToggle}
-              trackColor={{ false: colors.border, true: colors.primaryContainer }}
+              trackColor={{ false: colors.border, true: colors.secondary }}
               thumbColor={isDarkMode ? colors.primary : '#f4f3f4'}
               {...({ activeThumbColor: colors.primary } as any)}
             />
@@ -184,11 +185,11 @@ export default function ConfigurationScreen() {
 
           <View style={[styles.cardHeader, { flexDirection: 'column', alignItems: 'flex-start', gap: 12 }]}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-              <View style={[styles.iconWrap, { backgroundColor: colors.surfaceVariant }]}>
-                <Feather name="droplet" size={ms(20)} color={colors.accent} />
+              <View style={[styles.iconWrap, { backgroundColor: colors.primary }]}>
+                <Feather name="droplet" size={ms(20)} color={colors.onPrimary} />
               </View>
               <View style={styles.cardTextContainer}>
-                <BibleText style={[styles.cardTitle, { fontSize: ms(16), color: colors.text }]}>
+                <BibleText style={[styles.cardTitle, { fontSize: ms(16), color: colors.onBackground }]}>
                   Cor do Aplicativo
                 </BibleText>
                 <BibleText style={[styles.cardDesc, { fontSize: ms(13), color: colors.textMuted }]}>
@@ -198,35 +199,36 @@ export default function ConfigurationScreen() {
             </View>
 
             <View style={styles.swatchGrid}>
-              {colorThemes.map((theme) => {
-                const swatchColor = isDarkMode ? theme.swatchDark : theme.swatch;
-                const isActive = colorTheme === theme.key;
-                return (
-                  <TouchableOpacity
-                    key={theme.key}
-                    activeOpacity={0.8}
-                    onPress={() => setColorTheme(theme.key)}
-                    style={[
-                      styles.swatchItem,
-                      { borderColor: isActive ? swatchColor : colors.border },
-                      isActive && { borderWidth: 2.5, backgroundColor: colors.surfaceVariant },
-                    ]}
-                  >
-                    <View style={[styles.swatchDot, { backgroundColor: swatchColor }]}>
-                      {isActive && (
-                        <Feather name="check" size={ms(14)} color={colors.onPrimary} />
-                      )}
-                    </View>
-                    <BibleText style={[
-                      styles.swatchLabel,
-                      { fontSize: ms(11), color: isActive ? swatchColor : colors.textMuted },
-                      isActive && { fontWeight: '800' },
-                    ]}>
-                      {theme.label}
-                    </BibleText>
-                  </TouchableOpacity>
-                );
-              })}
+              {Object.entries(COLOR_THEMES).map(([key, value]) => ({ key, ...value }))
+                .map((theme) => {
+                  const swatchColor = theme.swatch;
+                  const isActive = colorTheme === theme.key;
+                  return (
+                    <TouchableOpacity
+                      key={theme.key}
+                      activeOpacity={0.8}
+                      onPress={() => setColorTheme(theme.key as ColorThemeKey)}
+                      style={[
+                        styles.swatchItem,
+                        { borderColor: isActive ? swatchColor : colors.border },
+                        isActive && { borderWidth: 2.5, backgroundColor: colors.background },
+                      ]}
+                    >
+                      <View style={[styles.swatchDot, { backgroundColor: swatchColor }]}>
+                        {isActive && (
+                          <Feather name="check" size={ms(14)} color={colors.onPrimary} />
+                        )}
+                      </View>
+                      <BibleText style={[
+                        styles.swatchLabel,
+                        { fontSize: ms(11), color: isActive ? swatchColor : colors.textMuted },
+                        isActive && { fontWeight: '800' },
+                      ]}>
+                        {theme.label}
+                      </BibleText>
+                    </TouchableOpacity>
+                  );
+                })}
             </View>
           </View>
         </View>
@@ -234,11 +236,11 @@ export default function ConfigurationScreen() {
         <BibleText style={{ marginTop: 24, marginLeft: 8, marginBottom: 8, fontSize: ms(14), fontWeight: '700', color: colors.textMuted }}>GERENCIAMENTO</BibleText>
         <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border, shadowColor: colors.shadow }]}>
           <TouchableOpacity style={styles.cardHeader} activeOpacity={0.8} onPress={() => router.push('/configuration/trash' as any)}>
-            <View style={[styles.iconWrap, { backgroundColor: colors.surfaceVariant }]}>
-              <Feather name="trash-2" size={ms(20)} color={colors.accent} />
+            <View style={[styles.iconWrap, { backgroundColor: colors.primary }]}>
+              <Feather name="trash-2" size={ms(20)} color={colors.onPrimary} />
             </View>
             <View style={styles.cardTextContainer}>
-              <BibleText style={[styles.cardTitle, { fontSize: ms(16), color: colors.text }]}>
+              <BibleText style={[styles.cardTitle, { fontSize: ms(16), color: colors.onBackground }]}>
                 Lixeira de Estudos
               </BibleText>
               <BibleText style={[styles.cardDesc, { fontSize: ms(13), color: colors.textMuted }]}>
@@ -251,11 +253,11 @@ export default function ConfigurationScreen() {
         <BibleText style={{ marginTop: 24, marginLeft: 8, marginBottom: 8, fontSize: ms(14), fontWeight: '700', color: colors.textMuted }}>BACKUP E RESTAURAÇÃO</BibleText>
         <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border, shadowColor: colors.shadow }]}>
           <TouchableOpacity style={styles.cardHeader} activeOpacity={0.8} onPress={() => handleToggleAutoBackup(!autoBackup)}>
-            <View style={[styles.iconWrap, { backgroundColor: colors.surfaceVariant }]}>
-              <Feather name="save" size={ms(20)} color={colors.accent} />
+            <View style={[styles.iconWrap, { backgroundColor: colors.primary }]}>
+              <Feather name="save" size={ms(20)} color={colors.onPrimary} />
             </View>
             <View style={styles.cardTextContainer}>
-              <BibleText style={[styles.cardTitle, { fontSize: ms(16), color: colors.text }]}>
+              <BibleText style={[styles.cardTitle, { fontSize: ms(16), color: colors.onBackground }]}>
                 Backup Automático
               </BibleText>
               <BibleText style={[styles.cardDesc, { fontSize: ms(13), color: colors.textMuted }]}>
@@ -266,7 +268,7 @@ export default function ConfigurationScreen() {
               style={{ marginLeft: 8 }}
               value={autoBackup}
               onValueChange={handleToggleAutoBackup}
-              trackColor={{ false: colors.border, true: colors.primaryContainer }}
+              trackColor={{ false: colors.border, true: colors.secondary }}
               thumbColor={autoBackup ? colors.primary : '#f4f3f4'}
               {...({ activeThumbColor: colors.primary } as any)}
             />
@@ -275,11 +277,11 @@ export default function ConfigurationScreen() {
           <View style={{ height: 1, backgroundColor: colors.border, marginLeft: 70 }} />
 
           <TouchableOpacity style={styles.cardHeader} activeOpacity={0.8} onPress={handleManualBackup}>
-            <View style={[styles.iconWrap, { backgroundColor: colors.surfaceVariant }]}>
-              <Feather name="download" size={ms(20)} color={colors.accent} />
+            <View style={[styles.iconWrap, { backgroundColor: colors.primary }]}>
+              <Feather name="download" size={ms(20)} color={colors.onPrimary} />
             </View>
             <View style={styles.cardTextContainer}>
-              <BibleText style={[styles.cardTitle, { fontSize: ms(16), color: colors.text }]}>
+              <BibleText style={[styles.cardTitle, { fontSize: ms(16), color: colors.onBackground }]}>
                 Exportar Backup
               </BibleText>
               <BibleText style={[styles.cardDesc, { fontSize: ms(13), color: colors.textMuted }]}>
@@ -291,11 +293,11 @@ export default function ConfigurationScreen() {
           <View style={{ height: 1, backgroundColor: colors.border, marginLeft: 70 }} />
 
           <TouchableOpacity style={styles.cardHeader} activeOpacity={0.8} onPress={handleImport}>
-            <View style={[styles.iconWrap, { backgroundColor: colors.surfaceVariant }]}>
-              <Feather name="upload" size={ms(20)} color={colors.accent} />
+            <View style={[styles.iconWrap, { backgroundColor: colors.primary }]}>
+              <Feather name="upload" size={ms(20)} color={colors.onPrimary} />
             </View>
             <View style={styles.cardTextContainer}>
-              <BibleText style={[styles.cardTitle, { fontSize: ms(16), color: colors.text }]}>
+              <BibleText style={[styles.cardTitle, { fontSize: ms(16), color: colors.onBackground }]}>
                 Restaurar do Backup
               </BibleText>
               <BibleText style={[styles.cardDesc, { fontSize: ms(13), color: colors.textMuted }]}>

@@ -1,44 +1,25 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { STORAGE_KEYS } from '../constants/storage';
-import { ThemeColors, useTheme, COLOR_THEMES } from './use-theme';
+import { useTheme } from './use-theme';
+import { ThemeColors, COLOR_THEMES } from '../constants/colors';
 
 export type ReaderTheme = 'light' | 'dark' | 'sepia';
 export type TextAlign = 'auto' | 'left' | 'right' | 'center' | 'justify';
 
 export const sepiaColors: ThemeColors = {
+  primary: '#5C4033',
+  primaryVariant: '#4A3B32',
+  secondary: '#7A6354',
+  secondaryVariant: '#D8CCB2',
   background: '#EAE0C8',
   surface: '#E1D6BD',
-  surfaceVariant: '#D8CCB2',
-  primary: '#5C4033',
-  systemBar: '#4A3B32',
-  accent: '#7A6354',
-  onPrimary: '#EAE0C8',
-  primaryContainer: '#D8CCB2',
-  onPrimaryContainer: '#3E2A1F',
-  text: '#4A3B32',
-  textMuted: '#7A6354',
-  border: '#CDBE9F',
   error: '#8B0000',
+  onPrimary: '#EAE0C8',
+  onSecondary: '#EAE0C8',
+  onBackground: '#4A3B32',
+  onSurface: '#4A3B32',
   onError: '#FFFFFF',
-  overlay: 'rgba(62, 42, 31, 0.5)',
-  surfaceHighlight: 'rgba(92, 64, 51, 0.08)',
-  highlight: '#E1D6BD',
-  blinking: '#CDBE9F',
-  selected: '#D8CCB2',
-  shadow: '#3E2A1F',
-  highlightYellow: 'rgba(212, 175, 55, 0.4)',
-  highlightBlue: 'rgba(70, 130, 180, 0.4)',
-  highlightGreen: 'rgba(85, 107, 47, 0.4)',
-  highlightPink: 'rgba(188, 143, 143, 0.4)',
-  primaryLow: 'rgba(92, 64, 51, 0.1)',
-  errorLow: 'rgba(139, 0, 0, 0.1)',
-  textPrimary: '#5C4033',
-  textDanger: '#8B0000',
-  textInfo: '#4682B4',
-  textWarning: '#D4AF37',
-  inverseSurface: '#3E2A1F',
-  onInverseSurface: '#EAE0C8',
 };
 
 export type ReaderSettingsContextType = {
@@ -90,7 +71,7 @@ export const ReaderSettingsProvider = ({ children }: { children: React.ReactNode
     try { await AsyncStorage.setItem(STORAGE_KEYS.READER_THEME, val); } catch (e) { }
   };
 
-  const activePalette = COLOR_THEMES.find(t => t.key === colorTheme) ?? COLOR_THEMES[0];
+  const activePalette = COLOR_THEMES[colorTheme] || COLOR_THEMES.teal;
   const readerColors = readerTheme === 'sepia' ? sepiaColors : (readerTheme === 'dark' ? activePalette.dark : activePalette.light);
 
   if (!loaded) return null;

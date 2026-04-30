@@ -16,8 +16,8 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BibleDrawerMenu } from '../../components/BibleDrawerMenu';
-import { BibleSkeleton } from '../../components/BibleSkeleton';
 import { BibleHeader } from '../../components/BibleHeader';
+import { BibleSkeleton } from '../../components/BibleSkeleton';
 import { BibleText } from '../../components/BibleText';
 import { BibleTopMenu } from '../../components/BibleTopMenu';
 import { DonateModal } from '../../components/DonateModal';
@@ -150,8 +150,8 @@ export default function EstudosScreen() {
 
   const renderEmpty = () => (
     <View style={styles.emptyContainer}>
-      <Feather name="book" size={ms(64)} color={colors.surfaceVariant} />
-      <BibleText style={[styles.emptyTitle, { fontSize: ms(20), color: colors.text }]}>Nenhum estudo ainda</BibleText>
+      <Feather name="book" size={ms(64)} color={colors.primaryVariant} />
+      <BibleText style={[styles.emptyTitle, { fontSize: ms(20), color: colors.onBackground }]}>Nenhum estudo ainda</BibleText>
       <BibleText style={[styles.emptySubtitle, { fontSize: ms(14), color: colors.textMuted }]}>
         Abra o menu superior nos três pontos para criar seu primeiro estudo
       </BibleText>
@@ -165,25 +165,25 @@ export default function EstudosScreen() {
 
     return (
       <TouchableOpacity
-        style={[styles.card, { backgroundColor: isSelected ? colors.primaryContainer : colors.surface, borderColor: isSelected ? colors.primary : colors.border }]}
+        style={[styles.card, { backgroundColor: isSelected ? colors.primaryVariant : colors.surface, borderColor: isSelected ? colors.primary : colors.border }]}
         onPress={() => isSelectionMode ? toggleSelection(item.id) : router.push(ROUTES.STUDY_EDITOR(item.id) as any)}
         onLongPress={() => toggleSelection(item.id)}
         activeOpacity={0.75}
       >
         <View style={styles.cardContent}>
-          <TouchableOpacity onPress={() => toggleSelection(item.id)} style={[styles.cardIcon, { backgroundColor: isSelected ? colors.primary : colors.surfaceVariant }]}>
+          <TouchableOpacity onPress={() => toggleSelection(item.id)} style={[styles.cardIcon, { backgroundColor: isSelected ? colors.primary : colors.surfaceHighlight }]}>
             {isSelected ? (
               <Feather name="check" size={ms(18)} color={colors.onPrimary} />
             ) : (
-              <Feather name="book-open" size={ms(18)} color={colors.accent} />
+              <Feather name="book-open" size={ms(18)} color={colors.primary} />
             )}
           </TouchableOpacity>
           <View style={styles.cardText}>
-            <BibleText style={[styles.cardTitle, { fontSize: ms(16), color: colors.text }]}>{item.title}</BibleText>
+            <BibleText style={[styles.cardTitle, { fontSize: ms(16), color: colors.onSurface, fontWeight: '600' }]}>{item.title}</BibleText>
             <BibleText style={[styles.cardDate, { fontSize: ms(12), color: colors.textMuted }]}>{item.createdAt}</BibleText>
           </View>
           {!isSelectionMode && (
-            <TouchableOpacity onPress={() => setStudyToDelete(item.id)} style={[styles.deleteBtn, { backgroundColor: colors.errorLow }]}>
+            <TouchableOpacity onPress={() => setStudyToDelete(item.id)} style={[styles.deleteBtn, { backgroundColor: colors.error + '20' }]}>
               <Feather name="trash-2" size={ms(18)} color={colors.error} />
             </TouchableOpacity>
           )}
@@ -236,9 +236,9 @@ export default function EstudosScreen() {
           <TouchableOpacity style={[styles.modalBackdrop, { backgroundColor: colors.overlay }]} activeOpacity={1} onPress={() => setModalVisible(false)} />
           <View style={[styles.modalSheet, { backgroundColor: colors.surface, paddingBottom: Math.max(32, insets.bottom + 16) }]}>
             <View style={[styles.modalHandle, { backgroundColor: colors.border }]} />
-            <BibleText style={[styles.modalTitle, { fontSize: ms(20), color: colors.text }]}>Novo Estudo</BibleText>
+            <BibleText style={[styles.modalTitle, { fontSize: ms(20), color: colors.onSurface, fontWeight: '700' }]}>Novo Estudo</BibleText>
             <TextInput
-              style={[styles.input, { fontSize: ms(16), backgroundColor: colors.surfaceVariant, color: colors.text }]}
+              style={[styles.input, { fontSize: ms(16), backgroundColor: colors.surfaceHighlight, color: colors.onSurface }]}
               placeholder="Título do estudo"
               placeholderTextColor={colors.textMuted}
               value={newTitle}
@@ -246,7 +246,7 @@ export default function EstudosScreen() {
               {...({ outlineStyle: 'none' } as any)}
             />
             <TextInput
-              style={[styles.input, styles.inputMultiline, { fontSize: ms(15), backgroundColor: colors.surfaceVariant, color: colors.text }]}
+              style={[styles.input, styles.inputMultiline, { fontSize: ms(15), backgroundColor: colors.surfaceHighlight, color: colors.onSurface }]}
               placeholder="Descrição inicial (opcional)"
               placeholderTextColor={colors.textMuted}
               value={newDescription}
@@ -256,8 +256,8 @@ export default function EstudosScreen() {
               {...({ outlineStyle: 'none' } as any)}
             />
             <View style={styles.modalActions}>
-              <TouchableOpacity style={[styles.cancelBtn, { backgroundColor: colors.surfaceVariant }]} onPress={() => setModalVisible(false)}>
-                <BibleText style={[styles.cancelText, { fontSize: ms(15), color: colors.text }]}>Cancelar</BibleText>
+              <TouchableOpacity style={[styles.cancelBtn, { backgroundColor: colors.surfaceHighlight }]} onPress={() => setModalVisible(false)}>
+                <BibleText style={[styles.cancelText, { fontSize: ms(15), color: colors.onSurface }]}>Cancelar</BibleText>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.createBtn, { backgroundColor: colors.primary }, !newTitle.trim() && styles.createBtnDisabled]}
@@ -319,14 +319,14 @@ export default function EstudosScreen() {
       <Modal visible={shareMenuVisible} transparent animationType="fade">
         <TouchableOpacity style={{ flex: 1, backgroundColor: colors.overlay, justifyContent: 'center', alignItems: 'center' }} activeOpacity={1} onPress={() => setShareMenuVisible(false)}>
           <View style={{ backgroundColor: colors.surface, borderRadius: 16, padding: 20, width: '80%', gap: 16, shadowColor: colors.shadow, elevation: 12 }}>
-            <BibleText style={{ fontSize: ms(18), fontWeight: '700', color: colors.text }}>Como deseja compartilhar?</BibleText>
-            <TouchableOpacity style={{ flexDirection: 'row', gap: 12, alignItems: 'center', backgroundColor: colors.surfaceVariant, padding: 16, borderRadius: 12 }} onPress={() => exportPDFs(selectedIds)}>
+            <BibleText style={{ fontSize: ms(18), fontWeight: '700', color: colors.onSurface }}>Como deseja compartilhar?</BibleText>
+            <TouchableOpacity style={{ flexDirection: 'row', gap: 12, alignItems: 'center', backgroundColor: colors.surfaceHighlight, padding: 16, borderRadius: 12 }} onPress={() => exportPDFs(selectedIds)}>
               <Feather name="file-text" size={ms(20)} color={colors.primary} />
-              <BibleText style={{ fontSize: ms(15), color: colors.text, fontWeight: '600' }}>Compartilhar em PDF</BibleText>
+              <BibleText style={{ fontSize: ms(15), color: colors.onSurface, fontWeight: '600' }}>Compartilhar em PDF</BibleText>
             </TouchableOpacity>
-            <TouchableOpacity style={{ flexDirection: 'row', gap: 12, alignItems: 'center', backgroundColor: colors.surfaceVariant, padding: 16, borderRadius: 12 }} onPress={() => exportBackup(selectedIds)}>
+            <TouchableOpacity style={{ flexDirection: 'row', gap: 12, alignItems: 'center', backgroundColor: colors.surfaceHighlight, padding: 16, borderRadius: 12 }} onPress={() => exportBackup(selectedIds)}>
               <Feather name="file" size={ms(20)} color={colors.primary} />
-              <BibleText style={{ fontSize: ms(15), color: colors.text, fontWeight: '600' }}>Compartilhar em arquivo</BibleText>
+              <BibleText style={{ fontSize: ms(15), color: colors.onSurface, fontWeight: '600' }}>Compartilhar em arquivo</BibleText>
             </TouchableOpacity>
             <TouchableOpacity style={{ alignItems: 'center', marginTop: 8 }} onPress={() => setShareMenuVisible(false)}>
               <BibleText style={{ fontSize: ms(15), color: colors.primary, fontWeight: '700' }}>Cancelar</BibleText>

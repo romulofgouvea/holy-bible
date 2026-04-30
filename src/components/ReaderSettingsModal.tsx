@@ -26,24 +26,24 @@ export function ReaderSettingsModal({ visible, onClose }: { visible: boolean; on
       <View style={[styles.container, { backgroundColor: colors.surface, shadowColor: colors.shadow }]}>
         <View style={styles.section}>
           <BibleText style={[styles.sectionTitle, { color: colors.textMuted }]}>Tamanho da Fonte</BibleText>
-          <View style={[styles.row, { backgroundColor: colors.surfaceVariant }]}>
+          <View style={[styles.row, { backgroundColor: colors.surfaceHighlight }]}>
             <TouchableOpacity style={styles.actionBtn} onPress={() => setFontSizeMultiplier(Math.max(0.7, fontSizeMultiplier - 0.1))}>
-              <BibleText style={[{ fontSize: ms(16), color: colors.text }]}>A-</BibleText>
+              <BibleText style={[{ fontSize: ms(16), color: colors.onSurface, fontWeight: '700' }]}>A-</BibleText>
             </TouchableOpacity>
             <View style={[styles.divider, { backgroundColor: colors.border }]} />
             <TouchableOpacity style={styles.actionBtn} onPress={() => setFontSizeMultiplier(Math.min(2.0, fontSizeMultiplier + 0.1))}>
-              <BibleText style={[{ fontSize: ms(20), color: colors.text }]}>A+</BibleText>
+              <BibleText style={[{ fontSize: ms(20), color: colors.onSurface, fontWeight: '700' }]}>A+</BibleText>
             </TouchableOpacity>
           </View>
         </View>
 
         <View style={styles.section}>
           <BibleText style={[styles.sectionTitle, { color: colors.textMuted }]}>Alinhamento</BibleText>
-          <View style={[styles.row, { backgroundColor: colors.surfaceVariant }]}>
+          <View style={[styles.row, { backgroundColor: colors.surfaceHighlight }]}>
             {['left', 'center', 'right', 'justify'].map((align, idx) => (
               <React.Fragment key={align}>
                 <TouchableOpacity style={[styles.actionBtn, textAlign === align && { backgroundColor: colors.primary }]} onPress={() => setTextAlign(align as any)}>
-                  <Feather name={`align-${align}` as any} size={ms(18)} color={textAlign === align ? colors.onPrimary : colors.text} />
+                  <Feather name={`align-${align}` as any} size={ms(18)} color={textAlign === align ? colors.onPrimary : colors.onSurface} />
                 </TouchableOpacity>
                 {idx < 3 && <View style={[styles.divider, { backgroundColor: colors.border }]} />}
               </React.Fragment>
@@ -53,17 +53,17 @@ export function ReaderSettingsModal({ visible, onClose }: { visible: boolean; on
 
         <View style={styles.section}>
           <BibleText style={[styles.sectionTitle, { color: colors.textMuted }]}>Tema de Leitura</BibleText>
-          <View style={[styles.row, { backgroundColor: colors.surfaceVariant }]}>
+          <View style={[styles.row, { backgroundColor: colors.surfaceHighlight }]}>
             <TouchableOpacity style={[styles.actionBtn, readerTheme === 'light' && { backgroundColor: colors.primary }]} onPress={() => handleSetTheme('light')}>
-              <BibleText style={[{ color: readerTheme === 'light' ? colors.onPrimary : colors.text, fontWeight: '700' }]}>Claro</BibleText>
+              <BibleText style={[{ color: readerTheme === 'light' ? colors.onPrimary : colors.onSurface, fontWeight: '700' }]}>Claro</BibleText>
             </TouchableOpacity>
             <View style={[styles.divider, { backgroundColor: colors.border }]} />
             <TouchableOpacity style={[styles.actionBtn, readerTheme === 'sepia' && { backgroundColor: colors.primary }]} onPress={() => handleSetTheme('sepia')}>
-              <BibleText style={[{ color: readerTheme === 'sepia' ? colors.onPrimary : colors.text, fontWeight: '700' }]}>Sépia</BibleText>
+              <BibleText style={[{ color: readerTheme === 'sepia' ? colors.onPrimary : colors.onSurface, fontWeight: '700' }]}>Sépia</BibleText>
             </TouchableOpacity>
             <View style={[styles.divider, { backgroundColor: colors.border }]} />
             <TouchableOpacity style={[styles.actionBtn, readerTheme === 'dark' && { backgroundColor: colors.primary }]} onPress={() => handleSetTheme('dark')}>
-              <BibleText style={[{ color: readerTheme === 'dark' ? colors.onPrimary : colors.text, fontWeight: '700' }]}>Escuro</BibleText>
+              <BibleText style={[{ color: readerTheme === 'dark' ? colors.onPrimary : colors.onSurface, fontWeight: '700' }]}>Escuro</BibleText>
             </TouchableOpacity>
           </View>
         </View>

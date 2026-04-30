@@ -1,9 +1,9 @@
 import { Feather } from '@expo/vector-icons';
 import * as FileSystem from 'expo-file-system/legacy';
 import * as Print from 'expo-print';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useLocalSearchParams, usePathname, useRouter } from 'expo-router';
 import * as Sharing from 'expo-sharing';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Alert,
   DeviceEventEmitter,
@@ -14,21 +14,22 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
+import { handleSmartBack } from '../../../utils/navigation';
 
+import { COLOR_THEMES } from '@/constants/colors';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BibleBookModal } from '../../../components/BibleBookModal';
 import { BibleBottomSheet } from '../../../components/BibleBottomSheet';
 import { BibleHeader } from '../../../components/BibleHeader';
 import { BibleNumberModal } from '../../../components/BibleNumberModal';
+import { BibleSkeleton } from '../../../components/BibleSkeleton';
 import { BibleTopMenu } from '../../../components/BibleTopMenu';
 import { BibleVersionModal } from '../../../components/BibleVersionModal';
 import { ReaderSettingsModal } from '../../../components/ReaderSettingsModal';
 import { RichTextEditor, RichTextEditorRef } from '../../../components/study/RichTextEditor';
 import { StudyVerseSelectModal } from '../../../components/study/StudyVerseSelectModal';
-import { ROUTES } from '../../../constants/routes';
 import { STORAGE_KEYS } from '../../../constants/storage';
-import { getBibleData, availableVersions, Book } from '../../../data';
-import { BibleSkeleton } from '../../../components/BibleSkeleton';
+import { availableVersions, Book, getBibleData } from '../../../data';
 import { useReaderSettings } from '../../../hooks/use-reader-settings';
 import { useResponsive } from '../../../hooks/use-responsive';
 import { useStudies } from '../../../hooks/use-studies';
@@ -38,18 +39,20 @@ const noOutline = Platform.select({ web: { outline: 'none', outlineWidth: 0 } as
 
 export default function StudyEditorScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const pathname = usePathname();
   const { getStudy, updateStudy, loaded } = useStudies();
   const { ms } = useResponsive();
-  const { colors: themeColors, isDarkMode, colorTheme, colorThemes } = useTheme();
+  const { colors: themeColors, isDarkMode, colorTheme } = useTheme();
   const { readerColors, readerTheme } = useReaderSettings();
 
   const colors = useMemo(() => {
     if (readerTheme === 'sepia') {
-      const active = colorThemes.find(t => t.key === colorTheme) ?? colorThemes[0];
+      const active = Object.entries(COLOR_THEMES).map(([key, value]) => ({ key, ...value }))
+        .find(t => t.key === colorTheme) ?? COLOR_THEMES.teal;
       return active.light;
     }
     return themeColors;
-  }, [readerTheme, themeColors, colorTheme, colorThemes]);
+  }, [readerTheme, themeColors, colorTheme]);
   const router = useRouter();
 
   const [title, setTitle] = useState('');
@@ -223,7 +226,7 @@ export default function StudyEditorScreen() {
         contentColor={colors.onPrimary}
         leftContent={
           <>
-            <TouchableOpacity style={{ width: ms(40), height: ms(40), borderRadius: ms(10), alignItems: 'center', justifyContent: 'center', backgroundColor: colors.surfaceHighlight, marginRight: ms(8) }} onPress={() => router.canGoBack() ? router.back() : router.replace(ROUTES.STUDIES as any)}>
+            <TouchableOpacity style={{ width: ms(40), height: ms(40), borderRadius: ms(10), alignItems: 'center', justifyContent: 'center', backgroundColor: colors.primary, marginRight: ms(8) }} onPress={() => handleSmartBack(pathname)}>
               <Feather name="arrow-left" size={ms(20)} color={colors.onPrimary} />
             </TouchableOpacity>
             <TextInput
@@ -238,7 +241,7 @@ export default function StudyEditorScreen() {
           </>
         }
         rightContent={
-          <TouchableOpacity style={{ width: ms(40), height: ms(40), borderRadius: ms(10), alignItems: 'center', justifyContent: 'center', backgroundColor: colors.surfaceHighlight }} onPress={() => setMenuVisible(true)}>
+          <TouchableOpacity style={{ width: ms(40), height: ms(40), borderRadius: ms(10), alignItems: 'center', justifyContent: 'center', backgroundColor: colors.primary }} onPress={() => setMenuVisible(true)}>
             <Feather name="more-vertical" size={ms(20)} color={colors.onPrimary} />
           </TouchableOpacity>
         }

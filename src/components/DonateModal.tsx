@@ -34,11 +34,11 @@ export function DonateModal({ visible, onClose }: Props) {
       <View style={[styles.overlay, { backgroundColor: colors.overlay }]}>
         <View style={[styles.card, { backgroundColor: colors.surface, shadowColor: colors.shadow }]}>
 
-          <View style={[styles.heartCircle, { backgroundColor: colors.primaryContainer }]}>
-            <Feather name="heart" size={ms(36)} color={colors.primary} />
+          <View style={[styles.heartCircle, { backgroundColor: colors.primary }]}>
+            <Feather name="heart" size={ms(36)} color={colors.onPrimary} />
           </View>
 
-          <BibleText style={[styles.title, { color: colors.text, fontSize: ms(20) }]}>
+          <BibleText style={[styles.title, { color: colors.onSurface, fontSize: ms(20), fontWeight: '700' }]}>
             Apoie este Projeto
           </BibleText>
 
@@ -46,27 +46,27 @@ export function DonateModal({ visible, onClose }: Props) {
             Este aplicativo é gratuito e feito com muito cuidado para levar a Palavra de Deus às suas mãos. Cada contribuição ajuda a manter e melhorar o app. 🙏
           </BibleText>
 
-          <View style={[styles.pixBox, { backgroundColor: colors.surfaceVariant, borderColor: colors.border }]}>
+          <View style={[styles.pixBox, { backgroundColor: colors.primary, borderColor: colors.border }]}>
             <View style={styles.pixLabelRow}>
-              <View style={[styles.pixBadge, { backgroundColor: colors.primary }]}>
-                <BibleText style={[styles.pixBadgeText, { color: colors.background }]}>PIX</BibleText>
+              <View style={[styles.pixBadge, { backgroundColor: colors.background }]}>
+                <BibleText style={[styles.pixBadgeText, { color: colors.primary }]}>PIX</BibleText>
               </View>
               <BibleText style={[styles.pixLabel, { color: colors.textMuted, fontSize: ms(12) }]}>
                 Chave (e-mail)
               </BibleText>
             </View>
 
-            <BibleText style={[styles.pixKey, { color: colors.text, fontSize: ms(15) }]} selectable>
+            <BibleText style={[styles.pixKey, { color: colors.onPrimary, fontSize: ms(15) }]} selectable>
               {PIX_KEY}
             </BibleText>
 
             <TouchableOpacity
-              style={[styles.copyBtn, { backgroundColor: copied ? colors.primaryContainer : colors.primary }]}
+              style={[styles.copyBtn, { backgroundColor: copied ? colors.primary : colors.primary }]}
               onPress={handleCopy}
               activeOpacity={0.8}
             >
-              <Feather name={copied ? 'check' : 'copy'} size={ms(15)} color={copied ? colors.primary : colors.background} />
-              <BibleText style={[styles.copyBtnText, { fontSize: ms(13), color: copied ? colors.primary : colors.background }]}>
+              <Feather name={copied ? 'check' : 'copy'} size={ms(15)} color={copied ? colors.background : colors.onPrimary} />
+              <BibleText style={[styles.copyBtnText, { fontSize: ms(13), color: copied ? colors.background : colors.onPrimary }]}>
                 {copied ? 'Copiado!' : 'Copiar chave'}
               </BibleText>
             </TouchableOpacity>

@@ -20,7 +20,7 @@ export function BibleGridBlock({ title, widthPercentage, exactWidth, onPress }: 
       style={[
         styles.gridItem,
         exactWidth ? { width: exactWidth } : widthPercentage ? { width: `${widthPercentage}%` } : {},
-        { backgroundColor: colors.surfaceVariant, borderColor: colors.border }
+        { backgroundColor: colors.primary, borderColor: colors.border }
       ]}
       onPress={onPress}
     >

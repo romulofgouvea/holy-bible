@@ -12,13 +12,13 @@ type BibleBottomSheetProps = {
 export function BibleBottomSheet({ visible, onClose, children }: BibleBottomSheetProps) {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
-  
+
   return (
     <Modal visible={visible} animationType="slide" transparent>
       <TouchableOpacity activeOpacity={1} style={[styles.modalBackdrop, { backgroundColor: colors.overlay }]} onPress={onClose}>
         <TouchableWithoutFeedback>
           <View style={[styles.bottomSheet, { height: '85%', backgroundColor: colors.surface, paddingBottom: Math.max(8, insets.bottom + 8), shadowColor: colors.shadow }]}>
-            <View style={[styles.modalHandle, { backgroundColor: colors.surfaceVariant }]} />
+            <View style={[styles.modalHandle, { backgroundColor: colors.primary }]} />
             {children}
           </View>
         </TouchableWithoutFeedback>

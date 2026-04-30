@@ -24,12 +24,15 @@ export function BibleHeader({ title, leftContent, rightContent, onMenuPress, sho
     <View style={[styles.header, { backgroundColor: backgroundColor || colors.primary, minHeight: ms(56), paddingHorizontal: ms(16), paddingVertical: ms(12), shadowColor: colors.shadow }]}>
       <View style={styles.leftContainer}>
         {showMenu && (
-          <TouchableOpacity style={[styles.menuBtn, { backgroundColor: menuBtnBackgroundColor || colors.surfaceHighlight, width: ms(40), height: ms(40), borderRadius: ms(10), marginRight: ms(8) }]} onPress={onMenuPress} activeOpacity={0.7}>
-            <Feather name="menu" size={ms(20)} color={contentColor || colors.onPrimary} />
+          <TouchableOpacity style={[styles.menuBtn, { backgroundColor: menuBtnBackgroundColor || colors.onPrimary, width: ms(40), height: ms(40), borderRadius: ms(10), marginRight: ms(8) }]} onPress={onMenuPress} activeOpacity={0.7}>
+            <Feather name="menu" size={ms(20)} color={contentColor || colors.primary} />
           </TouchableOpacity>
         )}
-        {leftContent ? leftContent : (
-          title ? <BibleText style={[styles.title, { fontSize: ms(16), color: contentColor || colors.onPrimary }]}>{title}</BibleText> : null
+        {leftContent}
+        {title && (
+          <BibleText style={[styles.title, { fontSize: ms(16), color: contentColor || colors.onPrimary, marginLeft: leftContent ? ms(8) : 0 }]}>
+            {title}
+          </BibleText>
         )}
       </View>
       <View style={styles.rightContainer}>

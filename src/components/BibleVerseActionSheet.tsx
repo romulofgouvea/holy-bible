@@ -5,6 +5,7 @@ import { Animated, Share, StyleSheet, TouchableOpacity, View } from 'react-nativ
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useResponsive } from '../hooks/use-responsive';
 import { useTheme } from '../hooks/use-theme';
+import { VERSE_HIGHLIGHTS as HIGHLIGHT_COLORS } from '../constants/colors';
 
 export type SelectedVerse = {
   chapter: number;
@@ -23,12 +24,6 @@ type VerseActionSheetProps = {
   onShowToast?: (msg: string, type?: 'success' | 'info' | 'warning') => void;
 };
 
-const HIGHLIGHT_COLORS = [
-  { id: 'yellow', hex: '#fde047' },
-  { id: 'blue', hex: '#93c5fd' },
-  { id: 'green', hex: '#86efac' },
-  { id: 'pink', hex: '#f9a8d4' },
-];
 
 export function BibleVerseActionSheet(props: VerseActionSheetProps) {
   const { visible, selectedVerses, highlights, onClose, onBulkHighlight } = props;
@@ -138,7 +133,7 @@ export function BibleVerseActionSheet(props: VerseActionSheetProps) {
         <View style={[styles.divider, { backgroundColor: colors.border }]} />
 
         <TouchableOpacity style={styles.iconBtn} onPress={onClose}>
-          <Feather name="x" size={iconSize} color={colors.textMuted} />
+          <Feather name="x" size={iconSize} color={colors.error} />
         </TouchableOpacity>
       </View>
     </Animated.View>

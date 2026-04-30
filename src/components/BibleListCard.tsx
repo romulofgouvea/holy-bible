@@ -15,9 +15,9 @@ export function BibleListCard({ title, pillText, onPress }: BibleListCardProps) 
   const { colors } = useTheme();
   return (
     <TouchableOpacity activeOpacity={0.7} style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]} onPress={onPress}>
-      <BibleText style={[styles.cardTitle, { fontSize: ms(14), color: colors.text }]}>{title}</BibleText>
+      <BibleText style={[styles.cardTitle, { fontSize: ms(14), color: colors.onPrimary }]}>{title}</BibleText>
       {pillText !== undefined && (
-        <View style={[styles.pill, { backgroundColor: colors.surfaceVariant, borderColor: colors.border }]}>
+        <View style={[styles.pill, { backgroundColor: colors.primary, borderColor: colors.border }]}>
           <BibleText style={[styles.pillText, { fontSize: ms(14), color: colors.primary }]}>{pillText}</BibleText>
         </View>
       )}

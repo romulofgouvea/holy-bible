@@ -1,8 +1,8 @@
 import React from 'react';
 import { Animated, StyleSheet } from 'react-native';
-import { BibleText } from './BibleText';
 import { useTheme } from '../hooks/use-theme';
 import { ToastState } from '../hooks/use-toast';
+import { BibleText } from './BibleText';
 
 type BibleToastProps = {
   toast: ToastState;
@@ -14,8 +14,8 @@ export function BibleToast({ toast, opacity }: BibleToastProps) {
   if (!toast.visible) return null;
 
   return (
-    <Animated.View style={[styles.container, { opacity, backgroundColor: colors.inverseSurface, shadowColor: colors.shadow }]}>
-      <BibleText style={[styles.text, { color: colors.onInverseSurface }]}>{toast.message}</BibleText>
+    <Animated.View style={[styles.container, { opacity, backgroundColor: colors.primary, shadowColor: colors.shadow }]}>
+      <BibleText style={[styles.text, { color: colors.onPrimary }]}>{toast.message}</BibleText>
     </Animated.View>
   );
 }

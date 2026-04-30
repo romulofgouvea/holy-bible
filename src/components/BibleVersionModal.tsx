@@ -1,14 +1,14 @@
 import { Feather } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useMemo, useState } from 'react';
-import { Modal, ScrollView, StyleSheet, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
+import { STORAGE_KEYS } from '../constants/storage';
 import { ALIASES, BibleVersionInfo } from '../data';
 import { useResponsive } from '../hooks/use-responsive';
+import { useTheme } from '../hooks/use-theme';
 import { BibleGridBlock } from './BibleGridBlock';
 import { BibleListCard } from './BibleListCard';
 import { BibleText } from './BibleText';
-import { useTheme } from '../hooks/use-theme';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { STORAGE_KEYS } from '../constants/storage';
 
 type BibleVersionModalProps = {
   visible: boolean;
@@ -28,13 +28,13 @@ export function BibleVersionModal({ visible, onClose, onSelect }: BibleVersionMo
       setSearchQuery('');
       AsyncStorage.getItem(STORAGE_KEYS.VIEW_MODE_VERSION).then(val => {
         if (val === 'list' || val === 'grid') setViewMode(val);
-      }).catch(() => {});
+      }).catch(() => { });
     }
   }, [visible]);
 
   const handleSetViewMode = (mode: 'grid' | 'list') => {
     setViewMode(mode);
-    AsyncStorage.setItem(STORAGE_KEYS.VIEW_MODE_VERSION, mode).catch(() => {});
+    AsyncStorage.setItem(STORAGE_KEYS.VIEW_MODE_VERSION, mode).catch(() => { });
   };
 
   const normalize = (str: string) => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
@@ -55,77 +55,77 @@ export function BibleVersionModal({ visible, onClose, onSelect }: BibleVersionMo
   return (
     <View style={{ flex: 1 }}>
       <View style={styles.header}>
-              <View style={[styles.headerIconWrap, { backgroundColor: colors.primaryContainer }]}>
-                <Feather name="book-open" size={ms(18)} color={colors.primary} />
-              </View>
-              <BibleText style={[styles.title, { fontSize: ms(18), color: colors.primary }]}>Versões</BibleText>
-              <TouchableOpacity onPress={() => setIsSearchVisible(!isSearchVisible)} style={[styles.searchToggleBtn, { backgroundColor: colors.surfaceVariant }]}>
-                <Feather name="search" size={ms(18)} color={isSearchVisible ? colors.primary : colors.textMuted} />
-              </TouchableOpacity>
-              <View style={[styles.viewToggles, { backgroundColor: colors.surfaceVariant }]}>
-                <TouchableOpacity onPress={() => handleSetViewMode('grid')} style={[styles.toggleBtn, viewMode === 'grid' && { backgroundColor: colors.surface }]}>
-                  <Feather name="grid" size={ms(18)} color={viewMode === 'grid' ? colors.primary : colors.textMuted} />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => handleSetViewMode('list')} style={[styles.toggleBtn, viewMode === 'list' && { backgroundColor: colors.surface }]}>
-                  <Feather name="list" size={ms(18)} color={viewMode === 'list' ? colors.primary : colors.textMuted} />
-                </TouchableOpacity>
-              </View>
-              <TouchableOpacity onPress={onClose} style={[styles.closeBtn, { backgroundColor: colors.surfaceVariant }]}>
-                <Feather name="x" size={ms(18)} color={colors.error} />
-              </TouchableOpacity>
-            </View>
+        <View style={[styles.headerIconWrap, { backgroundColor: colors.primary + '15' }]}>
+          <Feather name="book-open" size={ms(18)} color={colors.primary} />
+        </View>
+        <BibleText style={[styles.title, { fontSize: ms(18), color: colors.onSurface, fontWeight: '700' }]}>Versões</BibleText>
+        <TouchableOpacity onPress={() => setIsSearchVisible(!isSearchVisible)} style={[styles.searchToggleBtn, { backgroundColor: colors.surfaceHighlight }]}>
+          <Feather name="search" size={ms(18)} color={isSearchVisible ? colors.primary : colors.onSurface} />
+        </TouchableOpacity>
+        <View style={[styles.viewToggles, { backgroundColor: colors.surfaceHighlight }]}>
+          <TouchableOpacity onPress={() => handleSetViewMode('grid')} style={[styles.toggleBtn, viewMode === 'grid' && { backgroundColor: colors.surface }]}>
+            <Feather name="grid" size={ms(18)} color={viewMode === 'grid' ? colors.primary : colors.onSurface} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => handleSetViewMode('list')} style={[styles.toggleBtn, viewMode === 'list' && { backgroundColor: colors.surface }]}>
+            <Feather name="list" size={ms(18)} color={viewMode === 'list' ? colors.primary : colors.onSurface} />
+          </TouchableOpacity>
+        </View>
+        <TouchableOpacity onPress={onClose} style={[styles.closeBtn, { backgroundColor: colors.surfaceHighlight }]}>
+          <Feather name="x" size={ms(18)} color={colors.error} />
+        </TouchableOpacity>
+      </View>
 
-            {isSearchVisible && (
-              <View style={[styles.searchContainer, { backgroundColor: colors.surfaceVariant, borderColor: colors.border }]}>
-                <Feather name="search" size={ms(18)} color={colors.primary} style={styles.searchIcon} />
-                <TextInput
-                  style={[styles.searchInput, { fontSize: ms(14), color: colors.text }]}
-                  placeholder="Pesquisar versão..."
-                  placeholderTextColor={colors.textMuted}
-                  value={searchQuery}
-                  onChangeText={setSearchQuery}
-                  underlineColorAndroid="transparent"
+      {isSearchVisible && (
+        <View style={[styles.searchContainer, { backgroundColor: colors.surfaceHighlight, borderColor: colors.border }]}>
+          <Feather name="search" size={ms(18)} color={colors.primary} style={styles.searchIcon} />
+          <TextInput
+            style={[styles.searchInput, { fontSize: ms(14), color: colors.onSurface }]}
+            placeholder="Pesquisar versão..."
+            placeholderTextColor={colors.textMuted}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            underlineColorAndroid="transparent"
+          />
+        </View>
+      )}
+
+      <View style={[styles.divider, { backgroundColor: colors.border }]} />
+
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.list} showsVerticalScrollIndicator={false} bounces={true} overScrollMode="always" keyboardShouldPersistTaps="handled" keyboardDismissMode="interactive">
+        {viewMode === 'list' ? (
+          filteredVersions.map((item) => (
+            <BibleListCard
+              key={item.sigla}
+              title={item.name}
+              pillText={item.sigla}
+              onPress={() => handleSelect(item)}
+            />
+          ))
+        ) : (
+          <View style={styles.gridContainer}>
+            {filteredVersions.map((item) => {
+              const availableWidth = width - 32;
+              const numCols = Math.max(4, Math.floor(availableWidth / ms(72)));
+              const itemWidth = ((availableWidth - (numCols - 1) * 8) / numCols) - 0.01;
+              return (
+                <BibleGridBlock
+                  key={item.sigla}
+                  title={item.sigla}
+                  exactWidth={itemWidth}
+                  onPress={() => handleSelect(item)}
                 />
-              </View>
-            )}
+              );
+            })}
+          </View>
+        )}
+      </ScrollView>
 
-            <View style={[styles.divider, { backgroundColor: colors.border }]} />
-
-            <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.list} showsVerticalScrollIndicator={false} bounces={true} overScrollMode="always" keyboardShouldPersistTaps="handled" keyboardDismissMode="interactive">
-              {viewMode === 'list' ? (
-                filteredVersions.map((item) => (
-                  <BibleListCard
-                    key={item.sigla}
-                    title={item.name}
-                    pillText={item.sigla}
-                    onPress={() => handleSelect(item)}
-                  />
-                ))
-              ) : (
-                <View style={styles.gridContainer}>
-                  {filteredVersions.map((item) => {
-                    const availableWidth = width - 32;
-                    const numCols = Math.max(4, Math.floor(availableWidth / ms(72)));
-                    const itemWidth = ((availableWidth - (numCols - 1) * 8) / numCols) - 0.01;
-                    return (
-                      <BibleGridBlock
-                        key={item.sigla}
-                        title={item.sigla}
-                        exactWidth={itemWidth}
-                        onPress={() => handleSelect(item)}
-                      />
-                    );
-                  })}
-                </View>
-              )}
-            </ScrollView>
-
-            <View style={[styles.divider, { backgroundColor: colors.border }]} />
+      <View style={[styles.divider, { backgroundColor: colors.border }]} />
 
       <View style={styles.footer}>
-        <View style={[styles.countPill, { backgroundColor: colors.surfaceVariant, borderColor: colors.primary }]}>
-          <BibleText style={[styles.countNumber, { color: colors.primary }]}>{filteredVersions.length}</BibleText>
-          <BibleText style={[styles.countText, { color: colors.primary }]}> {filteredVersions.length === 1 ? 'versão' : 'versões'}</BibleText>
+        <View style={[styles.countPill, { backgroundColor: colors.surfaceHighlight, borderColor: colors.primary + '30' }]}>
+          <BibleText style={[styles.countNumber, { color: colors.primary, fontWeight: '700' }]}>{filteredVersions.length}</BibleText>
+          <BibleText style={[styles.countText, { color: colors.primary, fontWeight: '600' }]}> {filteredVersions.length === 1 ? 'versão' : 'versões'}</BibleText>
         </View>
       </View>
     </View>

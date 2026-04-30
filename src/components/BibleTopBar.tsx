@@ -1,12 +1,12 @@
 import { Feather } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { useReaderSettings } from '../hooks/use-reader-settings';
 import { useResponsive } from '../hooks/use-responsive';
 import { useTheme } from '../hooks/use-theme';
 import { BibleHeader } from './BibleHeader';
 import { BibleText } from './BibleText';
 import { BibleTopMenu } from './BibleTopMenu';
-import { useReaderSettings } from '../hooks/use-reader-settings';
 
 export type BibleTopBarProps = {
     version: string;
@@ -32,7 +32,7 @@ export const BibleTopBar = React.memo((props: BibleTopBarProps) => {
     const isSepia = readerTheme === 'sepia';
     const headerBg = isSepia ? readerColors.primary : colors.primary;
     const headerContent = isSepia ? readerColors.onPrimary : colors.onPrimary;
-    const btnBg = isSepia ? readerColors.surfaceHighlight : colors.surfaceHighlight;
+    const btnBg = isSepia ? readerColors.primary : colors.surfaceHighlight;
 
     return (
         <>

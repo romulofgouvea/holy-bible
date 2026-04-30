@@ -1,3 +1,4 @@
+import { VERSE_HIGHLIGHTS } from '@/constants/colors';
 import React from 'react';
 import { SectionList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { ALIASES } from '../data';
@@ -44,14 +45,8 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
     const { fontSizeMultiplier, textAlign, readerColors, readerTheme } = useReaderSettings();
 
     const getHighlightColorValue = (colorId: string) => {
-        const themeColors = readerTheme === 'sepia' ? readerColors : colors;
-        switch (colorId) {
-            case 'yellow': return colors.highlightYellow;
-            case 'blue': return colors.highlightBlue;
-            case 'green': return colors.highlightGreen;
-            case 'pink': return colors.highlightPink;
-            default: return colors.highlightYellow;
-        }
+        const h = VERSE_HIGHLIGHTS.find(v => v.id === colorId);
+        return h ? h.hex : colors.surfaceHighlight;
     };
 
     return (
@@ -64,7 +59,7 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
             onScrollToIndexFailed={onScrollToIndexFailed}
             renderSectionHeader={({ section: { title } }) => (
                 <View style={[styles.chapterHeader, { backgroundColor: readerColors.background }]}>
-                    <Text style={[styles.chapterHeaderText, { fontSize: ms(28 * fontSizeMultiplier), color: readerColors.text }]}>{title}</Text>
+                    <Text style={[styles.chapterHeaderText, { fontSize: ms(28 * fontSizeMultiplier), color: readerColors.onBackground }]}>{title}</Text>
                 </View>
             )}
             renderItem={({ item }) => {
@@ -72,7 +67,7 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
                 const highlightColorId = highlights[`${bookAbbrev}-${item.chapter}-${item.verse}`];
                 const isSelected = selectedKeys[`${bookAbbrev}-${item.chapter}-${item.verse}`];
                 const primaryColor = readerTheme === 'sepia' ? readerColors.primary : colors.primary;
-                const primaryLow = readerTheme === 'sepia' ? (readerColors as any).primaryLow || colors.primaryLow : colors.primaryLow;
+                const primaryLow = `${primaryColor}20`; // 12.5% opacity
 
                 return (
                     <TouchableOpacity
@@ -82,13 +77,13 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
                         <View style={[
                             styles.verseRow,
                             highlightColorId && [styles.highlightedRow, { backgroundColor: getHighlightColorValue(highlightColorId) }],
-                            isBlinking && [styles.blinkingRow, { backgroundColor: readerColors.primaryContainer }],
+                            isBlinking && [styles.blinkingRow, { backgroundColor: primaryLow }],
                             isSelected && [styles.selectedRow, { backgroundColor: primaryLow, borderLeftColor: primaryColor }],
                         ]}>
                             <Text style={[styles.verseText, {
-                                fontSize: ms(22 * fontSizeMultiplier),
-                                lineHeight: ms(26 * fontSizeMultiplier),
-                                color: readerColors.text,
+                                fontSize: ms(20 * fontSizeMultiplier),
+                                lineHeight: ms(28 * fontSizeMultiplier),
+                                color: readerColors.onBackground,
                                 textAlign: textAlign as any
                             }]}>
                                 <Text style={{ color: primaryColor, fontWeight: '700', fontSize: ms(16 * fontSizeMultiplier), marginLeft: 16, marginRight: 8 }}>
@@ -105,7 +100,7 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
                 const copyright = (versionInfo as any)?.copyright;
                 if (!copyright) return null;
                 const primaryColor = readerTheme === 'sepia' ? readerColors.primary : colors.primary;
-                const primaryLow = readerTheme === 'sepia' ? (readerColors as any).primaryLow || colors.primaryLow : colors.primaryLow;
+                const primaryLow = readerTheme === 'sepia' ? (readerColors as any).primaryLow || colors.primary : colors.primary;
                 return (
                     <View style={[
                         styles.copyrightCard,
@@ -114,7 +109,7 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
                         <Text style={[styles.copyrightTitle, { color: primaryColor }]}>
                             {versionInfo?.name} ({versionInfo?.sigla})
                         </Text>
-                        <Text style={[styles.copyrightText, { color: readerColors.textMuted }]}>
+                        <Text style={[styles.copyrightText, { color: readerColors.onBackground, opacity: 0.6 }]}>
                             {copyright}
                         </Text>
                     </View>

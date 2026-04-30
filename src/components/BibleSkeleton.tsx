@@ -3,7 +3,11 @@ import { Animated, StyleSheet, View } from 'react-native';
 import { useResponsive } from '../hooks/use-responsive';
 import { useTheme } from '../hooks/use-theme';
 
-export function BibleSkeleton() {
+export type BibleSkeletonProps = {
+  onlyContent?: boolean;
+};
+
+export function BibleSkeleton({ onlyContent = false }: BibleSkeletonProps) {
   const { colors } = useTheme();
   const { ms } = useResponsive();
   const pulseAnim = useRef(new Animated.Value(0.3)).current;
@@ -28,22 +32,26 @@ export function BibleSkeleton() {
   const skeletonColor = colors.surfaceHighlight;
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <View style={[styles.header, { backgroundColor: colors.primary, minHeight: ms(56) }]}>
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <View style={[styles.menuBtn, { backgroundColor: colors.surfaceHighlight, width: ms(40), height: ms(40), borderRadius: ms(10) }]} />
-          <Animated.View style={[styles.titleSkeleton, { backgroundColor: colors.surfaceHighlight, width: ms(100), height: ms(20), opacity: pulseAnim }]} />
-        </View>
-        <View style={{ flexDirection: 'row', gap: ms(12) }}>
-          <View style={[styles.iconSkeleton, { backgroundColor: colors.surfaceHighlight, width: ms(24), height: ms(24) }]} />
-          <View style={[styles.iconSkeleton, { backgroundColor: colors.surfaceHighlight, width: ms(24), height: ms(24) }]} />
-        </View>
-      </View>
+    <View style={[styles.container, !onlyContent && { backgroundColor: colors.background }]}>
+      {!onlyContent && (
+        <>
+          <View style={[styles.header, { backgroundColor: colors.primary, minHeight: ms(56) }]}>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <View style={[styles.menuBtn, { backgroundColor: colors.surfaceHighlight, width: ms(40), height: ms(40), borderRadius: ms(10) }]} />
+              <Animated.View style={[styles.titleSkeleton, { backgroundColor: colors.surfaceHighlight, width: ms(100), height: ms(20), opacity: pulseAnim }]} />
+            </View>
+            <View style={{ flexDirection: 'row', gap: ms(12) }}>
+              <View style={[styles.iconSkeleton, { backgroundColor: colors.surfaceHighlight, width: ms(24), height: ms(24) }]} />
+              <View style={[styles.iconSkeleton, { backgroundColor: colors.surfaceHighlight, width: ms(24), height: ms(24) }]} />
+            </View>
+          </View>
 
-      <View style={[styles.topBar, { backgroundColor: colors.surface, borderBottomColor: colors.border }]}>
-        <Animated.View style={[styles.pillSkeleton, { backgroundColor: skeletonColor, width: ms(80), opacity: pulseAnim }]} />
-        <Animated.View style={[styles.pillSkeleton, { backgroundColor: skeletonColor, width: ms(120), opacity: pulseAnim }]} />
-      </View>
+          <View style={[styles.topBar, { backgroundColor: colors.surface, borderBottomColor: colors.border }]}>
+            <Animated.View style={[styles.pillSkeleton, { backgroundColor: skeletonColor, width: ms(80), opacity: pulseAnim }]} />
+            <Animated.View style={[styles.pillSkeleton, { backgroundColor: skeletonColor, width: ms(120), opacity: pulseAnim }]} />
+          </View>
+        </>
+      )}
 
       <View style={styles.content}>
         {[...Array(8)].map((_, i) => (

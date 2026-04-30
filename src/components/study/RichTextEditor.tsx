@@ -1,3 +1,4 @@
+import { COLOR_THEMES } from '@/constants/colors';
 import { Feather } from '@expo/vector-icons';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Platform, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
@@ -20,18 +21,19 @@ type Props = {
 export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ initialHtml, onChange, onOpenVersePicker }, ref) => {
   const webViewRef = useRef<WebView>(null);
   const webIframeRef = useRef<any>(null);
-  const { colors: themeColors, colorTheme, colorThemes } = useTheme();
+  const { colors: themeColors, colorTheme } = useTheme();
   const { ms } = useResponsive();
   const { readerColors, readerTheme } = useReaderSettings();
 
   // When sepia is active use the light palette for editor UI
   const colors = useMemo(() => {
     if (readerTheme === 'sepia') {
-      const active = colorThemes.find(t => t.key === colorTheme) ?? colorThemes[0];
+      const active = Object.entries(COLOR_THEMES).map(([key, value]) => ({ key, ...value }))
+        .find(t => t.key === colorTheme) ?? COLOR_THEMES.teal;
       return active.light;
     }
     return themeColors;
-  }, [readerTheme, themeColors, colorTheme, colorThemes]);
+  }, [readerTheme, themeColors, colorTheme]);
 
   const [formatState, setFormatState] = useState<{
     bold?: boolean; italic?: boolean; underline?: boolean;
@@ -68,11 +70,11 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
     if (!webViewRef.current) return;
     const js = `
       (function() {
-        document.body.style.backgroundColor = '${colors.surface}';
+        document.body.style.backgroundColor = '${colors.background}';
         var editorEl = document.getElementById('editor');
         if (editorEl) {
-          editorEl.style.color = '${readerColors.text || colors.text}';
-          editorEl.style.backgroundColor = '${colors.surface}';
+          editorEl.style.color = '${readerColors.onBackground || colors.onBackground}';
+          editorEl.style.backgroundColor = '${colors.background}';
         }
       })();
       true;
@@ -118,8 +120,8 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
           outline: none;
           font-size: ${ms(16)}px;
           line-height: 1.6;
-          color: ${readerColors.text || colors.text};
-          background-color: ${colors.surface};
+          color: ${readerColors.onBackground || colors.onBackground};
+          background-color: ${colors.background};
         }
         font[size="1"] { font-size: 11px; line-height: 1.4; }
         font[size="2"] { font-size: 13px; line-height: 1.5; }
@@ -129,7 +131,7 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
         font[size="6"] { font-size: 48px; line-height: 1.6; }
         font[size="7"] { font-size: 64px; line-height: 1.6; }
         ::selection {
-          background-color: ${colors.primaryContainer};
+          background-color: ${colors.primary};
         }
         [contenteditable="true"]:empty:before {
           content: attr(placeholder);
@@ -140,7 +142,7 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
         .bible-verse {
           margin: 16px 0;
           padding: 12px 16px;
-          background-color: ${colors.primaryContainer};
+          background-color: ${colors.primary}15;
           border-left: 4px solid ${colors.primary};
           border-radius: 8px;
         }
@@ -155,7 +157,7 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
         }
         .bible-verse p {
           margin: 0;
-          color: ${colors.text};
+          color: ${colors.onSurface};
           font-style: italic;
         }
         ul, ol { padding-left: 24px; margin-top: 8px; margin-bottom: 8px; }
@@ -174,7 +176,7 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
         ul.task-list li[data-checked="true"] { text-decoration: line-through; opacity: 0.6; }
         .verse-line { margin-bottom: 10px; display: flex; gap: 8px; }
         .verse-num { font-weight: 800; color: ${colors.primary}; font-size: 12px; margin-top: 2px; }
-        .verse-text { font-style: italic; color: ${colors.text}; }
+        .verse-text { font-style: italic; color: ${colors.onPrimary}; }
       </style>
     </head>
     <body onclick="document.getElementById('editor').focus();" oncontextmenu="return false;">
@@ -410,10 +412,10 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
 
   return (
     <View style={{ flex: 1 }}>
-      <View style={[styles.toolbar, { backgroundColor: colors.surface, borderBottomColor: colors.border, shadowColor: colors.shadow }]}>
-        <ScrollView horizontal showsHorizontalScrollIndicator={true} persistentScrollbar={true} keyboardShouldPersistTaps="always" style={{ flex: 1 }} contentContainerStyle={{ paddingHorizontal: 8, alignItems: 'center', paddingRight: 40 }}>
-          <TouchableOpacity 
-            style={[styles.toolBtn, { backgroundColor: colors.primaryLow, marginRight: 12 }, Platform.select({ web: { outlineStyle: 'none' } as any, default: {} })]} 
+      <View style={[styles.toolbar, { backgroundColor: colors.surface, borderBottomColor: colors.border }]}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} keyboardShouldPersistTaps="always" style={{ flex: 1 }} contentContainerStyle={{ paddingHorizontal: 8, alignItems: 'center' }}>
+          <TouchableOpacity
+            style={[styles.toolBtn, { backgroundColor: colors.primary + '20', marginRight: 12 }, Platform.select({ web: { outlineStyle: 'none' } as any, default: {} })]}
             onPress={onOpenVersePicker}
             activeOpacity={0.7}
           >
@@ -423,110 +425,110 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
 
           <View style={styles.divider} />
 
-          <View style={[styles.rowGroup, { backgroundColor: colors.surfaceVariant }]}>
+          <View style={[styles.rowGroup, { backgroundColor: colors.primary }]}>
             <TouchableOpacity style={styles.groupBtn} onPress={() => changeFontSize(-1)}>
-              <BibleText style={{ fontWeight: '800', fontSize: ms(14), color: colors.text }}>A</BibleText>
-              <Feather name="minus" size={ms(14)} color={colors.text} style={{ marginRight: -4 }} />
+              <BibleText style={{ fontWeight: '800', fontSize: ms(14), color: colors.onPrimary }}>A</BibleText>
+              <Feather name="minus" size={ms(14)} color={colors.onPrimary} style={{ marginRight: -4 }} />
             </TouchableOpacity>
-            <View style={[styles.innerDivider, { backgroundColor: colors.border }]} />
+            <View style={[styles.innerDivider, { backgroundColor: colors.primary }]} />
             <TouchableOpacity style={styles.groupBtn} onPress={() => changeFontSize(1)}>
-              <BibleText style={{ fontWeight: '800', fontSize: ms(16), color: colors.text }}>A</BibleText>
-              <Feather name="plus" size={ms(14)} color={colors.text} style={{ marginRight: -4 }} />
+              <BibleText style={{ fontWeight: '800', fontSize: ms(16), color: colors.onPrimary }}>A</BibleText>
+              <Feather name="plus" size={ms(14)} color={colors.onPrimary} style={{ marginRight: -4 }} />
             </TouchableOpacity>
           </View>
 
           <View style={styles.divider} />
 
-          <View style={[styles.rowGroup, { backgroundColor: colors.surfaceVariant }]}>
+          <View style={[styles.rowGroup, { backgroundColor: colors.primary }]}>
             <TouchableOpacity style={[styles.groupBtn, formatState.bold && { backgroundColor: colors.primary }]} onPress={() => execDocumentCmd('bold')}>
-              <Feather name="bold" size={ms(18)} color={formatState.bold ? colors.onPrimary : colors.text} />
+              <Feather name="bold" size={ms(18)} color={formatState.bold ? colors.onPrimary : colors.onPrimary} />
             </TouchableOpacity>
-            <View style={[styles.innerDivider, { backgroundColor: colors.border }]} />
+            <View style={[styles.innerDivider, { backgroundColor: colors.primary }]} />
             <TouchableOpacity style={[styles.groupBtn, formatState.italic && { backgroundColor: colors.primary }]} onPress={() => execDocumentCmd('italic')}>
-              <Feather name="italic" size={ms(18)} color={formatState.italic ? colors.onPrimary : colors.text} />
+              <Feather name="italic" size={ms(18)} color={formatState.italic ? colors.onPrimary : colors.onPrimary} />
             </TouchableOpacity>
-            <View style={[styles.innerDivider, { backgroundColor: colors.border }]} />
+            <View style={[styles.innerDivider, { backgroundColor: colors.primary }]} />
             <TouchableOpacity style={[styles.groupBtn, formatState.underline && { backgroundColor: colors.primary }]} onPress={() => execDocumentCmd('underline')}>
-              <Feather name="underline" size={ms(18)} color={formatState.underline ? colors.onPrimary : colors.text} />
+              <Feather name="underline" size={ms(18)} color={formatState.underline ? colors.onPrimary : colors.onPrimary} />
             </TouchableOpacity>
           </View>
 
           <View style={styles.divider} />
 
-          <View style={[styles.rowGroup, { backgroundColor: colors.surfaceVariant }]}>
+          <View style={[styles.rowGroup, { backgroundColor: colors.primary }]}>
             <TouchableOpacity style={[styles.groupBtn, formatState.insertUnorderedList && !formatState.isTaskList && { backgroundColor: colors.primary }]} onPress={() => execDocumentCmd('insertUnorderedList')}>
-              <Feather name="list" size={ms(18)} color={formatState.insertUnorderedList && !formatState.isTaskList ? colors.onPrimary : colors.text} />
+              <Feather name="list" size={ms(18)} color={formatState.insertUnorderedList && !formatState.isTaskList ? colors.onPrimary : colors.onPrimary} />
             </TouchableOpacity>
-            <View style={[styles.innerDivider, { backgroundColor: colors.border }]} />
+            <View style={[styles.innerDivider, { backgroundColor: colors.primary }]} />
             <TouchableOpacity style={[styles.groupBtn, formatState.isTaskList && { backgroundColor: colors.primary }]} onPress={() => injectToEditor(`window.toggleTaskList(); true;`)}>
-              <Feather name="check-square" size={ms(18)} color={formatState.isTaskList ? colors.onPrimary : colors.text} />
+              <Feather name="check-square" size={ms(18)} color={formatState.isTaskList ? colors.onPrimary : colors.onPrimary} />
             </TouchableOpacity>
-            <View style={[styles.innerDivider, { backgroundColor: colors.border }]} />
+            <View style={[styles.innerDivider, { backgroundColor: colors.primary }]} />
             <TouchableOpacity style={[styles.groupBtn, formatState.insertOrderedList && { backgroundColor: colors.primary }]} onPress={() => execDocumentCmd('insertOrderedList')}>
-              <BibleText style={{ fontWeight: '800', fontSize: ms(16), color: formatState.insertOrderedList ? colors.onPrimary : colors.text, marginTop: -2 }}>1.</BibleText>
+              <BibleText style={{ fontWeight: '800', fontSize: ms(16), color: formatState.insertOrderedList ? colors.onPrimary : colors.onPrimary, marginTop: -2 }}>1.</BibleText>
             </TouchableOpacity>
           </View>
 
           <View style={styles.divider} />
 
-          <View style={[styles.rowGroup, { backgroundColor: colors.surfaceVariant }]}>
+          <View style={[styles.rowGroup, { backgroundColor: colors.primary }]}>
             <TouchableOpacity style={styles.groupBtn} onPress={() => execDocumentCmd('outdent')}>
-              <Feather name="arrow-left" size={ms(18)} color={colors.text} />
+              <Feather name="arrow-left" size={ms(18)} color={colors.onPrimary} />
             </TouchableOpacity>
-            <View style={[styles.innerDivider, { backgroundColor: colors.border }]} />
+            <View style={[styles.innerDivider, { backgroundColor: colors.primary }]} />
             <TouchableOpacity style={styles.groupBtn} onPress={() => execDocumentCmd('indent')}>
-              <Feather name="arrow-right" size={ms(18)} color={colors.text} />
+              <Feather name="arrow-right" size={ms(18)} color={colors.onPrimary} />
             </TouchableOpacity>
           </View>
 
           <View style={styles.divider} />
 
-          <View style={[styles.rowGroup, { backgroundColor: colors.surfaceVariant }]}>
+          <View style={[styles.rowGroup, { backgroundColor: colors.primary }]}>
             <TouchableOpacity style={[styles.groupBtn, formatState.justifyLeft && { backgroundColor: colors.primary }]} onPress={() => execDocumentCmd('justifyLeft')}>
-              <Feather name="align-left" size={ms(18)} color={formatState.justifyLeft ? colors.onPrimary : colors.text} />
+              <Feather name="align-left" size={ms(18)} color={formatState.justifyLeft ? colors.onPrimary : colors.onPrimary} />
             </TouchableOpacity>
-            <View style={[styles.innerDivider, { backgroundColor: colors.border }]} />
+            <View style={[styles.innerDivider, { backgroundColor: colors.primary }]} />
             <TouchableOpacity style={[styles.groupBtn, formatState.justifyCenter && { backgroundColor: colors.primary }]} onPress={() => execDocumentCmd('justifyCenter')}>
-              <Feather name="align-center" size={ms(18)} color={formatState.justifyCenter ? colors.onPrimary : colors.text} />
+              <Feather name="align-center" size={ms(18)} color={formatState.justifyCenter ? colors.onPrimary : colors.onPrimary} />
             </TouchableOpacity>
-            <View style={[styles.innerDivider, { backgroundColor: colors.border }]} />
+            <View style={[styles.innerDivider, { backgroundColor: colors.primary }]} />
             <TouchableOpacity style={[styles.groupBtn, formatState.justifyRight && { backgroundColor: colors.primary }]} onPress={() => execDocumentCmd('justifyRight')}>
-              <Feather name="align-right" size={ms(18)} color={formatState.justifyRight ? colors.onPrimary : colors.text} />
+              <Feather name="align-right" size={ms(18)} color={formatState.justifyRight ? colors.onPrimary : colors.onPrimary} />
             </TouchableOpacity>
-            <View style={[styles.innerDivider, { backgroundColor: colors.border }]} />
+            <View style={[styles.innerDivider, { backgroundColor: colors.primary }]} />
             <TouchableOpacity style={[styles.groupBtn, formatState.justifyFull && { backgroundColor: colors.primary }]} onPress={() => execDocumentCmd('justifyFull')}>
-              <Feather name="align-justify" size={ms(18)} color={formatState.justifyFull ? colors.onPrimary : colors.text} />
+              <Feather name="align-justify" size={ms(18)} color={formatState.justifyFull ? colors.onPrimary : colors.onPrimary} />
             </TouchableOpacity>
           </View>
 
           <View style={styles.divider} />
 
-          <View style={[styles.rowGroup, { backgroundColor: colors.surfaceVariant }]}>
-            <TouchableOpacity style={[styles.groupBtn, { paddingHorizontal: 10 }]} onPress={() => execDocumentCmd('foreColor', colors.text)}>
-              <View style={[styles.colorBtn, { backgroundColor: colors.text, marginHorizontal: 0, borderColor: colors.surfaceHighlight }]} />
+          <View style={[styles.rowGroup, { backgroundColor: colors.primary }]}>
+            <TouchableOpacity style={[styles.groupBtn, { paddingHorizontal: 10 }]} onPress={() => execDocumentCmd('foreColor', colors.onError)}>
+              <View style={[styles.colorBtn, { backgroundColor: colors.error, marginHorizontal: 0, borderColor: colors.onError }]} />
             </TouchableOpacity>
-            <View style={[styles.innerDivider, { backgroundColor: colors.border }]} />
-            <TouchableOpacity style={[styles.groupBtn, { paddingHorizontal: 10 }]} onPress={() => execDocumentCmd('foreColor', colors.textPrimary)}>
-              <View style={[styles.colorBtn, { backgroundColor: colors.textPrimary, marginHorizontal: 0, borderColor: colors.surfaceHighlight }]} />
+            <View style={[styles.innerDivider, { backgroundColor: colors.primary }]} />
+            <TouchableOpacity style={[styles.groupBtn, { paddingHorizontal: 10 }]} onPress={() => execDocumentCmd('foreColor', colors.onPrimary)}>
+              <View style={[styles.colorBtn, { backgroundColor: colors.error, marginHorizontal: 0, borderColor: colors.onError }]} />
             </TouchableOpacity>
-            <View style={[styles.innerDivider, { backgroundColor: colors.border }]} />
-            <TouchableOpacity style={[styles.groupBtn, { paddingHorizontal: 10 }]} onPress={() => execDocumentCmd('foreColor', colors.textDanger)}>
-              <View style={[styles.colorBtn, { backgroundColor: colors.textDanger, marginHorizontal: 0, borderColor: colors.surfaceHighlight }]} />
+            <View style={[styles.innerDivider, { backgroundColor: colors.primary }]} />
+            <TouchableOpacity style={[styles.groupBtn, { paddingHorizontal: 10 }]} onPress={() => execDocumentCmd('foreColor', colors.onPrimary)}>
+              <View style={[styles.colorBtn, { backgroundColor: colors.error, marginHorizontal: 0, borderColor: colors.onError }]} />
             </TouchableOpacity>
-            <View style={[styles.innerDivider, { backgroundColor: colors.border }]} />
-            <TouchableOpacity style={[styles.groupBtn, { paddingHorizontal: 10 }]} onPress={() => execDocumentCmd('foreColor', colors.textInfo)}>
-              <View style={[styles.colorBtn, { backgroundColor: colors.textInfo, marginHorizontal: 0, borderColor: colors.surfaceHighlight }]} />
+            <View style={[styles.innerDivider, { backgroundColor: colors.primary }]} />
+            <TouchableOpacity style={[styles.groupBtn, { paddingHorizontal: 10 }]} onPress={() => execDocumentCmd('foreColor', colors.onPrimary)}>
+              <View style={[styles.colorBtn, { backgroundColor: colors.error, marginHorizontal: 0, borderColor: colors.onError }]} />
             </TouchableOpacity>
-            <View style={[styles.innerDivider, { backgroundColor: colors.border }]} />
-            <TouchableOpacity style={[styles.groupBtn, { paddingHorizontal: 10 }]} onPress={() => execDocumentCmd('foreColor', colors.textWarning)}>
-              <View style={[styles.colorBtn, { backgroundColor: colors.textWarning, marginHorizontal: 0, borderColor: colors.surfaceHighlight }]} />
+            <View style={[styles.innerDivider, { backgroundColor: colors.primary }]} />
+            <TouchableOpacity style={[styles.groupBtn, { paddingHorizontal: 10 }]} onPress={() => execDocumentCmd('foreColor', colors.onPrimary)}>
+              <View style={[styles.colorBtn, { backgroundColor: colors.error, marginHorizontal: 0, borderColor: colors.onError }]} />
             </TouchableOpacity>
           </View>
 
         </ScrollView>
 
         <View style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: 24, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.surface, opacity: 0.9 }} pointerEvents="none">
-          <Feather name="chevron-right" size={20} color={colors.textMuted} />
+          <Feather name="chevron-right" size={20} color={colors.primary} />
         </View>
       </View>
 

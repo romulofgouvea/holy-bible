@@ -32,16 +32,16 @@ export function BibleConfirmModal({
     <Modal visible={visible} transparent animationType="fade">
       <View style={[styles.backdrop, { backgroundColor: colors.overlay }]}>
         <View style={[styles.dialog, { backgroundColor: colors.surface, shadowColor: colors.shadow }]}>
-          <BibleText style={[styles.title, { fontSize: ms(18), color: colors.text }]}>{title}</BibleText>
-          <BibleText style={[styles.message, { fontSize: ms(15), color: colors.textMuted }]}>{message}</BibleText>
+          <BibleText style={[styles.title, { fontSize: ms(18), color: colors.onSurface, fontWeight: '700' }]}>{title}</BibleText>
+          <BibleText style={[styles.message, { fontSize: ms(15), color: colors.textMuted, marginTop: 8 }]}>{message}</BibleText>
           <View style={styles.actions}>
             {onCancel && (
-              <TouchableOpacity style={[styles.btn, { backgroundColor: colors.surfaceVariant }]} onPress={onCancel}>
-                <BibleText style={[styles.cancelText, { fontSize: ms(15), color: colors.text }]}>{cancelText}</BibleText>
+              <TouchableOpacity style={[styles.btn, { backgroundColor: colors.surfaceHighlight }]} onPress={onCancel}>
+                <BibleText style={[styles.cancelText, { fontSize: ms(15), color: colors.onSurface }]}>{cancelText}</BibleText>
               </TouchableOpacity>
             )}
             <TouchableOpacity style={[styles.btn, { backgroundColor: isDanger ? colors.error : colors.primary }]} onPress={onConfirm}>
-              <BibleText style={[styles.confirmText, { fontSize: ms(15), color: isDanger ? colors.onError : colors.onPrimary }]}>{confirmText}</BibleText>
+              <BibleText style={[styles.confirmText, { fontSize: ms(15), color: isDanger ? colors.onError : colors.onPrimary, fontWeight: '700' }]}>{confirmText}</BibleText>
             </TouchableOpacity>
           </View>
         </View>

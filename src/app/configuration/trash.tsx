@@ -1,24 +1,24 @@
 import { BibleConfirmModal } from '@/components/BibleConfirmModal';
 import { Feather } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { usePathname, useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
   FlatList,
-  Platform,
   StyleSheet,
   TouchableOpacity,
   View
 } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BibleHeader } from '../../components/BibleHeader';
 import { BibleText } from '../../components/BibleText';
 import { useResponsive } from '../../hooks/use-responsive';
 import { Study, useStudies } from '../../hooks/use-studies';
 import { useTheme } from '../../hooks/use-theme';
+import { handleSmartBack } from '../../utils/navigation';
 
 export default function TrashScreen() {
   const { ms } = useResponsive();
   const router = useRouter();
+  const pathname = usePathname();
   const { colors } = useTheme();
   const [studyToDelete, setStudyToDelete] = useState<string | null>(null);
   const [multiDeleteVisible, setMultiDeleteVisible] = useState(false);
@@ -40,8 +40,8 @@ export default function TrashScreen() {
 
   const renderEmpty = () => (
     <View style={styles.emptyContainer}>
-      <Feather name="trash-2" size={ms(64)} color={colors.surfaceVariant} />
-      <BibleText style={[styles.emptyTitle, { fontSize: ms(20), color: colors.text }]}>
+      <Feather name="trash-2" size={ms(64)} color={colors.primary} />
+      <BibleText style={[styles.emptyTitle, { fontSize: ms(20), color: colors.onBackground }]}>
         Lixeira vazia
       </BibleText>
       <BibleText style={[styles.emptySubtitle, { fontSize: ms(14), color: colors.textMuted }]}>
@@ -55,28 +55,32 @@ export default function TrashScreen() {
 
     return (
       <TouchableOpacity
-        style={[styles.card, { backgroundColor: isSelected ? colors.primaryContainer : colors.errorLow, borderColor: isSelected ? colors.primary : colors.errorLow }]}
-        onPress={() => isSelectionMode ? toggleSelection(item.id) : toggleSelection(item.id)}
+        style={[
+          styles.card,
+          {
+            backgroundColor: isSelected ? colors.primaryVariant : colors.background,
+            borderColor: isSelected ? colors.primary : colors.error,
+          }
+        ]}
+        onPress={() => toggleSelection(item.id)}
         onLongPress={() => toggleSelection(item.id)}
         activeOpacity={0.75}
       >
         <View style={styles.cardContent}>
-          <TouchableOpacity onPress={() => toggleSelection(item.id)} style={[styles.cardIcon, { backgroundColor: isSelected ? colors.primary : colors.surfaceVariant }]}>
-            {isSelected ? (
-              <Feather name="check" size={ms(18)} color={colors.onPrimary} />
-            ) : (
-              <Feather name="trash-2" size={ms(18)} color={colors.error} />
-            )}
+          <TouchableOpacity
+            onPress={() => toggleSelection(item.id)}
+            style={[styles.cardIcon, { backgroundColor: isSelected ? colors.primary : colors.error }]}
+          >
+            <Feather
+              name={isSelected ? "check" : "trash-2"}
+              size={ms(18)}
+              color={colors.onPrimary}
+            />
           </TouchableOpacity>
           <View style={styles.cardText}>
-            <BibleText style={[styles.cardTitle, { fontSize: ms(16), color: colors.error }]}>{item.title}</BibleText>
+            <BibleText style={[styles.cardTitle, { fontSize: ms(16), color: colors.onBackground }]}>{item.title}</BibleText>
             <BibleText style={[styles.cardDate, { fontSize: ms(12), color: colors.textMuted }]}>{item.createdAt}</BibleText>
           </View>
-          {!isSelectionMode && (
-            <TouchableOpacity onPress={() => restoreMultiple([item.id])} style={[styles.deleteBtn, { backgroundColor: colors.primaryContainer }]}>
-              <Feather name="corner-up-left" size={ms(18)} color={colors.primary} />
-            </TouchableOpacity>
-          )}
         </View>
       </TouchableOpacity>
     );
@@ -86,7 +90,7 @@ export default function TrashScreen() {
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       {isSelectionMode ? (
         <BibleHeader
-          title={`${selectedIds.size} selecionado${selectedIds.size > 1 ? 's' : ''}`}
+          title={selectedIds.size === 0 ? "Lixeira" : `${selectedIds.size} selecionado${selectedIds.size > 1 ? 's' : ''}`}
           showMenu={false}
           leftContent={
             <TouchableOpacity onPress={() => setSelectedIds(new Set())} style={{ padding: 8 }}>
@@ -109,7 +113,7 @@ export default function TrashScreen() {
         />
       ) : (
         <BibleHeader title="Lixeira de Estudos" showMenu={false} leftContent={
-          <TouchableOpacity onPress={() => router.back()} style={{ padding: 4 }}>
+          <TouchableOpacity onPress={() => handleSmartBack(pathname)} style={{ padding: 4 }}>
             <Feather name="arrow-left" size={ms(24)} color={colors.onPrimary} />
           </TouchableOpacity>
         } />

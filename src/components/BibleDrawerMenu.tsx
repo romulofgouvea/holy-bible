@@ -114,7 +114,7 @@ export function BibleDrawerMenu(props: DrawerMenuProps) {
         style={[
           styles.menuItem,
           { paddingVertical: ms(9), paddingHorizontal: ms(8), borderRadius: ms(10), marginBottom: ms(4) },
-          isActive && { backgroundColor: colors.primaryContainer },
+          isActive && { backgroundColor: colors.primary },
         ]}
         onPress={() => handlePress(item)}
         activeOpacity={0.7}
@@ -122,15 +122,15 @@ export function BibleDrawerMenu(props: DrawerMenuProps) {
         <View style={[
           styles.menuIconWrap,
           { width: ms(38), height: ms(38), borderRadius: ms(10), marginRight: ms(10) },
-          isActive ? { backgroundColor: tintColor } : { backgroundColor: colors.surfaceVariant },
+          isActive ? { backgroundColor: colors.onPrimary } : { backgroundColor: colors.surfaceHighlight },
         ]}>
-          <Feather name={item.icon} size={ms(18)} color={isActive ? colors.onPrimary : (item.tint || colors.textMuted)} />
+          <Feather name={item.icon} size={ms(18)} color={isActive ? colors.primary : (item.tint || colors.onSurface)} />
         </View>
         <BibleText
           style={[
             styles.menuLabel,
             { fontSize: ms(15) },
-            isActive ? { color: colors.onPrimaryContainer, fontWeight: '800' } : { color: item.tint || colors.text },
+            isActive ? { color: colors.onPrimary, fontWeight: '800' } : { color: item.tint || colors.onSurface },
           ]}
           numberOfLines={1}
         >
