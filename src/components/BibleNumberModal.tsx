@@ -34,7 +34,7 @@ export function BibleNumberModal({ visible, onClose, onBack, items, title, iconN
             <Feather name={iconName} size={ms(18)} color={colors.primary} />
           </View>
         )}
-        <BibleText style={[styles.title, { fontSize: ms(18), color: colors.onSurface, fontWeight: '700' }]}>{title}</BibleText>
+        <BibleText style={[styles.title, { fontSize: ms(18), color: colors.primary, fontWeight: '800' }]}>{title}</BibleText>
         <TouchableOpacity onPress={onClose} style={[styles.closeBtn, { backgroundColor: colors.surfaceHighlight }]}>
           <Feather name="x" size={ms(18)} color={colors.error} />
         </TouchableOpacity>

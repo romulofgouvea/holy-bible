@@ -49,7 +49,7 @@ export const VERSE_HIGHLIGHTS = [
  * These can be used alongside the 12 theme colors
  */
 export const getSupportColors = (colors: ThemeColors, isDarkMode: boolean) => ({
-  border: isDarkMode ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.1)',
+  border: isDarkMode ? colors.primary + '30' : colors.primary + '20',
   shadow: '#000000',
   overlay: 'rgba(0,0,0,0.5)',
   textMuted: isDarkMode ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.6)',

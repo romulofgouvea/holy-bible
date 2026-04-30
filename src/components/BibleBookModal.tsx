@@ -128,7 +128,7 @@ export function BibleBookModal({ visible, onClose, books, versionSigla, onVersio
               <View style={[styles.headerIconWrap, { backgroundColor: colors.primary + '15' }]}>
                 <Feather name="book" size={ms(18)} color={colors.primary} />
               </View>
-              <BibleText style={[styles.title, { flex: 0, flexShrink: 1, fontSize: ms(18), color: colors.onSurface, fontWeight: '700' }]}>Livros</BibleText>
+              <BibleText style={[styles.title, { flex: 0, flexShrink: 1, fontSize: ms(18), color: colors.primary, fontWeight: '800' }]}>Livros</BibleText>
             </>
           )}
         </View>
@@ -157,7 +157,7 @@ export function BibleBookModal({ visible, onClose, books, versionSigla, onVersio
         <View style={[styles.searchContainer, { backgroundColor: colors.surfaceHighlight, borderColor: colors.border }]}>
           <Feather name="search" size={ms(18)} color={colors.primary} style={styles.searchIcon} />
           <TextInput
-            style={[styles.searchInput, { fontSize: ms(14), color: colors.onSurface }]}
+            style={[styles.searchInput, { fontSize: ms(15), color: colors.onSurface }]}
             placeholder="Pesquisar livro..."
             placeholderTextColor={colors.textMuted}
             value={searchQuery}

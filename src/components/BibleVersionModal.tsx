@@ -58,7 +58,7 @@ export function BibleVersionModal({ visible, onClose, onSelect }: BibleVersionMo
         <View style={[styles.headerIconWrap, { backgroundColor: colors.primary + '15' }]}>
           <Feather name="book-open" size={ms(18)} color={colors.primary} />
         </View>
-        <BibleText style={[styles.title, { fontSize: ms(18), color: colors.onSurface, fontWeight: '700' }]}>Versões</BibleText>
+        <BibleText style={[styles.title, { fontSize: ms(18), color: colors.primary, fontWeight: '800' }]}>Versões</BibleText>
         <TouchableOpacity onPress={() => setIsSearchVisible(!isSearchVisible)} style={[styles.searchToggleBtn, { backgroundColor: colors.surfaceHighlight }]}>
           <Feather name="search" size={ms(18)} color={isSearchVisible ? colors.primary : colors.onSurface} />
         </TouchableOpacity>
@@ -79,7 +79,7 @@ export function BibleVersionModal({ visible, onClose, onSelect }: BibleVersionMo
         <View style={[styles.searchContainer, { backgroundColor: colors.surfaceHighlight, borderColor: colors.border }]}>
           <Feather name="search" size={ms(18)} color={colors.primary} style={styles.searchIcon} />
           <TextInput
-            style={[styles.searchInput, { fontSize: ms(14), color: colors.onSurface }]}
+            style={[styles.searchInput, { fontSize: ms(15), color: colors.onSurface }]}
             placeholder="Pesquisar versão..."
             placeholderTextColor={colors.textMuted}
             value={searchQuery}

@@ -20,11 +20,11 @@ export function BibleGridBlock({ title, widthPercentage, exactWidth, onPress }: 
       style={[
         styles.gridItem,
         exactWidth ? { width: exactWidth } : widthPercentage ? { width: `${widthPercentage}%` } : {},
-        { backgroundColor: colors.surfaceHighlight, borderColor: colors.primary + '30' }
+        { backgroundColor: colors.surfaceHighlight, borderColor: colors.border }
       ]}
       onPress={onPress}
     >
-      <BibleText style={[styles.gridText, { fontSize: ms(16), color: colors.primary }]} numberOfLines={1}>
+      <BibleText style={[styles.gridText, { fontSize: ms(17), color: colors.primary }]} numberOfLines={1}>
         {title}
       </BibleText>
     </TouchableOpacity>

@@ -15,10 +15,10 @@ export function BibleListCard({ title, pillText, onPress }: BibleListCardProps) 
   const { colors } = useTheme();
   return (
     <TouchableOpacity activeOpacity={0.7} style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]} onPress={onPress}>
-      <BibleText style={[styles.cardTitle, { fontSize: ms(14), color: colors.onSurface }]}>{title}</BibleText>
+      <BibleText style={[styles.cardTitle, { fontSize: ms(16), color: colors.onSurface }]}>{title}</BibleText>
       {pillText !== undefined && (
         <View style={[styles.pill, { backgroundColor: colors.primary, borderColor: colors.primary }]}>
-          <BibleText style={[styles.pillText, { fontSize: ms(14), color: colors.onPrimary }]}>{pillText}</BibleText>
+          <BibleText style={[styles.pillText, { fontSize: ms(13), color: colors.onPrimary }]}>{pillText}</BibleText>
         </View>
       )}
     </TouchableOpacity>
