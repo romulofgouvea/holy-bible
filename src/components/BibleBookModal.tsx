@@ -1,4 +1,4 @@
-﻿import { Feather } from '@expo/vector-icons';
+import { Feather } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
@@ -99,7 +99,7 @@ export function BibleBookModal({ visible, onClose, books, versionSigla, onVersio
   const testamentHeaderOT = (
     <View style={[styles.testamentHeader, { backgroundColor: colors.primaryContainer }]}>
       <BibleText style={[styles.testamentTitle, { color: colors.primary, fontSize: ms(12) }]}>
-        📜  ANTIGO TESTAMENTO
+        ANTIGO TESTAMENTO
       </BibleText>
     </View>
   );
@@ -107,7 +107,7 @@ export function BibleBookModal({ visible, onClose, books, versionSigla, onVersio
   const testamentHeaderNT = (
     <View style={[styles.testamentHeader, { backgroundColor: colors.primaryContainer }]}>
       <BibleText style={[styles.testamentTitle, { color: colors.primary, fontSize: ms(12) }]}>
-        ✝  NOVO TESTAMENTO
+        NOVO TESTAMENTO
       </BibleText>
     </View>
   );
@@ -148,7 +148,7 @@ export function BibleBookModal({ visible, onClose, books, versionSigla, onVersio
           </View>
 
           <TouchableOpacity onPress={onClose} style={[styles.closeBtn, { backgroundColor: colors.surfaceVariant }]}>
-            <Feather name="x" size={ms(18)} color="#e74c3c" />
+            <Feather name="x" size={ms(18)} color={colors.error} />
           </TouchableOpacity>
         </View>
       </View>
@@ -242,22 +242,22 @@ export function BibleBookModal({ visible, onClose, books, versionSigla, onVersio
 
 const styles = StyleSheet.create({
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 8 },
-  headerIconWrap: { width: 42, height: 42, borderRadius: 12, backgroundColor: '#e6f3f3', justifyContent: 'center', alignItems: 'center', marginRight: 12 },
-  title: { flex: 1, fontWeight: '700', color: '#008080' },
-  versionPill: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#e6f3f3', paddingHorizontal: 10, height: 42, borderRadius: 12, marginRight: 12 },
-  versionPillText: { color: '#008080', fontWeight: '800' },
-  searchToggleBtn: { width: 42, height: 42, justifyContent: 'center', alignItems: 'center', backgroundColor: '#f5f5f5', borderRadius: 8, marginLeft: 12 },
-  closeBtn: { width: 42, height: 42, justifyContent: 'center', alignItems: 'center', backgroundColor: '#fdeded', borderRadius: 8, marginLeft: 12 },
-  searchContainer: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#f9f9f9', borderWidth: 1, borderColor: '#e0e0e0', borderRadius: 12, marginHorizontal: 8, paddingHorizontal: 12, marginTop: 8, height: 44 },
+  headerIconWrap: { width: 42, height: 42, borderRadius: 12, justifyContent: 'center', alignItems: 'center', marginRight: 12 },
+  title: { flex: 1, fontWeight: '700' },
+  versionPill: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 10, height: 42, borderRadius: 12, marginRight: 12 },
+  versionPillText: { fontWeight: '800' },
+  searchToggleBtn: { width: 42, height: 42, justifyContent: 'center', alignItems: 'center', borderRadius: 8, marginLeft: 12 },
+  closeBtn: { width: 42, height: 42, justifyContent: 'center', alignItems: 'center', borderRadius: 8, marginLeft: 12 },
+  searchContainer: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderRadius: 12, marginHorizontal: 8, paddingHorizontal: 12, marginTop: 8, height: 44 },
   searchIcon: { marginRight: 8 },
-  searchInput: { flex: 1, height: '100%', color: '#333', ...({ outlineStyle: 'none' } as any) },
+  searchInput: { flex: 1, height: '100%', ...({ outlineStyle: 'none' } as any) },
   scrollContent: { paddingHorizontal: 8, paddingVertical: 4 },
-  divider: { height: 1, backgroundColor: '#f0f0f0', marginVertical: 4 },
+  divider: { height: 1, marginVertical: 4 },
   footer: { paddingTop: 4 },
-  countPill: { flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start', backgroundColor: '#fff', borderWidth: 1, borderColor: '#0080806e', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 16 },
-  countNumber: { fontWeight: '800', color: '#666', fontSize: 13 },
-  countText: { color: '#666', fontWeight: '600', fontSize: 13 },
-  viewToggles: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#f5f5f5', borderRadius: 8, padding: 4, gap: 4, marginLeft: 12, height: 42 },
+  countPill: { flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start', borderWidth: 1, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 16 },
+  countNumber: { fontWeight: '800', fontSize: 13 },
+  countText: { fontWeight: '600', fontSize: 13 },
+  viewToggles: { flexDirection: 'row', alignItems: 'center', borderRadius: 8, padding: 4, gap: 4, marginLeft: 12, height: 42 },
   toggleBtn: { width: 34, height: 34, justifyContent: 'center', alignItems: 'center', borderRadius: 6 },
   gridContainer: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, justifyContent: 'flex-start', marginBottom: 8 },
   listGroup: { gap: 8, marginBottom: 8 },

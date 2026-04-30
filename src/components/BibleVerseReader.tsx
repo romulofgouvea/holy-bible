@@ -44,13 +44,14 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
     const { fontSizeMultiplier, textAlign, readerColors, readerTheme } = useReaderSettings();
 
     const getHighlightColorValue = (colorId: string) => {
-        const hexes: Record<string, string> = {
-            yellow: readerTheme === 'dark' ? 'rgba(255, 215, 0, 0.25)' : readerTheme === 'sepia' ? 'rgba(255, 193, 7, 0.4)' : 'rgba(253, 224, 71, 0.6)',
-            blue: readerTheme === 'dark' ? 'rgba(59, 130, 246, 0.3)' : readerTheme === 'sepia' ? 'rgba(59, 130, 246, 0.4)' : 'rgba(147, 197, 253, 0.6)',
-            green: readerTheme === 'dark' ? 'rgba(34, 197, 94, 0.25)' : readerTheme === 'sepia' ? 'rgba(34, 197, 94, 0.4)' : 'rgba(134, 239, 172, 0.6)',
-            pink: readerTheme === 'dark' ? 'rgba(236, 72, 153, 0.3)' : readerTheme === 'sepia' ? 'rgba(236, 72, 153, 0.4)' : 'rgba(249, 168, 212, 0.6)',
-        };
-        return hexes[colorId] || hexes.yellow;
+        const themeColors = readerTheme === 'sepia' ? readerColors : colors;
+        switch (colorId) {
+            case 'yellow': return colors.highlightYellow;
+            case 'blue': return colors.highlightBlue;
+            case 'green': return colors.highlightGreen;
+            case 'pink': return colors.highlightPink;
+            default: return colors.highlightYellow;
+        }
     };
 
     return (
@@ -71,6 +72,7 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
                 const highlightColorId = highlights[`${bookAbbrev}-${item.chapter}-${item.verse}`];
                 const isSelected = selectedKeys[`${bookAbbrev}-${item.chapter}-${item.verse}`];
                 const primaryColor = readerTheme === 'sepia' ? readerColors.primary : colors.primary;
+                const primaryLow = readerTheme === 'sepia' ? (readerColors as any).primaryLow || colors.primaryLow : colors.primaryLow;
 
                 return (
                     <TouchableOpacity
@@ -81,7 +83,7 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
                             styles.verseRow,
                             highlightColorId && [styles.highlightedRow, { backgroundColor: getHighlightColorValue(highlightColorId) }],
                             isBlinking && [styles.blinkingRow, { backgroundColor: readerColors.primaryContainer }],
-                            isSelected && [styles.selectedRow, { backgroundColor: primaryColor + '1A', borderLeftColor: primaryColor }],
+                            isSelected && [styles.selectedRow, { backgroundColor: primaryLow, borderLeftColor: primaryColor }],
                         ]}>
                             <Text style={[styles.verseText, {
                                 fontSize: ms(22 * fontSizeMultiplier),
@@ -103,10 +105,11 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
                 const copyright = (versionInfo as any)?.copyright;
                 if (!copyright) return null;
                 const primaryColor = readerTheme === 'sepia' ? readerColors.primary : colors.primary;
+                const primaryLow = readerTheme === 'sepia' ? (readerColors as any).primaryLow || colors.primaryLow : colors.primaryLow;
                 return (
                     <View style={[
                         styles.copyrightCard,
-                        { backgroundColor: primaryColor + '1A', borderLeftColor: primaryColor }
+                        { backgroundColor: primaryLow, borderLeftColor: primaryColor }
                     ]}>
                         <Text style={[styles.copyrightTitle, { color: primaryColor }]}>
                             {versionInfo?.name} ({versionInfo?.sigla})
@@ -132,7 +135,6 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     chapterHeader: {
-        backgroundColor: '#ffffff',
         paddingVertical: 24,
         paddingHorizontal: 16,
         alignItems: 'center',
@@ -140,9 +142,7 @@ const styles = StyleSheet.create({
         marginBottom: 8,
     },
     chapterHeaderText: {
-        fontSize: 28,
         fontWeight: '800',
-        color: '#008080',
         letterSpacing: 0.5,
     },
     verseRow: {
@@ -151,26 +151,16 @@ const styles = StyleSheet.create({
         borderRadius: 0,
         marginHorizontal: 0,
     },
-    highlightedRow: {
-        backgroundColor: '#fffacd',
-    },
-    blinkingRow: {
-        backgroundColor: '#e6f2ff',
-    },
+    highlightedRow: {},
+    blinkingRow: {},
     selectedRow: {
-        backgroundColor: '#e0f2f1',
         borderLeftWidth: 3,
-        borderLeftColor: '#008080',
     },
     verseNumber: {
         fontWeight: '700',
-        color: '#008080',
         marginBottom: 4,
     },
     verseText: {
-        fontSize: 22,
-        lineHeight: 26,
-        color: '#333',
         flexWrap: 'wrap',
         textAlignVertical: 'top',
     },

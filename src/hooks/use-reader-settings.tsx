@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { STORAGE_KEYS } from '../constants/storage';
-import { darkColors, lightColors, ThemeColors } from './use-theme';
+import { ThemeColors, useTheme, COLOR_THEMES } from './use-theme';
 
 export type ReaderTheme = 'light' | 'dark' | 'sepia';
 export type TextAlign = 'auto' | 'left' | 'right' | 'center' | 'justify';
@@ -19,6 +19,26 @@ export const sepiaColors: ThemeColors = {
   text: '#4A3B32',
   textMuted: '#7A6354',
   border: '#CDBE9F',
+  error: '#8B0000',
+  onError: '#FFFFFF',
+  overlay: 'rgba(62, 42, 31, 0.5)',
+  surfaceHighlight: 'rgba(92, 64, 51, 0.08)',
+  highlight: '#E1D6BD',
+  blinking: '#CDBE9F',
+  selected: '#D8CCB2',
+  shadow: '#3E2A1F',
+  highlightYellow: 'rgba(212, 175, 55, 0.4)',
+  highlightBlue: 'rgba(70, 130, 180, 0.4)',
+  highlightGreen: 'rgba(85, 107, 47, 0.4)',
+  highlightPink: 'rgba(188, 143, 143, 0.4)',
+  primaryLow: 'rgba(92, 64, 51, 0.1)',
+  errorLow: 'rgba(139, 0, 0, 0.1)',
+  textPrimary: '#5C4033',
+  textDanger: '#8B0000',
+  textInfo: '#4682B4',
+  textWarning: '#D4AF37',
+  inverseSurface: '#3E2A1F',
+  onInverseSurface: '#EAE0C8',
 };
 
 export type ReaderSettingsContextType = {
@@ -34,6 +54,7 @@ export type ReaderSettingsContextType = {
 const ReaderSettingsContext = createContext<ReaderSettingsContextType>({} as ReaderSettingsContextType);
 
 export const ReaderSettingsProvider = ({ children }: { children: React.ReactNode }) => {
+  const { colorTheme } = useTheme();
   const [loaded, setLoaded] = useState(false);
   const [fontSizeMultiplier, setFontSizeMultiplierState] = useState(1);
   const [textAlign, setTextAlignState] = useState<TextAlign>('left');
@@ -69,7 +90,8 @@ export const ReaderSettingsProvider = ({ children }: { children: React.ReactNode
     try { await AsyncStorage.setItem(STORAGE_KEYS.READER_THEME, val); } catch (e) { }
   };
 
-  const readerColors = readerTheme === 'sepia' ? sepiaColors : (readerTheme === 'dark' ? darkColors : lightColors);
+  const activePalette = COLOR_THEMES.find(t => t.key === colorTheme) ?? COLOR_THEMES[0];
+  const readerColors = readerTheme === 'sepia' ? sepiaColors : (readerTheme === 'dark' ? activePalette.dark : activePalette.light);
 
   if (!loaded) return null;
 

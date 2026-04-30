@@ -40,8 +40,16 @@ export default function StudyEditorScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { getStudy, updateStudy, loaded } = useStudies();
   const { ms } = useResponsive();
-  const { colors, isDarkMode } = useTheme();
-  const { readerColors } = useReaderSettings();
+  const { colors: themeColors, isDarkMode, colorTheme, colorThemes } = useTheme();
+  const { readerColors, readerTheme } = useReaderSettings();
+
+  const colors = useMemo(() => {
+    if (readerTheme === 'sepia') {
+      const active = colorThemes.find(t => t.key === colorTheme) ?? colorThemes[0];
+      return active.light;
+    }
+    return themeColors;
+  }, [readerTheme, themeColors, colorTheme, colorThemes]);
   const router = useRouter();
 
   const [title, setTitle] = useState('');
@@ -208,12 +216,14 @@ export default function StudyEditorScreen() {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
+    <View style={{ flex: 1, backgroundColor: colors.background }}>
       <BibleHeader
         showMenu={false}
+        backgroundColor={colors.primary}
+        contentColor={colors.onPrimary}
         leftContent={
           <>
-            <TouchableOpacity style={{ width: ms(40), height: ms(40), borderRadius: ms(10), alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.15)', marginRight: ms(8) }} onPress={() => router.canGoBack() ? router.back() : router.replace(ROUTES.STUDIES as any)}>
+            <TouchableOpacity style={{ width: ms(40), height: ms(40), borderRadius: ms(10), alignItems: 'center', justifyContent: 'center', backgroundColor: colors.surfaceHighlight, marginRight: ms(8) }} onPress={() => router.canGoBack() ? router.back() : router.replace(ROUTES.STUDIES as any)}>
               <Feather name="arrow-left" size={ms(20)} color={colors.onPrimary} />
             </TouchableOpacity>
             <TextInput
@@ -221,14 +231,14 @@ export default function StudyEditorScreen() {
               value={title}
               onChangeText={setTitle}
               placeholder="Nome do estudo"
-              placeholderTextColor={colors.textMuted}
+              placeholderTextColor={colors.onPrimary}
               {...({ outlineStyle: 'none' } as any)}
               underlineColorAndroid="transparent"
             />
           </>
         }
         rightContent={
-          <TouchableOpacity style={{ width: ms(40), height: ms(40), borderRadius: ms(10), alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.15)' }} onPress={() => setMenuVisible(true)}>
+          <TouchableOpacity style={{ width: ms(40), height: ms(40), borderRadius: ms(10), alignItems: 'center', justifyContent: 'center', backgroundColor: colors.surfaceHighlight }} onPress={() => setMenuVisible(true)}>
             <Feather name="more-vertical" size={ms(20)} color={colors.onPrimary} />
           </TouchableOpacity>
         }
@@ -311,5 +321,5 @@ export default function StudyEditorScreen() {
 }
 
 const styles = StyleSheet.create({
-  titleInput: { flex: 1, color: '#fff', fontWeight: '700' },
+  titleInput: { flex: 1, fontWeight: '700' },
 });

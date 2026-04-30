@@ -21,10 +21,10 @@ export function BibleHeader({ title, leftContent, rightContent, onMenuPress, sho
   const { ms } = useResponsive();
 
   return (
-    <View style={[styles.header, { backgroundColor: backgroundColor || colors.primary, minHeight: ms(56), paddingHorizontal: ms(16), paddingVertical: ms(12) }]}>
+    <View style={[styles.header, { backgroundColor: backgroundColor || colors.primary, minHeight: ms(56), paddingHorizontal: ms(16), paddingVertical: ms(12), shadowColor: colors.shadow }]}>
       <View style={styles.leftContainer}>
         {showMenu && (
-          <TouchableOpacity style={[styles.menuBtn, { backgroundColor: menuBtnBackgroundColor || 'rgba(255,255,255,0.15)', width: ms(40), height: ms(40), borderRadius: ms(10), marginRight: ms(8) }]} onPress={onMenuPress} activeOpacity={0.7}>
+          <TouchableOpacity style={[styles.menuBtn, { backgroundColor: menuBtnBackgroundColor || colors.surfaceHighlight, width: ms(40), height: ms(40), borderRadius: ms(10), marginRight: ms(8) }]} onPress={onMenuPress} activeOpacity={0.7}>
             <Feather name="menu" size={ms(20)} color={contentColor || colors.onPrimary} />
           </TouchableOpacity>
         )}
@@ -45,7 +45,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     elevation: 6,
-    shadowColor: '#000',
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.25,
     shadowRadius: 4,
@@ -68,6 +67,5 @@ const styles = StyleSheet.create({
   menuBtn: {
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(255,255,255,0.15)',
   },
 });

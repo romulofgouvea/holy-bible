@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { StyleSheet, TouchableOpacity } from 'react-native';
 import { useResponsive } from '../hooks/use-responsive';
 import { useTheme } from '../hooks/use-theme';
@@ -20,7 +20,7 @@ export function BibleGridBlock({ title, widthPercentage, exactWidth, onPress }: 
       style={[
         styles.gridItem,
         exactWidth ? { width: exactWidth } : widthPercentage ? { width: `${widthPercentage}%` } : {},
-        { backgroundColor: colors.surfaceVariant, borderColor: colors.primary }
+        { backgroundColor: colors.surfaceVariant, borderColor: colors.border }
       ]}
       onPress={onPress}
     >
@@ -34,16 +34,13 @@ export function BibleGridBlock({ title, widthPercentage, exactWidth, onPress }: 
 const styles = StyleSheet.create({
   gridItem: {
     aspectRatio: 1,
-    backgroundColor: '#f5f5f5',
     borderWidth: 1,
-    borderColor: '#0080806e',
     borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 4,
   },
   gridText: {
-    color: '#008080',
     fontWeight: '800',
   }
 });

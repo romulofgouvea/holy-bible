@@ -1,4 +1,4 @@
-﻿import { Feather } from '@expo/vector-icons';
+import { Feather } from '@expo/vector-icons';
 import React from 'react';
 import { Modal, ScrollView, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { useResponsive } from '../hooks/use-responsive';
@@ -36,7 +36,7 @@ export function BibleNumberModal({ visible, onClose, onBack, items, title, iconN
               )}
               <BibleText style={[styles.title, { fontSize: ms(18), color: colors.primary }]}>{title}</BibleText>
               <TouchableOpacity onPress={onClose} style={[styles.closeBtn, { backgroundColor: colors.surfaceVariant }]}>
-                <Feather name="x" size={ms(18)} color="#e74c3c" />
+                <Feather name="x" size={ms(18)} color={colors.error} />
               </TouchableOpacity>
             </View>
 
@@ -77,31 +77,28 @@ export function BibleNumberModal({ visible, onClose, onBack, items, title, iconN
 const styles = StyleSheet.create({
   modalBackdrop: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
     justifyContent: 'flex-end',
   },
   bottomSheet: {
     width: '100%',
-    backgroundColor: '#fff',
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     padding: 8,
     elevation: 24,
-    shadowColor: '#000',
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.15,
     shadowRadius: 16,
   },
-  modalHandle: { width: 40, height: 4, backgroundColor: '#e0e0e0', borderRadius: 2, alignSelf: 'center', marginBottom: 4, marginTop: 4 },
+  modalHandle: { width: 40, height: 4, borderRadius: 2, alignSelf: 'center', marginBottom: 4, marginTop: 4 },
   header: { flexDirection: 'row', alignItems: 'center', padding: 8 },
-  headerIconWrap: { width: 42, height: 42, borderRadius: 12, backgroundColor: '#e6f3f3', justifyContent: 'center', alignItems: 'center', marginRight: 12 },
-  title: { flex: 1, fontWeight: '700', color: '#008080' },
-  closeBtn: { width: 42, height: 42, justifyContent: 'center', alignItems: 'center', backgroundColor: '#fdeded', borderRadius: 8, marginLeft: 12 },
+  headerIconWrap: { width: 42, height: 42, borderRadius: 12, justifyContent: 'center', alignItems: 'center', marginRight: 12 },
+  title: { flex: 1, fontWeight: '700' },
+  closeBtn: { width: 42, height: 42, justifyContent: 'center', alignItems: 'center', borderRadius: 8, marginLeft: 12 },
   list: { padding: 8, paddingBottom: 12, gap: 8 },
-  divider: { height: 1, backgroundColor: '#f0f0f0', marginVertical: 8 },
+  divider: { height: 1, marginVertical: 8 },
   footer: { paddingTop: 4 },
-  countPill: { flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start', backgroundColor: '#fff', borderWidth: 1, borderColor: '#0080806e', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 16 },
-  countNumber: { fontWeight: '800', color: '#666', fontSize: 13 },
-  countText: { color: '#666', fontWeight: '600', fontSize: 13 },
+  countPill: { flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start', borderWidth: 1, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 16 },
+  countNumber: { fontWeight: '800', fontSize: 13 },
+  countText: { fontWeight: '600', fontSize: 13 },
   gridContainer: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, justifyContent: 'flex-start' },
 });

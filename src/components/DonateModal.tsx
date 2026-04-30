@@ -31,8 +31,8 @@ export function DonateModal({ visible, onClose }: Props) {
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
-      <View style={styles.overlay}>
-        <View style={[styles.card, { backgroundColor: colors.surface }]}>
+      <View style={[styles.overlay, { backgroundColor: colors.overlay }]}>
+        <View style={[styles.card, { backgroundColor: colors.surface, shadowColor: colors.shadow }]}>
 
           <View style={[styles.heartCircle, { backgroundColor: colors.primaryContainer }]}>
             <Feather name="heart" size={ms(36)} color={colors.primary} />
@@ -94,7 +94,6 @@ export function DonateModal({ visible, onClose }: Props) {
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
     alignItems: 'center',
     justifyContent: 'center',
     padding: 24,
@@ -107,7 +106,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 16,
     elevation: 12,
-    shadowColor: '#000',
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.2,
     shadowRadius: 16,

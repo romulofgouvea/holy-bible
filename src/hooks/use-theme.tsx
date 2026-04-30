@@ -15,6 +15,26 @@ export type ThemeColors = {
   text: string;
   textMuted: string;
   border: string;
+  error: string;
+  onError: string;
+  overlay: string;
+  surfaceHighlight: string;
+  highlight: string;
+  blinking: string;
+  selected: string;
+  shadow: string;
+  highlightYellow: string;
+  highlightBlue: string;
+  highlightGreen: string;
+  highlightPink: string;
+  primaryLow: string;
+  errorLow: string;
+  textPrimary: string;
+  textDanger: string;
+  textInfo: string;
+  textWarning: string;
+  inverseSurface: string;
+  onInverseSurface: string;
 };
 
 export type ColorThemeKey =
@@ -42,6 +62,26 @@ const DARK_BASE = {
   text: '#F5F5F5',
   textMuted: '#A0A5AA',
   border: '#4A4C4E',
+  error: '#FF5252',
+  onError: '#FFFFFF',
+  overlay: 'rgba(0,0,0,0.7)',
+  surfaceHighlight: 'rgba(255,255,255,0.1)',
+  highlight: '#4D4D00',
+  blinking: '#003366',
+  selected: '#004D40',
+  shadow: '#000000',
+  highlightYellow: 'rgba(255, 215, 0, 0.25)',
+  highlightBlue: 'rgba(59, 130, 246, 0.3)',
+  highlightGreen: 'rgba(34, 197, 94, 0.25)',
+  highlightPink: 'rgba(236, 72, 153, 0.3)',
+  primaryLow: 'rgba(0, 128, 128, 0.15)',
+  errorLow: 'rgba(255, 82, 82, 0.15)',
+  textPrimary: '#008080',
+  textDanger: '#FF5252',
+  textInfo: '#448AFF',
+  textWarning: '#FFD700',
+  inverseSurface: '#313033',
+  onInverseSurface: '#F4EFF4',
 };
 
 
@@ -52,6 +92,26 @@ const LIGHT_BASE = {
   text: '#1C1E21',
   textMuted: '#606770',
   border: '#CCD0D5',
+  error: '#D32F2F',
+  onError: '#FFFFFF',
+  overlay: 'rgba(0,0,0,0.5)',
+  surfaceHighlight: 'rgba(0,0,0,0.05)',
+  highlight: '#FFFACD',
+  blinking: '#E6F2FF',
+  selected: '#E0F2F1',
+  shadow: '#000000',
+  highlightYellow: 'rgba(253, 224, 71, 0.6)',
+  highlightBlue: 'rgba(147, 197, 253, 0.6)',
+  highlightGreen: 'rgba(134, 239, 172, 0.6)',
+  highlightPink: 'rgba(249, 168, 212, 0.6)',
+  primaryLow: 'rgba(0, 128, 128, 0.1)',
+  errorLow: 'rgba(211, 47, 47, 0.1)',
+  textPrimary: '#008080',
+  textDanger: '#E74C3C',
+  textInfo: '#2980B9',
+  textWarning: '#F39C12',
+  inverseSurface: '#F4EFF4',
+  onInverseSurface: '#313033',
 };
 
 export const COLOR_THEMES: ColorThemeMeta[] = [

@@ -20,9 +20,18 @@ type Props = {
 export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ initialHtml, onChange, onOpenVersePicker }, ref) => {
   const webViewRef = useRef<WebView>(null);
   const webIframeRef = useRef<any>(null);
-  const { colors } = useTheme();
+  const { colors: themeColors, colorTheme, colorThemes } = useTheme();
   const { ms } = useResponsive();
-  const { readerColors } = useReaderSettings();
+  const { readerColors, readerTheme } = useReaderSettings();
+
+  // When sepia is active use the light palette for editor UI
+  const colors = useMemo(() => {
+    if (readerTheme === 'sepia') {
+      const active = colorThemes.find(t => t.key === colorTheme) ?? colorThemes[0];
+      return active.light;
+    }
+    return themeColors;
+  }, [readerTheme, themeColors, colorTheme, colorThemes]);
 
   const [formatState, setFormatState] = useState<{
     bold?: boolean; italic?: boolean; underline?: boolean;
@@ -59,16 +68,17 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
     if (!webViewRef.current) return;
     const js = `
       (function() {
-        document.body.style.backgroundColor = '#FFFFFF';
+        document.body.style.backgroundColor = '${colors.surface}';
         var editorEl = document.getElementById('editor');
         if (editorEl) {
           editorEl.style.color = '${readerColors.text || colors.text}';
+          editorEl.style.backgroundColor = '${colors.surface}';
         }
       })();
       true;
     `;
     injectToEditor(js);
-  }, [readerColors, colors.text]);
+  }, [readerColors, colors]);
 
   const onMessage = (event: any) => {
     try {
@@ -97,7 +107,7 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
         html, body {
           margin: 0; padding: 0; 
           height: 100%;
-          background-color: #FFFFFF;
+          background-color: ${colors.surface};
           font-family: -apple-system, sans-serif;
           -webkit-touch-callout: none;
         }
@@ -109,6 +119,7 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
           font-size: ${ms(16)}px;
           line-height: 1.6;
           color: ${readerColors.text || colors.text};
+          background-color: ${colors.surface};
         }
         font[size="1"] { font-size: 11px; line-height: 1.4; }
         font[size="2"] { font-size: 13px; line-height: 1.5; }
@@ -118,23 +129,23 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
         font[size="6"] { font-size: 48px; line-height: 1.6; }
         font[size="7"] { font-size: 64px; line-height: 1.6; }
         ::selection {
-          background-color: rgba(0, 128, 128, 0.3);
+          background-color: ${colors.primaryContainer};
         }
         [contenteditable="true"]:empty:before {
           content: attr(placeholder);
-          color: #aaa;
+          color: ${colors.textMuted};
           pointer-events: none;
           display: block;
         }
         .bible-verse {
           margin: 16px 0;
           padding: 12px 16px;
-          background-color: #f0f9f9;
-          border-left: 4px solid #008080;
+          background-color: ${colors.primaryContainer};
+          border-left: 4px solid ${colors.primary};
           border-radius: 8px;
         }
         .bible-verse b, .bible-verse .verse-title {
-          color: #008080;
+          color: ${colors.primary};
           display: block;
           margin-bottom: 8px;
           font-size: 14px;
@@ -144,7 +155,7 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
         }
         .bible-verse p {
           margin: 0;
-          color: #333;
+          color: ${colors.text};
           font-style: italic;
         }
         ul, ol { padding-left: 24px; margin-top: 8px; margin-bottom: 8px; }
@@ -153,17 +164,17 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
         ul.task-list li { position: relative; margin-bottom: 8px; }
         ul.task-list li::before {
           content: ''; position: absolute; left: -26px; top: 4px; width: 18px; height: 18px;
-          border: 2px solid #008080; border-radius: 4px; background-color: transparent; cursor: pointer; box-sizing: border-box;
+          border: 2px solid ${colors.primary}; border-radius: 4px; background-color: transparent; cursor: pointer; box-sizing: border-box;
         }
         ul.task-list li[data-checked="true"]::before {
-          background-color: #008080;
+          background-color: ${colors.primary};
           background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>');
           background-size: 12px; background-repeat: no-repeat; background-position: center;
         }
         ul.task-list li[data-checked="true"] { text-decoration: line-through; opacity: 0.6; }
         .verse-line { margin-bottom: 10px; display: flex; gap: 8px; }
-        .verse-num { font-weight: 800; color: #008080; font-size: 12px; margin-top: 2px; }
-        .verse-text { font-style: italic; color: #333; }
+        .verse-num { font-weight: 800; color: ${colors.primary}; font-size: 12px; margin-top: 2px; }
+        .verse-text { font-style: italic; color: ${colors.text}; }
       </style>
     </head>
     <body onclick="document.getElementById('editor').focus();" oncontextmenu="return false;">
@@ -399,10 +410,10 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
 
   return (
     <View style={{ flex: 1 }}>
-      <View style={[styles.toolbar, { backgroundColor: colors.surface, borderBottomColor: colors.border }]}>
+      <View style={[styles.toolbar, { backgroundColor: colors.surface, borderBottomColor: colors.border, shadowColor: colors.shadow }]}>
         <ScrollView horizontal showsHorizontalScrollIndicator={true} persistentScrollbar={true} keyboardShouldPersistTaps="always" style={{ flex: 1 }} contentContainerStyle={{ paddingHorizontal: 8, alignItems: 'center', paddingRight: 40 }}>
           <TouchableOpacity 
-            style={[styles.toolBtn, { backgroundColor: colors.primary + '1A', marginRight: 12 }, Platform.select({ web: { outlineStyle: 'none' } as any, default: {} })]} 
+            style={[styles.toolBtn, { backgroundColor: colors.primaryLow, marginRight: 12 }, Platform.select({ web: { outlineStyle: 'none' } as any, default: {} })]} 
             onPress={onOpenVersePicker}
             activeOpacity={0.7}
           >
@@ -491,24 +502,24 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
           <View style={styles.divider} />
 
           <View style={[styles.rowGroup, { backgroundColor: colors.surfaceVariant }]}>
-            <TouchableOpacity style={[styles.groupBtn, { paddingHorizontal: 10 }]} onPress={() => execDocumentCmd('foreColor', '#333333')}>
-              <View style={[styles.colorBtn, { backgroundColor: '#333', marginHorizontal: 0 }]} />
+            <TouchableOpacity style={[styles.groupBtn, { paddingHorizontal: 10 }]} onPress={() => execDocumentCmd('foreColor', colors.text)}>
+              <View style={[styles.colorBtn, { backgroundColor: colors.text, marginHorizontal: 0, borderColor: colors.surfaceHighlight }]} />
             </TouchableOpacity>
             <View style={[styles.innerDivider, { backgroundColor: colors.border }]} />
-            <TouchableOpacity style={[styles.groupBtn, { paddingHorizontal: 10 }]} onPress={() => execDocumentCmd('foreColor', '#008080')}>
-              <View style={[styles.colorBtn, { backgroundColor: '#008080', marginHorizontal: 0 }]} />
+            <TouchableOpacity style={[styles.groupBtn, { paddingHorizontal: 10 }]} onPress={() => execDocumentCmd('foreColor', colors.textPrimary)}>
+              <View style={[styles.colorBtn, { backgroundColor: colors.textPrimary, marginHorizontal: 0, borderColor: colors.surfaceHighlight }]} />
             </TouchableOpacity>
             <View style={[styles.innerDivider, { backgroundColor: colors.border }]} />
-            <TouchableOpacity style={[styles.groupBtn, { paddingHorizontal: 10 }]} onPress={() => execDocumentCmd('foreColor', '#e74c3c')}>
-              <View style={[styles.colorBtn, { backgroundColor: '#e74c3c', marginHorizontal: 0 }]} />
+            <TouchableOpacity style={[styles.groupBtn, { paddingHorizontal: 10 }]} onPress={() => execDocumentCmd('foreColor', colors.textDanger)}>
+              <View style={[styles.colorBtn, { backgroundColor: colors.textDanger, marginHorizontal: 0, borderColor: colors.surfaceHighlight }]} />
             </TouchableOpacity>
             <View style={[styles.innerDivider, { backgroundColor: colors.border }]} />
-            <TouchableOpacity style={[styles.groupBtn, { paddingHorizontal: 10 }]} onPress={() => execDocumentCmd('foreColor', '#2980b9')}>
-              <View style={[styles.colorBtn, { backgroundColor: '#2980b9', marginHorizontal: 0 }]} />
+            <TouchableOpacity style={[styles.groupBtn, { paddingHorizontal: 10 }]} onPress={() => execDocumentCmd('foreColor', colors.textInfo)}>
+              <View style={[styles.colorBtn, { backgroundColor: colors.textInfo, marginHorizontal: 0, borderColor: colors.surfaceHighlight }]} />
             </TouchableOpacity>
             <View style={[styles.innerDivider, { backgroundColor: colors.border }]} />
-            <TouchableOpacity style={[styles.groupBtn, { paddingHorizontal: 10 }]} onPress={() => execDocumentCmd('foreColor', '#f39c12')}>
-              <View style={[styles.colorBtn, { backgroundColor: '#f39c12', marginHorizontal: 0 }]} />
+            <TouchableOpacity style={[styles.groupBtn, { paddingHorizontal: 10 }]} onPress={() => execDocumentCmd('foreColor', colors.textWarning)}>
+              <View style={[styles.colorBtn, { backgroundColor: colors.textWarning, marginHorizontal: 0, borderColor: colors.surfaceHighlight }]} />
             </TouchableOpacity>
           </View>
 
@@ -523,7 +534,7 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
         <iframe
           ref={webIframeRef}
           srcDoc={editorHtml}
-          style={{ flex: 1, border: 'none', backgroundColor: '#FFFFFF', width: '100%', minHeight: 600 }}
+          style={{ flex: 1, border: 'none', backgroundColor: colors.surface, width: '100%', minHeight: 600 }}
           sandbox="allow-scripts allow-same-origin"
         />
       ) : (
@@ -532,7 +543,7 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
           source={{ html: editorHtml }}
           originWhitelist={['*']}
           onMessage={onMessage}
-          style={{ flex: 1, backgroundColor: '#FFFFFF' }}
+          style={{ flex: 1, backgroundColor: colors.surface }}
           hideKeyboardAccessoryView={true}
           keyboardDisplayRequiresUserAction={false}
           bounces={false}
@@ -543,11 +554,11 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
 });
 
 const styles = StyleSheet.create({
-  toolbar: { flexDirection: 'row', height: 48, borderBottomWidth: 1, elevation: 3, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 2, zIndex: 5 },
+  toolbar: { flexDirection: 'row', height: 48, borderBottomWidth: 1, elevation: 3, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 2, zIndex: 5 },
   toolBtn: { flexDirection: 'row', paddingHorizontal: 10, paddingVertical: 6, marginHorizontal: 2, borderRadius: 6, alignItems: 'center', justifyContent: 'center', minWidth: 36, height: 36 },
-  toolBtnActive: { backgroundColor: 'rgba(0,128,128,0.1)' },
-  divider: { width: 1, height: 24, backgroundColor: '#ddd', marginHorizontal: 6 },
-  colorBtn: { width: 24, height: 24, borderRadius: 12, marginHorizontal: 4, borderWidth: 1, borderColor: 'rgba(0,0,0,0.1)' },
+  toolBtnActive: {},
+  divider: { width: 1, height: 24, marginHorizontal: 6 },
+  colorBtn: { width: 24, height: 24, borderRadius: 12, marginHorizontal: 4, borderWidth: 1 },
   rowGroup: { flexDirection: 'row', borderRadius: 8, overflow: 'hidden', marginHorizontal: 2 },
   groupBtn: { flexDirection: 'row', paddingHorizontal: 12, paddingVertical: 6, alignItems: 'center', justifyContent: 'center', minHeight: 36 },
   innerDivider: { width: 1 },

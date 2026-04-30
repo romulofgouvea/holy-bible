@@ -144,12 +144,12 @@ export function BibleDrawerMenu(props: DrawerMenuProps) {
     <Modal visible={modalVisible} transparent animationType="none">
       <View style={StyleSheet.absoluteFill}>
         <TouchableWithoutFeedback onPress={onClose}>
-          <Animated.View style={[styles.backdrop, { opacity: backdropOpacity }]} />
+          <Animated.View style={[styles.backdrop, { opacity: backdropOpacity, backgroundColor: colors.overlay }]} />
         </TouchableWithoutFeedback>
 
-        <Animated.View style={[styles.drawer, { width: drawerWidth, transform: [{ translateX }], backgroundColor: colors.surface }]}>
+        <Animated.View style={[styles.drawer, { width: drawerWidth, transform: [{ translateX }], backgroundColor: colors.surface, shadowColor: colors.shadow }]}>
           <View style={[styles.drawerHeader, { backgroundColor: colors.primary, paddingTop: Math.max(ms(20), insets.top + ms(16)), paddingBottom: ms(20), paddingHorizontal: ms(16) }]}>
-            <View style={[styles.drawerLogo, { width: ms(38), height: ms(38), borderRadius: ms(10), marginRight: ms(10) }]}>
+            <View style={[styles.drawerLogo, { width: ms(38), height: ms(38), borderRadius: ms(10), marginRight: ms(10), backgroundColor: colors.surfaceHighlight }]}>
               <Feather name="book" size={ms(19)} color={colors.onPrimary} />
             </View>
             <View style={{ flex: 1, justifyContent: 'center' }}>
@@ -179,7 +179,6 @@ export function BibleDrawerMenu(props: DrawerMenuProps) {
 const styles = StyleSheet.create({
   backdrop: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.4)',
   },
   drawer: {
     position: 'absolute',
@@ -187,7 +186,6 @@ const styles = StyleSheet.create({
     left: 0,
     bottom: 0,
     elevation: 24,
-    shadowColor: '#000',
     shadowOffset: { width: 4, height: 0 },
     shadowOpacity: 0.18,
     shadowRadius: 12,
@@ -198,7 +196,6 @@ const styles = StyleSheet.create({
     gap: 0,
   },
   drawerLogo: {
-    backgroundColor: 'rgba(255,255,255,0.2)',
     alignItems: 'center',
     justifyContent: 'center',
     flexShrink: 0,

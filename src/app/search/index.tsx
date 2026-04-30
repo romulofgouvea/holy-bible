@@ -19,6 +19,7 @@ import { DonateModal } from '../../components/DonateModal';
 import { useBible } from '../../hooks/use-bible';
 import { useResponsive } from '../../hooks/use-responsive';
 import { useTheme } from '../../hooks/use-theme';
+import { ROUTES } from '../../constants/routes';
 
 
 export type SearchScope = 'bible' | 'book' | 'chapter';
@@ -42,14 +43,14 @@ const STORAGE_SEARCH_QUERY = '@bible:search_query';
 const STORAGE_SEARCH_HISTORY = '@bible:search_history';
 const MAX_HISTORY = 20;
 
-function HighlightText({ text, query, primaryColor }: { text: string; query: string; primaryColor: string }) {
-  if (!query.trim()) return <BibleText style={styles.verseText}>{text}</BibleText>;
+function HighlightText({ text, query, colors }: { text: string; query: string; colors: any }) {
+  if (!query.trim()) return <BibleText style={[styles.verseText, { color: colors.text }]}>{text}</BibleText>;
   const idx = text.toLowerCase().indexOf(query.toLowerCase());
-  if (idx === -1) return <BibleText style={styles.verseText}>{text}</BibleText>;
+  if (idx === -1) return <BibleText style={[styles.verseText, { color: colors.text }]}>{text}</BibleText>;
   return (
-    <BibleText style={styles.verseText}>
+    <BibleText style={[styles.verseText, { color: colors.text }]}>
       {text.slice(0, idx)}
-      <BibleText style={[styles.verseText, { backgroundColor: primaryColor + '33', color: primaryColor, fontWeight: '700' }]}>
+      <BibleText style={[styles.verseText, { backgroundColor: colors.primary, color: colors.onPrimary, fontWeight: '700', borderRadius: 4, paddingHorizontal: 2 }]}>
         {text.slice(idx, idx + query.length)}
       </BibleText>
       {text.slice(idx + query.length)}
@@ -249,7 +250,7 @@ export default function SearchScreen() {
         onMenuPress={() => setDrawerVisible(true)}
         leftContent={params.from === 'bible' ? (
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <TouchableOpacity onPress={() => router.back()} style={{ marginRight: 16 }}>
+            <TouchableOpacity onPress={() => router.canGoBack() ? router.back() : router.replace(ROUTES.BIBLE as any)} style={{ marginRight: 16 }}>
               <Feather name="arrow-left" size={ms(24)} color={colors.onPrimary} />
             </TouchableOpacity>
             <BibleText style={{ fontSize: ms(16), color: colors.onPrimary, fontFamily: 'Poppins_600SemiBold', fontWeight: '700' }}>
@@ -380,13 +381,13 @@ export default function SearchScreen() {
               style={[styles.resultCard, { backgroundColor: colors.surface, borderColor: colors.border }]}
               onPress={() => handleNavigate(item)}
             >
-              <View style={[styles.refBadge, { backgroundColor: colors.primaryContainer }]}>
-                <BibleText style={[styles.refText, { color: colors.primary, fontSize: ms(11) }]}>
+              <View style={[styles.refBadge, { backgroundColor: colors.primary }]}>
+                <BibleText style={[styles.refText, { color: colors.onPrimary, fontSize: ms(11) }]}>
                   {item.bookName} {item.chapter}:{item.verse}
                 </BibleText>
               </View>
               <View style={{ flex: 1, marginTop: 6 }}>
-                <HighlightText text={item.text} query={query.trim()} primaryColor={colors.primary} />
+                <HighlightText text={item.text} query={query.trim()} colors={colors} />
               </View>
             </TouchableOpacity>
           )}

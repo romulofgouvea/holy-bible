@@ -265,28 +265,21 @@ export default function BibleScreen() {
         )}
 
         {!actionSheetVisible && (
-          (() => {
-            const isSepia = readerTheme === 'sepia';
-            const arrowBg = isSepia ? readerColors.primary : colors.primary;
-            const arrowColor = isSepia ? readerColors.onPrimary : colors.onPrimary;
-            return (
-              <>
-                <TouchableOpacity
-                  style={[styles.floatingArrow, styles.floatingArrowLeft, { backgroundColor: arrowBg }]}
-                  onPress={() => navigateChapter(-1)}
-                >
-                  <Feather name="chevron-left" size={24} color={arrowColor} />
-                </TouchableOpacity>
+          <>
+            <TouchableOpacity
+              style={[styles.floatingArrow, styles.floatingArrowLeft, { backgroundColor: colors.primary, shadowColor: colors.shadow }]}
+              onPress={() => navigateChapter(-1)}
+            >
+              <Feather name="chevron-left" size={24} color={colors.onPrimary} />
+            </TouchableOpacity>
 
-                <TouchableOpacity
-                  style={[styles.floatingArrow, styles.floatingArrowRight, { backgroundColor: arrowBg }]}
-                  onPress={() => navigateChapter(1)}
-                >
-                  <Feather name="chevron-right" size={24} color={arrowColor} />
-                </TouchableOpacity>
-              </>
-            );
-          })()
+            <TouchableOpacity
+              style={[styles.floatingArrow, styles.floatingArrowRight, { backgroundColor: colors.primary, shadowColor: colors.shadow }]}
+              onPress={() => navigateChapter(1)}
+            >
+              <Feather name="chevron-right" size={24} color={colors.onPrimary} />
+            </TouchableOpacity>
+          </>
         )}
       </View>
 
@@ -349,7 +342,6 @@ export default function BibleScreen() {
 const styles = StyleSheet.create({
   page: {
     flex: 1,
-    backgroundColor: '#ffffff',
   },
   content: {
     flex: 1,
@@ -362,11 +354,9 @@ const styles = StyleSheet.create({
     width: 42,
     height: 42,
     borderRadius: 14,
-    backgroundColor: '#008080',
     alignItems: 'center',
     justifyContent: 'center',
     elevation: 8,
-    shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.25,
     shadowRadius: 5,

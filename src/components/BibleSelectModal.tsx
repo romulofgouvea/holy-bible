@@ -1,4 +1,4 @@
-﻿import { Feather } from '@expo/vector-icons';
+import { Feather } from '@expo/vector-icons';
 import React from 'react';
 import {
   Modal,
@@ -10,6 +10,7 @@ import {
   View
 } from 'react-native';
 import { useResponsive } from '../hooks/use-responsive';
+import { useTheme } from '../hooks/use-theme';
 import { BibleText } from './BibleText';
 
 type SelectModalProps<T> = {
@@ -29,28 +30,29 @@ type SelectModalProps<T> = {
 export const BibleSelectModal = React.memo(function BibleSelectModal<T>(props: SelectModalProps<T>) {
   const { visible, onClose, title, placeholder, value, onChangeText, items, itemKey, renderItem, onSelect, hideSearch } = props;
   const { width, ms, s } = useResponsive();
+  const { colors } = useTheme();
   const numColumns = width > 600 ? 6 : 4;
   const itemWidth = `${100 / numColumns - 2}%`;
 
   return (
     <Modal visible={visible} animationType="fade" transparent>
-      <TouchableOpacity activeOpacity={1} style={styles.modalBackdrop} onPress={onClose}>
+      <TouchableOpacity activeOpacity={1} style={[styles.modalBackdrop, { backgroundColor: colors.overlay }]} onPress={onClose}>
         <TouchableWithoutFeedback>
-          <View style={styles.modalContentBig}>
+          <View style={[styles.modalContentBig, { backgroundColor: colors.surface, shadowColor: colors.shadow }]}>
             <View style={styles.modalHeader}>
-              <BibleText style={[styles.modalTitle, { fontSize: ms(20) }]}>{title}</BibleText>
+              <BibleText style={[styles.modalTitle, { fontSize: ms(20), color: colors.text }]}>{title}</BibleText>
               <TouchableOpacity onPress={onClose}>
-                <Feather name="x" size={ms(24)} color="#333" />
+                <Feather name="x" size={ms(24)} color={colors.text} />
               </TouchableOpacity>
             </View>
 
             {!hideSearch && (
-              <View style={styles.searchContainer}>
-                <Feather name="search" size={ms(20)} color="#999" style={styles.searchIcon} />
+              <View style={[styles.searchContainer, { backgroundColor: colors.surfaceVariant }]}>
+                <Feather name="search" size={ms(20)} color={colors.textMuted} style={styles.searchIcon} />
                 <TextInput
-                  style={[styles.searchInput, { fontSize: ms(16) }]}
+                  style={[styles.searchInput, { fontSize: ms(16), color: colors.text }]}
                   placeholder={placeholder}
-                  placeholderTextColor="#999"
+                  placeholderTextColor={colors.textMuted}
                   value={value}
                   onChangeText={onChangeText}
                   underlineColorAndroid="transparent"
@@ -63,7 +65,7 @@ export const BibleSelectModal = React.memo(function BibleSelectModal<T>(props: S
                 <TouchableOpacity
                   key={itemKey(item)}
                   activeOpacity={0.6}
-                  style={[styles.gridItem, { width: itemWidth as any }]}
+                  style={[styles.gridItem, { width: itemWidth as any, backgroundColor: colors.primary }]}
                   onPress={() => onSelect(item)}
                 >
                   {renderItem(item)}
@@ -80,18 +82,15 @@ export const BibleSelectModal = React.memo(function BibleSelectModal<T>(props: S
 const styles = StyleSheet.create({
   modalBackdrop: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
     justifyContent: 'center',
     alignItems: 'center',
   },
   modalContentBig: {
     width: '92%',
     maxHeight: '85%',
-    backgroundColor: '#fff',
     borderRadius: 20,
     padding: 20,
     elevation: 10,
-    shadowColor: '#000',
     shadowOffset: { width: 0, height: 5 },
     shadowOpacity: 0.3,
     shadowRadius: 10,
@@ -105,12 +104,10 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 20,
     fontWeight: '800',
-    color: '#333',
   },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#f5f5f5',
     borderRadius: 12,
     paddingHorizontal: 12,
     marginBottom: 20,
@@ -122,7 +119,6 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 48,
     fontSize: 16,
-    color: '#333',
     ...({ outlineStyle: 'none' } as any),
   },
   modalGrid: {
@@ -134,7 +130,6 @@ const styles = StyleSheet.create({
   },
   gridItem: {
     aspectRatio: 1,
-    backgroundColor: '#008080',
     borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',

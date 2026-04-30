@@ -110,7 +110,7 @@ export function BibleVerseActionSheet(props: VerseActionSheetProps) {
   const iconColor = colors.primary;
 
   return (
-    <Animated.View style={[styles.bar, { transform: [{ translateY }], backgroundColor: colors.surface, paddingBottom: 16 }]} id="bible-verse-action-sheet">
+    <Animated.View style={[styles.bar, { transform: [{ translateY }], backgroundColor: colors.surface, paddingBottom: 16, shadowColor: colors.shadow }]} id="bible-verse-action-sheet">
       <View style={styles.actions}>
         <TouchableOpacity style={styles.iconBtn} onPress={onShare} disabled={count === 0}>
           <Feather name="share-2" size={iconSize} color={count === 0 ? colors.textMuted : iconColor} />
@@ -120,17 +120,17 @@ export function BibleVerseActionSheet(props: VerseActionSheetProps) {
           <Feather name="copy" size={iconSize} color={count === 0 ? colors.textMuted : iconColor} />
         </TouchableOpacity>
 
-        <View style={styles.divider} />
+        <View style={[styles.divider, { backgroundColor: colors.border }]} />
 
         {HIGHLIGHT_COLORS.map(c => (
           <TouchableOpacity key={c.id} style={{ padding: 6 }} onPress={() => onHighlight(c.id)}>
-            <View style={{ width: ms(24), height: ms(24), borderRadius: ms(12), backgroundColor: c.hex, borderWidth: 1, borderColor: 'rgba(0,0,0,0.1)' }} />
+            <View style={{ width: ms(24), height: ms(24), borderRadius: ms(12), backgroundColor: c.hex, borderWidth: 1, borderColor: colors.surfaceHighlight }} />
           </TouchableOpacity>
         ))}
 
         {hasAnyHighlight && (
           <TouchableOpacity style={styles.iconBtn} onPress={() => onHighlight(null)}>
-            <Feather name="slash" size={ms(20)} color="#e74c3c" />
+            <Feather name="slash" size={ms(20)} color={colors.error} />
           </TouchableOpacity>
         )}
       </View>
@@ -138,7 +138,7 @@ export function BibleVerseActionSheet(props: VerseActionSheetProps) {
         <View style={[styles.divider, { backgroundColor: colors.border }]} />
 
         <TouchableOpacity style={styles.iconBtn} onPress={onClose}>
-          <Feather name="x" size={iconSize} color="red" />
+          <Feather name="x" size={iconSize} color={colors.textMuted} />
         </TouchableOpacity>
       </View>
     </Animated.View>
@@ -154,13 +154,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#fff',
     paddingHorizontal: 8,
     paddingVertical: 8,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     elevation: 20,
-    shadowColor: '#000',
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.12,
     shadowRadius: 12,
@@ -170,7 +168,6 @@ const styles = StyleSheet.create({
   },
   countText: {
     fontWeight: '700',
-    color: '#555',
   },
   actions: {
     flexDirection: 'row',
@@ -190,7 +187,6 @@ const styles = StyleSheet.create({
   divider: {
     width: 1,
     height: 28,
-    backgroundColor: '#e0e0e0',
     marginHorizontal: 4,
   },
 });

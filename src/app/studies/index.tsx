@@ -183,8 +183,8 @@ export default function EstudosScreen() {
             <BibleText style={[styles.cardDate, { fontSize: ms(12), color: colors.textMuted }]}>{item.createdAt}</BibleText>
           </View>
           {!isSelectionMode && (
-            <TouchableOpacity onPress={() => setStudyToDelete(item.id)} style={styles.deleteBtn}>
-              <Feather name="trash-2" size={ms(18)} color="#e74c3c" />
+            <TouchableOpacity onPress={() => setStudyToDelete(item.id)} style={[styles.deleteBtn, { backgroundColor: colors.errorLow }]}>
+              <Feather name="trash-2" size={ms(18)} color={colors.error} />
             </TouchableOpacity>
           )}
         </View>
@@ -233,7 +233,7 @@ export default function EstudosScreen() {
 
       <Modal visible={modalVisible} transparent animationType="slide">
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.modalWrapper}>
-          <TouchableOpacity style={styles.modalBackdrop} activeOpacity={1} onPress={() => setModalVisible(false)} />
+          <TouchableOpacity style={[styles.modalBackdrop, { backgroundColor: colors.overlay }]} activeOpacity={1} onPress={() => setModalVisible(false)} />
           <View style={[styles.modalSheet, { backgroundColor: colors.surface, paddingBottom: Math.max(32, insets.bottom + 16) }]}>
             <View style={[styles.modalHandle, { backgroundColor: colors.border }]} />
             <BibleText style={[styles.modalTitle, { fontSize: ms(20), color: colors.text }]}>Novo Estudo</BibleText>
@@ -317,8 +317,8 @@ export default function EstudosScreen() {
       />
 
       <Modal visible={shareMenuVisible} transparent animationType="fade">
-        <TouchableOpacity style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center' }} activeOpacity={1} onPress={() => setShareMenuVisible(false)}>
-          <View style={{ backgroundColor: colors.surface, borderRadius: 16, padding: 20, width: '80%', gap: 16 }}>
+        <TouchableOpacity style={{ flex: 1, backgroundColor: colors.overlay, justifyContent: 'center', alignItems: 'center' }} activeOpacity={1} onPress={() => setShareMenuVisible(false)}>
+          <View style={{ backgroundColor: colors.surface, borderRadius: 16, padding: 20, width: '80%', gap: 16, shadowColor: colors.shadow, elevation: 12 }}>
             <BibleText style={{ fontSize: ms(18), fontWeight: '700', color: colors.text }}>Como deseja compartilhar?</BibleText>
             <TouchableOpacity style={{ flexDirection: 'row', gap: 12, alignItems: 'center', backgroundColor: colors.surfaceVariant, padding: 16, borderRadius: 12 }} onPress={() => exportPDFs(selectedIds)}>
               <Feather name="file-text" size={ms(20)} color={colors.primary} />
@@ -341,45 +341,43 @@ export default function EstudosScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f8fafa' },
+  container: { flex: 1 },
   listContent: {
     padding: 16,
     paddingBottom: 100,
     flexGrow: 1
   },
   emptyContainer: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingTop: 80, gap: 12 },
-  emptyTitle: { fontWeight: '700', color: '#555' },
-  emptySubtitle: { color: '#aaa', textAlign: 'center', paddingHorizontal: 32 },
+  emptyTitle: { fontWeight: '700' },
+  emptySubtitle: { textAlign: 'center', paddingHorizontal: 32 },
   card: {
     borderWidth: 1,
-    borderColor: '#0080806e',
     marginBottom: 8,
     borderRadius: 16,
     overflow: 'hidden',
     elevation: 1,
-    shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
   },
   cardContent: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12, paddingVertical: 12, gap: 14 },
-  cardIcon: { width: 38, height: 38, borderRadius: 10, backgroundColor: '#e6f3f3', alignItems: 'center', justifyContent: 'center' },
+  cardIcon: { width: 38, height: 38, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
   cardText: { flex: 1, gap: 4 },
-  cardTitle: { fontWeight: '700', color: '#222' },
-  cardDesc: { color: '#666', lineHeight: 18 },
-  cardDate: { color: '#bbb', marginTop: 2 },
-  deleteBtn: { width: 38, height: 38, alignItems: 'center', justifyContent: 'center', borderRadius: 10, backgroundColor: 'rgba(231, 76, 60, 0.1)' },
+  cardTitle: { fontWeight: '700' },
+  cardDesc: { lineHeight: 18 },
+  cardDate: { marginTop: 2 },
+  deleteBtn: { width: 38, height: 38, alignItems: 'center', justifyContent: 'center', borderRadius: 10 },
   modalWrapper: { flex: 1, justifyContent: 'flex-end' },
-  modalBackdrop: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0,0,0,0.4)' },
-  modalSheet: { backgroundColor: '#fff', borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24, paddingBottom: 40, gap: 16 },
-  modalHandle: { width: 40, height: 4, backgroundColor: '#e0e0e0', borderRadius: 2, alignSelf: 'center', marginBottom: 8 },
-  modalTitle: { fontWeight: '800', color: '#222' },
-  input: { backgroundColor: '#f5f5f5', borderRadius: 14, paddingHorizontal: 16, paddingVertical: 14, color: '#333' },
+  modalBackdrop: { ...StyleSheet.absoluteFillObject },
+  modalSheet: { borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24, paddingBottom: 40, gap: 16 },
+  modalHandle: { width: 40, height: 4, borderRadius: 2, alignSelf: 'center', marginBottom: 8 },
+  modalTitle: { fontWeight: '800' },
+  input: { borderRadius: 14, paddingHorizontal: 16, paddingVertical: 14 },
   inputMultiline: { minHeight: 90, textAlignVertical: 'top' },
   modalActions: { flexDirection: 'row', gap: 12, marginTop: 4 },
-  cancelBtn: { flex: 1, paddingVertical: 14, borderRadius: 14, backgroundColor: '#f0f0f0', alignItems: 'center' },
-  cancelText: { fontWeight: '700', color: '#666' },
-  createBtn: { flex: 1, paddingVertical: 14, borderRadius: 14, backgroundColor: '#008080', alignItems: 'center' },
+  cancelBtn: { flex: 1, paddingVertical: 14, borderRadius: 14, alignItems: 'center' },
+  cancelText: { fontWeight: '700' },
+  createBtn: { flex: 1, paddingVertical: 14, borderRadius: 14, alignItems: 'center' },
   createBtnDisabled: { opacity: 0.5 },
-  createText: { fontWeight: '700', color: '#fff' },
+  createText: { fontWeight: '700' },
 });

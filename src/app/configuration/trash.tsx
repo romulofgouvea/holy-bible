@@ -55,7 +55,7 @@ export default function TrashScreen() {
 
     return (
       <TouchableOpacity
-        style={[styles.card, { backgroundColor: isSelected ? colors.primaryContainer : '#fff0f0', borderColor: isSelected ? colors.primary : '#ffcdd2' }]}
+        style={[styles.card, { backgroundColor: isSelected ? colors.primaryContainer : colors.errorLow, borderColor: isSelected ? colors.primary : colors.errorLow }]}
         onPress={() => isSelectionMode ? toggleSelection(item.id) : toggleSelection(item.id)}
         onLongPress={() => toggleSelection(item.id)}
         activeOpacity={0.75}
@@ -65,16 +65,16 @@ export default function TrashScreen() {
             {isSelected ? (
               <Feather name="check" size={ms(18)} color={colors.onPrimary} />
             ) : (
-              <Feather name="trash-2" size={ms(18)} color={colors.accent} />
+              <Feather name="trash-2" size={ms(18)} color={colors.error} />
             )}
           </TouchableOpacity>
           <View style={styles.cardText}>
-            <BibleText style={[styles.cardTitle, { fontSize: ms(16), color: '#d32f2f' }]}>{item.title}</BibleText>
-            <BibleText style={[styles.cardDate, { fontSize: ms(12), color: colors.border }]}>{item.createdAt}</BibleText>
+            <BibleText style={[styles.cardTitle, { fontSize: ms(16), color: colors.error }]}>{item.title}</BibleText>
+            <BibleText style={[styles.cardDate, { fontSize: ms(12), color: colors.textMuted }]}>{item.createdAt}</BibleText>
           </View>
           {!isSelectionMode && (
             <TouchableOpacity onPress={() => restoreMultiple([item.id])} style={[styles.deleteBtn, { backgroundColor: colors.primaryContainer }]}>
-              <Feather name="corner-up-left" size={ms(18)} color={colors.accent} />
+              <Feather name="corner-up-left" size={ms(18)} color={colors.primary} />
             </TouchableOpacity>
           )}
         </View>
@@ -157,18 +157,17 @@ export default function TrashScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f8fafa' },
+  container: { flex: 1 },
   listContent: { padding: 16, paddingBottom: 100, flexGrow: 1 },
   emptyContainer: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingTop: 80, gap: 12 },
-  emptyTitle: { fontWeight: '700', color: '#555' },
-  emptySubtitle: { color: '#aaa', textAlign: 'center', paddingHorizontal: 32 },
+  emptyTitle: { fontWeight: '700' },
+  emptySubtitle: { textAlign: 'center', paddingHorizontal: 32 },
   card: {
     borderWidth: 1,
     marginBottom: 8,
     borderRadius: 16,
     overflow: 'hidden',
     elevation: 1,
-    shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 2,

@@ -1,4 +1,4 @@
-﻿import { Feather } from '@expo/vector-icons';
+import { Feather } from '@expo/vector-icons';
 import React from 'react';
 import { Modal, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { useReaderSettings } from '../hooks/use-reader-settings';
@@ -21,9 +21,9 @@ export function ReaderSettingsModal({ visible, onClose }: { visible: boolean; on
   return (
     <Modal visible={visible} transparent animationType="fade">
       <TouchableWithoutFeedback onPress={onClose}>
-        <View style={styles.backdrop} />
+        <View style={[styles.backdrop, { backgroundColor: colors.overlay }]} />
       </TouchableWithoutFeedback>
-      <View style={[styles.container, { backgroundColor: colors.surface }]}>
+      <View style={[styles.container, { backgroundColor: colors.surface, shadowColor: colors.shadow }]}>
         <View style={styles.section}>
           <BibleText style={[styles.sectionTitle, { color: colors.textMuted }]}>Tamanho da Fonte</BibleText>
           <View style={[styles.row, { backgroundColor: colors.surfaceVariant }]}>
@@ -73,8 +73,8 @@ export function ReaderSettingsModal({ visible, onClose }: { visible: boolean; on
 }
 
 const styles = StyleSheet.create({
-  backdrop: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0,0,0,0.2)' },
-  container: { position: 'absolute', top: 60, right: 10, width: 280, borderRadius: 16, padding: 16, elevation: 8, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.15, shadowRadius: 12, gap: 16 },
+  backdrop: { ...StyleSheet.absoluteFillObject },
+  container: { position: 'absolute', top: 60, right: 10, width: 280, borderRadius: 16, padding: 16, elevation: 8, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.15, shadowRadius: 12, gap: 16 },
   section: { gap: 8 },
   sectionTitle: { fontSize: 12, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5 },
   row: { flexDirection: 'row', borderRadius: 8, overflow: 'hidden' },

@@ -156,7 +156,7 @@ export default function ConfigurationScreen() {
 
       <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <BibleText style={{ marginLeft: 8, marginBottom: 8, fontSize: ms(14), fontWeight: '700', color: colors.textMuted }}>APARÊNCIA</BibleText>
-        <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+        <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border, shadowColor: colors.shadow }]}>
 
           <TouchableOpacity style={styles.cardHeader} activeOpacity={0.8} onPress={handleToggle}>
             <View style={[styles.iconWrap, { backgroundColor: colors.surfaceVariant }]}>
@@ -214,7 +214,7 @@ export default function ConfigurationScreen() {
                   >
                     <View style={[styles.swatchDot, { backgroundColor: swatchColor }]}>
                       {isActive && (
-                        <Feather name="check" size={ms(14)} color="#fff" />
+                        <Feather name="check" size={ms(14)} color={colors.onPrimary} />
                       )}
                     </View>
                     <BibleText style={[
@@ -232,7 +232,7 @@ export default function ConfigurationScreen() {
         </View>
 
         <BibleText style={{ marginTop: 24, marginLeft: 8, marginBottom: 8, fontSize: ms(14), fontWeight: '700', color: colors.textMuted }}>GERENCIAMENTO</BibleText>
-        <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+        <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border, shadowColor: colors.shadow }]}>
           <TouchableOpacity style={styles.cardHeader} activeOpacity={0.8} onPress={() => router.push('/configuration/trash' as any)}>
             <View style={[styles.iconWrap, { backgroundColor: colors.surfaceVariant }]}>
               <Feather name="trash-2" size={ms(20)} color={colors.accent} />
@@ -249,7 +249,7 @@ export default function ConfigurationScreen() {
         </View>
 
         <BibleText style={{ marginTop: 24, marginLeft: 8, marginBottom: 8, fontSize: ms(14), fontWeight: '700', color: colors.textMuted }}>BACKUP E RESTAURAÇÃO</BibleText>
-        <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+        <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border, shadowColor: colors.shadow }]}>
           <TouchableOpacity style={styles.cardHeader} activeOpacity={0.8} onPress={() => handleToggleAutoBackup(!autoBackup)}>
             <View style={[styles.iconWrap, { backgroundColor: colors.surfaceVariant }]}>
               <Feather name="save" size={ms(20)} color={colors.accent} />
@@ -342,7 +342,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     overflow: 'hidden',
     elevation: 1,
-    shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 2,

@@ -26,13 +26,13 @@ export const BibleTopBar = React.memo((props: BibleTopBarProps) => {
     const { version, bookName, currentChapter, onOpenVersion, onOpenBook, onOpenChapter, onPrevChapter, onNextChapter, onOpenMenu, onOpenSettings, onOpenSearch } = props;
     const { ms } = useResponsive();
     const { colors } = useTheme();
-    const { readerTheme } = useReaderSettings();
+    const { readerColors, readerTheme } = useReaderSettings();
     const [dotsMenuVisible, setDotsMenuVisible] = useState(false);
 
     const isSepia = readerTheme === 'sepia';
-    const headerBg = isSepia ? '#f4e4c1' : colors.primary;
-    const headerContent = isSepia ? '#5f4b32' : colors.onPrimary;
-    const btnBg = isSepia ? 'rgba(95, 75, 50, 0.08)' : 'rgba(255,255,255,0.15)';
+    const headerBg = isSepia ? readerColors.primary : colors.primary;
+    const headerContent = isSepia ? readerColors.onPrimary : colors.onPrimary;
+    const btnBg = isSepia ? readerColors.surfaceHighlight : colors.surfaceHighlight;
 
     return (
         <>
@@ -91,16 +91,12 @@ const styles = StyleSheet.create({
     },
     topBarButton: {
         justifyContent: 'center',
-        backgroundColor: 'rgba(255,255,255,0.2)',
     },
     topBarButtonText: {
-        color: '#fff',
         fontWeight: '700',
-        fontSize: 15,
     },
     menuButton: {
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: 'rgba(255,255,255,0.15)',
     },
 });

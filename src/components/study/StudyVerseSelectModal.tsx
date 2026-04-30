@@ -1,4 +1,4 @@
-﻿import { Feather } from '@expo/vector-icons';
+import { Feather } from '@expo/vector-icons';
 import React, { useEffect, useState } from 'react';
 import { Modal, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useResponsive } from '../../hooks/use-responsive';
@@ -53,7 +53,7 @@ export function StudyVerseSelectModal({ visible, onClose, onBack, bookName, chap
             )}
             <BibleText style={[styles.title, { fontSize: ms(18), color: colors.primary }]}>{bookName} {chapter}</BibleText>
             <TouchableOpacity onPress={onClose} style={[styles.closeBtn, { backgroundColor: colors.surfaceVariant }]}>
-              <Feather name="x" size={ms(18)} color="#e74c3c" />
+              <Feather name="x" size={ms(18)} color={colors.error} />
             </TouchableOpacity>
           </View>
           <View style={[styles.divider, { backgroundColor: colors.border }]} />
@@ -80,21 +80,20 @@ export function StudyVerseSelectModal({ visible, onClose, onBack, bookName, chap
 }
 
 const styles = StyleSheet.create({
-  backdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
-  sheet: { backgroundColor: '#fff', borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 8, flex: 1 },
-  modalHandle: { width: 40, height: 4, backgroundColor: '#e0e0e0', borderRadius: 2, alignSelf: 'center', marginBottom: 4, marginTop: 4 },
+  sheet: { borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 8, flex: 1 },
+  modalHandle: { width: 40, height: 4, borderRadius: 2, alignSelf: 'center', marginBottom: 4, marginTop: 4 },
   header: { flexDirection: 'row', alignItems: 'center', padding: 8 },
-  headerIconWrap: { width: 42, height: 42, borderRadius: 12, backgroundColor: '#e6f3f3', justifyContent: 'center', alignItems: 'center', marginRight: 12 },
-  closeBtn: { width: 42, height: 42, justifyContent: 'center', alignItems: 'center', backgroundColor: '#fdeded', borderRadius: 8, marginLeft: 12 },
-  title: { flex: 1, fontWeight: '700', color: '#008080' },
-  verseRow: { flexDirection: 'row', alignItems: 'flex-start', paddingVertical: 12, paddingHorizontal: 8, borderBottomWidth: 1, borderBottomColor: '#f5f5f5', gap: 10 },
-  verseRowSelected: { backgroundColor: '#e0f2f1', borderLeftWidth: 3, borderLeftColor: '#008080', paddingLeft: 6 },
-  verseNumLabel: { fontWeight: '700', color: '#008080', minWidth: 24, paddingTop: 2 },
-  verseNumLabelSelected: { color: '#005f5f' },
-  verseRowText: { flex: 1, color: '#333', lineHeight: 20 },
-  divider: { height: 1, backgroundColor: '#f0f0f0', marginVertical: 8 },
-  confirmBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, backgroundColor: '#008080', borderRadius: 14, paddingVertical: 13, marginTop: 4 },
-  confirmBtnDisabled: { backgroundColor: '#f0f0f0' },
-  confirmText: { color: '#fff', fontWeight: '700' },
-  confirmTextDisabled: { color: '#aaa' }
+  headerIconWrap: { width: 42, height: 42, borderRadius: 12, justifyContent: 'center', alignItems: 'center', marginRight: 12 },
+  closeBtn: { width: 42, height: 42, justifyContent: 'center', alignItems: 'center', borderRadius: 8, marginLeft: 12 },
+  title: { flex: 1, fontWeight: '700' },
+  verseRow: { flexDirection: 'row', alignItems: 'flex-start', paddingVertical: 12, paddingHorizontal: 8, borderBottomWidth: 1, gap: 10 },
+  verseRowSelected: { borderLeftWidth: 3, paddingLeft: 6 },
+  verseNumLabel: { fontWeight: '700', minWidth: 24, paddingTop: 2 },
+  verseNumLabelSelected: {},
+  verseRowText: { flex: 1, lineHeight: 20 },
+  divider: { height: 1, marginVertical: 8 },
+  confirmBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, borderRadius: 14, paddingVertical: 13, marginTop: 4 },
+  confirmBtnDisabled: {},
+  confirmText: { fontWeight: '700' },
+  confirmTextDisabled: {}
 });

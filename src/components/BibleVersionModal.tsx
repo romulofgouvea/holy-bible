@@ -1,4 +1,4 @@
-﻿import { Feather } from '@expo/vector-icons';
+import { Feather } from '@expo/vector-icons';
 import React, { useMemo, useState } from 'react';
 import { Modal, ScrollView, StyleSheet, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { ALIASES, BibleVersionInfo } from '../data';
@@ -71,7 +71,7 @@ export function BibleVersionModal({ visible, onClose, onSelect }: BibleVersionMo
                 </TouchableOpacity>
               </View>
               <TouchableOpacity onPress={onClose} style={[styles.closeBtn, { backgroundColor: colors.surfaceVariant }]}>
-                <Feather name="x" size={ms(18)} color="#e74c3c" />
+                <Feather name="x" size={ms(18)} color={colors.error} />
               </TouchableOpacity>
             </View>
 
@@ -135,22 +135,19 @@ export function BibleVersionModal({ visible, onClose, onSelect }: BibleVersionMo
 const styles = StyleSheet.create({
   modalBackdrop: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
     justifyContent: 'flex-end',
   },
   bottomSheet: {
     width: '100%',
-    backgroundColor: '#fff',
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     padding: 8,
     elevation: 24,
-    shadowColor: '#000',
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.15,
     shadowRadius: 16,
   },
-  modalHandle: { width: 40, height: 4, backgroundColor: '#e0e0e0', borderRadius: 2, alignSelf: 'center', marginBottom: 4, marginTop: 4 },
+  modalHandle: { width: 40, height: 4, borderRadius: 2, alignSelf: 'center', marginBottom: 4, marginTop: 4 },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -160,7 +157,6 @@ const styles = StyleSheet.create({
     width: 42,
     height: 42,
     borderRadius: 12,
-    backgroundColor: '#e6f3f3',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
@@ -168,24 +164,20 @@ const styles = StyleSheet.create({
   title: {
     flex: 1,
     fontWeight: '700',
-    color: '#008080',
   },
-  searchToggleBtn: { width: 42, height: 42, justifyContent: 'center', alignItems: 'center', backgroundColor: '#f5f5f5', borderRadius: 8, marginLeft: 12 },
+  searchToggleBtn: { width: 42, height: 42, justifyContent: 'center', alignItems: 'center', borderRadius: 8, marginLeft: 12 },
   closeBtn: {
     width: 42,
     height: 42,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#fdeded',
     borderRadius: 8,
     marginLeft: 12,
   },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#f9f9f9',
     borderWidth: 1,
-    borderColor: '#e0e0e0',
     borderRadius: 12,
     marginHorizontal: 8,
     paddingHorizontal: 12,
@@ -198,11 +190,10 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     height: '100%',
-    color: '#333',
     ...({ outlineStyle: 'none' } as any),
   },
   list: { padding: 8, flexGrow: 1, gap: 8 },
-  divider: { height: 1, backgroundColor: '#f0f0f0', marginVertical: 8 },
+  divider: { height: 1, marginVertical: 8 },
   footer: {
     paddingTop: 4,
   },
@@ -210,25 +201,21 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     alignSelf: 'flex-start',
-    backgroundColor: '#fff',
     borderWidth: 1,
-    borderColor: '#0080806e',
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 16,
   },
   countNumber: {
     fontWeight: '800',
-    color: '#666',
     fontSize: 13,
   },
   countText: {
-    color: '#666',
     fontWeight: '600',
     fontSize: 13,
   },
-  viewToggles: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#f5f5f5', borderRadius: 8, padding: 4, gap: 4, marginLeft: 12, height: 42 },
+  viewToggles: { flexDirection: 'row', alignItems: 'center', borderRadius: 8, padding: 4, gap: 4, marginLeft: 12, height: 42 },
   toggleBtn: { width: 34, height: 34, justifyContent: 'center', alignItems: 'center', borderRadius: 6 },
-  toggleBtnActive: { backgroundColor: '#fff', elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.1, shadowRadius: 2 },
+  toggleBtnActive: { elevation: 2, shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.1, shadowRadius: 2 },
   gridContainer: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, justifyContent: 'flex-start' },
 });
