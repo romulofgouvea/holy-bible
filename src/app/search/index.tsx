@@ -3,16 +3,16 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useLocalSearchParams, usePathname, useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
-  ActivityIndicator,
   FlatList,
   Platform,
   StyleSheet,
   TextInput,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native';
 import { BibleDrawerMenu } from '../../components/BibleDrawerMenu';
 import { BibleHeader } from '../../components/BibleHeader';
+import { BibleModals } from '../../components/BibleModals';
 import { BibleSkeleton } from '../../components/BibleSkeleton';
 import { BibleText } from '../../components/BibleText';
 import { DonateModal } from '../../components/DonateModal';
@@ -31,12 +31,6 @@ export type SearchResult = {
   verse: number;
   text: string;
 };
-
-const SCOPES: { key: SearchScope; label: string }[] = [
-  { key: 'bible', label: 'Bíblia Completa' },
-  { key: 'book', label: 'Livro Atual' },
-  { key: 'chapter', label: 'Capítulo Atual' },
-];
 
 const STORAGE_SEARCH_SCOPE = '@bible:search_scope';
 const STORAGE_SEARCH_QUERY = '@bible:search_query';
@@ -64,7 +58,7 @@ export default function SearchScreen() {
   const router = useRouter();
   const pathname = usePathname();
   const params = useLocalSearchParams<{ query?: string; from?: string }>();
-  const { versionBooks, currentBook, chapter } = useBible();
+  const { versionBooks, currentBook, chapter, setVersion, setBook, setChapter, chapterCount, version } = useBible();
 
   const [query, setQuery] = useState('');
   const [scope, setScope] = useState<SearchScope>('bible');
@@ -75,6 +69,11 @@ export default function SearchScreen() {
 
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [donateVisible, setDonateVisible] = useState(false);
+
+  const [versionModalVisible, setVersionModalVisible] = useState(false);
+  const [bookModalVisible, setBookModalVisible] = useState(false);
+  const [chapterModalVisible, setChapterModalVisible] = useState(false);
+  const [verseModalVisible, setVerseModalVisible] = useState(false);
 
   const searchTimeout = useRef<any>(null);
   const inputRef = useRef<TextInput>(null);
@@ -191,13 +190,11 @@ export default function SearchScreen() {
     router.setParams({ query: q });
   };
 
-  const initialSearchRun = useRef(false);
   useEffect(() => {
-    if (loaded && query.trim().length >= 2 && !initialSearchRun.current) {
-      initialSearchRun.current = true;
+    if (loaded && query.trim().length >= 2) {
       runSearch(query, scope, true);
     }
-  }, [loaded, query, scope, runSearch]);
+  }, [version, activeBook, chapter, scope]);
 
   const handleChangeScope = (sc: SearchScope) => {
     setScope(sc);
@@ -222,7 +219,7 @@ export default function SearchScreen() {
 
   const handleNavigate = (r: SearchResult) => {
     addToHistory(query.trim());
-    router.push({ pathname: '/bible', params: { book: r.bookAbbrev, ch: r.chapter, v: r.verse } } as any);
+    router.push({ pathname: '/bible', params: { book: r.bookAbbrev, ch: r.chapter, v: r.verse, ver: version } } as any);
   };
 
   const handleClearQuery = () => {
@@ -243,14 +240,29 @@ export default function SearchScreen() {
     return <BibleSkeleton />;
   }
 
+  const btnBg = colors.onPrimary + '4D';
+  const btnText = colors.onPrimary;
+
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <BibleHeader
-        title="Pesquisar"
         showMenu={params.from !== 'bible'}
         showBack={params.from === 'bible'}
         onBack={() => handleSmartBack(pathname)}
         onMenuPress={() => setDrawerVisible(true)}
+        leftContent={
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <TouchableOpacity style={[styles.navBtn, { backgroundColor: btnBg }]} onPress={() => setVersionModalVisible(true)}>
+              <BibleText style={[styles.navBtnText, { color: btnText }]}>{version}</BibleText>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.navBtn, { backgroundColor: btnBg }]} onPress={() => setBookModalVisible(true)}>
+              <BibleText style={[styles.navBtnText, { color: btnText }]}>{currentBook.name}</BibleText>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.navBtn, { backgroundColor: btnBg }]} onPress={() => setChapterModalVisible(true)}>
+              <BibleText style={[styles.navBtnText, { color: btnText }]}>{chapter}</BibleText>
+            </TouchableOpacity>
+          </View>
+        }
       />
 
       <View style={[styles.searchContainer, { backgroundColor: colors.background, borderBottomColor: colors.border }]}>
@@ -273,13 +285,15 @@ export default function SearchScreen() {
             <TouchableOpacity onPress={handleClearQuery} style={{ padding: 4 }}>
               <Feather name="x" size={ms(16)} color={colors.textMuted} />
             </TouchableOpacity>
-          ) || (
-            <BibleText style={{ color: colors.textMuted, fontSize: ms(11), fontWeight: '700' }}>{scope === 'bible' ? 'BÍBLIA' : scope.toUpperCase()}</BibleText>
           )}
         </View>
 
         <View style={[styles.scopeRow]}>
-          {SCOPES.map(s => (
+          {[
+            { key: 'bible' as SearchScope, label: `Bíblia: ${version}` },
+            { key: 'book' as SearchScope, label: `Livro: ${currentBook.name}` },
+            { key: 'chapter' as SearchScope, label: `Capítulo: ${chapter}` },
+          ].map(s => (
             <TouchableOpacity
               key={s.key}
               style={[styles.scopeBtn, scope === s.key && { borderBottomColor: colors.primary, borderBottomWidth: 2 }]}
@@ -396,6 +410,32 @@ export default function SearchScreen() {
       />
 
       <DonateModal visible={donateVisible} onClose={() => setDonateVisible(false)} />
+      <BibleModals
+        versionBooks={versionBooks}
+        currentBook={currentBook}
+        chapter={chapter}
+        chapterCount={chapterCount}
+        versionModalVisible={versionModalVisible}
+        bookModalVisible={bookModalVisible}
+        chapterModalVisible={chapterModalVisible}
+        verseModalVisible={verseModalVisible}
+        setVersionModalVisible={setVersionModalVisible}
+        setBookModalVisible={setBookModalVisible}
+        setChapterModalVisible={setChapterModalVisible}
+        setVerseModalVisible={setVerseModalVisible}
+        skipVerseSelection={true}
+        onVersionSelect={(v) => {
+          setVersion(v);
+        }}
+        onBookSelect={(b) => {
+          setBook(b);
+          // Chapter selection will follow
+        }}
+        onChapterSelect={(c) => {
+          setChapter(c);
+        }}
+        onVerseSelect={() => { }}
+      />
     </View>
   );
 }
@@ -468,4 +508,6 @@ const styles = StyleSheet.create({
   },
   refText: { fontWeight: '700' },
   verseText: { fontSize: 14, lineHeight: 20 },
+  navBtn: { height: 38, paddingHorizontal: 12, marginHorizontal: 3, borderRadius: 10, justifyContent: 'center', alignItems: 'center' },
+  navBtnText: { fontSize: 15, fontWeight: '700' },
 });

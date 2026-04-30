@@ -11,8 +11,8 @@ import { BibleTopBar } from '../../components/BibleTopBar';
 import { BibleVerseReader } from '../../components/BibleVerseReader';
 import { useBible } from '../../hooks/use-bible';
 
-import { BibleToast } from '../../components/BibleToast';
 import { BibleSkeleton } from '../../components/BibleSkeleton';
+import { BibleToast } from '../../components/BibleToast';
 import { DonateModal } from '../../components/DonateModal';
 import { useReaderSettings } from '../../hooks/use-reader-settings';
 import { useTheme } from '../../hooks/use-theme';
@@ -228,112 +228,112 @@ export default function BibleScreen() {
         <BibleSkeleton />
       </Animated.View>
       <Animated.View style={[styles.page, { opacity: fadeAnim, backgroundColor: 'transparent', zIndex: 2 }]}>
-      <BibleTopBar
-        version={version}
-        bookName={currentBook.name}
-        currentChapter={visibleChapter}
-        onOpenVersion={() => setVersionModalVisible(true)}
-        onOpenBook={() => setBookModalVisible(true)}
-        onOpenChapter={() => setChapterModalVisible(true)}
-        onPrevChapter={() => navigateChapter(-1)}
-        onNextChapter={() => navigateChapter(1)}
-        onOpenMenu={() => setDrawerVisible(true)}
-        onOpenSettings={() => setSettingsModalVisible(true)}
-        onOpenSearch={() => router.push('/search?from=bible')}
-      />
+        <BibleTopBar
+          version={version}
+          bookName={currentBook.name}
+          currentChapter={visibleChapter}
+          onOpenVersion={() => setVersionModalVisible(true)}
+          onOpenBook={() => setBookModalVisible(true)}
+          onOpenChapter={() => setChapterModalVisible(true)}
+          onPrevChapter={() => navigateChapter(-1)}
+          onNextChapter={() => navigateChapter(1)}
+          onOpenMenu={() => setDrawerVisible(true)}
+          onOpenSettings={() => setSettingsModalVisible(true)}
+          onOpenSearch={() => router.push('/search?from=bible')}
+        />
 
-      <View style={styles.content}>
-        {isChangingVersion ? (
-          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <ActivityIndicator size="large" color={colors.primary} />
-            <BibleText style={{ marginTop: 16, fontWeight: '700', color: colors.primary, fontSize: 16 }}>Carregando {isChangingVersion}...</BibleText>
-          </View>
-        ) : (
-          <BibleVerseReader
-            listRef={sectionListRef}
-            sections={sectionData}
-            blinkingVerse={blinkingVerse}
-            highlights={highlights}
-            version={version}
-            selectedKeys={selectedVerses.reduce((acc, v) => { acc[`${v.bookAbbrev}-${v.chapter}-${v.verse}`] = true; return acc; }, {} as Record<string, boolean>)}
-            bookAbbrev={currentBook.abbrev}
-            onVersePress={onVersePress}
-            onViewableItemsChanged={onViewableItemsChanged.current}
-            viewabilityConfig={viewabilityConfig.current}
-            onScrollToIndexFailed={onScrollToIndexFailed}
-          />
-        )}
+        <View style={styles.content}>
+          {isChangingVersion ? (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+              <ActivityIndicator size="large" color={colors.primary} />
+              <BibleText style={{ marginTop: 16, fontWeight: '700', color: colors.primary, fontSize: 16 }}>Carregando {isChangingVersion}...</BibleText>
+            </View>
+          ) : (
+            <BibleVerseReader
+              listRef={sectionListRef}
+              sections={sectionData}
+              blinkingVerse={blinkingVerse}
+              highlights={highlights}
+              version={version}
+              selectedKeys={selectedVerses.reduce((acc, v) => { acc[`${v.bookAbbrev}-${v.chapter}-${v.verse}`] = true; return acc; }, {} as Record<string, boolean>)}
+              bookAbbrev={currentBook.abbrev}
+              onVersePress={onVersePress}
+              onViewableItemsChanged={onViewableItemsChanged.current}
+              viewabilityConfig={viewabilityConfig.current}
+              onScrollToIndexFailed={onScrollToIndexFailed}
+            />
+          )}
 
-        {!actionSheetVisible && (
-          <>
-            <TouchableOpacity
-              style={[styles.floatingArrow, styles.floatingArrowLeft, { backgroundColor: colors.primary, shadowColor: colors.shadow }]}
-              onPress={() => navigateChapter(-1)}
-            >
-              <Feather name="chevron-left" size={24} color={colors.onPrimary} />
-            </TouchableOpacity>
+          {!actionSheetVisible && (
+            <>
+              <TouchableOpacity
+                style={[styles.floatingArrow, styles.floatingArrowLeft, { backgroundColor: colors.primary, shadowColor: colors.shadow }]}
+                onPress={() => navigateChapter(-1)}
+              >
+                <Feather name="chevron-left" size={24} color={colors.onPrimary} />
+              </TouchableOpacity>
 
-            <TouchableOpacity
-              style={[styles.floatingArrow, styles.floatingArrowRight, { backgroundColor: colors.primary, shadowColor: colors.shadow }]}
-              onPress={() => navigateChapter(1)}
-            >
-              <Feather name="chevron-right" size={24} color={colors.onPrimary} />
-            </TouchableOpacity>
-          </>
-        )}
-      </View>
+              <TouchableOpacity
+                style={[styles.floatingArrow, styles.floatingArrowRight, { backgroundColor: colors.primary, shadowColor: colors.shadow }]}
+                onPress={() => navigateChapter(1)}
+              >
+                <Feather name="chevron-right" size={24} color={colors.onPrimary} />
+              </TouchableOpacity>
+            </>
+          )}
+        </View>
 
-      <BibleModals
-        versionBooks={versionBooks}
-        currentBook={currentBook}
-        chapter={chapter}
-        chapterCount={chapterCount}
-        versionModalVisible={versionModalVisible}
-        bookModalVisible={bookModalVisible}
-        chapterModalVisible={chapterModalVisible}
-        verseModalVisible={verseModalVisible}
-        setVersionModalVisible={setVersionModalVisible}
-        setBookModalVisible={setBookModalVisible}
-        setChapterModalVisible={setChapterModalVisible}
-        setVerseModalVisible={setVerseModalVisible}
-        onVersionSelect={(v) => {
-          setVersionModalVisible(false);
-          setIsChangingVersion(v);
-          setTimeout(() => {
-            setVersion(v);
-            setIsChangingVersion(null);
-          }, 50);
-        }}
-        onBookSelect={(b) => { setBook(b); setChapter(1); setVerse(1); }}
-        onChapterSelect={(c) => { setChapter(c); setVerse(1); }}
-        onVerseSelect={(v) => { setVerse(v); setTimeout(() => scrollToVerse(v, chapterRef.current), 300); }}
-      />
+        <BibleModals
+          versionBooks={versionBooks}
+          currentBook={currentBook}
+          chapter={chapter}
+          chapterCount={chapterCount}
+          versionModalVisible={versionModalVisible}
+          bookModalVisible={bookModalVisible}
+          chapterModalVisible={chapterModalVisible}
+          verseModalVisible={verseModalVisible}
+          setVersionModalVisible={setVersionModalVisible}
+          setBookModalVisible={setBookModalVisible}
+          setChapterModalVisible={setChapterModalVisible}
+          setVerseModalVisible={setVerseModalVisible}
+          onVersionSelect={(v) => {
+            setVersionModalVisible(false);
+            setIsChangingVersion(v);
+            setTimeout(() => {
+              setVersion(v);
+              setIsChangingVersion(null);
+            }, 50);
+          }}
+          onBookSelect={(b) => { setBook(b); setChapter(1); setVerse(1); }}
+          onChapterSelect={(c) => { setChapter(c); setVerse(1); }}
+          onVerseSelect={(v) => { setVerse(v); setTimeout(() => scrollToVerse(v, chapterRef.current), 300); }}
+        />
 
-      <BibleVerseActionSheet
-        visible={actionSheetVisible}
-        selectedVerses={selectedVerses}
-        highlights={highlights}
-        onClose={onActionSheetClose}
-        onBulkHighlight={bulkToggleHighlight}
-        onShowToast={show}
-      />
+        <BibleVerseActionSheet
+          visible={actionSheetVisible}
+          selectedVerses={selectedVerses}
+          highlights={highlights}
+          onClose={onActionSheetClose}
+          onBulkHighlight={bulkToggleHighlight}
+          onShowToast={show}
+        />
 
-      <ReaderSettingsModal
-        visible={settingsModalVisible}
-        onClose={() => setSettingsModalVisible(false)}
-      />
+        <ReaderSettingsModal
+          visible={settingsModalVisible}
+          onClose={() => setSettingsModalVisible(false)}
+        />
 
-      <BibleDrawerMenu
-        visible={drawerVisible}
-        activeItem="bible"
-        onClose={() => setDrawerVisible(false)}
-        onSelectItem={() => setDrawerVisible(false)}
-        onOpenDonate={() => { setDrawerVisible(false); setTimeout(() => setDonateVisible(true), 250); }}
-      />
+        <BibleDrawerMenu
+          visible={drawerVisible}
+          activeItem="bible"
+          onClose={() => setDrawerVisible(false)}
+          onSelectItem={() => setDrawerVisible(false)}
+          onOpenDonate={() => { setDrawerVisible(false); setTimeout(() => setDonateVisible(true), 250); }}
+        />
 
-      <BibleToast toast={toast} opacity={opacity} />
+        <BibleToast toast={toast} opacity={opacity} />
 
-      <DonateModal visible={donateVisible} onClose={() => setDonateVisible(false)} />
+        <DonateModal visible={donateVisible} onClose={() => setDonateVisible(false)} />
       </Animated.View>
     </View>
   );

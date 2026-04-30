@@ -1,4 +1,4 @@
-﻿import React, { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { Book } from '../data';
 import { useResponsive } from '../hooks/use-responsive';
 import { BibleBookModal } from './BibleBookModal';
@@ -26,6 +26,7 @@ export type BibleModalsProps = {
   onBookSelect: (bookName: string) => void;
   onChapterSelect: (chapter: number) => void;
   onVerseSelect: (verse: number) => void;
+  skipVerseSelection?: boolean;
 };
 
 export function BibleModals(props: BibleModalsProps) {
@@ -33,7 +34,8 @@ export function BibleModals(props: BibleModalsProps) {
     versionBooks, currentBook, chapter, chapterCount,
     versionModalVisible, bookModalVisible, chapterModalVisible, verseModalVisible,
     setVersionModalVisible, setBookModalVisible, setChapterModalVisible, setVerseModalVisible,
-    onVersionSelect, onBookSelect, onChapterSelect, onVerseSelect
+    onVersionSelect, onBookSelect, onChapterSelect, onVerseSelect,
+    skipVerseSelection = false
   } = props;
   const { ms } = useResponsive();
   const fontSize = ms(14);
@@ -97,7 +99,9 @@ export function BibleModals(props: BibleModalsProps) {
         onSelect={(num) => {
           onChapterSelect(num);
           setChapterModalVisible(false);
-          setVerseModalVisible(true);
+          if (!skipVerseSelection) {
+            setVerseModalVisible(true);
+          }
         }}
       />
       <BibleNumberModal

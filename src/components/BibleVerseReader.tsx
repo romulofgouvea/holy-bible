@@ -100,7 +100,7 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
                 const copyright = (versionInfo as any)?.copyright;
                 if (!copyright) return null;
                 const primaryColor = readerTheme === 'sepia' ? readerColors.primary : colors.primary;
-                const primaryLow = readerTheme === 'sepia' ? (readerColors as any).primaryLow || colors.primary : colors.primary;
+                const primaryLow = primaryColor + '1A'; // 10% opacity
                 return (
                     <View style={[
                         styles.copyrightCard,
