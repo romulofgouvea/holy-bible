@@ -1,28 +1,13 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, useMemo, useCallback } from 'react';
 import { Platform } from 'react-native';
-import { COLOR_THEMES, ThemeColors } from '../constants/colors';
+import { COLOR_THEMES, ThemeColors, sepiaColors } from '../constants/colors';
 import { STORAGE_KEYS } from '../constants/storage';
 import { useTheme } from './use-theme';
 
 export type ReaderTheme = 'light' | 'dark' | 'sepia';
 export type ReaderFont = 'poppins' | 'monospace';
 export type TextAlign = 'auto' | 'left' | 'right' | 'center' | 'justify';
-
-export const sepiaColors: ThemeColors = {
-  primary: '#5C4033',
-  primaryVariant: '#4A3B32',
-  secondary: '#7A6354',
-  secondaryVariant: '#D8CCB2',
-  background: '#EAE0C8',
-  surface: '#E1D6BD',
-  error: '#8B0000',
-  onPrimary: '#EAE0C8',
-  onSecondary: '#EAE0C8',
-  onBackground: '#4A3B32',
-  onSurface: '#4A3B32',
-  onError: '#FFFFFF',
-};
 
 export type ReaderSettingsContextType = {
   fontSizeMultiplier: number;
@@ -50,10 +35,12 @@ export const ReaderSettingsProvider = ({ children }: { children: React.ReactNode
   useEffect(() => {
     (async () => {
       try {
-        const savedFontSize = await AsyncStorage.getItem(STORAGE_KEYS.FONT_SIZE);
-        const savedAlign = await AsyncStorage.getItem(STORAGE_KEYS.TEXT_ALIGN);
-        const savedTheme = await AsyncStorage.getItem(STORAGE_KEYS.READER_THEME);
-        const savedFont = await AsyncStorage.getItem(STORAGE_KEYS.READER_FONT);
+        const [savedFontSize, savedAlign, savedTheme, savedFont] = await Promise.all([
+          AsyncStorage.getItem(STORAGE_KEYS.FONT_SIZE),
+          AsyncStorage.getItem(STORAGE_KEYS.TEXT_ALIGN),
+          AsyncStorage.getItem(STORAGE_KEYS.READER_THEME),
+          AsyncStorage.getItem(STORAGE_KEYS.READER_FONT),
+        ]);
 
         if (savedFontSize !== null) setFontSizeMultiplierState(Number(savedFontSize));
         if (savedAlign !== null) setTextAlignState(savedAlign as TextAlign);
@@ -64,47 +51,64 @@ export const ReaderSettingsProvider = ({ children }: { children: React.ReactNode
     })();
   }, []);
 
-  const setFontSizeMultiplier = async (val: number) => {
+  const setFontSizeMultiplier = useCallback(async (val: number) => {
     setFontSizeMultiplierState(val);
     try { await AsyncStorage.setItem(STORAGE_KEYS.FONT_SIZE, String(val)); } catch (e) { }
-  };
+  }, []);
 
-  const setTextAlign = async (val: TextAlign) => {
+  const setTextAlign = useCallback(async (val: TextAlign) => {
     setTextAlignState(val);
     try { await AsyncStorage.setItem(STORAGE_KEYS.TEXT_ALIGN, val); } catch (e) { }
-  };
+  }, []);
 
-  const setReaderTheme = async (val: ReaderTheme) => {
+  const setReaderTheme = useCallback(async (val: ReaderTheme) => {
     setReaderThemeState(val);
     try { await AsyncStorage.setItem(STORAGE_KEYS.READER_THEME, val); } catch (e) { }
-  };
+  }, []);
 
-  const setReaderFont = async (val: ReaderFont) => {
+  const setReaderFont = useCallback(async (val: ReaderFont) => {
     setReaderFontState(val);
     try { await AsyncStorage.setItem(STORAGE_KEYS.READER_FONT, val); } catch (e) { }
-  };
+  }, []);
 
-  const activePalette = COLOR_THEMES[colorTheme] || COLOR_THEMES.teal;
-  const readerColors = readerTheme === 'sepia' ? sepiaColors : (readerTheme === 'dark' ? activePalette.dark : activePalette.light);
-  const readerFontFamily = readerFont === 'monospace' ? (Platform.OS === 'ios' ? 'Courier' : 'monospace') : 'Poppins_400Regular';
+  const value = useMemo(() => {
+    const activePalette = COLOR_THEMES[colorTheme] || COLOR_THEMES.teal;
+    const readerColors = readerTheme === 'sepia' 
+      ? sepiaColors 
+      : (readerTheme === 'dark' ? activePalette.dark : activePalette.light);
+    
+    const readerFontFamily = readerFont === 'monospace' 
+      ? (Platform.OS === 'ios' ? 'Courier' : 'monospace') 
+      : 'Poppins_400Regular';
+
+    return {
+      fontSizeMultiplier,
+      setFontSizeMultiplier,
+      textAlign,
+      setTextAlign,
+      readerTheme,
+      setReaderTheme,
+      readerFont,
+      setReaderFont,
+      readerFontFamily,
+      readerColors,
+    };
+  }, [
+    colorTheme, 
+    fontSizeMultiplier, 
+    textAlign, 
+    readerTheme, 
+    readerFont, 
+    setFontSizeMultiplier, 
+    setTextAlign, 
+    setReaderTheme, 
+    setReaderFont
+  ]);
 
   if (!loaded) return null;
 
   return (
-    <ReaderSettingsContext.Provider
-      value={{
-        fontSizeMultiplier,
-        setFontSizeMultiplier,
-        textAlign,
-        setTextAlign,
-        readerTheme,
-        setReaderTheme,
-        readerFont,
-        setReaderFont,
-        readerFontFamily,
-        readerColors,
-      }}
-    >
+    <ReaderSettingsContext.Provider value={value}>
       {children}
     </ReaderSettingsContext.Provider>
   );
