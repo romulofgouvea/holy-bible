@@ -157,7 +157,7 @@ export function BibleDrawerMenu(props: DrawerMenuProps) {
                 Bíblia Sagrada
               </BibleText>
               <BibleText style={{ fontSize: ms(12), color: colors.onPrimary, opacity: 0.75, marginTop: 2 }}>
-                v{require('../../package.json').version}
+                v{require('../../app.json').expo.version}
               </BibleText>
             </View>
           </View>
