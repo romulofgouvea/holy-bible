@@ -39,7 +39,7 @@ const STORAGE_SEARCH_QUERY = '@bible:search_query';
 const STORAGE_SEARCH_HISTORY = '@bible:search_history';
 const MAX_HISTORY = 20;
 
-function HighlightText({ text, query, colors, fontSizeMultiplier, ms }: { text: string; query: string; colors: any; fontSizeMultiplier: number; ms: (v: number) => number }) {
+const HighlightText = React.memo(({ text, query, colors, fontSizeMultiplier, ms }: { text: string; query: string; colors: any; fontSizeMultiplier: number; ms: (v: number) => number }) => {
   const baseSize = 20;
   const currentSize = ms(baseSize * fontSizeMultiplier);
   const currentLineHeight = ms(28 * fontSizeMultiplier);
@@ -56,7 +56,30 @@ function HighlightText({ text, query, colors, fontSizeMultiplier, ms }: { text: 
       {text.slice(idx + query.length)}
     </BibleText>
   );
-}
+});
+const SearchResultItem = React.memo(({ item, query, colors, fontSizeMultiplier, ms, onPress }: { 
+  item: SearchResult; 
+  query: string; 
+  colors: any; 
+  fontSizeMultiplier: number; 
+  ms: (v: number) => number; 
+  onPress: (item: SearchResult) => void;
+}) => (
+  <TouchableOpacity
+    activeOpacity={0.75}
+    style={[styles.resultCard, { backgroundColor: colors.surface, borderColor: colors.border }]}
+    onPress={() => onPress(item)}
+  >
+    <View style={[styles.refBadge, { backgroundColor: colors.primary, paddingVertical: ms(2) }]}>
+      <BibleText style={[styles.refText, { color: colors.onPrimary, fontSize: ms(11 * fontSizeMultiplier) }]}>
+        {item.bookName} {item.chapter}:{item.verse}
+      </BibleText>
+    </View>
+    <View style={{ flex: 1, marginTop: 6 }}>
+      <HighlightText text={item.text} query={query} colors={colors} fontSizeMultiplier={fontSizeMultiplier} ms={ms} />
+    </View>
+  </TouchableOpacity>
+));
 
 export default function SearchScreen() {
   const { ms } = useResponsive();
@@ -392,20 +415,14 @@ export default function SearchScreen() {
             </BibleText>
           }
           renderItem={({ item }) => (
-            <TouchableOpacity
-              activeOpacity={0.75}
-              style={[styles.resultCard, { backgroundColor: colors.surface, borderColor: colors.border }]}
-              onPress={() => handleNavigate(item)}
-            >
-              <View style={[styles.refBadge, { backgroundColor: colors.primary, paddingVertical: ms(2) }]}>
-                <BibleText style={[styles.refText, { color: colors.onPrimary, fontSize: ms(11 * fontSizeMultiplier) }]}>
-                  {item.bookName} {item.chapter}:{item.verse}
-                </BibleText>
-              </View>
-              <View style={{ flex: 1, marginTop: 6 }}>
-                <HighlightText text={item.text} query={query.trim()} colors={colors} fontSizeMultiplier={fontSizeMultiplier} ms={ms} />
-              </View>
-            </TouchableOpacity>
+            <SearchResultItem 
+              item={item} 
+              query={query.trim()} 
+              colors={colors} 
+              fontSizeMultiplier={fontSizeMultiplier} 
+              ms={ms} 
+              onPress={handleNavigate} 
+            />
           )}
         />
       ) : null}

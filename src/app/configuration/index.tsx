@@ -12,6 +12,7 @@ import { BibleDrawerMenu } from '../../components/BibleDrawerMenu';
 import { BibleHeader } from '../../components/BibleHeader';
 import { BibleText } from '../../components/BibleText';
 import { DonateModal } from '../../components/DonateModal';
+import { ThemedIcon } from '../../components/ThemedIcon';
 import { STORAGE_KEYS } from '../../constants/storage';
 import { useReaderSettings } from '../../hooks/use-reader-settings';
 import { useResponsive } from '../../hooks/use-responsive';
@@ -160,9 +161,7 @@ export default function ConfigurationScreen() {
         <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border, shadowColor: colors.shadow }]}>
 
           <TouchableOpacity style={styles.cardHeader} activeOpacity={0.8} onPress={handleToggle}>
-            <View style={[styles.iconWrap, { backgroundColor: colors.primary }]}>
-              <Feather name={isDarkMode ? 'moon' : 'sun'} size={ms(20)} color={colors.onPrimary} />
-            </View>
+            <ThemedIcon name={isDarkMode ? 'moon' : 'sun'} />
             <View style={styles.cardTextContainer}>
               <BibleText style={[styles.cardTitle, { fontSize: ms(16), color: colors.onBackground }]}>
                 Modo Escuro
@@ -185,9 +184,7 @@ export default function ConfigurationScreen() {
 
           <View style={[styles.cardHeader, { flexDirection: 'column', alignItems: 'flex-start', gap: 12 }]}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-              <View style={[styles.iconWrap, { backgroundColor: colors.primary }]}>
-                <Feather name="droplet" size={ms(20)} color={colors.onPrimary} />
-              </View>
+              <ThemedIcon name="droplet" />
               <View style={styles.cardTextContainer}>
                 <BibleText style={[styles.cardTitle, { fontSize: ms(16), color: colors.onBackground }]}>
                   Cor do Aplicativo
@@ -210,9 +207,9 @@ export default function ConfigurationScreen() {
                       onPress={() => setColorTheme(theme.key as ColorThemeKey)}
                       style={[
                         styles.swatchItem,
-                        { 
+                        {
                           borderColor: isActive ? swatchColor : colors.border,
-                          backgroundColor: isActive ? swatchColor + '15' : colors.surfaceHighlight 
+                          backgroundColor: isActive ? swatchColor + '15' : colors.surfaceHighlight
                         },
                         isActive && { borderWidth: 2, borderColor: swatchColor },
                       ]}
@@ -239,9 +236,7 @@ export default function ConfigurationScreen() {
         <BibleText style={{ marginTop: 24, marginLeft: 8, marginBottom: 8, fontSize: ms(14), fontWeight: '700', color: colors.textMuted }}>GERENCIAMENTO</BibleText>
         <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border, shadowColor: colors.shadow }]}>
           <TouchableOpacity style={styles.cardHeader} activeOpacity={0.8} onPress={() => router.push('/configuration/trash' as any)}>
-            <View style={[styles.iconWrap, { backgroundColor: colors.primary }]}>
-              <Feather name="trash-2" size={ms(20)} color={colors.onPrimary} />
-            </View>
+            <ThemedIcon name="trash-2" />
             <View style={styles.cardTextContainer}>
               <BibleText style={[styles.cardTitle, { fontSize: ms(16), color: colors.onBackground }]}>
                 Lixeira de Estudos
@@ -256,9 +251,7 @@ export default function ConfigurationScreen() {
         <BibleText style={{ marginTop: 24, marginLeft: 8, marginBottom: 8, fontSize: ms(14), fontWeight: '700', color: colors.textMuted }}>BACKUP E RESTAURAÇÃO</BibleText>
         <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border, shadowColor: colors.shadow }]}>
           <TouchableOpacity style={styles.cardHeader} activeOpacity={0.8} onPress={() => handleToggleAutoBackup(!autoBackup)}>
-            <View style={[styles.iconWrap, { backgroundColor: colors.primary }]}>
-              <Feather name="save" size={ms(20)} color={colors.onPrimary} />
-            </View>
+            <ThemedIcon name="save" />
             <View style={styles.cardTextContainer}>
               <BibleText style={[styles.cardTitle, { fontSize: ms(16), color: colors.onBackground }]}>
                 Backup Automático
@@ -280,9 +273,7 @@ export default function ConfigurationScreen() {
           <View style={{ height: 1, backgroundColor: colors.border, marginLeft: 70 }} />
 
           <TouchableOpacity style={styles.cardHeader} activeOpacity={0.8} onPress={handleManualBackup}>
-            <View style={[styles.iconWrap, { backgroundColor: colors.primary }]}>
-              <Feather name="download" size={ms(20)} color={colors.onPrimary} />
-            </View>
+            <ThemedIcon name="download" />
             <View style={styles.cardTextContainer}>
               <BibleText style={[styles.cardTitle, { fontSize: ms(16), color: colors.onBackground }]}>
                 Exportar Backup
@@ -296,9 +287,7 @@ export default function ConfigurationScreen() {
           <View style={{ height: 1, backgroundColor: colors.border, marginLeft: 70 }} />
 
           <TouchableOpacity style={styles.cardHeader} activeOpacity={0.8} onPress={handleImport}>
-            <View style={[styles.iconWrap, { backgroundColor: colors.primary }]}>
-              <Feather name="upload" size={ms(20)} color={colors.onPrimary} />
-            </View>
+            <ThemedIcon name="upload" />
             <View style={styles.cardTextContainer}>
               <BibleText style={[styles.cardTitle, { fontSize: ms(16), color: colors.onBackground }]}>
                 Restaurar do Backup
@@ -356,13 +345,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 16,
     gap: 16,
-  },
-  iconWrap: {
-    width: 38,
-    height: 38,
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   cardTextContainer: {
     flex: 1,
