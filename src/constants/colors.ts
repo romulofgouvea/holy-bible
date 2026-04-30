@@ -51,7 +51,7 @@ export const VERSE_HIGHLIGHTS = [
 export const getSupportColors = (colors: ThemeColors, isDarkMode: boolean) => ({
   border: isDarkMode ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.1)',
   shadow: '#000000',
-  overlay: isDarkMode ? 'rgba(0,0,0,0.85)' : 'rgba(0,0,0,0.5)',
+  overlay: 'rgba(0,0,0,0.5)',
   textMuted: isDarkMode ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.6)',
   surfaceHighlight: isDarkMode ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.05)',
 });

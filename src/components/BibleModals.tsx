@@ -1,10 +1,10 @@
 import React, { useMemo } from 'react';
 import { Book } from '../data';
 import { useResponsive } from '../hooks/use-responsive';
+import { BibleBookModal } from './BibleBookModal';
+import { BibleNumberModal } from './BibleNumberModal';
+import { BibleVersionModal } from './BibleVersionModal';
 import { BibleBottomSheet } from './BibleBottomSheet';
-import { VersionPicker } from './modals/VersionPicker';
-import { BookPicker } from './modals/BookPicker';
-import { NumberPicker } from './modals/NumberPicker';
 import { selectionHaptic } from '../utils/haptics';
 
 export type BibleModalsProps = {
@@ -60,66 +60,63 @@ export function BibleModals(props: BibleModalsProps) {
 
   return (
     <BibleBottomSheet visible={isAnyVisible} onClose={closeAllModals}>
-      {versionModalVisible && (
-        <VersionPicker
-          onClose={closeAllModals}
-          onSelect={(v) => {
-            selectionHaptic();
-            onVersionSelect(v, '');
-            setVersionModalVisible(false);
-          }}
-        />
-      )}
-      {bookModalVisible && (
-        <BookPicker
-          books={versionBooks}
-          onClose={closeAllModals}
-          onSelect={(name) => {
-            selectionHaptic();
-            onBookSelect(name);
-            setBookModalVisible(false);
-            setChapterModalVisible(true);
-          }}
-        />
-      )}
-      {chapterModalVisible && (
-        <NumberPicker
-          title="Capítulos"
-          items={chapterNumbers}
-          activeNumber={chapter}
-          onClose={closeAllModals}
-          onBack={() => {
-            setChapterModalVisible(false);
-            setBookModalVisible(true);
-          }}
-          onSelect={(num) => {
-            selectionHaptic();
-            onChapterSelect(num);
-            setChapterModalVisible(false);
-            if (skipVerseSelection) {
-              onVerseSelect(1);
-            } else {
-              setVerseModalVisible(true);
-            }
-          }}
-        />
-      )}
-      {verseModalVisible && (
-        <NumberPicker
-          title="Versículos"
-          items={verseNumbers}
-          onClose={closeAllModals}
-          onBack={() => {
-            setVerseModalVisible(false);
-            setChapterModalVisible(true);
-          }}
-          onSelect={(num) => {
-            selectionHaptic();
-            onVerseSelect(num);
-            setVerseModalVisible(false);
-          }}
-        />
-      )}
+      <BibleVersionModal
+        visible={versionModalVisible}
+        onClose={closeAllModals}
+        onSelect={(v) => {
+          selectionHaptic();
+          onVersionSelect(v.sigla, '');
+          setVersionModalVisible(false);
+        }}
+      />
+      <BibleBookModal
+        visible={bookModalVisible}
+        onClose={closeAllModals}
+        books={versionBooks}
+        onSelect={(bookName) => {
+          selectionHaptic();
+          onBookSelect(bookName);
+          setBookModalVisible(false);
+          setChapterModalVisible(true);
+        }}
+      />
+      <BibleNumberModal
+        visible={chapterModalVisible}
+        onClose={closeAllModals}
+        onBack={() => {
+          setChapterModalVisible(false);
+          setBookModalVisible(true);
+        }}
+        title="Capítulos"
+        iconName="list"
+        items={chapterNumbers}
+        onSelect={(num) => {
+          selectionHaptic();
+          onChapterSelect(num);
+          setChapterModalVisible(false);
+          if (skipVerseSelection) {
+            onVerseSelect(1);
+          } else {
+            setVerseModalVisible(true);
+          }
+        }}
+      />
+      <BibleNumberModal
+        visible={verseModalVisible}
+        onClose={closeAllModals}
+        onBack={() => {
+          setVerseModalVisible(false);
+          setChapterModalVisible(true);
+        }}
+        title="Versículos"
+        iconName="hash"
+        items={verseNumbers}
+        onSelect={(num) => {
+          selectionHaptic();
+          onVerseSelect(num);
+          setVerseModalVisible(false);
+        }}
+      />
     </BibleBottomSheet>
   );
 }
