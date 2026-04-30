@@ -58,12 +58,12 @@ export function ReaderSettingsModal({ visible, onClose }: { visible: boolean; on
               <BibleText style={[{ color: readerTheme === 'light' ? colors.onPrimary : colors.onSurface, fontWeight: '700' }]}>Claro</BibleText>
             </TouchableOpacity>
             <View style={[styles.divider, { backgroundColor: colors.border }]} />
-            <TouchableOpacity style={[styles.actionBtn, readerTheme === 'sepia' && { backgroundColor: colors.primary }]} onPress={() => handleSetTheme('sepia')}>
-              <BibleText style={[{ color: readerTheme === 'sepia' ? colors.onPrimary : colors.onSurface, fontWeight: '700' }]}>Sépia</BibleText>
-            </TouchableOpacity>
-            <View style={[styles.divider, { backgroundColor: colors.border }]} />
             <TouchableOpacity style={[styles.actionBtn, readerTheme === 'dark' && { backgroundColor: colors.primary }]} onPress={() => handleSetTheme('dark')}>
               <BibleText style={[{ color: readerTheme === 'dark' ? colors.onPrimary : colors.onSurface, fontWeight: '700' }]}>Escuro</BibleText>
+            </TouchableOpacity>
+            <View style={[styles.divider, { backgroundColor: colors.border }]} />
+            <TouchableOpacity style={[styles.actionBtn, readerTheme === 'sepia' && { backgroundColor: colors.primary }]} onPress={() => handleSetTheme('sepia')}>
+              <BibleText style={[{ color: readerTheme === 'sepia' ? colors.onPrimary : colors.onSurface, fontWeight: '700' }]}>Leitura</BibleText>
             </TouchableOpacity>
           </View>
         </View>

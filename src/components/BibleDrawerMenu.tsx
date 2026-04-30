@@ -147,7 +147,7 @@ export function BibleDrawerMenu(props: DrawerMenuProps) {
           <Animated.View style={[styles.backdrop, { opacity: backdropOpacity, backgroundColor: colors.overlay }]} />
         </TouchableWithoutFeedback>
 
-        <Animated.View style={[styles.drawer, { width: drawerWidth, transform: [{ translateX }], backgroundColor: colors.surface, shadowColor: colors.shadow }]}>
+        <Animated.View style={[styles.drawer, { width: drawerWidth, transform: [{ translateX }], backgroundColor: colors.background, shadowColor: colors.shadow }]}>
           <View style={[styles.drawerHeader, { backgroundColor: colors.primary, paddingTop: Math.max(ms(20), insets.top + ms(16)), paddingBottom: ms(20), paddingHorizontal: ms(16) }]}>
             <View style={[styles.drawerLogo, { width: ms(38), height: ms(38), borderRadius: ms(10), marginRight: ms(10), backgroundColor: colors.surfaceHighlight }]}>
               <Feather name="book" size={ms(19)} color={colors.onPrimary} />
@@ -156,7 +156,7 @@ export function BibleDrawerMenu(props: DrawerMenuProps) {
               <BibleText style={[styles.drawerTitle, { fontSize: ms(17), color: colors.onPrimary }]} numberOfLines={1}>
                 Bíblia Sagrada
               </BibleText>
-              <BibleText style={{ fontSize: ms(12), color: colors.onPrimary, opacity: 0.75, marginTop: -2 }}>
+              <BibleText style={{ fontSize: ms(12), color: colors.onPrimary, opacity: 0.75, marginTop: 2 }}>
                 v{require('../../package.json').version}
               </BibleText>
             </View>

@@ -267,17 +267,17 @@ export default function BibleScreen() {
           {!actionSheetVisible && (
             <>
               <TouchableOpacity
-                style={[styles.floatingArrow, styles.floatingArrowLeft, { backgroundColor: colors.primary, shadowColor: colors.shadow }]}
+                style={[styles.floatingArrow, styles.floatingArrowLeft, { backgroundColor: readerColors.primary, shadowColor: colors.shadow }]}
                 onPress={() => navigateChapter(-1)}
               >
-                <Feather name="chevron-left" size={24} color={colors.onPrimary} />
+                <Feather name="chevron-left" size={24} color={readerColors.onPrimary} />
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={[styles.floatingArrow, styles.floatingArrowRight, { backgroundColor: colors.primary, shadowColor: colors.shadow }]}
+                style={[styles.floatingArrow, styles.floatingArrowRight, { backgroundColor: readerColors.primary, shadowColor: colors.shadow }]}
                 onPress={() => navigateChapter(1)}
               >
-                <Feather name="chevron-right" size={24} color={colors.onPrimary} />
+                <Feather name="chevron-right" size={24} color={readerColors.onPrimary} />
               </TouchableOpacity>
             </>
           )}
