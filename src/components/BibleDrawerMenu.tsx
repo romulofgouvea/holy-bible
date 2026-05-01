@@ -148,8 +148,8 @@ export function BibleDrawerMenu(props: DrawerMenuProps) {
 
         <Animated.View style={[styles.drawer, { width: drawerWidth, transform: [{ translateX }], backgroundColor: colors.surface, shadowColor: colors.shadow }]}>
           <View style={[styles.drawerHeader, { backgroundColor: colors.primary, paddingTop: Math.max(ms(20), insets.top + ms(16)), paddingBottom: ms(20), paddingHorizontal: ms(16) }]}>
-            <View style={[styles.drawerLogo, { width: ms(38), height: ms(38), borderRadius: ms(10), marginRight: ms(10), backgroundColor: colors.surfaceHighlight }]}>
-              <Feather name="book" size={ms(19)} color={colors.onPrimary} />
+            <View style={[styles.drawerLogo, { width: ms(44), height: ms(44), borderRadius: ms(12), marginRight: ms(12), backgroundColor: colors.onPrimary + '25' }]}>
+              <Feather name="book" size={ms(21)} color={colors.onPrimary} />
             </View>
             <View style={{ flex: 1, justifyContent: 'center' }}>
               <BibleText style={[styles.drawerTitle, { fontSize: ms(17), color: colors.onPrimary }]} numberOfLines={1}>
