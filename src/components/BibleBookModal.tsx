@@ -202,7 +202,7 @@ export function BibleBookModal({ visible, onClose, books, versionSigla, onVersio
                       title={item.name}
                       pillText={item.abbrev}
                       onPress={() => {
-                        onSelect(item.name || item.abbrev || '');
+                        onSelect(item.abbrev || item.name);
                         setSearchQuery('');
                       }}
                     />
@@ -216,7 +216,7 @@ export function BibleBookModal({ visible, onClose, books, versionSigla, onVersio
                       title={item.abbrev || item.name.substring(0, 3)}
                       exactWidth={itemWidth}
                       onPress={() => {
-                        onSelect(item.name || item.abbrev || '');
+                        onSelect(item.abbrev || item.name);
                         setSearchQuery('');
                       }}
                     />
