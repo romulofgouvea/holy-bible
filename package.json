@@ -10,7 +10,8 @@
     "web": "expo start --web",
     "lint": "expo lint",
     "build:apk": "npx expo run:android --variant release",
-    "eas:prod": "eas build -p android --profile production"
+    "eas:build": "eas build -p android --profile production",
+    "eas:submit": "eas submit --platform android --profile production"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "2.2.0",
