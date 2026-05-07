@@ -127,7 +127,6 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
           height: 100%;
           background-color: ${colors.surface};
           font-family: -apple-system, sans-serif;
-          -webkit-touch-callout: none;
         }
         #editor {
           min-height: 100%;
@@ -195,7 +194,7 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
         .verse-text { font-style: italic; color: ${colors.onSurface}; }
       </style>
     </head>
-    <body onclick="document.getElementById('editor').focus();" oncontextmenu="return false;">
+    <body onclick="document.getElementById('editor').focus();">
       <div id="editor" contenteditable="true" placeholder="Comece a escrever seu estudo aqui...">${initialHtml}</div>
       <script>
         const editor = document.getElementById('editor');
@@ -529,9 +528,17 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
                 >
                   <View style={{ width: ms(22), height: ms(22), borderRadius: ms(11), backgroundColor: h.hex, borderWidth: 1, borderColor: colors.border }} />
                 </TouchableOpacity>
-                {i < VERSE_HIGHLIGHTS.length - 1 && <View style={[styles.innerDivider, { backgroundColor: colors.border }]} />}
+                <View style={[styles.innerDivider, { backgroundColor: colors.border }]} />
               </React.Fragment>
             ))}
+            <TouchableOpacity
+              style={[styles.groupBtn, { width: ms(36) }]}
+              onPress={() => applyHighlight('transparent')}
+            >
+              <View style={{ width: ms(22), height: ms(22), borderRadius: ms(11), borderWidth: 1.5, borderColor: colors.textMuted, alignItems: 'center', justifyContent: 'center' }}>
+                <View style={{ width: ms(18), height: 1.5, backgroundColor: colors.textMuted, transform: [{ rotate: '45deg' }] }} />
+              </View>
+            </TouchableOpacity>
           </View>
 
         </ScrollView>
