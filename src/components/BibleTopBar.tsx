@@ -44,13 +44,13 @@ export const BibleTopBar = React.memo((props: BibleTopBarProps) => {
                 onMenuPress={onOpenMenu}
                 leftContent={
                     <View style={styles.leftButtons}>
-                        <TouchableOpacity style={[styles.topBarButton, { backgroundColor: btnBg, height: ms(38), paddingHorizontal: ms(12), marginHorizontal: ms(3), borderRadius: ms(10) }]} onPress={onOpenVersion}>
+                        <TouchableOpacity style={[styles.topBarButton, { backgroundColor: btnBg, height: ms(38), paddingHorizontal: ms(12), marginHorizontal: ms(3), borderRadius: ms(10), flexShrink: 0 }]} onPress={onOpenVersion}>
                             <BibleText style={[styles.topBarButtonText, { fontSize: ms(15), color: btnText }]}>{version}</BibleText>
                         </TouchableOpacity>
-                        <TouchableOpacity style={[styles.topBarButton, { backgroundColor: btnBg, height: ms(38), paddingHorizontal: ms(12), marginHorizontal: ms(3), borderRadius: ms(10) }]} onPress={onOpenBook}>
-                            <BibleText style={[styles.topBarButtonText, { fontSize: ms(15), color: btnText }]}>{bookName}</BibleText>
+                        <TouchableOpacity style={[styles.topBarButton, { backgroundColor: btnBg, height: ms(38), paddingHorizontal: ms(12), marginHorizontal: ms(3), borderRadius: ms(10), flexShrink: 1, minWidth: 0 }]} onPress={onOpenBook}>
+                            <BibleText style={[styles.topBarButtonText, { fontSize: ms(15), color: btnText }]} numberOfLines={1}>{bookName}</BibleText>
                         </TouchableOpacity>
-                        <TouchableOpacity style={[styles.topBarButton, { backgroundColor: btnBg, height: ms(38), paddingHorizontal: ms(12), marginHorizontal: ms(3), borderRadius: ms(10) }]} onPress={onOpenChapter}>
+                        <TouchableOpacity style={[styles.topBarButton, { backgroundColor: btnBg, height: ms(38), paddingHorizontal: ms(12), marginHorizontal: ms(3), borderRadius: ms(10), flexShrink: 0 }]} onPress={onOpenChapter}>
                             <BibleText style={[styles.topBarButtonText, { fontSize: ms(15), color: btnText }]}>{currentChapter}</BibleText>
                         </TouchableOpacity>
                     </View>
@@ -87,6 +87,7 @@ export const BibleTopBar = React.memo((props: BibleTopBarProps) => {
 
 const styles = StyleSheet.create({
     leftButtons: {
+        flex: 1,
         flexDirection: 'row',
         alignItems: 'center',
     },

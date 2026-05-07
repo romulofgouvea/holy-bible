@@ -30,11 +30,11 @@ export function SettingsItem({
     <View style={[styles.container, showDivider && { borderBottomWidth: 1, borderBottomColor: colors.border }]}>
       <ThemedIcon name={icon} />
       <View style={styles.textContainer}>
-        <BibleText style={[styles.label, { fontSize: ms(16), color: colors.onBackground }]}>
+        <BibleText style={[styles.label, { fontSize: ms(16), color: colors.onBackground }]} numberOfLines={2}>
           {label}
         </BibleText>
         {description && (
-          <BibleText style={[styles.description, { fontSize: ms(13), color: colors.textMuted }]}>
+          <BibleText style={[styles.description, { fontSize: ms(13), color: colors.textMuted }]} numberOfLines={2}>
             {description}
           </BibleText>
         )}

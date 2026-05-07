@@ -13,18 +13,18 @@ import { BibleHeader } from '../../components/BibleHeader';
 import { BibleSwitch } from '../../components/BibleSwitch';
 import { BibleText } from '../../components/BibleText';
 import { DonateModal } from '../../components/DonateModal';
+import { SettingsItem } from '../../components/SettingsItem';
 import { ThemedIcon } from '../../components/ThemedIcon';
 import { STORAGE_KEYS } from '../../constants/storage';
 import { useReaderSettings } from '../../hooks/use-reader-settings';
 import { useResponsive } from '../../hooks/use-responsive';
 import { useStudies } from '../../hooks/use-studies';
 import { useTheme } from '../../hooks/use-theme';
-import { SettingsItem } from '../../components/SettingsItem';
 import { impactLight, selectionHaptic } from '../../utils/haptics';
 
-const COLOR_THEME_OPTIONS = Object.entries(COLOR_THEMES).map(([key, value]) => ({ 
-  key, 
-  ...value 
+const COLOR_THEME_OPTIONS = Object.entries(COLOR_THEMES).map(([key, value]) => ({
+  key,
+  ...value
 }));
 
 export default function ConfigurationScreen() {
@@ -168,7 +168,7 @@ export default function ConfigurationScreen() {
       <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <BibleText style={{ marginLeft: 8, marginBottom: 8, fontSize: ms(14), fontWeight: '700', color: colors.textMuted }}>APARÊNCIA</BibleText>
         <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border, shadowColor: colors.shadow }]}>
-          <SettingsItem 
+          <SettingsItem
             label="Modo Escuro"
             description="Ative o tema noturno no app"
             icon={isDarkMode ? 'moon' : 'sun'}
@@ -183,7 +183,7 @@ export default function ConfigurationScreen() {
 
           <View style={{ height: 1, backgroundColor: colors.border, marginLeft: 70 }} />
 
-          <SettingsItem 
+          <SettingsItem
             label="Vibração"
             description="Feedback tátil ao tocar nos itens"
             icon="smartphone"
@@ -253,7 +253,7 @@ export default function ConfigurationScreen() {
 
         <BibleText style={{ marginTop: 24, marginLeft: 8, marginBottom: 8, fontSize: ms(14), fontWeight: '700', color: colors.textMuted }}>GERENCIAMENTO</BibleText>
         <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border, shadowColor: colors.shadow }]}>
-          <SettingsItem 
+          <SettingsItem
             label="Lixeira de Estudos"
             description="Gerencie estudos excluídos ou restaure-os"
             icon="trash-2"
@@ -263,7 +263,7 @@ export default function ConfigurationScreen() {
 
         <BibleText style={{ marginTop: 24, marginLeft: 8, marginBottom: 8, fontSize: ms(14), fontWeight: '700', color: colors.textMuted }}>BACKUP E RESTAURAÇÃO</BibleText>
         <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border, shadowColor: colors.shadow }]}>
-          <SettingsItem 
+          <SettingsItem
             label="Backup Automático"
             description="Salvar estudos na pasta do App"
             icon="save"
@@ -278,7 +278,7 @@ export default function ConfigurationScreen() {
 
           <View style={{ height: 1, backgroundColor: colors.border, marginLeft: 70 }} />
 
-          <SettingsItem 
+          <SettingsItem
             label="Exportar Backup"
             description="Salvar ou compartilhar o arquivo de backup"
             icon="download"
@@ -287,7 +287,7 @@ export default function ConfigurationScreen() {
 
           <View style={{ height: 1, backgroundColor: colors.border, marginLeft: 70 }} />
 
-          <SettingsItem 
+          <SettingsItem
             label="Restaurar do Backup"
             description="Importar arquivo de backup com todos os seus estudos"
             icon="upload"

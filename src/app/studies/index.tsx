@@ -183,7 +183,7 @@ export default function EstudosScreen() {
             )}
           </TouchableOpacity>
           <View style={styles.cardText}>
-            <BibleText style={[styles.cardTitle, { fontSize: ms(16), color: colors.onSurface, fontWeight: '600' }]}>{item.title}</BibleText>
+            <BibleText style={[styles.cardTitle, { fontSize: ms(16), color: colors.onSurface, fontWeight: '600' }]} numberOfLines={2}>{item.title}</BibleText>
             <BibleText style={[styles.cardDate, { fontSize: ms(12), color: colors.textMuted }]}>{item.createdAt}</BibleText>
           </View>
           {!isSelectionMode && (
