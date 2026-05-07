@@ -3,7 +3,7 @@ import { useRouter } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import { Animated, Modal, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { ROUTES } from '../constants/routes';
+import { DRAWER_ITEMS, ROUTES } from '../constants/routes';
 import { useResponsive } from '../hooks/use-responsive';
 import { useTheme } from '../hooks/use-theme';
 import { BibleText } from './BibleText';
@@ -78,12 +78,7 @@ export function BibleDrawerMenu(props: DrawerMenuProps) {
     }
   }, [visible]);
 
-  const MENU_ITEMS: MenuItem[] = [
-    { key: 'bible', label: 'Bíblia', icon: 'book-open', route: ROUTES.BIBLE },
-    { key: 'studies', label: 'Estudos', icon: 'edit-3', route: ROUTES.STUDIES },
-    { key: 'search', label: 'Pesquisar', icon: 'search', route: ROUTES.SEARCH },
-    { key: 'configuration', label: 'Configurações', icon: 'settings', route: ROUTES.CONFIGURATION },
-  ];
+  const MENU_ITEMS: MenuItem[] = DRAWER_ITEMS;
 
   const BOTTOM_ITEMS: MenuItem[] = [
     {

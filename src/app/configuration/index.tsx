@@ -15,6 +15,7 @@ import { BibleText } from '../../components/BibleText';
 import { DonateModal } from '../../components/DonateModal';
 import { SettingsItem } from '../../components/SettingsItem';
 import { ThemedIcon } from '../../components/ThemedIcon';
+import { ROUTES, ROUTE_LABELS } from '../../constants/routes';
 import { STORAGE_KEYS } from '../../constants/storage';
 import { useReaderSettings } from '../../hooks/use-reader-settings';
 import { useResponsive } from '../../hooks/use-responsive';
@@ -163,7 +164,7 @@ export default function ConfigurationScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <BibleHeader title="Configurações" onMenuPress={() => setDrawerVisible(true)} />
+      <BibleHeader title={ROUTE_LABELS[ROUTES.CONFIGURATION]} onMenuPress={() => setDrawerVisible(true)} />
 
       <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <BibleText style={{ marginLeft: 8, marginBottom: 8, fontSize: ms(14), fontWeight: '700', color: colors.textMuted }}>APARÊNCIA</BibleText>
@@ -257,7 +258,7 @@ export default function ConfigurationScreen() {
             label="Lixeira de Estudos"
             description="Gerencie estudos excluídos ou restaure-os"
             icon="trash-2"
-            onPress={() => router.push('/configuration/trash' as any)}
+            onPress={() => router.push(ROUTES.TRASH as any)}
           />
         </View>
 

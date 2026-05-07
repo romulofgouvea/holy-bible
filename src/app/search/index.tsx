@@ -23,6 +23,7 @@ import { useReaderSettings } from '../../hooks/use-reader-settings';
 import { useResponsive } from '../../hooks/use-responsive';
 import { useTheme } from '../../hooks/use-theme';
 import { impactLight, selectionHaptic } from '../../utils/haptics';
+import { ROUTES } from '../../constants/routes';
 import { handleSmartBack } from '../../utils/navigation';
 
 
@@ -254,7 +255,7 @@ export default function SearchScreen() {
   const handleNavigate = (r: SearchResult) => {
     impactLight();
     addToHistory(query.trim());
-    router.push({ pathname: '/bible', params: { book: r.bookAbbrev, ch: r.chapter, v: r.verse, ver: version } } as any);
+    router.push({ pathname: ROUTES.BIBLE, params: { book: r.bookAbbrev, ch: r.chapter, v: r.verse, ver: version } } as any);
   };
 
   const handleClearQuery = () => {

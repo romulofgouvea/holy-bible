@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { BibleHeader } from '../../components/BibleHeader';
 import { BibleText } from '../../components/BibleText';
+import { ROUTES, ROUTE_LABELS } from '../../constants/routes';
 import { useResponsive } from '../../hooks/use-responsive';
 import { Study, useStudies } from '../../hooks/use-studies';
 import { useTheme } from '../../hooks/use-theme';
@@ -112,7 +113,7 @@ export default function TrashScreen() {
         />
       ) : (
         <BibleHeader
-          title="Lixeira de Estudos"
+          title={ROUTE_LABELS[ROUTES.TRASH]}
           showMenu={false}
           showBack={true}
           onBack={() => handleSmartBack(pathname)}

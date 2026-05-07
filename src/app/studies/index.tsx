@@ -21,7 +21,7 @@ import { BibleSkeleton } from '../../components/BibleSkeleton';
 import { BibleText } from '../../components/BibleText';
 import { BibleTopMenu } from '../../components/BibleTopMenu';
 import { DonateModal } from '../../components/DonateModal';
-import { ROUTES } from '../../constants/routes';
+import { ROUTES, ROUTE_LABELS } from '../../constants/routes';
 import { useResponsive } from '../../hooks/use-responsive';
 import { Study, useStudies } from '../../hooks/use-studies';
 import { useTheme } from '../../hooks/use-theme';
@@ -217,7 +217,7 @@ export default function EstudosScreen() {
           }
         />
       ) : (
-        <BibleHeader title="Estudos" onMenuPress={() => setDrawerVisible(true)} rightContent={
+        <BibleHeader title={ROUTE_LABELS[ROUTES.STUDIES]} onMenuPress={() => setDrawerVisible(true)} rightContent={
           <TouchableOpacity onPress={() => setHeaderMenuVisible(true)} style={{ padding: 4 }}>
             <Feather name="more-vertical" size={ms(24)} color={colors.onPrimary} />
           </TouchableOpacity>
@@ -314,7 +314,7 @@ export default function EstudosScreen() {
         onClose={() => setHeaderMenuVisible(false)}
         items={[
           { icon: 'file-plus', label: 'Novo Estudo', onPress: () => setModalVisible(true) },
-          { icon: 'trash', label: 'Lixeira', onPress: () => router.push('/configuration/trash' as any) }
+          { icon: 'trash', label: 'Lixeira', onPress: () => router.push(ROUTES.TRASH as any) }
         ]}
       />
 
