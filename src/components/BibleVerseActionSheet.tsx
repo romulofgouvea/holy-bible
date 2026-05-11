@@ -102,11 +102,24 @@ export function BibleVerseActionSheet(props: VerseActionSheetProps) {
     onClose();
   };
 
+  let activeColorId: string | null = null;
+  if (count > 0) {
+    let firstColor = highlights[`${selectedVerses[0].bookAbbrev}-${selectedVerses[0].chapter}-${selectedVerses[0].verse}`];
+    let allSame = true;
+    for (let i = 1; i < count; i++) {
+      if (highlights[`${selectedVerses[i].bookAbbrev}-${selectedVerses[i].chapter}-${selectedVerses[i].verse}`] !== firstColor) {
+        allSame = false;
+        break;
+      }
+    }
+    if (allSame) activeColorId = firstColor || null;
+  }
+
   const iconSize = ms(22);
-  const iconColor = colors.primary;
+  const iconColor = colors.onBackground;
 
   return (
-    <Animated.View style={[styles.bar, { transform: [{ translateY }], backgroundColor: colors.surface, shadowColor: colors.shadow }]} id="bible-verse-action-sheet">
+    <Animated.View style={[styles.bar, { transform: [{ translateY }], backgroundColor: colors.background, shadowColor: colors.shadow, borderWidth: 1, borderColor: colors.border }]} id="bible-verse-action-sheet">
       <View style={styles.actions}>
         <TouchableOpacity style={styles.iconBtn} onPress={onShare} disabled={count === 0}>
           <Feather name="share-2" size={iconSize} color={count === 0 ? colors.textMuted : iconColor} />
@@ -118,11 +131,22 @@ export function BibleVerseActionSheet(props: VerseActionSheetProps) {
 
         <View style={[styles.divider, { backgroundColor: colors.border }]} />
 
-        {HIGHLIGHT_COLORS.map(c => (
-          <TouchableOpacity key={c.id} style={{ padding: 6 }} onPress={() => onHighlight(c.id)}>
-            <View style={{ width: ms(24), height: ms(24), borderRadius: ms(12), backgroundColor: c.hex, borderWidth: 1, borderColor: colors.surfaceHighlight }} />
-          </TouchableOpacity>
-        ))}
+        {HIGHLIGHT_COLORS.map(c => {
+          const isSelectedColor = activeColorId === c.id;
+          return (
+            <TouchableOpacity key={c.id} style={{ padding: 3 }} onPress={() => onHighlight(c.id)}>
+              <View style={{
+                width: ms(24),
+                height: ms(24),
+                borderRadius: ms(12),
+                backgroundColor: c.hex,
+                borderWidth: isSelectedColor ? 3 : 1,
+                borderColor: isSelectedColor ? colors.primaryVariant : colors.onPrimary,
+                transform: [{ scale: isSelectedColor ? 1.2 : 1 }]
+              }} />
+            </TouchableOpacity>
+          );
+        })}
 
         {hasAnyHighlight && (
           <TouchableOpacity style={styles.iconBtn} onPress={() => onHighlight(null)}>
@@ -139,6 +163,7 @@ export function BibleVerseActionSheet(props: VerseActionSheetProps) {
           size="sm"
           onPress={onClose}
           style={styles.clearBtn}
+          textStyle={{ color: colors.onBackground, fontSize: ms(13) }}
         />
       </View>
     </Animated.View>
@@ -154,8 +179,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 8,
-    paddingVertical: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     elevation: 20,
@@ -173,7 +198,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-start',
-    gap: 4,
+    gap: 2,
   },
   removeActions: {
     flexDirection: 'row',
@@ -181,15 +206,16 @@ const styles = StyleSheet.create({
     gap: 0,
   },
   iconBtn: {
-    padding: 8,
+    padding: 6,
     borderRadius: 10,
   },
   divider: {
     width: 1,
-    height: 28,
+    height: 24,
     marginHorizontal: 4,
   },
   clearBtn: {
-    marginLeft: 8,
+    marginLeft: 2,
+    paddingHorizontal: 4,
   },
 });
