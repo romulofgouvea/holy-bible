@@ -166,7 +166,12 @@ export default function BibleScreen() {
     });
   }, [changeChapter]);
 
-  const onScrollToIndexFailed = useCallback(() => {
+  const onScrollToIndexFailed = useCallback((info: any) => {
+    try {
+      const offset = (info.averageItemLength || 50) * info.index;
+      sectionListRef.current?.getScrollResponder()?.scrollTo({ y: offset, animated: false });
+    } catch (e) {}
+    
     setTimeout(() => {
       try {
         sectionListRef.current?.scrollToLocation({
@@ -175,7 +180,7 @@ export default function BibleScreen() {
           viewPosition: 0,
         });
       } catch (error) { }
-    }, 500);
+    }, 100);
   }, []);
 
   const viewabilityConfig = useRef({

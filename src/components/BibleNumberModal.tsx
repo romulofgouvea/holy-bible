@@ -1,6 +1,6 @@
 import { Feather } from '@expo/vector-icons';
 import React from 'react';
-import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useResponsive } from '../hooks/use-responsive';
 import { useTheme } from '../hooks/use-theme';
 import { BibleGridBlock } from './BibleGridBlock';
@@ -42,25 +42,27 @@ export function BibleNumberModal({ visible, onClose, onBack, items, title, iconN
 
       <View style={[styles.divider, { backgroundColor: colors.border }]} />
 
-      <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.list} showsVerticalScrollIndicator={false} bounces={true} overScrollMode="always">
-        <View style={styles.gridContainer}>
-          {items.map((item) => {
-            const availableWidth = width - 32;
-            const numCols = Math.max(4, Math.floor(availableWidth / ms(72)));
-            const itemWidth = ((availableWidth - (numCols - 1) * 8) / numCols) - 0.01;
-            return (
-              <BibleGridBlock
-                key={item}
-                title={item}
-                exactWidth={itemWidth}
-                onPress={() => {
-                  onSelect(item);
-                }}
-              />
-            );
-          })}
-        </View>
-      </ScrollView>
+      <FlatList
+        style={{ flex: 1 }}
+        contentContainerStyle={styles.list}
+        showsVerticalScrollIndicator={false}
+        data={items}
+        numColumns={5}
+        keyExtractor={(item) => item.toString()}
+        columnWrapperStyle={{ gap: 8, marginBottom: 8 }}
+        renderItem={({ item }) => {
+          const availableWidth = width - 32;
+          const numCols = 5;
+          const itemWidth = ((availableWidth - (numCols - 1) * 8) / numCols) - 0.01;
+          return (
+            <BibleGridBlock
+              title={item}
+              exactWidth={itemWidth}
+              onPress={() => onSelect(item)}
+            />
+          );
+        }}
+      />
 
       <View style={[styles.divider, { backgroundColor: colors.border }]} />
 

@@ -121,7 +121,7 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
                 );
             }}
             contentContainerStyle={styles.readerContent}
-            initialNumToRender={20}
+            initialNumToRender={180}
             onViewableItemsChanged={onViewableItemsChanged}
             viewabilityConfig={viewabilityConfig}
             stickySectionHeadersEnabled={false}
