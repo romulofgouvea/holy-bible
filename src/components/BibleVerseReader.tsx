@@ -48,7 +48,8 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
 
     const getHighlightColorValue = (colorId: string) => {
         const h = VERSE_HIGHLIGHTS.find(v => v.id === colorId);
-        return h ? h.hex : colors.surfaceHighlight;
+        // Append '4D' (30% opacity) to make the highlight subtle and readable in both light and dark modes
+        return h ? `${h.hex}4D` : colors.surfaceHighlight;
     };
 
     return (
