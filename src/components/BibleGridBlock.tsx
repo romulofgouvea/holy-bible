@@ -8,10 +8,11 @@ type BibleGridBlockProps = {
   title: string | number;
   widthPercentage?: number;
   exactWidth?: number;
+  isSelected?: boolean;
   onPress: () => void;
 };
 
-export function BibleGridBlock({ title, widthPercentage, exactWidth, onPress }: BibleGridBlockProps) {
+export function BibleGridBlock({ title, widthPercentage, exactWidth, isSelected, onPress }: BibleGridBlockProps) {
   const { ms } = useResponsive();
   const { colors } = useTheme();
   return (
@@ -20,11 +21,11 @@ export function BibleGridBlock({ title, widthPercentage, exactWidth, onPress }: 
       style={[
         styles.gridItem,
         exactWidth ? { width: exactWidth } : widthPercentage ? { width: `${widthPercentage}%` } : {},
-        { backgroundColor: colors.surfaceHighlight, borderColor: colors.border }
+        { backgroundColor: isSelected ? colors.primary : colors.surfaceHighlight, borderColor: isSelected ? colors.primary : colors.border }
       ]}
       onPress={onPress}
     >
-      <BibleText style={[styles.gridText, { fontSize: ms(17), color: colors.primary }]} numberOfLines={1}>
+      <BibleText style={[styles.gridText, { fontSize: ms(17), color: isSelected ? colors.onPrimary : colors.primary }]} numberOfLines={1}>
         {title}
       </BibleText>
     </TouchableOpacity>

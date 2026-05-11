@@ -7,18 +7,29 @@ import { BibleText } from './BibleText';
 type BibleListCardProps = {
   title: string;
   pillText?: string | number;
+  isSelected?: boolean;
   onPress: () => void;
 };
 
-export function BibleListCard({ title, pillText, onPress }: BibleListCardProps) {
+export function BibleListCard({ title, pillText, isSelected, onPress }: BibleListCardProps) {
   const { ms } = useResponsive();
   const { colors } = useTheme();
   return (
-    <TouchableOpacity activeOpacity={0.7} style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]} onPress={onPress}>
-      <BibleText style={[styles.cardTitle, { fontSize: ms(16), color: colors.onSurface }]}>{title}</BibleText>
+    <TouchableOpacity 
+      activeOpacity={0.7} 
+      style={[
+        styles.card, 
+        { 
+          backgroundColor: isSelected ? colors.primary + '10' : colors.surface, 
+          borderColor: isSelected ? colors.primary : colors.border 
+        }
+      ]} 
+      onPress={onPress}
+    >
+      <BibleText style={[styles.cardTitle, { fontSize: ms(16), color: isSelected ? colors.primary : colors.onSurface }]}>{title}</BibleText>
       {pillText !== undefined && (
-        <View style={[styles.pill, { backgroundColor: colors.primary, borderColor: colors.primary }]}>
-          <BibleText style={[styles.pillText, { fontSize: ms(13), color: colors.onPrimary }]}>{pillText}</BibleText>
+        <View style={[styles.pill, { backgroundColor: isSelected ? colors.primary : colors.surfaceHighlight, borderColor: isSelected ? colors.primary : colors.border }]}>
+          <BibleText style={[styles.pillText, { fontSize: ms(13), color: isSelected ? colors.onPrimary : colors.primary }]}>{pillText}</BibleText>
         </View>
       )}
     </TouchableOpacity>

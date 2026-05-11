@@ -12,6 +12,8 @@ export type BibleModalsProps = {
   currentBook: Book;
   chapter: number;
   chapterCount: number;
+  verse?: number;
+  version?: string;
 
   versionModalVisible: boolean;
   bookModalVisible: boolean;
@@ -32,13 +34,15 @@ export type BibleModalsProps = {
 
 export function BibleModals(props: BibleModalsProps) {
   const {
-    versionBooks, currentBook, chapter, chapterCount,
+    versionBooks, currentBook, chapter, chapterCount, verse, version,
     versionModalVisible, bookModalVisible, chapterModalVisible, verseModalVisible,
     setVersionModalVisible, setBookModalVisible, setChapterModalVisible, setVerseModalVisible,
     onVersionSelect, onBookSelect, onChapterSelect, onVerseSelect,
     skipVerseSelection = false
   } = props;
   const { ms } = useResponsive();
+  const [navBook, setNavBook] = React.useState<Book | null>(null);
+  const [navChapter, setNavChapter] = React.useState<number | null>(null);
 
   const closeAllModals = () => {
     setVersionModalVisible(false);
@@ -49,19 +53,36 @@ export function BibleModals(props: BibleModalsProps) {
 
   const isAnyVisible = versionModalVisible || bookModalVisible || chapterModalVisible || verseModalVisible;
 
-  const chapterNumbers = useMemo(() => Array.from({ length: chapterCount }, (_, i) => i + 1), [chapterCount]);
+  React.useEffect(() => {
+    if (!isAnyVisible) {
+      setNavBook(null);
+      setNavChapter(null);
+    }
+  }, [isAnyVisible]);
 
-  const verseCount = useMemo(() => {
-    if (!currentBook?.chapters || !currentBook.chapters[chapter - 1]) return 1;
-    return currentBook.chapters[chapter - 1].length;
-  }, [currentBook, chapter]);
+  const activeBook = navBook || currentBook;
+  const activeChapterCount = activeBook?.chapters?.length || chapterCount;
+  const activeChapterNumbers = useMemo(() => Array.from({ length: activeChapterCount }, (_, i) => i + 1), [activeChapterCount]);
 
-  const verseNumbers = useMemo(() => Array.from({ length: verseCount }, (_, i) => i + 1), [verseCount]);
+  const activeVerseCount = useMemo(() => {
+    const ch = navChapter || chapter;
+    if (!activeBook?.chapters || !activeBook.chapters[ch - 1]) return 1;
+    return activeBook.chapters[ch - 1].length;
+  }, [activeBook, navChapter, chapter]);
+
+  const activeVerseNumbers = useMemo(() => Array.from({ length: activeVerseCount }, (_, i) => i + 1), [activeVerseCount]);
+
+  const highlightedBook = currentBook?.abbrev;
+  const isShowingCurrentBook = !navBook || navBook.abbrev === currentBook?.abbrev;
+  const highlightedChapter = isShowingCurrentBook ? chapter : undefined;
+  const isShowingCurrentChapter = isShowingCurrentBook && (!navChapter || navChapter === chapter);
+  const highlightedVerse = isShowingCurrentChapter ? verse : undefined;
 
   return (
     <BibleBottomSheet visible={isAnyVisible} onClose={closeAllModals}>
       <BibleVersionModal
         visible={versionModalVisible}
+        currentVersionSigla={version}
         onClose={closeAllModals}
         onSelect={(v) => {
           selectionHaptic();
@@ -73,10 +94,12 @@ export function BibleModals(props: BibleModalsProps) {
         visible={bookModalVisible}
         onClose={closeAllModals}
         books={versionBooks}
-        currentBookAbbrev={currentBook?.abbrev}
-        onSelect={(bookName) => {
+        currentBookAbbrev={highlightedBook}
+        onSelect={(bookNameOrAbbrev) => {
           selectionHaptic();
-          onBookSelect(bookName);
+          const selectedBookObj = versionBooks.find(b => b.abbrev === bookNameOrAbbrev || b.name === bookNameOrAbbrev) || null;
+          setNavBook(selectedBookObj);
+          setNavChapter(null);
           setBookModalVisible(false);
           setChapterModalVisible(true);
         }}
@@ -90,14 +113,17 @@ export function BibleModals(props: BibleModalsProps) {
         }}
         title="Capítulos"
         iconName="list"
-        items={chapterNumbers}
+        items={activeChapterNumbers}
+        currentItem={highlightedChapter}
         onSelect={(num) => {
           selectionHaptic();
-          onChapterSelect(num);
-          setChapterModalVisible(false);
           if (skipVerseSelection) {
-            onVerseSelect(1);
+            if (navBook) onBookSelect(navBook.name);
+            onChapterSelect(num);
+            setChapterModalVisible(false);
           } else {
+            setNavChapter(num);
+            setChapterModalVisible(false);
             setVerseModalVisible(true);
           }
         }}
@@ -111,9 +137,16 @@ export function BibleModals(props: BibleModalsProps) {
         }}
         title="Versículos"
         iconName="hash"
-        items={verseNumbers}
+        items={activeVerseNumbers}
+        currentItem={highlightedVerse}
         onSelect={(num) => {
           selectionHaptic();
+          if (navBook) onBookSelect(navBook.name);
+          
+          if (navChapter !== null) {
+            onChapterSelect(navChapter);
+          }
+          
           onVerseSelect(num);
           setVerseModalVisible(false);
         }}

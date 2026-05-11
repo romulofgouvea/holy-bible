@@ -1,6 +1,6 @@
 import { Feather } from '@expo/vector-icons';
 import React from 'react';
-import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useResponsive } from '../hooks/use-responsive';
 import { useTheme } from '../hooks/use-theme';
 import { BibleGridBlock } from './BibleGridBlock';
@@ -14,11 +14,20 @@ type BibleNumberModalProps = {
   title: string;
   iconName: keyof typeof Feather.glyphMap;
   onSelect: (item: number) => void;
+  currentItem?: number;
 };
 
-export function BibleNumberModal({ visible, onClose, onBack, items, title, iconName, onSelect }: BibleNumberModalProps) {
+export function BibleNumberModal({ visible, onClose, onBack, items, title, iconName, onSelect, currentItem }: BibleNumberModalProps) {
   const { ms, height, width } = useResponsive();
   const { colors } = useTheme();
+  const scrollViewRef = React.useRef<any>(null);
+  const hasScrolledRef = React.useRef(false);
+
+  React.useEffect(() => {
+    if (visible) {
+      hasScrolledRef.current = false;
+    }
+  }, [visible]);
 
   if (!visible) return null;
 
@@ -42,27 +51,42 @@ export function BibleNumberModal({ visible, onClose, onBack, items, title, iconN
 
       <View style={[styles.divider, { backgroundColor: colors.border }]} />
 
-      <FlatList
-        style={{ flex: 1 }}
-        contentContainerStyle={styles.list}
-        showsVerticalScrollIndicator={false}
-        data={items}
-        numColumns={5}
-        keyExtractor={(item) => item.toString()}
-        columnWrapperStyle={{ gap: 8, marginBottom: 8 }}
-        renderItem={({ item }) => {
-          const availableWidth = width - 32;
-          const numCols = 5;
-          const itemWidth = ((availableWidth - (numCols - 1) * 8) / numCols) - 0.01;
-          return (
-            <BibleGridBlock
-              title={item}
-              exactWidth={itemWidth}
-              onPress={() => onSelect(item)}
-            />
-          );
-        }}
-      />
+      <ScrollView 
+        ref={scrollViewRef}
+        style={{ flex: 1 }} 
+        contentContainerStyle={styles.list} 
+        showsVerticalScrollIndicator={false} 
+        bounces={true} 
+        overScrollMode="always"
+      >
+        <View style={styles.gridContainer}>
+          {items.map((item) => {
+            const availableWidth = width - 32;
+            const numCols = 5;
+            const itemWidth = ((availableWidth - (numCols - 1) * 8) / numCols) - 0.01;
+            const isSelected = item === currentItem;
+            return (
+              <View
+                key={item}
+                onLayout={isSelected ? (e) => {
+                  if (!hasScrolledRef.current && visible) {
+                    hasScrolledRef.current = true;
+                    const y = Math.max(0, e.nativeEvent.layout.y - 16);
+                    scrollViewRef.current?.scrollTo({ y, animated: false });
+                  }
+                } : undefined}
+              >
+                <BibleGridBlock
+                  title={item}
+                  exactWidth={itemWidth}
+                  isSelected={isSelected}
+                  onPress={() => onSelect(item)}
+                />
+              </View>
+            );
+          })}
+        </View>
+      </ScrollView>
 
       <View style={[styles.divider, { backgroundColor: colors.border }]} />
 

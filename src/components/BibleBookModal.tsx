@@ -212,31 +212,39 @@ export function BibleBookModal({ visible, onClose, books, versionSigla, onVersio
               </View>
               {viewMode === 'list' ? (
                 <View style={styles.listGroup}>
-                  {section.books.map((item, index) => (
-                    <BibleListCard
-                      key={`${item.abbrev || item.name}-${index}`}
-                      title={item.name}
-                      pillText={item.abbrev}
-                      onPress={() => {
-                        onSelect(item.abbrev || item.name);
-                        setSearchQuery('');
-                      }}
-                    />
-                  ))}
+                  {section.books.map((item, index) => {
+                    const isSelected = item.abbrev === currentBookAbbrev;
+                    return (
+                      <BibleListCard
+                        key={`${item.abbrev || item.name}-${index}`}
+                        title={item.name}
+                        pillText={item.abbrev}
+                        isSelected={isSelected}
+                        onPress={() => {
+                          onSelect(item.abbrev || item.name);
+                          setSearchQuery('');
+                        }}
+                      />
+                    );
+                  })}
                 </View>
               ) : (
                 <View style={styles.gridContainer}>
-                  {section.books.map((item, index) => (
-                    <BibleGridBlock
-                      key={`grid-${item.abbrev || item.name}-${index}`}
-                      title={item.abbrev || item.name.substring(0, 3)}
-                      exactWidth={itemWidth}
-                      onPress={() => {
-                        onSelect(item.abbrev || item.name);
-                        setSearchQuery('');
-                      }}
-                    />
-                  ))}
+                  {section.books.map((item, index) => {
+                    const isSelected = item.abbrev === currentBookAbbrev;
+                    return (
+                      <BibleGridBlock
+                        key={`grid-${item.abbrev || item.name}-${index}`}
+                        title={item.abbrev || item.name.substring(0, 3)}
+                        exactWidth={itemWidth}
+                        isSelected={isSelected}
+                        onPress={() => {
+                          onSelect(item.abbrev || item.name);
+                          setSearchQuery('');
+                        }}
+                      />
+                    );
+                  })}
                 </View>
               )}
             </View>

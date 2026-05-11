@@ -294,6 +294,8 @@ export default function BibleScreen() {
           currentBook={currentBook}
           chapter={chapter}
           chapterCount={chapterCount}
+          verse={verse}
+          version={version}
           versionModalVisible={versionModalVisible}
           bookModalVisible={bookModalVisible}
           chapterModalVisible={chapterModalVisible}
@@ -310,8 +312,19 @@ export default function BibleScreen() {
               setIsChangingVersion(null);
             }, 50);
           }}
-          onBookSelect={(b) => { setBook(b); setChapter(1); setVerse(1); }}
-          onChapterSelect={(c) => { setChapter(c); setVerse(1); }}
+          onBookSelect={(b) => { 
+            if (b !== currentBook.abbrev && b !== currentBook.name) {
+              setBook(b); 
+              setChapter(1); 
+              setVerse(1); 
+            }
+          }}
+          onChapterSelect={(c) => { 
+            if (c !== chapter) {
+              setChapter(c); 
+              setVerse(1); 
+            }
+          }}
           onVerseSelect={(v) => { setVerse(v); setTimeout(() => scrollToVerse(v, chapterRef.current), 300); }}
         />
 

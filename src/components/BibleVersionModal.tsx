@@ -14,17 +14,22 @@ type BibleVersionModalProps = {
   visible: boolean;
   onClose: () => void;
   onSelect: (version: BibleVersionInfo) => void;
+  currentVersionSigla?: string;
 };
 
-export function BibleVersionModal({ visible, onClose, onSelect }: BibleVersionModalProps) {
+export function BibleVersionModal({ visible, onClose, onSelect, currentVersionSigla }: BibleVersionModalProps) {
   const { ms, height, width } = useResponsive();
   const { colors } = useTheme();
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchVisible, setIsSearchVisible] = useState(false);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  
+  const scrollViewRef = React.useRef<ScrollView>(null);
+  const hasScrolledRef = React.useRef(false);
 
   React.useEffect(() => {
     if (visible) {
+      hasScrolledRef.current = false;
       setSearchQuery('');
       AsyncStorage.getItem(STORAGE_KEYS.VIEW_MODE_VERSION).then(val => {
         if (val === 'list' || val === 'grid') setViewMode(val);
@@ -91,29 +96,55 @@ export function BibleVersionModal({ visible, onClose, onSelect }: BibleVersionMo
 
       <View style={[styles.divider, { backgroundColor: colors.border }]} />
 
-      <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.list} showsVerticalScrollIndicator={false} bounces={true} overScrollMode="always" keyboardShouldPersistTaps="handled" keyboardDismissMode="interactive">
+      <ScrollView ref={scrollViewRef} style={{ flex: 1 }} contentContainerStyle={styles.list} showsVerticalScrollIndicator={false} bounces={true} overScrollMode="always" keyboardShouldPersistTaps="handled" keyboardDismissMode="interactive">
         {viewMode === 'list' ? (
-          filteredVersions.map((item) => (
-            <BibleListCard
-              key={item.sigla}
-              title={item.name}
-              pillText={item.sigla}
-              onPress={() => handleSelect(item)}
-            />
-          ))
+          filteredVersions.map((item) => {
+            const isSelected = item.sigla === currentVersionSigla;
+            return (
+              <View 
+                key={item.sigla}
+                onLayout={isSelected ? (e) => {
+                  if (!hasScrolledRef.current && visible && !searchQuery) {
+                    hasScrolledRef.current = true;
+                    const y = Math.max(0, e.nativeEvent.layout.y - 16);
+                    scrollViewRef.current?.scrollTo({ y, animated: false });
+                  }
+                } : undefined}
+              >
+                <BibleListCard
+                  title={item.name}
+                  pillText={item.sigla}
+                  isSelected={isSelected}
+                  onPress={() => handleSelect(item)}
+                />
+              </View>
+            );
+          })
         ) : (
           <View style={styles.gridContainer}>
             {filteredVersions.map((item) => {
               const availableWidth = width - 32;
               const numCols = Math.max(4, Math.floor(availableWidth / ms(72)));
               const itemWidth = ((availableWidth - (numCols - 1) * 8) / numCols) - 0.01;
+              const isSelected = item.sigla === currentVersionSigla;
               return (
-                <BibleGridBlock
+                <View 
                   key={item.sigla}
-                  title={item.sigla}
-                  exactWidth={itemWidth}
-                  onPress={() => handleSelect(item)}
-                />
+                  onLayout={isSelected ? (e) => {
+                    if (!hasScrolledRef.current && visible && !searchQuery) {
+                      hasScrolledRef.current = true;
+                      const y = Math.max(0, e.nativeEvent.layout.y - 16);
+                      scrollViewRef.current?.scrollTo({ y, animated: false });
+                    }
+                  } : undefined}
+                >
+                  <BibleGridBlock
+                    title={item.sigla}
+                    exactWidth={itemWidth}
+                    isSelected={isSelected}
+                    onPress={() => handleSelect(item)}
+                  />
+                </View>
               );
             })}
           </View>
