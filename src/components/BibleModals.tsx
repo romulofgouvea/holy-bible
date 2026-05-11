@@ -73,6 +73,7 @@ export function BibleModals(props: BibleModalsProps) {
         visible={bookModalVisible}
         onClose={closeAllModals}
         books={versionBooks}
+        currentBookAbbrev={currentBook?.abbrev}
         onSelect={(bookName) => {
           selectionHaptic();
           onBookSelect(bookName);

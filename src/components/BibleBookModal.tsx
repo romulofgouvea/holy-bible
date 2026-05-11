@@ -18,6 +18,7 @@ type BibleBookModalProps = {
   versionSigla?: string;
   onVersionPress?: () => void;
   onSelect: (bookName: string) => void;
+  currentBookAbbrev?: string;
 };
 
 type BookEntry = { abbrev: string; name: string };
@@ -34,16 +35,20 @@ const ABBREV_TO_NAME: Record<string, string> = {};
   });
 });
 
-export function BibleBookModal({ visible, onClose, books, versionSigla, onVersionPress, onSelect }: BibleBookModalProps) {
+export function BibleBookModal({ visible, onClose, books, versionSigla, onVersionPress, onSelect, currentBookAbbrev }: BibleBookModalProps) {
   const { ms, height, width } = useResponsive();
   const { colors } = useTheme();
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchVisible, setIsSearchVisible] = useState(false);
   const [viewMode, setViewMode] = useState<'list' | 'grid'>('grid');
+  
+  const scrollViewRef = React.useRef<ScrollView>(null);
+  const hasScrolledRef = React.useRef(false);
 
   React.useEffect(() => {
     if (visible) {
       setSearchQuery('');
+      hasScrolledRef.current = false;
       AsyncStorage.getItem(STORAGE_KEYS.VIEW_MODE_BOOK).then(val => {
         if (val === 'list' || val === 'grid') setViewMode(val);
       }).catch(() => { });
@@ -170,6 +175,7 @@ export function BibleBookModal({ visible, onClose, books, versionSigla, onVersio
       <View style={[styles.divider, { backgroundColor: colors.border }]} />
 
       <ScrollView
+        ref={scrollViewRef}
         style={{ flex: 1 }}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
@@ -181,9 +187,19 @@ export function BibleBookModal({ visible, onClose, books, versionSigla, onVersio
         {groupedSections.map((section, sIdx) => {
           const showTestamentHeader = section.testament !== lastTestament;
           if (showTestamentHeader) lastTestament = section.testament;
+          const groupHasCurrent = currentBookAbbrev && section.books.some((b) => b.abbrev === currentBookAbbrev);
 
           return (
-            <View key={`section-${sIdx}`}>
+            <View 
+              key={`section-${sIdx}`}
+              onLayout={(e) => {
+                if (groupHasCurrent && !hasScrolledRef.current && visible && !searchQuery) {
+                  hasScrolledRef.current = true;
+                  const y = Math.max(0, e.nativeEvent.layout.y - 16);
+                  scrollViewRef.current?.scrollTo({ y, animated: false });
+                }
+              }}
+            >
               {showTestamentHeader && (
                 section.testament === 'AT' ? testamentHeaderOT : testamentHeaderNT
               )}
