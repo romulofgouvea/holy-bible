@@ -2,11 +2,11 @@ import { VERSE_HIGHLIGHTS } from '@/constants/colors';
 import React from 'react';
 import { SectionList, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { ALIASES } from '../data';
-import { BibleText } from './BibleText';
 import { useReaderSettings } from '../hooks/use-reader-settings';
 import { useResponsive } from '../hooks/use-responsive';
 import { useTheme } from '../hooks/use-theme';
 import { impactLight } from '../utils/haptics';
+import { BibleText } from './BibleText';
 
 type VerseItem = {
     chapter: number;
@@ -82,7 +82,7 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
                             isBlinking && [styles.blinkingRow, { backgroundColor: primaryLow }],
                             isSelected && [styles.selectedRow, { backgroundColor: primaryLow, borderLeftColor: primaryColor }],
                         ]}>
-                            <BibleText 
+                            <BibleText
                                 variant="reading"
                                 style={[styles.verseText, {
                                     fontSize: ms(20 * fontSizeMultiplier),
@@ -91,10 +91,10 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
                                     textAlign: textAlign as any,
                                 }]}
                             >
-                                <BibleText style={{ color: primaryColor, fontWeight: '700', fontSize: ms(16 * fontSizeMultiplier), marginLeft: 16, marginRight: 8 }}>
-                                    {`${item.verse} `}
+                                <BibleText style={{ color: primaryColor, fontWeight: '700', fontSize: ms(16 * fontSizeMultiplier) }}>
+                                    {item.verse}
                                 </BibleText>
-                                {item.text}
+                                {'\u00A0\u00A0'}{item.text}
                             </BibleText>
                         </View>
                     </TouchableOpacity>
