@@ -117,6 +117,12 @@ export default function BibleScreen() {
     }
   }, [isReady, params.book, params.ch, params.v, params.ver]);
 
+  useEffect(() => {
+    setActionSheetVisible(false);
+    setSelectedVerses([]);
+  }, [currentBook.abbrev, chapter]);
+
+
   const scrollToVerse = useCallback((verseNumber: number, targetChapter?: number) => {
     const resolvedChapter = targetChapter ?? chapterRef.current;
 
