@@ -16,13 +16,13 @@ export function BibleSkeleton({ onlyContent = false }: BibleSkeletonProps) {
     Animated.loop(
       Animated.sequence([
         Animated.timing(pulseAnim, {
-          toValue: 0.7,
-          duration: 800,
+          toValue: 0.9, // Mais brilhante
+          duration: 500, // Ciclo mais rápido
           useNativeDriver: true,
         }),
         Animated.timing(pulseAnim, {
-          toValue: 0.3,
-          duration: 800,
+          toValue: 0.2, // Mais escuro
+          duration: 500,
           useNativeDriver: true,
         }),
       ])

@@ -27,8 +27,8 @@ type VerseReaderProps = {
     bookAbbrev: string;
     version: string;
     onVersePress: (item: VerseItem) => void;
-    onViewableItemsChanged: ({ viewableItems }: { viewableItems: any[] }) => void;
-    viewabilityConfig: any;
+    onViewableItemsChanged?: ({ viewableItems }: { viewableItems: any[] }) => void;
+    viewabilityConfig?: any;
     listRef?: React.RefObject<SectionList<VerseItem>>;
     onScrollToIndexFailed?: (info: {
         index: number;
@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
         textAlignVertical: 'top',
     },
     readerContent: {
-        paddingBottom: 150,
+        paddingBottom: 600,
     },
     copyrightCard: {
         marginHorizontal: 16,
