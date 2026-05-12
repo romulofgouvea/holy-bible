@@ -54,21 +54,12 @@ export default function BibleScreen() {
   const chapterRef = useRef(chapter);
   const targetScrollIndex = useRef({ sectionIndex: 0, itemIndex: 0 });
   const fadeAnim = useRef(new Animated.Value(0)).current;
+  const hasInitialScrolled = useRef(false);
   const { addHistoryEntry } = useHistory();
 
   useEffect(() => {
     chapterRef.current = chapter;
   }, [chapter]);
-
-  useEffect(() => {
-    if (isReady) {
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 400,
-        useNativeDriver: true,
-      }).start();
-    }
-  }, [isReady]);
 
   const scrollToVerse = useCallback((targetVerse: number, targetChapter: number) => {
     if (sectionListRef.current) {
@@ -93,6 +84,23 @@ export default function BibleScreen() {
       }, 1000);
     }
   }, [setBlinkingVerse]);
+
+  useEffect(() => {
+    if (isReady) {
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 400,
+        useNativeDriver: true,
+      }).start();
+
+      if (!hasInitialScrolled.current) {
+        hasInitialScrolled.current = true;
+        setTimeout(() => {
+          scrollToVerse(verse, chapter);
+        }, 500);
+      }
+    }
+  }, [isReady, verse, chapter, scrollToVerse]);
 
   const changeChapter = useCallback((deltaOrValue: number, onComplete?: (newChapter: number) => void) => {
     setIsNavigating(true);
