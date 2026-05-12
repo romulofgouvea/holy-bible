@@ -14,7 +14,7 @@ type BibleHistoryModalProps = {
 };
 
 export function BibleHistoryModal({ visible, onClose, onSelect }: BibleHistoryModalProps) {
-  const { history, clearHistory, loadHistory } = useHistory();
+  const { history, loadHistory } = useHistory();
   const { ms } = useResponsive();
   const { colors } = useTheme();
 
@@ -85,7 +85,13 @@ export function BibleHistoryModal({ visible, onClose, onSelect }: BibleHistoryMo
           </>
         ) : (
           <View style={styles.empty}>
-            <BibleText style={{ color: colors.textMuted }}>Nenhum histórico encontrado.</BibleText>
+            <Feather name="clock" size={ms(48)} color={colors.border} />
+            <BibleText style={[styles.emptyTitle, { color: colors.textMuted, fontSize: ms(15), marginTop: 12 }]}>
+              Nenhum histórico encontrado
+            </BibleText>
+            <BibleText style={[styles.emptySubtitle, { color: colors.textMuted, fontSize: ms(13), marginTop: 4 }]}>
+              Navegue pelos livros e capítulos para registrar
+            </BibleText>
           </View>
         )}
       </View>
@@ -200,7 +206,16 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   empty: {
-    padding: 40,
+    flex: 1,
     alignItems: 'center',
+    justifyContent: 'center',
+    padding: 32,
+  },
+  emptyTitle: {
+    textAlign: 'center',
+    fontWeight: '600',
+  },
+  emptySubtitle: {
+    textAlign: 'center',
   },
 });

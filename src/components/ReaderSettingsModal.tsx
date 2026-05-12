@@ -1,21 +1,38 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Feather } from '@expo/vector-icons';
-import React from 'react';
+import React, { useState } from 'react';
 import { Modal, Platform, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { useReaderSettings } from '../hooks/use-reader-settings';
 import { useResponsive } from '../hooks/use-responsive';
 import { useTheme } from '../hooks/use-theme';
 import { impactLight, selectionHaptic } from '../utils/haptics';
+import { BibleConfirmModal } from './BibleConfirmModal';
 import { BibleText } from './BibleText';
 
 export function ReaderSettingsModal({ visible, onClose }: { visible: boolean; onClose: () => void }) {
   const { ms } = useResponsive();
   const { colors, toggleDarkMode } = useTheme();
   const { fontSizeMultiplier, setFontSizeMultiplier, textAlign, setTextAlign, readerTheme, setReaderTheme, readerFont, setReaderFont } = useReaderSettings();
+  const [confirmVisible, setConfirmVisible] = useState(false);
 
   const handleSetTheme = (theme: 'light' | 'dark' | 'sepia') => {
     selectionHaptic();
     setReaderTheme(theme);
     toggleDarkMode(theme === 'dark');
+  };
+
+  const handleClearCache = async () => {
+    try {
+      await AsyncStorage.clear();
+      setConfirmVisible(false);
+      onClose();
+      // Optionally reload app or show toast
+      if (Platform.OS === 'web') {
+        window.location.reload();
+      }
+    } catch (e) {
+      console.error('Failed to clear cache', e);
+    }
   };
 
   if (!visible) return null;
@@ -82,6 +99,25 @@ export function ReaderSettingsModal({ visible, onClose }: { visible: boolean; on
             </TouchableOpacity>
           </View>
         </View>
+        <View style={styles.section}>
+          <TouchableOpacity 
+            style={[styles.clearBtn, { backgroundColor: colors.surfaceHighlight }]} 
+            onPress={() => setConfirmVisible(true)}
+          >
+            <Feather name="trash-2" size={ms(16)} color={colors.error} />
+            <BibleText style={[styles.clearBtnText, { color: colors.error, marginLeft: 8 }]}>Limpar Cache</BibleText>
+          </TouchableOpacity>
+        </View>
+
+        <BibleConfirmModal
+          visible={confirmVisible}
+          title="Limpar Cache"
+          message="Tem certeza que deseja limpar todo o cache e dados salvos? Isso removerá históricos, favoritos e configurações."
+          confirmText="Limpar Tudo"
+          isDanger
+          onConfirm={handleClearCache}
+          onCancel={() => setConfirmVisible(false)}
+        />
       </View>
     </Modal>
   );
@@ -95,4 +131,16 @@ const styles = StyleSheet.create({
   row: { flexDirection: 'row', borderRadius: 8, overflow: 'hidden' },
   actionBtn: { flex: 1, paddingVertical: 12, alignItems: 'center', justifyContent: 'center' },
   divider: { width: 1 },
+  clearBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    borderRadius: 12,
+    marginTop: 8,
+  },
+  clearBtnText: {
+    fontSize: 14,
+    fontWeight: '700',
+  },
 });

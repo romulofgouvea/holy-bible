@@ -11,14 +11,14 @@ import { BibleTopBar } from '../../components/BibleTopBar';
 import { BibleVerseReader } from '../../components/BibleVerseReader';
 import { useBible } from '../../hooks/use-bible';
 
+import { BibleHistoryModal } from '../../components/BibleHistoryModal';
 import { BibleSkeleton } from '../../components/BibleSkeleton';
 import { BibleToast } from '../../components/BibleToast';
 import { DonateModal } from '../../components/DonateModal';
+import { useHistory } from '../../hooks/use-history';
 import { useReaderSettings } from '../../hooks/use-reader-settings';
 import { useTheme } from '../../hooks/use-theme';
 import { useToast } from '../../hooks/use-toast';
-import { useHistory } from '../../hooks/use-history';
-import { BibleHistoryModal } from '../../components/BibleHistoryModal';
 
 export default function BibleScreen() {
   const {
@@ -56,7 +56,8 @@ export default function BibleScreen() {
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [donateVisible, setDonateVisible] = useState(false);
   const [historyModalVisible, setHistoryModalVisible] = useState(false);
-  const { addHistoryEntry } = useHistory();
+  // Única instância do hook de histórico — compartilhada com o modal
+  const { history, addHistoryEntry, loadHistory, clearHistory } = useHistory();
 
   const [isChangingVersion, setIsChangingVersion] = useState<string | null>(null);
   const [isNavigating, setIsNavigating] = useState(false);
@@ -68,22 +69,6 @@ export default function BibleScreen() {
   const initialScrollDone = useRef(false);
   const chapterRef = useRef(chapter);
   useEffect(() => { chapterRef.current = chapter; }, [chapter]);
-
-  useEffect(() => {
-    if (isChangingVersion || isNavigating || !isReady) return;
-    const timer = setTimeout(() => {
-      if (currentBook) {
-        addHistoryEntry({
-          version: version,
-          bookName: currentBook.name,
-          bookAbbrev: currentBook.abbrev,
-          chapter: chapter,
-          verse: visibleVerse || 1,
-        });
-      }
-    }, 1000);
-    return () => clearTimeout(timer);
-  }, [currentBook?.abbrev, chapter, isReady, version, visibleVerse, isChangingVersion, isNavigating]);
 
   useEffect(() => {
     if (!isReady || Platform.OS !== 'web' || typeof window === 'undefined') return;
@@ -118,22 +103,29 @@ export default function BibleScreen() {
   }, [isReady, fadeAnim]);
 
   useEffect(() => {
-    if (isReady && params.book && params.ch && params.v) {
+    if (isReady && params.book && params.ch) {
+      const targetVerse = Number(params.v || 1);
+      const targetChapter = Number(params.ch);
+
       if (params.ver && params.ver.toLowerCase() !== version.toLowerCase()) {
         setIsChangingVersion(params.ver.toUpperCase());
         setTimeout(() => {
           setVersion(params.ver!.toUpperCase());
           setBook(params.book!);
-          setChapter(Number(params.ch));
-          setVerse(Number(params.v));
+          setChapter(targetChapter);
+          setVerse(targetVerse);
+          setVisibleChapter(targetChapter);
+          setVisibleVerse(targetVerse);
           setIsChangingVersion(null);
-          setTimeout(() => scrollToVerse(Number(params.v), Number(params.ch)), 600);
+          setTimeout(() => scrollToVerse(targetVerse, targetChapter), 600);
         }, 300);
       } else {
         setBook(params.book);
-        setChapter(Number(params.ch));
-        setVerse(Number(params.v));
-        setTimeout(() => scrollToVerse(Number(params.v), Number(params.ch)), 600);
+        setChapter(targetChapter);
+        setVerse(targetVerse);
+        setVisibleChapter(targetChapter);
+        setVisibleVerse(targetVerse);
+        setTimeout(() => scrollToVerse(targetVerse, targetChapter), 600);
       }
     }
   }, [isReady, params.book, params.ch, params.v, params.ver]);
@@ -160,10 +152,10 @@ export default function BibleScreen() {
           setBlinkingVerse(`${resolvedChapter}-${verseNumber}`);
           setTimeout(() => setBlinkingVerse(null), 1500);
         } catch (error) { }
-        setTimeout(() => { 
+        setTimeout(() => {
           isAutoScrolling.current = false;
           setIsNavigating(false);
-        }, 1200);
+        }, 2000);
       }, 500);
       return;
     }
@@ -177,10 +169,10 @@ export default function BibleScreen() {
       setBlinkingVerse(`${resolvedChapter}-${verseNumber}`);
       setTimeout(() => setBlinkingVerse(null), 1500);
     } catch (error) { }
-    setTimeout(() => { 
+    setTimeout(() => {
       isAutoScrolling.current = false;
       setIsNavigating(false);
-    }, 1200);
+    }, 2000);
   }, [setChapter, setBlinkingVerse]);
 
   const navigateChapter = useCallback((delta: number) => {
@@ -204,8 +196,8 @@ export default function BibleScreen() {
     try {
       const offset = (info.averageItemLength || 50) * info.index;
       sectionListRef.current?.getScrollResponder()?.scrollTo({ y: offset, animated: false });
-    } catch (e) {}
-    
+    } catch (e) { }
+
     setTimeout(() => {
       try {
         sectionListRef.current?.scrollToLocation({
@@ -218,8 +210,8 @@ export default function BibleScreen() {
   }, []);
 
   const viewabilityConfig = useRef({
-    itemVisiblePercentThreshold: 50,
-    minimumViewTime: 150,
+    itemVisiblePercentThreshold: 15, // Sensibilidade alta para capturar o versículo exatamente no topo
+    minimumViewTime: 100,
   });
 
   const onVersePress = (item: any) => {
@@ -253,7 +245,8 @@ export default function BibleScreen() {
   };
 
   const onViewableItemsChanged = useRef(({ viewableItems }: { viewableItems: any[] }) => {
-    if (isAutoScrolling.current) return;
+    // Bloqueia atualizações durante trocas de versão, rolagem automática ou navegação manual
+    if (isAutoScrolling.current || isChangingVersion || isNavigating) return;
     const firstVisible = viewableItems.find((v) => v.item && v.item.chapter && v.item.verse && v.isViewable)?.item;
     if (firstVisible) {
       setVisibleChapter(firstVisible.chapter);
@@ -289,6 +282,8 @@ export default function BibleScreen() {
           setBook(item.bookAbbrev);
           setChapter(item.chapter);
           setVerse(item.verse);
+          setVisibleChapter(item.chapter);
+          setVisibleVerse(item.verse);
           setTimeout(() => scrollToVerse(item.verse, item.chapter), 300);
         }}
       />
@@ -336,78 +331,110 @@ export default function BibleScreen() {
         </View>
       </Animated.View>
 
-        <BibleModals
-          versionBooks={versionBooks}
-          currentBook={currentBook}
-          chapter={chapter}
-          chapterCount={chapterCount}
-          verse={verse}
-          version={version}
-          versionModalVisible={versionModalVisible}
-          bookModalVisible={bookModalVisible}
-          chapterModalVisible={chapterModalVisible}
-          verseModalVisible={verseModalVisible}
-          setVersionModalVisible={setVersionModalVisible}
-          setBookModalVisible={setBookModalVisible}
-          setChapterModalVisible={setChapterModalVisible}
-          setVerseModalVisible={setVerseModalVisible}
-          onVersionSelect={(v) => {
-            setVersionModalVisible(false);
-            setIsChangingVersion(v);
-            setIsNavigating(true);
-            const targetVerse = visibleVerse;
-            
-            setVersion(v);
-            setVerse(targetVerse);
-            
+      <BibleModals
+        versionBooks={versionBooks}
+        currentBook={currentBook}
+        chapter={chapter}
+        chapterCount={chapterCount}
+        verse={verse}
+        version={version}
+        versionModalVisible={versionModalVisible}
+        bookModalVisible={bookModalVisible}
+        chapterModalVisible={chapterModalVisible}
+        verseModalVisible={verseModalVisible}
+        setVersionModalVisible={setVersionModalVisible}
+        setBookModalVisible={setBookModalVisible}
+        setChapterModalVisible={setChapterModalVisible}
+        setVerseModalVisible={setVerseModalVisible}
+        onVersionSelect={(v) => {
+          setVersionModalVisible(false);
+          setIsChangingVersion(v);
+          setIsNavigating(true);
+          
+          // Captura a posição atual antes de qualquer mudança
+          const savedBook = book;
+          const savedChapter = chapter;
+          const savedVerse = visibleVerse || verse;
+
+          setVersion(v);
+          setBook(savedBook);
+          setChapter(savedChapter);
+          setVerse(savedVerse);
+          setVisibleChapter(savedChapter);
+          setVisibleVerse(savedVerse);
+
+          addHistoryEntry({
+            version: v,
+            bookName: currentBook.name,
+            bookAbbrev: savedBook,
+            chapter: savedChapter,
+            verse: savedVerse,
+          });
+
+          setTimeout(() => {
+            setIsChangingVersion(null);
             setTimeout(() => {
-              setIsChangingVersion(null);
-              setTimeout(() => {
-                scrollToVerse(targetVerse, chapter);
-              }, 200);
-            }, 100);
-          }}
-          onBookSelect={(b) => { 
-            if (b !== currentBook.abbrev && b !== currentBook.name) {
-              setBook(b); 
-              setChapter(1); 
-              setVerse(1); 
-            }
-          }}
-          onChapterSelect={(c) => { 
-            if (c !== chapter) {
-              setChapter(c); 
-              setVerse(1); 
-            }
-          }}
-          onVerseSelect={(v) => { setVerse(v); setTimeout(() => scrollToVerse(v, chapterRef.current), 300); }}
-        />
+              scrollToVerse(savedVerse, savedChapter);
+            }, 500); // Tempo extra para garantir que a NVI/ARA carregou os textos
+          }, 200);
+        }}
+        onBookSelect={(b) => {
+          if (b !== currentBook.abbrev && b !== currentBook.name) {
+            setBook(b);
+            setChapter(1);
+            setVerse(1);
+            setVisibleChapter(1);
+            setVisibleVerse(1);
+          }
+        }}
+        onChapterSelect={(c) => {
+          if (c !== chapter) {
+            setChapter(c);
+            setVerse(1);
+            setVisibleChapter(c);
+            setVisibleVerse(1);
+          }
+        }}
+        onVerseSelect={(v) => {
+          setVerse(v);
+          setVisibleVerse(v);
+          setVisibleChapter(chapter);
+          addHistoryEntry({
+            version,
+            bookName: currentBook.name,
+            bookAbbrev: currentBook.abbrev,
+            chapter,
+            verse: v
+          });
+          setTimeout(() => scrollToVerse(v, chapterRef.current), 300);
+        }}
+      />
 
-        <BibleVerseActionSheet
-          visible={actionSheetVisible}
-          selectedVerses={selectedVerses}
-          highlights={highlights}
-          onClose={onActionSheetClose}
-          onBulkHighlight={bulkToggleHighlight}
-          onShowToast={show}
-        />
+      <BibleVerseActionSheet
+        visible={actionSheetVisible}
+        selectedVerses={selectedVerses}
+        highlights={highlights}
+        onClose={onActionSheetClose}
+        onBulkHighlight={bulkToggleHighlight}
+        onShowToast={show}
+      />
 
-        <ReaderSettingsModal
-          visible={settingsModalVisible}
-          onClose={() => setSettingsModalVisible(false)}
-        />
+      <ReaderSettingsModal
+        visible={settingsModalVisible}
+        onClose={() => setSettingsModalVisible(false)}
+      />
 
-        <BibleDrawerMenu
-          visible={drawerVisible}
-          activeItem="bible"
-          onClose={() => setDrawerVisible(false)}
-          onSelectItem={() => setDrawerVisible(false)}
-          onOpenDonate={() => { setDrawerVisible(false); setTimeout(() => setDonateVisible(true), 250); }}
-        />
+      <BibleDrawerMenu
+        visible={drawerVisible}
+        activeItem="bible"
+        onClose={() => setDrawerVisible(false)}
+        onSelectItem={() => setDrawerVisible(false)}
+        onOpenDonate={() => { setDrawerVisible(false); setTimeout(() => setDonateVisible(true), 250); }}
+      />
 
-        <BibleToast toast={toast} opacity={opacity} />
+      <BibleToast toast={toast} opacity={opacity} />
 
-        <DonateModal visible={donateVisible} onClose={() => setDonateVisible(false)} />
+      <DonateModal visible={donateVisible} onClose={() => setDonateVisible(false)} />
     </View>
   );
 }

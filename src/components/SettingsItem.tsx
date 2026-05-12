@@ -13,6 +13,7 @@ interface SettingsItemProps {
   onPress?: () => void;
   rightElement?: React.ReactNode;
   showDivider?: boolean;
+  isDanger?: boolean;
 }
 
 export function SettingsItem({
@@ -22,15 +23,19 @@ export function SettingsItem({
   onPress,
   rightElement,
   showDivider = false,
+  isDanger = false,
 }: SettingsItemProps) {
   const { colors } = useTheme();
   const { ms } = useResponsive();
+  const dangerColor = (colors as any).error || '#EF4444';
+  const labelColor = isDanger ? dangerColor : colors.onBackground;
+  const iconColor = isDanger ? dangerColor : undefined;
 
   const Content = (
     <View style={[styles.container, showDivider && { borderBottomWidth: 1, borderBottomColor: colors.border }]}>
-      <ThemedIcon name={icon} />
+      <ThemedIcon name={icon} color={iconColor} />
       <View style={styles.textContainer}>
-        <BibleText style={[styles.label, { fontSize: ms(16), color: colors.onBackground }]} numberOfLines={2}>
+        <BibleText style={[styles.label, { fontSize: ms(16), color: labelColor }]} numberOfLines={2}>
           {label}
         </BibleText>
         {description && (

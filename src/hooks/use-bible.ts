@@ -1,4 +1,4 @@
-﻿import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DeviceEventEmitter } from 'react-native';
 import { STORAGE_KEYS } from '../constants/storage';
@@ -56,8 +56,14 @@ export function useBible() {
             AsyncStorage.setItem(STORAGE_KEYS.BIBLE_VERSION_GLOBAL, parsed.version).catch(() => { });
           }
           if (parsed.book) setBook(parsed.book);
-          if (parsed.chapter) setChapter(parsed.chapter);
-          if (parsed.verse) setVerse(parsed.verse);
+          if (parsed.chapter) {
+            setChapter(parsed.chapter);
+            setVisibleChapter(parsed.chapter);
+          }
+          if (parsed.verse) {
+            setVerse(parsed.verse);
+            setVisibleVerse(parsed.verse);
+          }
         }
 
         const savedHighlights = await AsyncStorage.getItem(STORAGE_KEYS.HIGHLIGHTS);

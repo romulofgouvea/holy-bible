@@ -38,6 +38,21 @@ export default function ConfigurationScreen() {
   const [autoBackup, setAutoBackup] = useState(false);
   const [donateVisible, setDonateVisible] = useState(false);
   const [alertInfo, setAlertInfo] = useState<{ title: string; message: string; isDanger?: boolean } | null>(null);
+  const [clearCacheConfirmVisible, setClearCacheConfirmVisible] = useState(false);
+
+  const handleClearCache = async () => {
+    try {
+      const keysToKeep = [STORAGE_KEYS.AUTO_BACKUP, STORAGE_KEYS.AUTO_BACKUP_FILE_URI];
+      const allKeys = await AsyncStorage.getAllKeys();
+      const keysToRemove = allKeys.filter(k => !keysToKeep.includes(k as any));
+      await AsyncStorage.multiRemove(keysToRemove);
+      setClearCacheConfirmVisible(false);
+      setAlertInfo({ title: 'Limpar Histórico', message: 'Histórico limpo com sucesso.' });
+    } catch (e) {
+      console.error('Failed to clear cache', e);
+      setAlertInfo({ title: 'Erro', message: 'Não foi possível limpar o histórico.', isDanger: true });
+    }
+  };
 
   useEffect(() => {
     AsyncStorage.getItem(STORAGE_KEYS.AUTO_BACKUP).then(val => {
@@ -260,6 +275,13 @@ export default function ConfigurationScreen() {
             icon="trash-2"
             onPress={() => router.push(ROUTES.TRASH as any)}
           />
+          <View style={{ height: 1, backgroundColor: colors.border, marginLeft: 70 }} />
+          <SettingsItem
+            label="Limpar Histórico"
+            description="Remove posição salva"
+            icon="trash"
+            onPress={() => setClearCacheConfirmVisible(true)}
+          />
         </View>
 
         <BibleText style={{ marginTop: 24, marginLeft: 8, marginBottom: 8, fontSize: ms(14), fontWeight: '700', color: colors.textMuted }}>BACKUP E RESTAURAÇÃO</BibleText>
@@ -303,6 +325,16 @@ export default function ConfigurationScreen() {
         onClose={() => setDrawerVisible(false)}
         onSelectItem={() => { }}
         onOpenDonate={() => { setDrawerVisible(false); setTimeout(() => setDonateVisible(true), 250); }}
+      />
+
+      <BibleConfirmModal
+        visible={clearCacheConfirmVisible}
+        title="Limpar Histórico"
+        message="Tem certeza? Isso removerá sua posição de leitura salva."
+        confirmText="Limpar"
+        isDanger
+        onConfirm={handleClearCache}
+        onCancel={() => setClearCacheConfirmVisible(false)}
       />
 
       <BibleConfirmModal
