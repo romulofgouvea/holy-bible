@@ -41,7 +41,7 @@ export function BibleBookModal({ visible, onClose, books, versionSigla, onVersio
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchVisible, setIsSearchVisible] = useState(false);
   const [viewMode, setViewMode] = useState<'list' | 'grid'>('grid');
-  
+
   const scrollViewRef = React.useRef<ScrollView>(null);
   const hasScrolledRef = React.useRef(false);
 
@@ -190,7 +190,7 @@ export function BibleBookModal({ visible, onClose, books, versionSigla, onVersio
           const groupHasCurrent = currentBookAbbrev && section.books.some((b) => b.abbrev === currentBookAbbrev);
 
           return (
-            <View 
+            <View
               key={`section-${sIdx}`}
               onLayout={(e) => {
                 if (groupHasCurrent && !hasScrolledRef.current && visible && !searchQuery) {

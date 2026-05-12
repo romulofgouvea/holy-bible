@@ -17,6 +17,8 @@ import { DonateModal } from '../../components/DonateModal';
 import { useReaderSettings } from '../../hooks/use-reader-settings';
 import { useTheme } from '../../hooks/use-theme';
 import { useToast } from '../../hooks/use-toast';
+import { useHistory } from '../../hooks/use-history';
+import { BibleHistoryModal } from '../../components/BibleHistoryModal';
 
 export default function BibleScreen() {
   const {
@@ -53,8 +55,11 @@ export default function BibleScreen() {
   const [verseModalVisible, setVerseModalVisible] = useState(false);
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [donateVisible, setDonateVisible] = useState(false);
+  const [historyModalVisible, setHistoryModalVisible] = useState(false);
+  const { addHistoryEntry } = useHistory();
 
   const [isChangingVersion, setIsChangingVersion] = useState<string | null>(null);
+  const [isNavigating, setIsNavigating] = useState(false);
 
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const sectionListRef = useRef<any>(null);
@@ -63,6 +68,22 @@ export default function BibleScreen() {
   const initialScrollDone = useRef(false);
   const chapterRef = useRef(chapter);
   useEffect(() => { chapterRef.current = chapter; }, [chapter]);
+
+  useEffect(() => {
+    if (isChangingVersion || isNavigating || !isReady) return;
+    const timer = setTimeout(() => {
+      if (currentBook) {
+        addHistoryEntry({
+          version: version,
+          bookName: currentBook.name,
+          bookAbbrev: currentBook.abbrev,
+          chapter: chapter,
+          verse: visibleVerse || 1,
+        });
+      }
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, [currentBook?.abbrev, chapter, isReady, version, visibleVerse, isChangingVersion, isNavigating]);
 
   useEffect(() => {
     if (!isReady || Platform.OS !== 'web' || typeof window === 'undefined') return;
@@ -125,6 +146,7 @@ export default function BibleScreen() {
 
   const scrollToVerse = useCallback((verseNumber: number, targetChapter?: number) => {
     const resolvedChapter = targetChapter ?? chapterRef.current;
+    setIsNavigating(true);
 
     if (resolvedChapter !== chapterRef.current) {
       isAutoScrolling.current = true;
@@ -138,7 +160,10 @@ export default function BibleScreen() {
           setBlinkingVerse(`${resolvedChapter}-${verseNumber}`);
           setTimeout(() => setBlinkingVerse(null), 1500);
         } catch (error) { }
-        setTimeout(() => { isAutoScrolling.current = false; }, 1200);
+        setTimeout(() => { 
+          isAutoScrolling.current = false;
+          setIsNavigating(false);
+        }, 1200);
       }, 500);
       return;
     }
@@ -152,7 +177,10 @@ export default function BibleScreen() {
       setBlinkingVerse(`${resolvedChapter}-${verseNumber}`);
       setTimeout(() => setBlinkingVerse(null), 1500);
     } catch (error) { }
-    setTimeout(() => { isAutoScrolling.current = false; }, 1200);
+    setTimeout(() => { 
+      isAutoScrolling.current = false;
+      setIsNavigating(false);
+    }, 1200);
   }, [setChapter, setBlinkingVerse]);
 
   const navigateChapter = useCallback((delta: number) => {
@@ -250,6 +278,19 @@ export default function BibleScreen() {
         onOpenMenu={() => setDrawerVisible(true)}
         onOpenSettings={() => setSettingsModalVisible(true)}
         onOpenSearch={() => router.push('/search?from=bible')}
+        onOpenHistory={() => setHistoryModalVisible(true)}
+      />
+
+      <BibleHistoryModal
+        visible={historyModalVisible}
+        onClose={() => setHistoryModalVisible(false)}
+        onSelect={(item) => {
+          setVersion(item.version);
+          setBook(item.bookAbbrev);
+          setChapter(item.chapter);
+          setVerse(item.verse);
+          setTimeout(() => scrollToVerse(item.verse, item.chapter), 300);
+        }}
       />
 
       <Animated.View style={{ flex: 1, opacity: fadeAnim }}>
@@ -313,10 +354,18 @@ export default function BibleScreen() {
           onVersionSelect={(v) => {
             setVersionModalVisible(false);
             setIsChangingVersion(v);
+            setIsNavigating(true);
+            const targetVerse = visibleVerse;
+            
+            setVersion(v);
+            setVerse(targetVerse);
+            
             setTimeout(() => {
-              setVersion(v);
               setIsChangingVersion(null);
-            }, 50);
+              setTimeout(() => {
+                scrollToVerse(targetVerse, chapter);
+              }, 200);
+            }, 100);
           }}
           onBookSelect={(b) => { 
             if (b !== currentBook.abbrev && b !== currentBook.name) {

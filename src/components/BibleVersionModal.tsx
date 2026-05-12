@@ -23,7 +23,7 @@ export function BibleVersionModal({ visible, onClose, onSelect, currentVersionSi
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchVisible, setIsSearchVisible] = useState(false);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  
+
   const scrollViewRef = React.useRef<ScrollView>(null);
   const hasScrolledRef = React.useRef(false);
 
@@ -101,7 +101,7 @@ export function BibleVersionModal({ visible, onClose, onSelect, currentVersionSi
           filteredVersions.map((item) => {
             const isSelected = item.sigla === currentVersionSigla;
             return (
-              <View 
+              <View
                 key={item.sigla}
                 onLayout={isSelected ? (e) => {
                   if (!hasScrolledRef.current && visible && !searchQuery) {
@@ -128,7 +128,7 @@ export function BibleVersionModal({ visible, onClose, onSelect, currentVersionSi
               const itemWidth = ((availableWidth - (numCols - 1) * 8) / numCols) - 0.01;
               const isSelected = item.sigla === currentVersionSigla;
               return (
-                <View 
+                <View
                   key={item.sigla}
                   onLayout={isSelected ? (e) => {
                     if (!hasScrolledRef.current && visible && !searchQuery) {

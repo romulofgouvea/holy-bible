@@ -20,10 +20,11 @@ export type BibleTopBarProps = {
     onOpenMenu: () => void;
     onOpenSettings: () => void;
     onOpenSearch: () => void;
+    onOpenHistory: () => void;
 };
 
 export const BibleTopBar = React.memo((props: BibleTopBarProps) => {
-    const { version, bookName, currentChapter, onOpenVersion, onOpenBook, onOpenChapter, onPrevChapter, onNextChapter, onOpenMenu, onOpenSettings, onOpenSearch } = props;
+    const { version, bookName, currentChapter, onOpenVersion, onOpenBook, onOpenChapter, onPrevChapter, onNextChapter, onOpenMenu, onOpenSettings, onOpenSearch, onOpenHistory } = props;
     const { ms } = useResponsive();
     const { colors } = useTheme();
     const { readerColors, readerTheme } = useReaderSettings();
@@ -73,6 +74,11 @@ export const BibleTopBar = React.memo((props: BibleTopBarProps) => {
                         icon: 'search',
                         label: 'Pesquisar',
                         onPress: onOpenSearch,
+                    },
+                    {
+                        icon: 'clock',
+                        label: 'Histórico',
+                        onPress: onOpenHistory,
                     },
                     {
                         icon: 'type',

@@ -51,12 +51,12 @@ export function BibleNumberModal({ visible, onClose, onBack, items, title, iconN
 
       <View style={[styles.divider, { backgroundColor: colors.border }]} />
 
-      <ScrollView 
+      <ScrollView
         ref={scrollViewRef}
-        style={{ flex: 1 }} 
-        contentContainerStyle={styles.list} 
-        showsVerticalScrollIndicator={false} 
-        bounces={true} 
+        style={{ flex: 1 }}
+        contentContainerStyle={styles.list}
+        showsVerticalScrollIndicator={false}
+        bounces={true}
         overScrollMode="always"
       >
         <View style={styles.gridContainer}>

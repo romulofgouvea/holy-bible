@@ -23,7 +23,7 @@ export function BibleBottomSheet({ visible, onClose, children }: BibleBottomShee
         <View style={[
           styles.bottomSheet, 
           { 
-            height: '85%', 
+            maxHeight: '85%', 
             backgroundColor: colors.surface, 
             paddingBottom: Math.max(8, insets.bottom + 8), 
             shadowColor: colors.shadow 
