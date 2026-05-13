@@ -1,19 +1,21 @@
 import { BibleModals } from '@/components/BibleModals';
 import { BibleVerseActionSheet, SelectedVerse } from '@/components/BibleVerseActionSheet';
 import { ReaderSettingsModal } from '@/components/ReaderSettingsModal';
+import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Animated, StyleSheet, View } from 'react-native';
+import { Animated, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { BibleDrawerMenu } from '../../components/BibleDrawerMenu';
-import { BibleTopBar } from '../../components/BibleTopBar';
-import { BibleVerseReader } from '../../components/BibleVerseReader';
-import { useBible } from '../../hooks/use-bible';
-
 import { BibleHistoryModal } from '../../components/BibleHistoryModal';
 import { BibleSkeleton } from '../../components/BibleSkeleton';
 import { BibleToast } from '../../components/BibleToast';
+import { BibleTopBar } from '../../components/BibleTopBar';
+import { BibleVerseReader } from '../../components/BibleVerseReader';
 import { DonateModal } from '../../components/DonateModal';
+import { useBible } from '../../hooks/use-bible';
 import { useHistory } from '../../hooks/use-history';
+import { useReaderSettings } from '../../hooks/use-reader-settings';
+import { useResponsive } from '../../hooks/use-responsive';
 import { useTheme } from '../../hooks/use-theme';
 import { useToast } from '../../hooks/use-toast';
 
@@ -33,8 +35,10 @@ export default function BibleScreen() {
   } = useBible();
 
   const router = useRouter();
+  const { ms } = useResponsive();
   const { toast, opacity, show } = useToast();
   const { colors } = useTheme();
+  const { readerTheme, readerColors } = useReaderSettings();
 
   const [actionSheetVisible, setActionSheetVisible] = useState(false);
   const [selectedVerses, setSelectedVerses] = useState<SelectedVerse[]>([]);
@@ -64,19 +68,15 @@ export default function BibleScreen() {
   const scrollToVerse = useCallback((targetVerse: number, targetChapter: number) => {
     if (sectionListRef.current) {
       isAutoScrolling.current = true;
-      
       const targetIndex = targetVerse;
-
       sectionListRef.current?.scrollToIndex({
         index: targetIndex,
         animated: false,
         viewPosition: 0.05,
         viewOffset: 0
       });
-
       setBlinkingVerse(`${targetChapter}-${targetVerse}`);
       setTimeout(() => setBlinkingVerse(null), 1000);
-
       setTimeout(() => {
         isAutoScrolling.current = false;
       }, 500);
@@ -90,7 +90,6 @@ export default function BibleScreen() {
         duration: 400,
         useNativeDriver: true,
       }).start();
-
       if (!hasInitialScrolled.current) {
         hasInitialScrolled.current = true;
         setTimeout(() => {
@@ -118,8 +117,6 @@ export default function BibleScreen() {
     });
   }, [changeChapter, scrollToVerse]);
 
-
-
   const onVersePress = (item: any) => {
     const verseText = sectionData[0]?.data.find((v: any) => v.verse === item.verse)?.text || '';
     const selected: SelectedVerse = {
@@ -131,7 +128,6 @@ export default function BibleScreen() {
       version,
     };
     const key = `${selected.bookAbbrev}-${selected.chapter}-${selected.verse}`;
-
     setSelectedVerses((prev) => {
       const exists = prev.some((v) => `${v.bookAbbrev}-${v.chapter}-${v.verse}` === key);
       const next = exists
@@ -150,12 +146,10 @@ export default function BibleScreen() {
 
   useEffect(() => {
     if (!isReady) return;
-
     if (!historySyncRef.current) {
       historySyncRef.current = true;
       return;
     }
-
     addHistoryEntry({
       version,
       bookName: currentBook.name,
@@ -169,6 +163,9 @@ export default function BibleScreen() {
     setActionSheetVisible(false);
     setSelectedVerses([]);
   };
+
+  const navBg = readerTheme === 'sepia' ? readerColors.primary : colors.primary;
+  const navIcon = readerTheme === 'sepia' ? readerColors.onPrimary : colors.onPrimary;
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.background }}>
@@ -207,16 +204,39 @@ export default function BibleScreen() {
           {isChangingVersion ? (
             <BibleSkeleton onlyContent={true} />
           ) : (
-            <BibleVerseReader
-              listRef={sectionListRef}
-              sections={sectionData}
-              blinkingVerse={blinkingVerse}
-              highlights={highlights}
-              version={version}
-              selectedKeys={selectedVerses.reduce((acc, v) => { acc[`${v.bookAbbrev}-${v.chapter}-${v.verse}`] = true; return acc; }, {} as Record<string, boolean>)}
-              bookAbbrev={currentBook.abbrev}
-              onVersePress={onVersePress}
-            />
+            <>
+              <BibleVerseReader
+                listRef={sectionListRef}
+                sections={sectionData}
+                blinkingVerse={blinkingVerse}
+                highlights={highlights}
+                version={version}
+                selectedKeys={selectedVerses.reduce((acc, v) => { acc[`${v.bookAbbrev}-${v.chapter}-${v.verse}`] = true; return acc; }, {} as Record<string, boolean>)}
+                bookAbbrev={currentBook.abbrev}
+                onVersePress={onVersePress}
+              />
+              
+              {/* Floating Navigation Buttons - Hidden when actions are open */}
+              {!actionSheetVisible && (
+                <View style={styles.floatingNav}>
+                  <TouchableOpacity 
+                    style={[styles.navArrow, { backgroundColor: navBg }]} 
+                    onPress={() => navigateChapter(-1)}
+                    activeOpacity={0.8}
+                  >
+                    <Feather name="chevron-left" size={ms(26)} color={navIcon} />
+                  </TouchableOpacity>
+
+                  <TouchableOpacity 
+                    style={[styles.navArrow, { backgroundColor: navBg }]} 
+                    onPress={() => navigateChapter(1)}
+                    activeOpacity={0.8}
+                  >
+                    <Feather name="chevron-right" size={ms(26)} color={navIcon} />
+                  </TouchableOpacity>
+                </View>
+              )}
+            </>
           )}
         </View>
       </Animated.View>
@@ -308,4 +328,26 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
   },
+  floatingNav: {
+    position: 'absolute',
+    bottom: 24,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    pointerEvents: 'box-none',
+  },
+  navArrow: {
+    width: 48,
+    height: 48,
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+  }
 });

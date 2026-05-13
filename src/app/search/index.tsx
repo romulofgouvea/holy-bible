@@ -422,9 +422,11 @@ export default function SearchScreen() {
             ItemSeparatorComponent={() => <View style={{ height: 8 }} />}
             keyboardShouldPersistTaps="handled"
             ListHeaderComponent={
-              <BibleText style={[styles.resultCount, { color: colors.textMuted, fontSize: ms(12) }]}>
-                {results.length >= 300 ? '300+ resultados' : `${results.length} resultado${results.length !== 1 ? 's' : ''}`}
-              </BibleText>
+              <View style={{ alignSelf: 'flex-start', backgroundColor: colors.surfaceHighlight, paddingHorizontal: 10, paddingVertical: 2, borderRadius: 12, marginBottom: 8 }}>
+                <BibleText style={[styles.resultCount, { color: colors.primary, fontSize: ms(12), marginBottom: 0 }]}>
+                  {results.length >= 300 ? '300+ resultados' : `${results.length} resultado${results.length !== 1 ? 's' : ''}`}
+                </BibleText>
+              </View>
             }
             renderItem={({ item }) => (
               <SearchResultItem
