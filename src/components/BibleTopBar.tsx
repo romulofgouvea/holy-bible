@@ -1,6 +1,7 @@
 import { Feather } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { ROUTES, ROUTE_LABELS } from '../constants/routes';
 import { useReaderSettings } from '../hooks/use-reader-settings';
 import { useResponsive } from '../hooks/use-responsive';
 import { useTheme } from '../hooks/use-theme';
@@ -72,17 +73,17 @@ export const BibleTopBar = React.memo((props: BibleTopBarProps) => {
                 items={[
                     {
                         icon: 'search',
-                        label: 'Pesquisar',
+                        label: ROUTE_LABELS[ROUTES.SEARCH],
                         onPress: onOpenSearch,
                     },
                     {
                         icon: 'clock',
-                        label: 'Histórico',
+                        label: ROUTE_LABELS.HISTORY,
                         onPress: onOpenHistory,
                     },
                     {
                         icon: 'type',
-                        label: 'Aparência (Aa)',
+                        label: ROUTE_LABELS.APPEARANCE,
                         onPress: onOpenSettings,
                     },
                 ]}

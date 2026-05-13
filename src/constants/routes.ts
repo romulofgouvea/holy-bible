@@ -23,6 +23,8 @@ export const ROUTE_LABELS: Record<string, string> = {
   [ROUTES.SEARCH]: 'Pesquisar',
   [ROUTES.CONFIGURATION]: 'Configurações',
   [ROUTES.TRASH]: 'Lixeira de Estudos',
+  APPEARANCE: 'Aparência (Aa)',
+  HISTORY: 'Histórico',
 };
 
 export const DRAWER_ITEMS: { key: string; label: string; icon: keyof typeof Feather.glyphMap; route: string }[] = [

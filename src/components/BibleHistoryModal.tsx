@@ -2,6 +2,7 @@ import { Feather } from '@expo/vector-icons';
 import { FlashList } from '@shopify/flash-list';
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { ROUTE_LABELS } from '../constants/routes';
 import { HistoryItem, useHistory } from '../hooks/use-history';
 import { useResponsive } from '../hooks/use-responsive';
 import { useTheme } from '../hooks/use-theme';
@@ -38,7 +39,7 @@ export function BibleHistoryModal({ visible, onClose, onSelect }: BibleHistoryMo
           <View style={[styles.iconBtn, styles.headerIconWrap, { backgroundColor: colors.primary + '25' }]} testID="bible-history-icon">
             <Feather name="clock" size={ms(14)} color={colors.primary} />
           </View>
-          <BibleText style={[styles.title, { fontSize: ms(16), color: colors.primary, fontWeight: '800' }]} testID="bible-history-title">Histórico</BibleText>
+          <BibleText style={[styles.title, { fontSize: ms(16), color: colors.primary, fontWeight: '800' }]} testID="bible-history-title">{ROUTE_LABELS.HISTORY}</BibleText>
           <TouchableOpacity onPress={onClose} style={[styles.iconBtn, styles.closeBtn, { backgroundColor: colors.surfaceHighlight }]} testID="bible-history-close-btn">
             <Feather name="x" size={ms(14)} color={colors.error} />
           </TouchableOpacity>
