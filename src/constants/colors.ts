@@ -23,10 +23,13 @@ export const COMMON_COLORS = {
 };
 
 export const VERSE_HIGHLIGHTS = [
-  { id: 'yellow', hex: '#fde047', label: 'Amarelo' },
-  { id: 'blue', hex: '#93c5fd', label: 'Azul' },
-  { id: 'green', hex: '#86efac', label: 'Verde' },
-  { id: 'pink', hex: '#f9a8d4', label: 'Rosa' },
+  { id: 'yellow', hex: '#FFEB3B', label: 'Amarelo' },
+  { id: 'red', hex: '#FF8A80', label: 'Vermelho' },
+  { id: 'green', hex: '#A5D6A7', label: 'Verde' },
+  { id: 'blue', hex: '#90CAF9', label: 'Azul' },
+  { id: 'orange', hex: '#FFCC80', label: 'Laranja' },
+  { id: 'pink', hex: '#F48FB1', label: 'Rosa' },
+  { id: 'purple', hex: '#CE93D8', label: 'Roxo' },
 ];
 
 export const getSupportColors = (colors: ThemeColors, isDarkMode: boolean) => ({
