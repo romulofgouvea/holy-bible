@@ -169,19 +169,47 @@ export default function StudyEditorScreen() {
     try {
       const css = `
         @import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap');
-        @media print { @page { margin: 0; size: auto; } body { padding: 20mm; } }
-        body { font-family: 'Inter', -apple-system, sans-serif; color: #222; max-width: 800px; margin: 0 auto; line-height: 1.6; padding: 24px; }
-        h1.main-title { color: #008080; font-size: 32px; font-weight: 800; margin-bottom: 8px; border-bottom: 2px solid #e0f2f1; padding-bottom: 12px; }
-        .meta { color: #888; font-size: 13px; margin-bottom: 32px; font-weight: 600; }
-        .bible-verse { border-left: 4px solid #008080; padding: 16px 24px; background: #f4faf9; border-radius: 8px; margin: 24px 0; page-break-inside: avoid; overflow-wrap: break-word; word-wrap: break-word; word-break: break-word; }
-        .bible-verse b, .bible-verse .verse-title { color: #008080; display: block; margin-bottom: 12px; font-size: 16px; font-weight: bold; letter-spacing: 0.5px; text-transform: uppercase; }
-        .verse-line { margin-bottom: 10px; line-height: 1.7; display: flex; gap: 8px; align-items: flex-start; }
-        .verse-num { font-weight: 800; color: #008080; font-size: 12px; margin-top: 2px; min-width: 24px; text-align: right; flex-shrink: 0; white-space: nowrap; }
-        .verse-text { font-style: italic; color: #333; flex: 1; }
-        img { max-width: 100%; border-radius: 12px; margin: 24px 0; box-shadow: 0 4px 12px rgba(0,0,0,0.1); page-break-inside: avoid; }
-        ul, ol { padding-left: 24px; margin-top: 8px; margin-bottom: 8px; }
-        li { margin-bottom: 4px; }
-        .remove-verse-btn { display: none; }
+        @media print { 
+          @page { size: A4; margin: 0; } 
+          body { padding: 15mm !important; margin: 0 !important; }
+        }
+        body { 
+          font-family: 'Helvetica', 'Arial', sans-serif; 
+          color: #2d3436; 
+          line-height: 1.5; 
+          padding: 15mm; 
+          margin: 0;
+          font-size: 12px;
+          width: 100%;
+        }
+        h1 { color: #006b6b; font-size: 16px; margin-bottom: 4px; font-weight: 800; }
+        .meta { color: #a0a0a0; font-size: 10px; margin-bottom: 20px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        .bible-verse { 
+          border-left: 3px solid #008080; 
+          padding: 10px 16px; 
+          background: #f8fdfc; 
+          border-radius: 4px; 
+          margin: 12px 0; 
+          page-break-inside: avoid; 
+          overflow-wrap: break-word; 
+          word-wrap: break-word; 
+          word-break: break-word;
+          box-shadow: inset 0 0 0 1px rgba(0,128,128,0.05);
+        }
+        .remove-verse-btn { display: none !important; }
+        .bible-verse .verse-title { 
+          color: #008080; 
+          display: block; 
+          margin-bottom: 8px; 
+          font-size: 11px; 
+          font-weight: 800; 
+          letter-spacing: 0.5px; 
+          text-transform: uppercase; 
+        }
+        .verse-line { margin-bottom: 6px; display: flex; gap: 8px; align-items: flex-start; }
+        .verse-num { font-weight: 800; color: #008080; font-size: 10px; margin-top: 2px; min-width: 20px; text-align: right; flex-shrink: 0; white-space: nowrap; opacity: 0.7; }
+        .verse-text { font-style: italic; color: #2d3436; flex: 1; font-size: 11.5px; }
+        p { margin: 8px 0; font-size: 12px; }
         ul.task-list { list-style: none; padding-left: 28px; }
         ul.task-list li { position: relative; margin-bottom: 8px; }
         ul.task-list li::before {
@@ -198,8 +226,7 @@ export default function StudyEditorScreen() {
 
       const htmlDocument = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${study.title}</title><style>${css}</style></head><body>
         <h1 class="main-title">${study.title}</h1>
-        <div class="meta">Criado em ${study.createdAt} • Exportado em ${new Date().toLocaleDateString('pt-BR')}</div>
-        ${htmlContent}
+        ${htmlContent.replace(/<p>\s*<br\s*\/?>\s*<\/p>/gi, '')}
       </body></html>`;
 
       if (Platform.OS === 'web') {
