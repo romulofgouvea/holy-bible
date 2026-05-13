@@ -65,7 +65,7 @@ export default function BibleScreen() {
     if (sectionListRef.current) {
       isAutoScrolling.current = true;
       
-      const targetIndex = targetVerse; // Em nossa lista achatada, 0 é o header, 1 é o v1, etc.
+      const targetIndex = targetVerse;
 
       sectionListRef.current?.scrollToIndex({
         index: targetIndex,

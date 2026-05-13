@@ -35,7 +35,7 @@ export function BibleTopMenu({ visible, onClose, items }: BibleTopMenuProps) {
           backgroundColor: colors.surface,
           borderRadius: ms(12),
           minWidth: ms(200),
-          // Premium Shadow
+
           shadowColor: colors.shadow,
           shadowOffset: { width: 0, height: 8 },
           shadowOpacity: 0.15,

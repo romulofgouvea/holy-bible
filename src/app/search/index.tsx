@@ -468,7 +468,7 @@ export default function SearchScreen() {
         }}
         onBookSelect={(b) => {
           setBook(b);
-          // Chapter selection will follow
+
         }}
         onChapterSelect={(c) => {
           setChapter(c);

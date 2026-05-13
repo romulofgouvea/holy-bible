@@ -48,7 +48,7 @@ const VerseRow = React.memo(({
         }
     }, [isBlinking, blinkAnim]);
 
-    const primaryLow = `${primaryColor}20`; // 12.5% opacity
+    const primaryLow = `${primaryColor}20`;
 
     const animatedBackgroundColor = blinkAnim.interpolate({
         inputRange: [0, 1],

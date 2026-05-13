@@ -60,7 +60,7 @@ export function StudyVerseSelectModal({ visible, onClose, onBack, bookName, chap
       <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }} bounces={true} overScrollMode="always" testID="study-verse-list">
         {verses.map(({ verse, text }) => {
           const selected = selectedNums.has(verse);
-          const primaryLow = colors.primary + '20'; // 12.5% opacity
+          const primaryLow = colors.primary + '20';
           return (
             <TouchableOpacity key={verse} style={[styles.verseRow, { borderBottomColor: colors.border }, selected && { backgroundColor: primaryLow, borderLeftWidth: 3, borderLeftColor: colors.primary, paddingLeft: ms(6) }]} onPress={() => toggleVerse(verse)} activeOpacity={0.7}>
               <BibleText style={[styles.verseNumLabel, { fontSize: ms(12), color: colors.primary }]}>{verse}</BibleText>

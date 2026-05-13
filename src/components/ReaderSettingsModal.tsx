@@ -26,7 +26,7 @@ export function ReaderSettingsModal({ visible, onClose }: { visible: boolean; on
       await AsyncStorage.clear();
       setConfirmVisible(false);
       onClose();
-      // Optionally reload app or show toast
+
       if (Platform.OS === 'web') {
         window.location.reload();
       }

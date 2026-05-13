@@ -12,10 +12,7 @@ type NavPosition = {
 
 type AddHistoryEntry = (entry: Omit<HistoryItem, 'timestamp'>) => Promise<void>;
 
-/**
- * Observa a posição de leitura (capítulo e versículo visíveis) e grava no histórico com debounce.
- * O debounce garante que só salvemos quando a posição estabilizar (usuário parou de rolar).
- */
+
 export function useNavigationHistory(
   position: NavPosition,
   addHistoryEntry: AddHistoryEntry
@@ -36,7 +33,7 @@ export function useNavigationHistory(
       lastKeyRef.current = key;
 
       addHistoryEntry({ version, bookName, bookAbbrev, chapter, verse });
-    }, 1000); // Debounce de 1s para ser mais responsivo
+    }, 1000);
 
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);

@@ -24,7 +24,7 @@ export function BibleHistoryModal({ visible, onClose, onSelect }: BibleHistoryMo
   React.useEffect(() => {
     if (visible) {
       loadHistory();
-      // setTimeout is used to ensure the list is rendered before scrolling
+
       setTimeout(() => {
         listRef.current?.scrollToOffset({ offset: 0, animated: false });
       }, 50);

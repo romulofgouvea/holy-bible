@@ -26,7 +26,7 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
   const { ms } = useResponsive();
   const { readerColors, readerTheme, readerFontFamily } = useReaderSettings();
 
-  // When sepia is active use the light palette for editor UI
+
   const colors = useMemo(() => {
     if (readerTheme === 'sepia') {
       const active = Object.entries(COLOR_THEMES).map(([key, value]) => ({ key, ...value }))
@@ -61,7 +61,7 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
 
   const applyHighlight = (color: string) => {
     selectionHaptic();
-    // HiliteColor for background highlighting
+
     execDocumentCmd('hiliteColor', color);
   };
 

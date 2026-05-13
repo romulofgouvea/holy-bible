@@ -59,7 +59,7 @@ export function BibleButton({
           container: { ...base, backgroundColor: colors.error }, 
           text: { ...text, color: colors.onError } 
         };
-      default: // primary
+      default:
         return { 
           container: { ...base, backgroundColor: colors.primary }, 
           text: { ...text, color: colors.onPrimary } 

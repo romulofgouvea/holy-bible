@@ -1,23 +1,14 @@
-/**
- * Color system for Holy Bible app.
- * Standardized to 12 main theme tokens.
- */
-
 export type ThemeColors = {
-  // Primary colors
   primary: string;
   primaryVariant: string;
 
-  // Secondary colors (Accents)
   secondary: string;
   secondaryVariant: string;
 
-  // Interface colors
   background: string;
   surface: string;
   error: string;
 
-  // Contrast colors (On-colors)
   onPrimary: string;
   onSecondary: string;
   onBackground: string;
@@ -25,18 +16,12 @@ export type ThemeColors = {
   onError: string;
 };
 
-/**
- * Common colors that don't change per theme
- */
 export const COMMON_COLORS = {
   white: '#FFFFFF',
   black: '#000000',
   transparent: 'transparent',
 };
 
-/**
- * Bible Verse Highlight Colors (Move out of theme to separate context)
- */
 export const VERSE_HIGHLIGHTS = [
   { id: 'yellow', hex: '#fde047', label: 'Amarelo' },
   { id: 'blue', hex: '#93c5fd', label: 'Azul' },
@@ -44,10 +29,6 @@ export const VERSE_HIGHLIGHTS = [
   { id: 'pink', hex: '#f9a8d4', label: 'Rosa' },
 ];
 
-/**
- * UI Support Colors (Derived or fixed)
- * These can be used alongside the 12 theme colors
- */
 export const getSupportColors = (colors: ThemeColors, isDarkMode: boolean) => ({
   border: isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)',
   shadow: '#000000',
@@ -57,10 +38,10 @@ export const getSupportColors = (colors: ThemeColors, isDarkMode: boolean) => ({
 });
 
 const DARK_BASE = {
-  background: '#0F1115', // Deep Obsidian/Navy
-  surface: '#1A1D23',    // Slightly lighter for depth
+  background: '#0F1115',
+  surface: '#1A1D23',
   error: '#FF5252',
-  onBackground: '#E9ECEF', // Soft off-white
+  onBackground: '#E9ECEF',
   onSurface: '#E9ECEF',
   onError: '#FFFFFF',
 };
@@ -106,7 +87,7 @@ export const COLOR_THEMES: Record<ColorThemeKey, { label: string; swatch: string
     },
     dark: {
       ...DARK_BASE,
-      primary: '#008080',        // Consistent Teal
+      primary: '#008080',
       primaryVariant: '#004D40',
       secondary: '#4DB6AC',
       secondaryVariant: '#002D2D',
@@ -128,7 +109,7 @@ export const COLOR_THEMES: Record<ColorThemeKey, { label: string; swatch: string
     },
     dark: {
       ...DARK_BASE,
-      primary: '#606770',        // Consistent Gray
+      primary: '#606770',
       primaryVariant: '#394047',
       secondary: '#ADB5BD',
       secondaryVariant: '#212529',
@@ -150,7 +131,7 @@ export const COLOR_THEMES: Record<ColorThemeKey, { label: string; swatch: string
     },
     dark: {
       ...DARK_BASE,
-      primary: '#820AD1',        // Consistent Purple
+      primary: '#820AD1',
       primaryVariant: '#4406A1',
       secondary: '#B768FF',
       secondaryVariant: '#1D0033',
@@ -172,7 +153,7 @@ export const COLOR_THEMES: Record<ColorThemeKey, { label: string; swatch: string
     },
     dark: {
       ...DARK_BASE,
-      primary: '#1877F2',        // Consistent Blue
+      primary: '#1877F2',
       primaryVariant: '#0A57C2',
       secondary: '#73A5F8',
       secondaryVariant: '#051E3D',
@@ -194,7 +175,7 @@ export const COLOR_THEMES: Record<ColorThemeKey, { label: string; swatch: string
     },
     dark: {
       ...DARK_BASE,
-      primary: '#f37321',        // Consistent Orange (No more peach)
+      primary: '#f37321',
       primaryVariant: '#B84F0E',
       secondary: '#FFA76B',
       secondaryVariant: '#3D1B00',
@@ -216,7 +197,7 @@ export const COLOR_THEMES: Record<ColorThemeKey, { label: string; swatch: string
     },
     dark: {
       ...DARK_BASE,
-      primary: '#1DB954',        // Consistent Green
+      primary: '#1DB954',
       primaryVariant: '#10853B',
       secondary: '#5EEA8F',
       secondaryVariant: '#0A2D16',
