@@ -49,19 +49,19 @@ export const VERSE_HIGHLIGHTS = [
  * These can be used alongside the 12 theme colors
  */
 export const getSupportColors = (colors: ThemeColors, isDarkMode: boolean) => ({
-  border: isDarkMode ? colors.secondary + '30' : colors.primary + '20',
+  border: isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)',
   shadow: '#000000',
-  overlay: 'rgba(0,0,0,0.5)',
-  textMuted: isDarkMode ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.6)',
-  surfaceHighlight: isDarkMode ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.05)',
+  overlay: 'rgba(0,0,0,0.7)',
+  textMuted: isDarkMode ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.6)',
+  surfaceHighlight: isDarkMode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)',
 });
 
 const DARK_BASE = {
-  background: '#2d2d2d',
-  surface: '#3d3d3d',
+  background: '#0F1115', // Deep Obsidian/Navy
+  surface: '#1A1D23',    // Slightly lighter for depth
   error: '#FF5252',
-  onBackground: '#FFFFFF',
-  onSurface: '#FFFFFF',
+  onBackground: '#E9ECEF', // Soft off-white
+  onSurface: '#E9ECEF',
   onError: '#FFFFFF',
 };
 
@@ -106,10 +106,10 @@ export const COLOR_THEMES: Record<ColorThemeKey, { label: string; swatch: string
     },
     dark: {
       ...DARK_BASE,
-      primary: '#008080',
+      primary: '#008080',        // Consistent Teal
       primaryVariant: '#004D40',
       secondary: '#4DB6AC',
-      secondaryVariant: '#B2DFDB',
+      secondaryVariant: '#002D2D',
       onPrimary: '#FFFFFF',
       onSecondary: '#FFFFFF',
     },
@@ -128,10 +128,10 @@ export const COLOR_THEMES: Record<ColorThemeKey, { label: string; swatch: string
     },
     dark: {
       ...DARK_BASE,
-      primary: '#606770',
+      primary: '#606770',        // Consistent Gray
       primaryVariant: '#394047',
-      secondary: '#A0A7B0',
-      secondaryVariant: '#1C1E21',
+      secondary: '#ADB5BD',
+      secondaryVariant: '#212529',
       onPrimary: '#FFFFFF',
       onSecondary: '#FFFFFF',
     },
@@ -150,10 +150,10 @@ export const COLOR_THEMES: Record<ColorThemeKey, { label: string; swatch: string
     },
     dark: {
       ...DARK_BASE,
-      primary: '#820AD1',
+      primary: '#820AD1',        // Consistent Purple
       primaryVariant: '#4406A1',
       secondary: '#B768FF',
-      secondaryVariant: '#280066',
+      secondaryVariant: '#1D0033',
       onPrimary: '#FFFFFF',
       onSecondary: '#FFFFFF',
     },
@@ -172,10 +172,10 @@ export const COLOR_THEMES: Record<ColorThemeKey, { label: string; swatch: string
     },
     dark: {
       ...DARK_BASE,
-      primary: '#1877F2',
+      primary: '#1877F2',        // Consistent Blue
       primaryVariant: '#0A57C2',
       secondary: '#73A5F8',
-      secondaryVariant: '#053170',
+      secondaryVariant: '#051E3D',
       onPrimary: '#FFFFFF',
       onSecondary: '#FFFFFF',
     },
@@ -194,10 +194,10 @@ export const COLOR_THEMES: Record<ColorThemeKey, { label: string; swatch: string
     },
     dark: {
       ...DARK_BASE,
-      primary: '#f37321',
+      primary: '#f37321',        // Consistent Orange (No more peach)
       primaryVariant: '#B84F0E',
       secondary: '#FFA76B',
-      secondaryVariant: '#521D00',
+      secondaryVariant: '#3D1B00',
       onPrimary: '#FFFFFF',
       onSecondary: '#FFFFFF',
     },
@@ -216,10 +216,10 @@ export const COLOR_THEMES: Record<ColorThemeKey, { label: string; swatch: string
     },
     dark: {
       ...DARK_BASE,
-      primary: '#1DB954',
+      primary: '#1DB954',        // Consistent Green
       primaryVariant: '#10853B',
       secondary: '#5EEA8F',
-      secondaryVariant: '#0B5222',
+      secondaryVariant: '#0A2D16',
       onPrimary: '#FFFFFF',
       onSecondary: '#FFFFFF',
     },
