@@ -51,6 +51,9 @@ export function BibleAddToStudyModal({ visible, onClose, selectedVerses, onShowT
         ref = `${bookName} ${sorted[0].chapter}:${sorted[0].verse}–${sorted[sorted.length - 1].chapter}:${sorted[sorted.length - 1].verse}`;
     }
 
+    const version = sorted[0].version;
+    ref = `${ref} (${version})`;
+
     const versesBody = sorted.map(v => `<div class="verse-line"><span class="verse-num">${v.verse}</span> <span class="verse-text">${v.text}</span></div>`).join('');
     
     return `<p><br></p><blockquote class="bible-verse"><b>${ref}</b>${versesBody}</blockquote><p><br></p>`;

@@ -16,6 +16,7 @@ export type SelectedVerse = {
   text: string;
   bookName: string;
   bookAbbrev: string;
+  version: string;
 };
 
 type VerseActionSheetProps = {

@@ -63,7 +63,7 @@ const VerseRow = React.memo(({
             <Animated.View style={[
                 styles.verseRow,
                 { backgroundColor: animatedBackgroundColor },
-                isSelected && [styles.selectedRow, { borderLeftColor: primaryColor }],
+                isSelected && { borderLeftColor: primaryColor },
             ]}>
                 <BibleText
                     variant="reading"
@@ -212,9 +212,10 @@ const styles = StyleSheet.create({
         paddingHorizontal: 16,
         borderRadius: 0,
         marginHorizontal: 0,
+        borderLeftWidth: 3,
+        borderLeftColor: 'transparent',
     },
     selectedRow: {
-        borderLeftWidth: 3,
     },
     verseText: {
         flexWrap: 'wrap',

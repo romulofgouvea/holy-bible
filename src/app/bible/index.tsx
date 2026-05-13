@@ -128,6 +128,7 @@ export default function BibleScreen() {
       text: verseText,
       bookName: currentBook.name,
       bookAbbrev: currentBook.abbrev,
+      version,
     };
     const key = `${selected.bookAbbrev}-${selected.chapter}-${selected.verse}`;
 
