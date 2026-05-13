@@ -340,10 +340,9 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
         ensureTrailingParagraph();
 
         window.insertHtml = function(html) {
-          moveCursorToTrailingParagraph();
+          editor.focus();
           document.execCommand('insertHTML', false, html);
           setTimeout(function() {
-            moveCursorToTrailingParagraph();
             updateFormatState();
           }, 80);
         };
