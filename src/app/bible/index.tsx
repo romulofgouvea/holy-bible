@@ -7,6 +7,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Animated, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { BibleDrawerMenu } from '../../components/BibleDrawerMenu';
 import { BibleHistoryModal } from '../../components/BibleHistoryModal';
+import { BibleIcon } from '../../components/BibleIcon';
 import { BibleSkeleton } from '../../components/BibleSkeleton';
 import { BibleToast } from '../../components/BibleToast';
 import { BibleTopBar } from '../../components/BibleTopBar';
@@ -219,21 +220,27 @@ export default function BibleScreen() {
               {/* Floating Navigation Buttons - Hidden when actions are open */}
               {!actionSheetVisible && (
                 <View style={styles.floatingNav}>
-                  <TouchableOpacity 
-                    style={[styles.navArrow, { backgroundColor: navBg }]} 
+                  <BibleIcon
+                    name="chevron-left"
+                    size={ms(20)}
+                    color={navIcon}
+                    backgroundColor={navBg}
+                    borderRadius={10}
                     onPress={() => navigateChapter(-1)}
                     activeOpacity={0.8}
-                  >
-                    <Feather name="chevron-left" size={ms(26)} color={navIcon} />
-                  </TouchableOpacity>
+                    style={{ elevation: 4, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 3 }}
+                  />
 
-                  <TouchableOpacity 
-                    style={[styles.navArrow, { backgroundColor: navBg }]} 
+                  <BibleIcon
+                    name="chevron-right"
+                    size={ms(20)}
+                    color={navIcon}
+                    backgroundColor={navBg}
+                    borderRadius={10}
                     onPress={() => navigateChapter(1)}
                     activeOpacity={0.8}
-                  >
-                    <Feather name="chevron-right" size={ms(26)} color={navIcon} />
-                  </TouchableOpacity>
+                    style={{ elevation: 4, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 3 }}
+                  />
                 </View>
               )}
             </>
@@ -337,17 +344,5 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 16,
     pointerEvents: 'box-none',
-  },
-  navArrow: {
-    width: 48,
-    height: 48,
-    borderRadius: 14,
-    alignItems: 'center',
-    justifyContent: 'center',
-    elevation: 5,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
   }
 });
