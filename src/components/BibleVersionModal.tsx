@@ -58,33 +58,33 @@ export function BibleVersionModal({ visible, onClose, onSelect, currentVersionSi
   if (!visible) return null;
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={styles.container}>
       <View style={styles.header}>
-        <View style={[styles.headerIconWrap, { backgroundColor: colors.primary + '15' }]}>
-          <Feather name="book-open" size={ms(18)} color={colors.primary} />
+        <View style={[styles.iconBtn, styles.headerIconWrap, { backgroundColor: colors.primary + '15' }]}>
+          <Feather name="book-open" size={ms(16)} color={colors.primary} />
         </View>
         <BibleText style={[styles.title, { fontSize: ms(18), color: colors.primary, fontWeight: '800' }]}>Versões</BibleText>
-        <TouchableOpacity onPress={() => setIsSearchVisible(!isSearchVisible)} style={[styles.searchToggleBtn, { backgroundColor: colors.surfaceHighlight }]}>
-          <Feather name="search" size={ms(18)} color={isSearchVisible ? colors.primary : colors.onSurface} />
+        <TouchableOpacity onPress={() => setIsSearchVisible(!isSearchVisible)} style={[styles.iconBtn, styles.headerActionSpacing, { backgroundColor: colors.surfaceHighlight }]}>
+          <Feather name="search" size={ms(16)} color={isSearchVisible ? colors.primary : colors.onSurface} />
         </TouchableOpacity>
         <View style={[styles.viewToggles, { backgroundColor: colors.surfaceHighlight }]}>
           <TouchableOpacity onPress={() => handleSetViewMode('grid')} style={[styles.toggleBtn, viewMode === 'grid' && { backgroundColor: colors.surface }]}>
-            <Feather name="grid" size={ms(18)} color={viewMode === 'grid' ? colors.primary : colors.onSurface} />
+            <Feather name="grid" size={ms(16)} color={viewMode === 'grid' ? colors.primary : colors.onSurface} />
           </TouchableOpacity>
           <TouchableOpacity onPress={() => handleSetViewMode('list')} style={[styles.toggleBtn, viewMode === 'list' && { backgroundColor: colors.surface }]}>
-            <Feather name="list" size={ms(18)} color={viewMode === 'list' ? colors.primary : colors.onSurface} />
+            <Feather name="list" size={ms(16)} color={viewMode === 'list' ? colors.primary : colors.onSurface} />
           </TouchableOpacity>
         </View>
-        <TouchableOpacity onPress={onClose} style={[styles.closeBtn, { backgroundColor: colors.surfaceHighlight }]}>
-          <Feather name="x" size={ms(18)} color={colors.error} />
+        <TouchableOpacity onPress={onClose} style={[styles.iconBtn, styles.headerActionSpacing, { backgroundColor: colors.surfaceHighlight }]}>
+          <Feather name="x" size={ms(16)} color={colors.error} />
         </TouchableOpacity>
       </View>
 
       {isSearchVisible && (
         <View style={[styles.searchContainer, { backgroundColor: colors.surfaceHighlight, borderColor: colors.border }]}>
-          <Feather name="search" size={ms(18)} color={colors.primary} style={styles.searchIcon} />
+          <Feather name="search" size={ms(16)} color={colors.primary} style={styles.searchIcon} />
           <TextInput
-            style={[styles.searchInput, { fontSize: ms(15), color: colors.onSurface }]}
+            style={[styles.searchInput, { fontSize: ms(16), color: colors.onSurface }]}
             placeholder="Pesquisar versão..."
             placeholderTextColor={colors.textMuted}
             value={searchQuery}
@@ -106,7 +106,7 @@ export function BibleVersionModal({ visible, onClose, onSelect, currentVersionSi
                 onLayout={isSelected ? (e) => {
                   if (!hasScrolledRef.current && visible && !searchQuery) {
                     hasScrolledRef.current = true;
-                    const y = Math.max(0, e.nativeEvent.layout.y - 16);
+                    const y = Math.max(0, e.nativeEvent.layout.y - 18);
                     scrollViewRef.current?.scrollTo({ y, animated: false });
                   }
                 } : undefined}
@@ -133,7 +133,7 @@ export function BibleVersionModal({ visible, onClose, onSelect, currentVersionSi
                   onLayout={isSelected ? (e) => {
                     if (!hasScrolledRef.current && visible && !searchQuery) {
                       hasScrolledRef.current = true;
-                      const y = Math.max(0, e.nativeEvent.layout.y - 16);
+                      const y = Math.max(0, e.nativeEvent.layout.y - 18);
                       scrollViewRef.current?.scrollTo({ y, animated: false });
                     }
                   } : undefined}
@@ -164,53 +164,37 @@ export function BibleVersionModal({ visible, onClose, onSelect, currentVersionSi
 }
 
 const styles = StyleSheet.create({
-  modalBackdrop: {
+  container: {
     flex: 1,
-    justifyContent: 'flex-end',
-  },
-  bottomSheet: {
-    width: '100%',
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
     padding: 8,
-    elevation: 24,
-    shadowOffset: { width: 0, height: -4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 16,
   },
-  modalHandle: { width: 40, height: 4, borderRadius: 2, alignSelf: 'center', marginBottom: 4, marginTop: 4 },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 8,
+    marginBottom: 0,
   },
   headerIconWrap: {
-    width: 42,
-    height: 42,
-    borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
+    marginRight: 8,
   },
   title: {
     flex: 1,
     fontWeight: '700',
   },
-  searchToggleBtn: { width: 42, height: 42, justifyContent: 'center', alignItems: 'center', borderRadius: 8, marginLeft: 12 },
-  closeBtn: {
-    width: 42,
-    height: 42,
+  iconBtn: {
+    width: 32,
+    height: 32,
+    borderRadius: 6,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 8,
-    marginLeft: 12,
+  },
+  headerActionSpacing: {
+    marginLeft: 8,
   },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
     borderRadius: 12,
-    marginHorizontal: 8,
     paddingHorizontal: 12,
     marginTop: 8,
     height: 44,
@@ -223,7 +207,7 @@ const styles = StyleSheet.create({
     height: '100%',
     ...({ outlineStyle: 'none' } as any),
   },
-  list: { padding: 8, flexGrow: 1, gap: 8 },
+  list: { flexGrow: 1, gap: 8 },
   divider: { height: 1, marginVertical: 8 },
   footer: {
     paddingTop: 4,
@@ -235,7 +219,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 16,
+    borderRadius: 18,
   },
   countNumber: {
     fontWeight: '800',
@@ -245,8 +229,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontSize: 13,
   },
-  viewToggles: { flexDirection: 'row', alignItems: 'center', borderRadius: 8, padding: 4, gap: 4, marginLeft: 12, height: 42 },
-  toggleBtn: { width: 34, height: 34, justifyContent: 'center', alignItems: 'center', borderRadius: 6 },
-  toggleBtnActive: { elevation: 2, shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.1, shadowRadius: 2 },
+  viewToggles: { flexDirection: 'row', alignItems: 'center', borderRadius: 6, padding: 3, gap: 2, marginLeft: 8, height: 32 },
+  toggleBtn: { width: 26, height: 26, justifyContent: 'center', alignItems: 'center', borderRadius: 4 },
   gridContainer: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, justifyContent: 'flex-start' },
 });

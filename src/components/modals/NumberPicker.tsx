@@ -1,6 +1,7 @@
 import { Feather } from '@expo/vector-icons';
+import { FlashList } from '@shopify/flash-list';
 import React from 'react';
-import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useResponsive } from '../../hooks/use-responsive';
 import { useTheme } from '../../hooks/use-theme';
 import { BibleText } from '../BibleText';
@@ -24,22 +25,24 @@ export function NumberPicker({ title, items, onSelect, onClose, onBack, activeNu
         <View style={styles.titleArea}>
           {onBack && (
             <TouchableOpacity onPress={onBack} style={styles.backBtn}>
-              <Feather name="chevron-left" size={ms(20)} color={colors.primary} />
+              <Feather name="chevron-left" size={ms(16)} color={colors.primary} />
             </TouchableOpacity>
           )}
-          <BibleText style={[styles.title, { fontSize: ms(18), color: colors.onBackground }]}>
+          <BibleText style={[styles.title, { fontSize: ms(15), color: colors.onBackground }]}>
             {title}
           </BibleText>
         </View>
-        <TouchableOpacity onPress={onClose} style={[styles.closeBtn, { backgroundColor: colors.error + '15' }]}>
-          <Feather name="x" size={ms(18)} color={colors.error} />
+        <TouchableOpacity onPress={onClose} style={[styles.iconBtn, { backgroundColor: colors.error + '15' }]}>
+          <Feather name="x" size={ms(14)} color={colors.error} />
         </TouchableOpacity>
       </View>
 
-      <FlatList
+      <FlashList
         data={items}
         keyExtractor={item => String(item)}
         numColumns={5}
+        // @ts-ignore
+        estimatedItemSize={50}
         contentContainerStyle={styles.list}
         renderItem={({ item }) => {
           const isActive = item === activeNumber;
@@ -70,35 +73,33 @@ export function NumberPicker({ title, items, onSelect, onClose, onBack, activeNu
 const styles = StyleSheet.create({
   container: {
     maxHeight: '60%',
+    padding: 8,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: 16,
-    borderBottomWidth: 1,
+    marginBottom: 8,
   },
   titleArea: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
   },
   title: {
     fontWeight: '800',
   },
   backBtn: {
-    padding: 4,
-    marginLeft: -4,
+    padding: 2,
+    marginRight: 4,
   },
-  closeBtn: {
+  iconBtn: {
     width: 32,
     height: 32,
-    borderRadius: 16,
-    alignItems: 'center',
+    borderRadius: 6,
     justifyContent: 'center',
+    alignItems: 'center',
   },
   list: {
-    padding: 12,
     paddingBottom: 32,
   },
   item: {

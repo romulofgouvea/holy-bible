@@ -120,18 +120,18 @@ export function BibleBookModal({ visible, onClose, books, versionSigla, onVersio
   let lastTestament: string | null = null;
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={styles.container}>
       <View style={styles.header}>
         <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
           {versionSigla && onVersionPress ? (
             <TouchableOpacity activeOpacity={0.7} style={[styles.versionPill, { backgroundColor: colors.primary + '15' }]} onPress={onVersionPress}>
               <BibleText style={[styles.versionPillText, { fontSize: ms(13), color: colors.primary, fontWeight: '700' }]}>{versionSigla}</BibleText>
-              <Feather name="chevron-down" size={ms(14)} color={colors.primary} style={{ marginLeft: 2 }} />
+              <Feather name="chevron-down" size={ms(16)} color={colors.primary} style={{ marginLeft: 2 }} />
             </TouchableOpacity>
           ) : (
             <>
-              <View style={[styles.headerIconWrap, { backgroundColor: colors.primary + '15' }]}>
-                <Feather name="book" size={ms(18)} color={colors.primary} />
+              <View style={[styles.iconBtn, styles.headerIconWrap, { backgroundColor: colors.primary + '15' }]}>
+                <Feather name="book" size={ms(16)} color={colors.primary} />
               </View>
               <BibleText style={[styles.title, { flex: 0, flexShrink: 1, fontSize: ms(18), color: colors.primary, fontWeight: '800' }]}>Livros</BibleText>
             </>
@@ -139,8 +139,8 @@ export function BibleBookModal({ visible, onClose, books, versionSigla, onVersio
         </View>
 
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <TouchableOpacity onPress={() => setIsSearchVisible(!isSearchVisible)} style={[styles.searchToggleBtn, { backgroundColor: colors.surfaceHighlight }]}>
-            <Feather name="search" size={ms(18)} color={isSearchVisible ? colors.primary : colors.onSurface} />
+          <TouchableOpacity onPress={() => setIsSearchVisible(!isSearchVisible)} style={[styles.iconBtn, styles.headerActionSpacing, { backgroundColor: colors.surfaceHighlight }]}>
+            <Feather name="search" size={ms(16)} color={isSearchVisible ? colors.primary : colors.onSurface} />
           </TouchableOpacity>
 
           <View style={[styles.viewToggles, { backgroundColor: colors.surfaceHighlight }]}>
@@ -152,17 +152,17 @@ export function BibleBookModal({ visible, onClose, books, versionSigla, onVersio
             </TouchableOpacity>
           </View>
 
-          <TouchableOpacity onPress={onClose} style={[styles.closeBtn, { backgroundColor: colors.surfaceHighlight }]}>
-            <Feather name="x" size={ms(18)} color={colors.error} />
+          <TouchableOpacity onPress={onClose} style={[styles.iconBtn, styles.headerActionSpacing, { backgroundColor: colors.surfaceHighlight }]}>
+            <Feather name="x" size={ms(16)} color={colors.error} />
           </TouchableOpacity>
         </View>
       </View>
 
       {isSearchVisible && (
         <View style={[styles.searchContainer, { backgroundColor: colors.surfaceHighlight, borderColor: colors.border }]}>
-          <Feather name="search" size={ms(18)} color={colors.primary} style={styles.searchIcon} />
+          <Feather name="search" size={ms(16)} color={colors.primary} style={styles.searchIcon} />
           <TextInput
-            style={[styles.searchInput, { fontSize: ms(15), color: colors.onSurface }]}
+            style={[styles.searchInput, { fontSize: ms(14), color: colors.onSurface }]}
             placeholder="Pesquisar livro..."
             placeholderTextColor={colors.textMuted}
             value={searchQuery}
@@ -265,24 +265,25 @@ export function BibleBookModal({ visible, onClose, books, versionSigla, onVersio
 }
 
 const styles = StyleSheet.create({
-  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 8 },
-  headerIconWrap: { width: 42, height: 42, borderRadius: 12, justifyContent: 'center', alignItems: 'center', marginRight: 12 },
+  container: { flex: 1, padding: 8 },
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 0 },
+  iconBtn: { width: 32, height: 32, borderRadius: 6, justifyContent: 'center', alignItems: 'center' },
+  headerActionSpacing: { marginLeft: 8 },
+  headerIconWrap: { marginRight: 8 },
   title: { flex: 1, fontWeight: '700' },
-  versionPill: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 10, height: 42, borderRadius: 12, marginRight: 12 },
+  versionPill: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 8, height: 32, borderRadius: 6, marginRight: 8 },
   versionPillText: { fontWeight: '800' },
-  searchToggleBtn: { width: 42, height: 42, justifyContent: 'center', alignItems: 'center', borderRadius: 8, marginLeft: 12 },
-  closeBtn: { width: 42, height: 42, justifyContent: 'center', alignItems: 'center', borderRadius: 8, marginLeft: 12 },
-  searchContainer: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderRadius: 12, marginHorizontal: 8, paddingHorizontal: 12, marginTop: 8, height: 44 },
+  searchContainer: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderRadius: 12, paddingHorizontal: 12, marginTop: 8, marginBottom: 4, height: 44 },
   searchIcon: { marginRight: 8 },
   searchInput: { flex: 1, height: '100%', ...({ outlineStyle: 'none' } as any) },
-  scrollContent: { paddingHorizontal: 8, paddingVertical: 4 },
+  scrollContent: { paddingVertical: 4 },
   divider: { height: 1, marginVertical: 4 },
   footer: { paddingTop: 4 },
   countPill: { flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start', borderWidth: 1, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 16 },
   countNumber: { fontWeight: '800', fontSize: 13 },
   countText: { fontWeight: '600', fontSize: 13 },
-  viewToggles: { flexDirection: 'row', alignItems: 'center', borderRadius: 8, padding: 4, gap: 4, marginLeft: 12, height: 42 },
-  toggleBtn: { width: 34, height: 34, justifyContent: 'center', alignItems: 'center', borderRadius: 6 },
+  viewToggles: { flexDirection: 'row', alignItems: 'center', borderRadius: 6, padding: 3, gap: 2, marginLeft: 8, height: 32 },
+  toggleBtn: { width: 26, height: 26, justifyContent: 'center', alignItems: 'center', borderRadius: 4 },
   gridContainer: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, justifyContent: 'flex-start', marginBottom: 8 },
   listGroup: { gap: 8, marginBottom: 8 },
   testamentHeader: {

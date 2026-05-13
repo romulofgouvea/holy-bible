@@ -1,4 +1,5 @@
 import { BibleConfirmModal } from '@/components/BibleConfirmModal';
+import { FlashList } from '@shopify/flash-list';
 import { Feather } from '@expo/vector-icons';
 import { usePathname, useRouter } from 'expo-router';
 import React, { useState } from 'react';
@@ -120,14 +121,18 @@ export default function TrashScreen() {
         />
       )}
 
-      <FlatList
-        data={currentStudies}
-        keyExtractor={(item) => item.id}
-        renderItem={renderItem}
-        ListEmptyComponent={renderEmpty}
-        contentContainerStyle={styles.listContent}
-        showsVerticalScrollIndicator={false}
-      />
+      <View style={{ flex: 1 }}>
+        <FlashList
+          data={currentStudies}
+          keyExtractor={(item) => item.id}
+          // @ts-ignore
+          estimatedItemSize={80}
+          renderItem={renderItem}
+          ListEmptyComponent={renderEmpty}
+          contentContainerStyle={styles.listContent}
+          showsVerticalScrollIndicator={false}
+        />
+      </View>
 
       <BibleConfirmModal
         visible={!!studyToDelete}

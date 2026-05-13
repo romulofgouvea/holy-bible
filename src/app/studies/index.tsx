@@ -1,11 +1,11 @@
 import { BibleConfirmModal } from '@/components/BibleConfirmModal';
+import { FlashList } from '@shopify/flash-list';
 import { Feather } from '@expo/vector-icons';
 import * as FileSystem from 'expo-file-system/legacy';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
   Alert,
-  FlatList,
   KeyboardAvoidingView,
   Modal,
   Platform,
@@ -224,14 +224,18 @@ export default function EstudosScreen() {
         } />
       )}
 
-      <FlatList
-        data={currentStudies}
-        keyExtractor={(item) => item.id}
-        renderItem={renderItem}
-        ListEmptyComponent={renderEmpty}
-        contentContainerStyle={styles.listContent}
-        showsVerticalScrollIndicator={false}
-      />
+      <View style={{ flex: 1 }}>
+        <FlashList
+          data={currentStudies}
+          keyExtractor={(item) => item.id}
+          // @ts-ignore
+          estimatedItemSize={80}
+          renderItem={renderItem}
+          ListEmptyComponent={renderEmpty}
+          contentContainerStyle={styles.listContent}
+          showsVerticalScrollIndicator={false}
+        />
+      </View>
 
       <Modal visible={modalVisible} transparent animationType="slide">
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.modalWrapper}>

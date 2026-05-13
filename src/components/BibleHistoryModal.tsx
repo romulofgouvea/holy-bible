@@ -1,6 +1,7 @@
 import { Feather } from '@expo/vector-icons';
+import { FlashList } from '@shopify/flash-list';
 import React from 'react';
-import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { HistoryItem, useHistory } from '../hooks/use-history';
 import { useResponsive } from '../hooks/use-responsive';
 import { useTheme } from '../hooks/use-theme';
@@ -18,9 +19,15 @@ export function BibleHistoryModal({ visible, onClose, onSelect }: BibleHistoryMo
   const { ms } = useResponsive();
   const { colors } = useTheme();
 
+  const listRef = React.useRef<any>(null);
+
   React.useEffect(() => {
     if (visible) {
       loadHistory();
+      // setTimeout is used to ensure the list is rendered before scrolling
+      setTimeout(() => {
+        listRef.current?.scrollToOffset({ offset: 0, animated: false });
+      }, 50);
     }
   }, [visible, loadHistory]);
 
@@ -28,52 +35,54 @@ export function BibleHistoryModal({ visible, onClose, onSelect }: BibleHistoryMo
     <BibleBottomSheet visible={visible} onClose={onClose}>
       <View style={styles.container}>
         <View style={styles.header}>
-          <View style={[styles.headerIconWrap, { backgroundColor: colors.primary + '15' }]}>
-            <Feather name="clock" size={ms(18)} color={colors.primary} />
+          <View style={[styles.iconBtn, styles.headerIconWrap, { backgroundColor: colors.primary + '15' }]}>
+            <Feather name="clock" size={ms(14)} color={colors.primary} />
           </View>
-          <BibleText style={[styles.title, { fontSize: ms(18), color: colors.primary, fontWeight: '800' }]}>Histórico</BibleText>
-          <TouchableOpacity onPress={onClose} style={[styles.closeBtn, { backgroundColor: colors.surfaceHighlight }]}>
-            <Feather name="x" size={ms(18)} color={colors.error} />
+          <BibleText style={[styles.title, { fontSize: ms(16), color: colors.primary, fontWeight: '800' }]}>Histórico</BibleText>
+          <TouchableOpacity onPress={onClose} style={[styles.iconBtn, styles.closeBtn, { backgroundColor: colors.surfaceHighlight }]}>
+            <Feather name="x" size={ms(14)} color={colors.error} />
           </TouchableOpacity>
         </View>
         <View style={[styles.divider, { backgroundColor: colors.border }]} />
         {history.length > 0 ? (
           <>
-            <FlatList
-              data={history}
-              keyExtractor={(item) => `${item.timestamp}`}
-              contentContainerStyle={styles.listContent}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  activeOpacity={0.7}
-                  style={[styles.card, { borderColor: colors.border, backgroundColor: colors.surfaceHighlight + '20' }]}
-                  onPress={() => {
-                    onSelect(item);
-                    onClose();
-                  }}
-                >
-                  <View style={styles.cardBody}>
-                    <View style={[styles.iconBox, { backgroundColor: colors.primary }]}>
-                      <Feather name="clock" size={ms(14)} color={colors.onPrimary} />
+            <View style={styles.list}>
+              <FlashList
+                ref={listRef}
+                data={history}
+                keyExtractor={(item) => `${item.timestamp}`}
+                // @ts-ignore
+                estimatedItemSize={70}
+                contentContainerStyle={styles.listContent}
+                ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
+                renderItem={({ item }) => (
+                  <TouchableOpacity
+                    activeOpacity={0.7}
+                    style={[styles.card, { borderColor: colors.border, backgroundColor: colors.surfaceHighlight }]}
+                    onPress={() => {
+                      onSelect(item);
+                      onClose();
+                    }}
+                  >
+                    <View style={styles.cardBody}>
+                      <View style={{ flex: 1 }}>
+                        <BibleText style={[styles.refText, { color: colors.onSurface, fontSize: ms(16) }]}>
+                          {item.bookName} {item.chapter}:{item.verse}
+                        </BibleText>
+                        <BibleText style={[styles.versionSubText, { color: colors.textMuted, fontSize: ms(12), marginTop: 2 }]}>
+                          {new Date(item.timestamp).toLocaleDateString()}
+                        </BibleText>
+                      </View>
+                      <View style={[styles.versionBadge, { backgroundColor: colors.primary }]}>
+                        <BibleText style={[styles.versionBadgeText, { color: colors.onPrimary, fontSize: ms(11) }]}>
+                          {item.version}
+                        </BibleText>
+                      </View>
                     </View>
-                    <View style={{ flex: 1 }}>
-                      <BibleText style={[styles.refText, { color: colors.onSurface, fontSize: ms(16) }]}>
-                        {item.bookName} {item.chapter}:{item.verse}
-                      </BibleText>
-                      <BibleText style={[styles.versionSubText, { color: colors.textMuted, fontSize: ms(12), marginTop: 2 }]}>
-                        {new Date(item.timestamp).toLocaleDateString()}
-                      </BibleText>
-                    </View>
-                    <View style={[styles.versionBadge, { backgroundColor: colors.primary }]}>
-                      <BibleText style={[styles.versionBadgeText, { color: colors.onPrimary, fontSize: ms(11) }]}>
-                        {item.version}
-                      </BibleText>
-                    </View>
-                  </View>
-                </TouchableOpacity>
-              )}
-              style={styles.list}
-            />
+                  </TouchableOpacity>
+                )}
+              />
+            </View>
             <View style={[styles.divider, { backgroundColor: colors.border }]} />
 
             <View style={styles.footer}>
@@ -102,33 +111,29 @@ export function BibleHistoryModal({ visible, onClose, onSelect }: BibleHistoryMo
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingBottom: 0,
+    padding: 8,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 8,
     marginBottom: 0,
   },
-  headerIconWrap: {
-    width: 42,
-    height: 42,
-    borderRadius: 12,
+  iconBtn: {
+    width: 32,
+    height: 32,
+    borderRadius: 6,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 12,
+  },
+  headerIconWrap: {
+    marginRight: 8,
   },
   title: {
     flex: 1,
     fontWeight: '700',
   },
   closeBtn: {
-    width: 42,
-    height: 42,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 8,
-    marginLeft: 12,
+    marginLeft: 8,
   },
   divider: {
     height: 1,
@@ -139,7 +144,6 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   listContent: {
-    paddingHorizontal: 16,
     gap: 10,
     paddingBottom: 10,
   },

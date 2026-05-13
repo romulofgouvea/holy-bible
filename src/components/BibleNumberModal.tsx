@@ -32,20 +32,20 @@ export function BibleNumberModal({ visible, onClose, onBack, items, title, iconN
   if (!visible) return null;
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={styles.container}>
       <View style={styles.header}>
         {onBack ? (
-          <TouchableOpacity onPress={onBack} style={[styles.headerIconWrap, { backgroundColor: colors.primary }]}>
-            <Feather name="arrow-left" size={ms(18)} color={colors.onPrimary} />
+          <TouchableOpacity onPress={onBack} style={[styles.iconBtn, styles.headerIconWrap, { backgroundColor: colors.primary }]}>
+            <Feather name="arrow-left" size={ms(16)} color={colors.onPrimary} />
           </TouchableOpacity>
         ) : (
-          <View style={[styles.headerIconWrap, { backgroundColor: colors.primary + '15' }]}>
-            <Feather name={iconName} size={ms(18)} color={colors.primary} />
+          <View style={[styles.iconBtn, styles.headerIconWrap, { backgroundColor: colors.primary }]}>
+            <Feather name={iconName} size={ms(16)} color={colors.primary} />
           </View>
         )}
         <BibleText style={[styles.title, { fontSize: ms(18), color: colors.primary, fontWeight: '800' }]}>{title}</BibleText>
-        <TouchableOpacity onPress={onClose} style={[styles.closeBtn, { backgroundColor: colors.surfaceHighlight }]}>
-          <Feather name="x" size={ms(18)} color={colors.error} />
+        <TouchableOpacity onPress={onClose} style={[styles.iconBtn, styles.closeBtn, { backgroundColor: colors.surfaceHighlight }]}>
+          <Feather name="x" size={ms(16)} color={colors.error} />
         </TouchableOpacity>
       </View>
 
@@ -101,26 +101,13 @@ export function BibleNumberModal({ visible, onClose, onBack, items, title, iconN
 }
 
 const styles = StyleSheet.create({
-  modalBackdrop: {
-    flex: 1,
-    justifyContent: 'flex-end',
-  },
-  bottomSheet: {
-    width: '100%',
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    padding: 8,
-    elevation: 24,
-    shadowOffset: { width: 0, height: -4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 16,
-  },
-  modalHandle: { width: 40, height: 4, borderRadius: 2, alignSelf: 'center', marginBottom: 4, marginTop: 4 },
-  header: { flexDirection: 'row', alignItems: 'center', padding: 8 },
-  headerIconWrap: { width: 42, height: 42, borderRadius: 12, justifyContent: 'center', alignItems: 'center', marginRight: 12 },
+  container: { flex: 1, padding: 8 },
+  header: { flexDirection: 'row', alignItems: 'center', marginBottom: 0 },
+  iconBtn: { width: 32, height: 32, borderRadius: 6, justifyContent: 'center', alignItems: 'center' },
+  headerIconWrap: { marginRight: 8 },
   title: { flex: 1, fontWeight: '700' },
-  closeBtn: { width: 42, height: 42, justifyContent: 'center', alignItems: 'center', borderRadius: 8, marginLeft: 12 },
-  list: { padding: 8, paddingBottom: 12, gap: 8 },
+  closeBtn: { marginLeft: 8 },
+  list: { paddingBottom: 12, gap: 8 },
   divider: { height: 1, marginVertical: 8 },
   footer: { paddingTop: 4 },
   countPill: { flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start', borderWidth: 1, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 16 },

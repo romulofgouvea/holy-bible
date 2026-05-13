@@ -1,6 +1,7 @@
 import { Feather } from '@expo/vector-icons';
+import { FlashList } from '@shopify/flash-list';
 import React, { useState } from 'react';
-import { FlatList, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import { Book } from '../../data';
 import { useResponsive } from '../../hooks/use-responsive';
 import { useTheme } from '../../hooks/use-theme';
@@ -17,19 +18,19 @@ export function BookPicker({ books, onSelect, onClose }: BookPickerProps) {
   const { ms } = useResponsive();
   const [search, setSearch] = useState('');
 
-  const filteredBooks = books.filter(b => 
-    b.name.toLowerCase().includes(search.toLowerCase()) || 
+  const filteredBooks = books.filter(b =>
+    b.name.toLowerCase().includes(search.toLowerCase()) ||
     b.abbrev.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
     <View style={styles.container}>
       <View style={[styles.header, { borderBottomColor: colors.border }]}>
-        <BibleText style={[styles.title, { fontSize: ms(18), color: colors.onBackground }]}>
+        <BibleText style={[styles.title, { fontSize: ms(16), color: colors.onBackground }]}>
           Livros
         </BibleText>
-        <TouchableOpacity onPress={onClose} style={[styles.closeBtn, { backgroundColor: colors.error + '15' }]}>
-          <Feather name="x" size={ms(18)} color={colors.error} />
+        <TouchableOpacity onPress={onClose} style={[styles.iconBtn, { backgroundColor: colors.error }]}>
+          <Feather name="x" size={ms(14)} color={colors.error} />
         </TouchableOpacity>
       </View>
 
@@ -44,22 +45,26 @@ export function BookPicker({ books, onSelect, onClose }: BookPickerProps) {
         />
       </View>
 
-      <FlatList
-        data={filteredBooks}
-        keyExtractor={item => item.abbrev}
-        numColumns={2}
-        contentContainerStyle={styles.list}
-        renderItem={({ item }) => (
-          <TouchableOpacity 
-            style={[styles.item, { backgroundColor: colors.surfaceHighlight, borderColor: colors.border }]} 
-            onPress={() => onSelect(item.name)}
-          >
-            <BibleText style={[styles.itemText, { fontSize: ms(14), color: colors.onBackground }]}>
-              {item.name}
-            </BibleText>
-          </TouchableOpacity>
-        )}
-      />
+      <View style={{ flex: 1, minHeight: 200 }}>
+        <FlashList
+          data={filteredBooks}
+          keyExtractor={item => item.abbrev}
+          numColumns={2}
+          // @ts-ignore
+          estimatedItemSize={50}
+          contentContainerStyle={styles.list}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              style={[styles.item, { backgroundColor: colors.surfaceHighlight, borderColor: colors.border }]}
+              onPress={() => onSelect(item.name)}
+            >
+              <BibleText style={[styles.itemText, { fontSize: ms(14), color: colors.onBackground }]}>
+                {item.name}
+              </BibleText>
+            </TouchableOpacity>
+          )}
+        />
+      </View>
     </View>
   );
 }
@@ -67,28 +72,28 @@ export function BookPicker({ books, onSelect, onClose }: BookPickerProps) {
 const styles = StyleSheet.create({
   container: {
     maxHeight: '80%',
+    padding: 8,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: 16,
-    borderBottomWidth: 1,
+    marginBottom: 8,
   },
   title: {
     fontWeight: '800',
   },
-  closeBtn: {
+  iconBtn: {
     width: 32,
     height: 32,
-    borderRadius: 16,
-    alignItems: 'center',
+    borderRadius: 6,
     justifyContent: 'center',
+    alignItems: 'center',
   },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    margin: 16,
+    marginBottom: 8,
     paddingHorizontal: 12,
     height: 44,
     borderRadius: 12,
@@ -98,7 +103,6 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   list: {
-    paddingHorizontal: 16,
     paddingBottom: 32,
     gap: 8,
   },

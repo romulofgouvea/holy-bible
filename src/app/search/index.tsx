@@ -1,9 +1,9 @@
 import { Feather } from '@expo/vector-icons';
+import { FlashList } from '@shopify/flash-list';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useLocalSearchParams, usePathname, useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
-  FlatList,
   Platform,
   StyleSheet,
   Text,
@@ -358,41 +358,46 @@ export default function SearchScreen() {
           </BibleText>
         </View>
       ) : showHistory ? (
-        <FlatList
-          data={history}
-          keyExtractor={(item) => item}
-          keyboardShouldPersistTaps="handled"
-          contentContainerStyle={{ padding: 16, gap: 8 }}
-          ListHeaderComponent={
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-              <BibleText style={{ fontWeight: '800', color: colors.textMuted, fontSize: ms(12), letterSpacing: 0.5 }}>
-                BUSCAS RECENTES
-              </BibleText>
-              <TouchableOpacity onPress={clearHistory} style={{ paddingHorizontal: 12, paddingVertical: 6, backgroundColor: colors.primary + '15', borderRadius: 12 }}>
-                <BibleText style={{ color: colors.primary, fontSize: ms(11), fontWeight: '800' }}>
-                  Limpar
+        <View style={{ flex: 1 }}>
+          <FlashList
+            data={history}
+            keyExtractor={(item) => item}
+            // @ts-ignore
+            estimatedItemSize={60}
+            keyboardShouldPersistTaps="handled"
+            contentContainerStyle={{ padding: 16 }}
+            ItemSeparatorComponent={() => <View style={{ height: 8 }} />}
+            ListHeaderComponent={
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                <BibleText style={{ fontWeight: '800', color: colors.textMuted, fontSize: ms(12), letterSpacing: 0.5 }}>
+                  BUSCAS RECENTES
                 </BibleText>
-              </TouchableOpacity>
-            </View>
-          }
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              style={[styles.resultCard, { borderColor: colors.border, backgroundColor: colors.background, flexDirection: 'row', alignItems: 'center', paddingVertical: 10 }]}
-              onPress={() => handleHistorySelect(item)}
-              activeOpacity={0.7}
-            >
-              <View style={{ width: ms(32), height: ms(32), borderRadius: ms(10), backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center', marginRight: 12 }}>
-                <Feather name="clock" size={ms(14)} color={colors.onPrimary} />
+                <TouchableOpacity onPress={clearHistory} style={{ paddingHorizontal: 12, paddingVertical: 6, backgroundColor: colors.primary + '15', borderRadius: 12 }}>
+                  <BibleText style={{ color: colors.primary, fontSize: ms(11), fontWeight: '800' }}>
+                    Limpar
+                  </BibleText>
+                </TouchableOpacity>
               </View>
-              <BibleText style={[styles.historyText, { color: colors.onSurface, fontSize: ms(15), flex: 1 }]}>
-                {item}
-              </BibleText>
-              <TouchableOpacity onPress={() => removeFromHistory(item)} style={{ padding: 6, backgroundColor: colors.error + '20', borderRadius: ms(14) }}>
-                <Feather name="x" size={ms(12)} color={colors.error} />
+            }
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                style={[styles.resultCard, { borderColor: colors.border, backgroundColor: colors.background, flexDirection: 'row', alignItems: 'center', paddingVertical: 10 }]}
+                onPress={() => handleHistorySelect(item)}
+                activeOpacity={0.7}
+              >
+                <View style={{ width: ms(32), height: ms(32), borderRadius: ms(10), backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center', marginRight: 12 }}>
+                  <Feather name="clock" size={ms(14)} color={colors.onPrimary} />
+                </View>
+                <BibleText style={[styles.historyText, { color: colors.onSurface, fontSize: ms(15), flex: 1 }]}>
+                  {item}
+                </BibleText>
+                <TouchableOpacity onPress={() => removeFromHistory(item)} style={{ padding: 6, backgroundColor: colors.error + '20', borderRadius: ms(14) }}>
+                  <Feather name="x" size={ms(12)} color={colors.error} />
+                </TouchableOpacity>
               </TouchableOpacity>
-            </TouchableOpacity>
-          )}
-        />
+            )}
+          />
+        </View>
       ) : showTooShort ? (
         <EmptyState 
           title="Pesquisa"
@@ -408,27 +413,32 @@ export default function SearchScreen() {
           onAction={handleClearQuery}
         />
       ) : showResults ? (
-        <FlatList
-          data={results}
-          keyExtractor={(_, i) => String(i)}
-          contentContainerStyle={{ padding: 12, gap: 8 }}
-          keyboardShouldPersistTaps="handled"
-          ListHeaderComponent={
-            <BibleText style={[styles.resultCount, { color: colors.textMuted, fontSize: ms(12) }]}>
-              {results.length >= 300 ? '300+ resultados' : `${results.length} resultado${results.length !== 1 ? 's' : ''}`}
-            </BibleText>
-          }
-          renderItem={({ item }) => (
-            <SearchResultItem 
-              item={item} 
-              query={query.trim()} 
-              colors={colors} 
-              fontSizeMultiplier={fontSizeMultiplier} 
-              ms={ms} 
-              onPress={handleNavigate} 
-            />
-          )}
-        />
+        <View style={{ flex: 1 }}>
+          <FlashList
+            data={results}
+            keyExtractor={(_, i) => String(i)}
+            // @ts-ignore
+            estimatedItemSize={100}
+            contentContainerStyle={{ padding: 12 }}
+            ItemSeparatorComponent={() => <View style={{ height: 8 }} />}
+            keyboardShouldPersistTaps="handled"
+            ListHeaderComponent={
+              <BibleText style={[styles.resultCount, { color: colors.textMuted, fontSize: ms(12) }]}>
+                {results.length >= 300 ? '300+ resultados' : `${results.length} resultado${results.length !== 1 ? 's' : ''}`}
+              </BibleText>
+            }
+            renderItem={({ item }) => (
+              <SearchResultItem 
+                item={item} 
+                query={query.trim()} 
+                colors={colors} 
+                fontSizeMultiplier={fontSizeMultiplier} 
+                ms={ms} 
+                onPress={handleNavigate} 
+              />
+            )}
+          />
+        </View>
       ) : null}
 
       <BibleDrawerMenu
