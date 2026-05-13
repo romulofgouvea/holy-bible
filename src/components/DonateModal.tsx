@@ -1,14 +1,11 @@
 import { Feather } from '@expo/vector-icons';
 import * as Clipboard from 'expo-clipboard';
 import React, { useState } from 'react';
-import {
-  Modal,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useResponsive } from '../hooks/use-responsive';
 import { useTheme } from '../hooks/use-theme';
+import { BibleBottomSheet } from './BibleBottomSheet';
+import { BibleIcon } from './BibleIcon';
 import { BibleText } from './BibleText';
 
 const PIX_KEY = 'romulo-gouvea@hotmail.com';
@@ -29,24 +26,36 @@ export function DonateModal({ visible, onClose }: Props) {
     setTimeout(() => setCopied(false), 2500);
   };
 
+  if (!visible) return null;
+
   return (
-    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
-      <View style={[styles.overlay, { backgroundColor: colors.overlay }]}>
-        <View style={[styles.card, { backgroundColor: colors.surface, shadowColor: colors.shadow }]}>
+    <BibleBottomSheet visible={visible} onClose={onClose}>
+      <View style={styles.content}>
+        <View style={styles.header}>
+          <BibleIcon
+            name="heart"
+            size={ms(16)}
+            color={colors.primary}
+            backgroundColor={colors.primary + '25'}
+            borderRadius={6}
+            style={styles.headerIconWrap}
+          />
+          <BibleText style={[styles.headerTitle, { fontSize: ms(16), color: colors.primary }]}>Apoie este Projeto</BibleText>
+          <BibleIcon
+            name="x"
+            size={ms(16)}
+            color={colors.error}
+            backgroundColor={colors.surfaceHighlight}
+            borderRadius={6}
+            onPress={onClose}
+            style={styles.closeBtn}
+          />
+        </View>
 
-          <View style={styles.headerArea}>
-            <View style={[styles.heartGlow, { backgroundColor: colors.primary + '20' }]} />
-            <View style={[styles.heartGlowSmall, { backgroundColor: colors.primary + '40' }]} />
-            <View style={[styles.heartCircle, { backgroundColor: colors.primary }]}>
-              <Feather name="heart" size={ms(32)} color={colors.onPrimary} />
-            </View>
-          </View>
+        <View style={[styles.divider, { backgroundColor: colors.border }]} />
 
-          <BibleText style={[styles.title, { color: colors.onSurface, fontSize: ms(22), fontWeight: '800' }]}>
-            Apoie este Projeto
-          </BibleText>
-
-          <BibleText style={[styles.body, { color: colors.onSurface, fontSize: ms(15), opacity: 0.8 }]}>
+        <View style={styles.bodyContent}>
+          <BibleText style={[styles.body, { color: colors.onSurface, fontSize: ms(14), opacity: 0.8 }]}>
             Este aplicativo é gratuito e feito com muito cuidado para levar a Palavra de Deus às suas mãos.
           </BibleText>
 
@@ -64,7 +73,7 @@ export function DonateModal({ visible, onClose }: Props) {
               </BibleText>
             </View>
 
-            <View style={styles.pixKeyContainer}>
+            <View style={[styles.pixKeyContainer, { backgroundColor: colors.surfaceHighlight, borderColor: colors.border }]}>
               <BibleText style={[styles.pixKey, { color: colors.onSurface, fontSize: ms(16), fontWeight: '600' }]} selectable>
                 {PIX_KEY}
               </BibleText>
@@ -82,83 +91,49 @@ export function DonateModal({ visible, onClose }: Props) {
             </TouchableOpacity>
           </View>
 
-          <BibleText style={[styles.thanks, { color: colors.primary, fontSize: ms(14), fontWeight: '600', fontStyle: 'italic' }]}>
+          <BibleText style={[styles.thanks, { color: colors.primary, fontSize: ms(14), fontWeight: '600' }]}>
             Que Deus abençoe você em dobro!
           </BibleText>
-
-          <TouchableOpacity
-            style={[styles.closeBtn, { backgroundColor: colors.surfaceHighlight }]}
-            onPress={onClose}
-            activeOpacity={0.7}
-          >
-            <BibleText style={[styles.closeBtnText, { color: colors.onSurface, fontSize: ms(14), fontWeight: '700' }]}>
-              Fechar
-            </BibleText>
-          </TouchableOpacity>
         </View>
       </View>
-    </Modal>
+    </BibleBottomSheet>
   );
 }
 
 const styles = StyleSheet.create({
-  overlay: {
+  content: {
+    paddingHorizontal: 8,
+    paddingTop: 8,
+    paddingBottom: 16,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  headerIconWrap: {
+    marginRight: 8,
+  },
+  headerTitle: {
     flex: 1,
+    fontWeight: '700',
+  },
+  closeBtn: {
+    marginLeft: 8,
+  },
+  divider: {
+    height: 1,
+    marginVertical: 4,
+  },
+  bodyContent: {
     alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
-  },
-  card: {
-    width: '100%',
-    maxWidth: 400,
-    borderRadius: 32,
-    padding: 24,
-    alignItems: 'center',
-    elevation: 20,
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.2,
-    shadowRadius: 15,
-  },
-  headerArea: {
-    width: 120,
-    height: 120,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 16,
-  },
-  heartGlow: {
-    position: 'absolute',
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-  },
-  heartGlowSmall: {
-    position: 'absolute',
-    width: 90,
-    height: 90,
-    borderRadius: 45,
-  },
-  heartCircle: {
-    width: 70,
-    height: 70,
-    borderRadius: 35,
-    alignItems: 'center',
-    justifyContent: 'center',
-    elevation: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
-  },
-  title: {
-    marginBottom: 12,
-    textAlign: 'center',
+    paddingTop: 8,
   },
   body: {
     textAlign: 'center',
-    lineHeight: 22,
-    marginBottom: 8,
-    paddingHorizontal: 10,
+    lineHeight: 20,
+    marginBottom: 16,
+    paddingHorizontal: 4,
   },
   bodySmall: {
     textAlign: 'center',
@@ -168,32 +143,31 @@ const styles = StyleSheet.create({
   },
   pixCard: {
     width: '100%',
-    borderRadius: 24,
-    padding: 20,
+    borderRadius: 20,
+    padding: 12,
     borderWidth: 1,
-    marginBottom: 20,
+    marginBottom: 12,
   },
   pixHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 12,
   },
   pixIconCircle: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 10,
+    marginRight: 8,
   },
   pixLabel: {
-    letterSpacing: 1,
+    letterSpacing: 0.5,
   },
   pixKeyContainer: {
-    backgroundColor: 'rgba(0,0,0,0.03)',
-    padding: 14,
-    borderRadius: 12,
-    marginBottom: 16,
+    padding: 12,
+    borderRadius: 10,
+    marginBottom: 12,
     alignItems: 'center',
   },
   pixKey: {
@@ -201,23 +175,14 @@ const styles = StyleSheet.create({
   },
   copyBtn: {
     flexDirection: 'row',
-    height: 54,
-    borderRadius: 16,
+    height: 48,
+    borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
   },
   copyBtnText: {},
   thanks: {
-    marginBottom: 24,
     textAlign: 'center',
   },
-  closeBtn: {
-    width: '100%',
-    height: 50,
-    borderRadius: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  closeBtnText: {},
 });
