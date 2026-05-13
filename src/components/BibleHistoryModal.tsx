@@ -35,7 +35,7 @@ export function BibleHistoryModal({ visible, onClose, onSelect }: BibleHistoryMo
     <BibleBottomSheet visible={visible} onClose={onClose}>
       <View style={styles.container} testID="bible-history-modal">
         <View style={styles.header} testID="bible-history-header">
-          <View style={[styles.iconBtn, styles.headerIconWrap, { backgroundColor: colors.primary + '15' }]} testID="bible-history-icon">
+          <View style={[styles.iconBtn, styles.headerIconWrap, { backgroundColor: colors.primary + '25' }]} testID="bible-history-icon">
             <Feather name="clock" size={ms(14)} color={colors.primary} />
           </View>
           <BibleText style={[styles.title, { fontSize: ms(16), color: colors.primary, fontWeight: '800' }]} testID="bible-history-title">Histórico</BibleText>

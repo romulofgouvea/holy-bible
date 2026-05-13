@@ -60,7 +60,7 @@ export function BibleVersionModal({ visible, onClose, onSelect, currentVersionSi
   return (
     <View style={styles.container} testID="bible-version-modal">
       <View style={styles.header} testID="bible-version-header">
-        <View style={[styles.iconBtn, styles.headerIconWrap, { backgroundColor: colors.primary + '15' }]}>
+        <View style={[styles.iconBtn, styles.headerIconWrap, { backgroundColor: colors.primary + '25' }]}>
           <Feather name="book-open" size={ms(16)} color={colors.primary} />
         </View>
         <BibleText style={[styles.title, { fontSize: ms(18), color: colors.primary, fontWeight: '800' }]}>Versões</BibleText>

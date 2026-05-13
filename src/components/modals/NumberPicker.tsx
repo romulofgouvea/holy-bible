@@ -24,7 +24,7 @@ export function NumberPicker({ title, items, onSelect, onClose, onBack, activeNu
       <View style={[styles.header, { borderBottomColor: colors.border }]} testID="number-picker-header">
         <View style={styles.titleArea}>
           {onBack && (
-            <TouchableOpacity onPress={onBack} style={[styles.iconBtn, { backgroundColor: colors.primary + '15', marginRight: 8 }]} testID="number-picker-back-btn">
+            <TouchableOpacity onPress={onBack} style={[styles.iconBtn, { backgroundColor: colors.primary + '25', marginRight: 8 }]} testID="number-picker-back-btn">
               <Feather name="arrow-left" size={ms(16)} color={colors.primary} />
             </TouchableOpacity>
           )}
@@ -32,7 +32,7 @@ export function NumberPicker({ title, items, onSelect, onClose, onBack, activeNu
             {title}
           </BibleText>
         </View>
-        <TouchableOpacity onPress={onClose} style={[styles.iconBtn, { backgroundColor: colors.error + '15' }]} testID="number-picker-close-btn">
+        <TouchableOpacity onPress={onClose} style={[styles.iconBtn, { backgroundColor: colors.error + '25' }]} testID="number-picker-close-btn">
           <Feather name="x" size={ms(14)} color={colors.error} />
         </TouchableOpacity>
       </View>

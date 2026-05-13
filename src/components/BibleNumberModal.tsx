@@ -36,11 +36,11 @@ export function BibleNumberModal({ visible, onClose, onBack, items, title, iconN
     <View style={styles.container} testID="bible-number-modal">
       <View style={styles.header} testID="bible-number-header">
         {onBack ? (
-          <TouchableOpacity onPress={onBack} style={[styles.iconBtn, styles.headerIconWrap, { backgroundColor: colors.primary + '15' }]}>
+          <TouchableOpacity onPress={onBack} style={[styles.iconBtn, styles.headerIconWrap, { backgroundColor: colors.primary + '25' }]}>
             <Feather name="arrow-left" size={ms(16)} color={colors.primary} />
           </TouchableOpacity>
         ) : (
-          <View style={[styles.iconBtn, styles.headerIconWrap, { backgroundColor: colors.primary + '15' }]}>
+          <View style={[styles.iconBtn, styles.headerIconWrap, { backgroundColor: colors.primary + '25' }]}>
             <Feather name={iconName} size={ms(16)} color={colors.primary} />
           </View>
         )}

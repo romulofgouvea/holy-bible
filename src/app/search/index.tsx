@@ -371,7 +371,7 @@ export default function SearchScreen() {
                 <BibleText style={{ fontWeight: '800', color: colors.textMuted, fontSize: ms(12), letterSpacing: 0.5 }}>
                   BUSCAS RECENTES
                 </BibleText>
-                <TouchableOpacity onPress={clearHistory} style={{ paddingHorizontal: 12, paddingVertical: 6, backgroundColor: colors.primary + '15', borderRadius: 12 }}>
+                <TouchableOpacity onPress={clearHistory} style={{ paddingHorizontal: 12, paddingVertical: 6, backgroundColor: colors.primary + '25', borderRadius: 12 }}>
                   <BibleText style={{ color: colors.primary, fontSize: ms(11), fontWeight: '800' }}>
                     Limpar
                   </BibleText>

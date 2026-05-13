@@ -43,11 +43,11 @@ export function StudyVerseSelectModal({ visible, onClose, onBack, bookName, chap
     <View style={styles.container} testID="study-verse-modal">
       <View style={styles.header} testID="study-verse-header">
         {onBack ? (
-          <TouchableOpacity onPress={onBack} style={[styles.iconBtn, styles.headerIconWrap, { backgroundColor: colors.primary + '15' }]}>
+          <TouchableOpacity onPress={onBack} style={[styles.iconBtn, styles.headerIconWrap, { backgroundColor: colors.primary + '25' }]}>
             <Feather name="arrow-left" size={ms(16)} color={colors.primary} />
           </TouchableOpacity>
         ) : (
-          <View style={[styles.iconBtn, styles.headerIconWrap, { backgroundColor: colors.primary + '15' }]}>
+          <View style={[styles.iconBtn, styles.headerIconWrap, { backgroundColor: colors.primary + '25' }]}>
             <Feather name="list" size={ms(16)} color={colors.primary} />
           </View>
         )}
@@ -60,7 +60,7 @@ export function StudyVerseSelectModal({ visible, onClose, onBack, bookName, chap
       <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }} bounces={true} overScrollMode="always" testID="study-verse-list">
         {verses.map(({ verse, text }) => {
           const selected = selectedNums.has(verse);
-          const primaryLow = colors.primary + '20';
+          const primaryLow = colors.primary + '25';
           return (
             <TouchableOpacity key={verse} style={[styles.verseRow, { borderBottomColor: colors.border }, selected && { backgroundColor: primaryLow, borderLeftWidth: 3, borderLeftColor: colors.primary, paddingLeft: ms(6) }]} onPress={() => toggleVerse(verse)} activeOpacity={0.7}>
               <BibleText style={[styles.verseNumLabel, { fontSize: ms(12), color: colors.primary }]}>{verse}</BibleText>

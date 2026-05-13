@@ -103,8 +103,8 @@ export function BibleBookModal({ visible, onClose, books, versionSigla, onVersio
 
   const testamentHeaderOT = (
     <View style={styles.testamentSectionHeader}>
-      <View style={[styles.testamentPill, { backgroundColor: colors.primary }]}>
-        <BibleText style={[styles.testamentTitle, { color: colors.onPrimary, fontSize: ms(11), fontWeight: '800' }]}>
+      <View style={[styles.testamentPill, { backgroundColor: colors.primary + '25' }]}>
+        <BibleText style={[styles.testamentTitle, { color: colors.primary, fontSize: ms(11), fontWeight: '800' }]}>
           ANTIGO TESTAMENTO
         </BibleText>
       </View>
@@ -113,8 +113,8 @@ export function BibleBookModal({ visible, onClose, books, versionSigla, onVersio
 
   const testamentHeaderNT = (
     <View style={[styles.testamentSectionHeader, { marginTop: ms(12) }]}>
-      <View style={[styles.testamentPill, { backgroundColor: colors.primary }]}>
-        <BibleText style={[styles.testamentTitle, { color: colors.onPrimary, fontSize: ms(11), fontWeight: '800' }]}>
+      <View style={[styles.testamentPill, { backgroundColor: colors.primary + '25' }]}>
+        <BibleText style={[styles.testamentTitle, { color: colors.primary, fontSize: ms(11), fontWeight: '800' }]}>
           NOVO TESTAMENTO
         </BibleText>
       </View>
@@ -128,13 +128,13 @@ export function BibleBookModal({ visible, onClose, books, versionSigla, onVersio
       <View style={styles.header} testID="bible-book-header">
         <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
           {versionSigla && onVersionPress ? (
-            <TouchableOpacity activeOpacity={0.7} style={[styles.versionPill, { backgroundColor: colors.primary + '15' }]} onPress={onVersionPress}>
+            <TouchableOpacity activeOpacity={0.7} style={[styles.versionPill, { backgroundColor: colors.primary + '25' }]} onPress={onVersionPress}>
               <BibleText style={[styles.versionPillText, { fontSize: ms(13), color: colors.primary, fontWeight: '700' }]}>{versionSigla}</BibleText>
               <Feather name="chevron-down" size={ms(16)} color={colors.primary} style={{ marginLeft: 2 }} />
             </TouchableOpacity>
           ) : (
             <>
-              <View style={[styles.iconBtn, styles.headerIconWrap, { backgroundColor: colors.primary + '15' }]}>
+              <View style={[styles.iconBtn, styles.headerIconWrap, { backgroundColor: colors.primary + '25' }]}>
                 <Feather name="book" size={ms(16)} color={colors.primary} />
               </View>
               <BibleText style={[styles.title, { flex: 0, flexShrink: 1, fontSize: ms(18), color: colors.primary, fontWeight: '800' }]}>Livros</BibleText>
@@ -298,7 +298,7 @@ const styles = StyleSheet.create({
   },
   testamentPill: {
     paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingVertical: 6,
     borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',

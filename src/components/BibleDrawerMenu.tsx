@@ -3,7 +3,7 @@ import { useRouter } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import { Animated, Modal, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { DRAWER_ITEMS, ROUTES } from '../constants/routes';
+import { DRAWER_ITEMS } from '../constants/routes';
 import { useResponsive } from '../hooks/use-responsive';
 import { useTheme } from '../hooks/use-theme';
 import { BibleText } from './BibleText';
@@ -108,7 +108,7 @@ export function BibleDrawerMenu(props: DrawerMenuProps) {
         style={[
           styles.menuItem,
           { paddingVertical: ms(9), paddingHorizontal: ms(8), borderRadius: ms(12), marginBottom: ms(4) },
-          isActive && { backgroundColor: colors.primary + '15' },
+          isActive && { backgroundColor: colors.primary + '25' },
         ]}
         onPress={() => handlePress(item)}
         activeOpacity={0.7}

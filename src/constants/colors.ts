@@ -38,7 +38,7 @@ export const getSupportColors = (colors: ThemeColors, isDarkMode: boolean) => ({
 });
 
 const DARK_BASE = {
-  background: '#0F1115',
+  background: '#2d2d2d',
   surface: '#1A1D23',
   error: '#FF5252',
   onBackground: '#E9ECEF',
@@ -62,13 +62,13 @@ export const sepiaColors: ThemeColors = {
   primaryVariant: '#4A3B32',
   secondary: '#7A6354',
   secondaryVariant: '#D8CCB2',
-  background: '#EAE0C8',
-  surface: '#E1D6BD',
+  background: '#FBF0D9',
+  surface: '#F2E7D2',
   error: '#8B0000',
-  onPrimary: '#EAE0C8',
-  onSecondary: '#EAE0C8',
-  onBackground: '#4A3B32',
-  onSurface: '#4A3B32',
+  onPrimary: '#FBF0D9',
+  onSecondary: '#FBF0D9',
+  onBackground: '#3F2B1B',
+  onSurface: '#3F2B1B',
   onError: '#FFFFFF',
 };
 
