@@ -1,9 +1,9 @@
-import { Feather } from '@expo/vector-icons';
 import { FlashList } from '@shopify/flash-list';
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useResponsive } from '../../hooks/use-responsive';
 import { useTheme } from '../../hooks/use-theme';
+import { BibleIcon } from '../BibleIcon';
 import { BibleText } from '../BibleText';
 
 interface NumberPickerProps {
@@ -25,16 +25,20 @@ export function NumberPicker({ title, items, onSelect, onClose, onBack, activeNu
         <View style={styles.titleArea}>
           {onBack && (
             <TouchableOpacity onPress={onBack} style={[styles.iconBtn, { backgroundColor: colors.primary + '25', marginRight: 8 }]} testID="number-picker-back-btn">
-              <Feather name="arrow-left" size={ms(16)} color={colors.primary} />
+              <BibleIcon name="arrow-left" size={ms(16)} color={colors.primary} />
             </TouchableOpacity>
           )}
           <BibleText style={[styles.title, { fontSize: ms(15), color: colors.onBackground }]} testID="number-picker-title">
             {title}
           </BibleText>
         </View>
-        <TouchableOpacity onPress={onClose} style={[styles.iconBtn, { backgroundColor: colors.error + '25' }]} testID="number-picker-close-btn">
-          <Feather name="x" size={ms(14)} color={colors.error} />
-        </TouchableOpacity>
+        <BibleIcon
+          name="x"
+          color={colors.error}
+          backgroundColor={colors.error + '20'}
+          onPress={onClose}
+          testID="number-picker-close-btn"
+        />
       </View>
 
       <FlashList
@@ -43,20 +47,21 @@ export function NumberPicker({ title, items, onSelect, onClose, onBack, activeNu
         numColumns={5}
         // @ts-ignore
         estimatedItemSize={50}
+        showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.list}
         renderItem={({ item }) => {
           const isActive = item === activeNumber;
           return (
-            <TouchableOpacity 
+            <TouchableOpacity
               style={[
-                styles.item, 
+                styles.item,
                 { backgroundColor: isActive ? colors.primary : colors.surfaceHighlight, borderColor: colors.border },
                 isActive && { borderColor: colors.primary }
-              ]} 
+              ]}
               onPress={() => onSelect(item)}
             >
               <BibleText style={[
-                styles.itemText, 
+                styles.itemText,
                 { fontSize: ms(15), color: isActive ? colors.onPrimary : colors.onBackground },
                 isActive && { fontWeight: '800' }
               ]}>
@@ -87,10 +92,6 @@ const styles = StyleSheet.create({
   },
   title: {
     fontWeight: '800',
-  },
-  backBtn: {
-    padding: 2,
-    marginRight: 4,
   },
   iconBtn: {
     width: 32,

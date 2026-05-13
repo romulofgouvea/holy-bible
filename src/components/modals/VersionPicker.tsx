@@ -1,10 +1,10 @@
-import { Feather } from '@expo/vector-icons';
 import { FlashList } from '@shopify/flash-list';
 import React, { useState } from 'react';
 import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import { availableVersions } from '../../data';
 import { useResponsive } from '../../hooks/use-responsive';
 import { useTheme } from '../../hooks/use-theme';
+import { BibleIcon } from '../BibleIcon';
 import { BibleText } from '../BibleText';
 
 interface VersionPickerProps {
@@ -31,13 +31,17 @@ export function VersionPicker({ onSelect, onClose }: VersionPickerProps) {
         <BibleText style={[styles.title, { fontSize: ms(16), color: colors.onBackground }]} testID="version-picker-title">
           Versão da Bíblia
         </BibleText>
-        <TouchableOpacity onPress={onClose} style={[styles.closeBtn, { backgroundColor: colors.error }]} testID="version-picker-close-btn">
-          <Feather name="x" size={ms(14)} color={colors.error} />
-        </TouchableOpacity>
+        <BibleIcon
+          name="x"
+          color={colors.error}
+          backgroundColor={colors.error + '20'}
+          onPress={onClose}
+          testID="version-picker-close-btn"
+        />
       </View>
 
       <View style={[styles.searchContainer, { backgroundColor: colors.surfaceHighlight }]}>
-        <Feather name="search" size={ms(16)} color={colors.textMuted} />
+        <BibleIcon name="search" size={ms(16)} color={colors.textMuted} />
         <TextInput
           style={[styles.searchInput, { color: colors.onBackground, fontSize: ms(14) }]}
           placeholder="Pesquisar versão..."
@@ -53,6 +57,7 @@ export function VersionPicker({ onSelect, onClose }: VersionPickerProps) {
           keyExtractor={item => item.sigla}
           // @ts-ignore
           estimatedItemSize={60}
+          showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.list}
           renderItem={({ item }) => (
             <TouchableOpacity
@@ -63,7 +68,7 @@ export function VersionPicker({ onSelect, onClose }: VersionPickerProps) {
                 <BibleText style={[styles.sigla, { fontSize: ms(15), color: colors.primary }]}>{item.sigla}</BibleText>
                 <BibleText style={[styles.nome, { fontSize: ms(13), color: colors.onBackground }]}>{item.nome}</BibleText>
               </View>
-              <Feather name="chevron-right" size={ms(16)} color={colors.border} />
+              <BibleIcon name="chevron-right" size={ms(16)} color={colors.border} />
             </TouchableOpacity>
           )}
         />
@@ -84,13 +89,6 @@ const styles = StyleSheet.create({
   },
   title: {
     fontWeight: '800',
-  },
-  closeBtn: {
-    width: 28,
-    height: 28,
-    borderRadius: 6,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   searchContainer: {
     flexDirection: 'row',

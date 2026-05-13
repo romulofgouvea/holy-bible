@@ -1,4 +1,3 @@
-import { Feather } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
@@ -6,9 +5,12 @@ import { STORAGE_KEYS } from '../constants/storage';
 import { ALIASES, BibleVersionInfo } from '../data';
 import { useResponsive } from '../hooks/use-responsive';
 import { useTheme } from '../hooks/use-theme';
+import { BibleCountPill } from './BibleCountPill';
 import { BibleGridBlock } from './BibleGridBlock';
+import { BibleIcon } from './BibleIcon';
 import { BibleListCard } from './BibleListCard';
 import { BibleText } from './BibleText';
+import { BibleDivider } from './BibleDivider';
 
 type BibleVersionModalProps = {
   visible: boolean;
@@ -60,29 +62,36 @@ export function BibleVersionModal({ visible, onClose, onSelect, currentVersionSi
   return (
     <View style={styles.container} testID="bible-version-modal">
       <View style={styles.header} testID="bible-version-header">
-        <View style={[styles.iconBtn, styles.headerIconWrap, { backgroundColor: colors.primary + '25' }]}>
-          <Feather name="book-open" size={ms(16)} color={colors.primary} />
-        </View>
+        <BibleIcon
+          name="book-open"
+          color={colors.primary}
+          backgroundColor={colors.primary + '20'}
+          style={styles.headerIconWrap}
+        />
         <BibleText style={[styles.title, { fontSize: ms(18), color: colors.primary, fontWeight: '800' }]}>Versões</BibleText>
         <TouchableOpacity onPress={() => setIsSearchVisible(!isSearchVisible)} style={[styles.iconBtn, styles.headerActionSpacing, { backgroundColor: colors.surfaceHighlight }]}>
-          <Feather name="search" size={ms(16)} color={isSearchVisible ? colors.primary : colors.onSurface} />
+          <BibleIcon name="search" size={ms(16)} color={isSearchVisible ? colors.primary : colors.onSurface} />
         </TouchableOpacity>
         <View style={[styles.viewToggles, { backgroundColor: colors.surfaceHighlight }]}>
           <TouchableOpacity onPress={() => handleSetViewMode('grid')} style={[styles.toggleBtn, viewMode === 'grid' && { backgroundColor: colors.surface }]}>
-            <Feather name="grid" size={ms(16)} color={viewMode === 'grid' ? colors.primary : colors.onSurface} />
+            <BibleIcon name="grid" size={ms(16)} color={viewMode === 'grid' ? colors.primary : colors.onSurface} />
           </TouchableOpacity>
           <TouchableOpacity onPress={() => handleSetViewMode('list')} style={[styles.toggleBtn, viewMode === 'list' && { backgroundColor: colors.surface }]}>
-            <Feather name="list" size={ms(16)} color={viewMode === 'list' ? colors.primary : colors.onSurface} />
+            <BibleIcon name="list" size={ms(16)} color={viewMode === 'list' ? colors.primary : colors.onSurface} />
           </TouchableOpacity>
         </View>
-        <TouchableOpacity onPress={onClose} style={[styles.iconBtn, styles.headerActionSpacing, { backgroundColor: colors.surfaceHighlight }]}>
-          <Feather name="x" size={ms(16)} color={colors.error} />
-        </TouchableOpacity>
+        <BibleIcon
+          name="x"
+          color={colors.error}
+          backgroundColor={colors.error + '20'}
+          onPress={onClose}
+          style={styles.headerActionSpacing}
+        />
       </View>
 
       {isSearchVisible && (
         <View style={[styles.searchContainer, { backgroundColor: colors.surfaceHighlight, borderColor: colors.border }]} testID="bible-version-search-container">
-          <Feather name="search" size={ms(16)} color={colors.primary} style={styles.searchIcon} />
+          <BibleIcon name="search" size={ms(16)} color={colors.primary} style={styles.searchIcon} />
           <TextInput
             style={[styles.searchInput, { fontSize: ms(14), color: colors.onSurface }]}
             placeholder="Pesquisar versão..."
@@ -94,7 +103,7 @@ export function BibleVersionModal({ visible, onClose, onSelect, currentVersionSi
         </View>
       )}
 
-      <View style={[styles.divider, { backgroundColor: colors.border }]} />
+      <BibleDivider />
 
       <ScrollView testID="bible-version-list" ref={scrollViewRef} style={{ flex: 1 }} contentContainerStyle={styles.list} showsVerticalScrollIndicator={false} bounces={true} overScrollMode="always" keyboardShouldPersistTaps="handled" keyboardDismissMode="interactive">
         {viewMode === 'list' ? (
@@ -151,13 +160,14 @@ export function BibleVersionModal({ visible, onClose, onSelect, currentVersionSi
         )}
       </ScrollView>
 
-      <View style={[styles.divider, { backgroundColor: colors.border }]} />
+      <BibleDivider />
 
       <View style={styles.footer} testID="bible-version-footer">
-        <View style={[styles.countPill, { backgroundColor: colors.surfaceHighlight, borderColor: colors.primary + '30' }]}>
-          <BibleText style={[styles.countNumber, { color: colors.primary, fontWeight: '700' }]}>{filteredVersions.length}</BibleText>
-          <BibleText style={[styles.countText, { color: colors.primary, fontWeight: '600' }]}> {filteredVersions.length === 1 ? 'versão' : 'versões'}</BibleText>
-        </View>
+        <BibleCountPill
+          count={filteredVersions.length}
+          label="versão"
+          labelPlural="versões"
+        />
       </View>
     </View>
   );
@@ -208,26 +218,8 @@ const styles = StyleSheet.create({
     ...({ outlineStyle: 'none' } as any),
   },
   list: { flexGrow: 1, gap: 8 },
-  divider: { height: 1, marginVertical: 8 },
   footer: {
     paddingTop: 4,
-  },
-  countPill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    alignSelf: 'flex-start',
-    borderWidth: 1,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 18,
-  },
-  countNumber: {
-    fontWeight: '800',
-    fontSize: 13,
-  },
-  countText: {
-    fontWeight: '600',
-    fontSize: 13,
   },
   viewToggles: { flexDirection: 'row', alignItems: 'center', borderRadius: 6, padding: 3, gap: 2, marginLeft: 8, height: 32 },
   toggleBtn: { width: 26, height: 26, justifyContent: 'center', alignItems: 'center', borderRadius: 4 },

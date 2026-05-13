@@ -87,8 +87,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  cancelBtn: {},
-  confirmBtn: {},
   cancelText: {
     fontWeight: '600',
   },

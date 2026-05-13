@@ -1,4 +1,3 @@
-import { Feather } from '@expo/vector-icons';
 import * as Clipboard from 'expo-clipboard';
 import React from 'react';
 import { Animated, Share, StyleSheet, TouchableOpacity, View } from 'react-native';
@@ -7,7 +6,7 @@ import { VERSE_HIGHLIGHTS as HIGHLIGHT_COLORS } from '../constants/colors';
 import { useResponsive } from '../hooks/use-responsive';
 import { useTheme } from '../hooks/use-theme';
 import { BibleAddToStudyModal } from './BibleAddToStudyModal';
-import { BibleText } from './BibleText';
+import { BibleIcon } from './BibleIcon';
 
 export type SelectedVerse = {
   chapter: number;
@@ -46,7 +45,7 @@ export function BibleVerseActionSheet(props: VerseActionSheetProps) {
   if (!visible && selectedVerses.length === 0) return null;
 
   const count = selectedVerses.length;
-  
+
   const buildText = () => {
     if (count === 0) return '';
     const sorted = [...selectedVerses].sort((a, b) => a.chapter !== b.chapter ? a.chapter - b.chapter : a.verse - b.verse);
@@ -117,42 +116,44 @@ export function BibleVerseActionSheet(props: VerseActionSheetProps) {
 
   return (
     <>
-      <Animated.View style={[styles.bar, { 
-        transform: [{ translateY }], 
-        backgroundColor: colors.background, 
+      <Animated.View style={[styles.bar, {
+        transform: [{ translateY }],
+        backgroundColor: colors.background,
         paddingBottom: Math.max(16, insets.bottom + 8),
-        borderColor: colors.border 
+        borderColor: colors.border
       }]} id="bible-verse-action-sheet">
-        
-        {/* Top Right Close Button */}
-        <TouchableOpacity onPress={onClose} style={[styles.closeBtn, { backgroundColor: colors.surfaceHighlight }]}>
-          <Feather name="x" size={ms(14)} color={colors.error} />
-        </TouchableOpacity>
+
+        <BibleIcon
+          name="x"
+          color={colors.error}
+          backgroundColor={colors.error + '20'}
+          onPress={onClose}
+        />
 
         {/* Row 1: Actions */}
         <View style={styles.topRow}>
-          <TouchableOpacity 
-            style={[styles.iconBtn, { backgroundColor: count === 0 ? colors.surfaceHighlight : colors.primary + '25' }]} 
-            onPress={onShare} 
+          <TouchableOpacity
+            style={[styles.iconBtn, { backgroundColor: count === 0 ? colors.surfaceHighlight : colors.primary + '25' }]}
+            onPress={onShare}
             disabled={count === 0}
           >
-            <Feather name="share-2" size={ms(16)} color={count === 0 ? colors.textMuted : colors.primary} />
+            <BibleIcon name="share-2" size={ms(16)} color={count === 0 ? colors.textMuted : colors.primary} />
           </TouchableOpacity>
 
-          <TouchableOpacity 
-            style={[styles.iconBtn, { backgroundColor: count === 0 ? colors.surfaceHighlight : colors.primary + '25' }]} 
-            onPress={onCopy} 
+          <TouchableOpacity
+            style={[styles.iconBtn, { backgroundColor: count === 0 ? colors.surfaceHighlight : colors.primary + '25' }]}
+            onPress={onCopy}
             disabled={count === 0}
           >
-            <Feather name="copy" size={ms(16)} color={count === 0 ? colors.textMuted : colors.primary} />
+            <BibleIcon name="copy" size={ms(16)} color={count === 0 ? colors.textMuted : colors.primary} />
           </TouchableOpacity>
 
-          <TouchableOpacity 
-            style={[styles.iconBtn, { backgroundColor: count === 0 ? colors.surfaceHighlight : colors.primary + '25' }]} 
-            onPress={() => setStudyModalVisible(true)} 
+          <TouchableOpacity
+            style={[styles.iconBtn, { backgroundColor: count === 0 ? colors.surfaceHighlight : colors.primary + '25' }]}
+            onPress={() => setStudyModalVisible(true)}
             disabled={count === 0}
           >
-            <Feather name="book-open" size={ms(16)} color={count === 0 ? colors.textMuted : colors.primary} />
+            <BibleIcon name="book-open" size={ms(16)} color={count === 0 ? colors.textMuted : colors.primary} />
           </TouchableOpacity>
         </View>
 
@@ -160,7 +161,7 @@ export function BibleVerseActionSheet(props: VerseActionSheetProps) {
         <View style={styles.bottomRow}>
           <TouchableOpacity style={{ paddingRight: 6 }} onPress={() => onHighlight(null)}>
             <View style={[styles.colorBox, { backgroundColor: colors.surfaceHighlight }]}>
-              <Feather name="slash" size={ms(14)} color={colors.error} />
+              <BibleIcon name="slash" color={colors.error} />
             </View>
           </TouchableOpacity>
 
@@ -170,7 +171,7 @@ export function BibleVerseActionSheet(props: VerseActionSheetProps) {
               <TouchableOpacity key={c.id} style={{ paddingHorizontal: 3 }} onPress={() => onHighlight(c.id)}>
                 <View style={[styles.colorBox, { backgroundColor: c.hex }]}>
                   {isSelectedColor && (
-                    <Feather name="check" size={ms(16)} color="#FFFFFF" />
+                    <BibleIcon name="check" size={ms(16)} color="#FFFFFF" />
                   )}
                 </View>
               </TouchableOpacity>
@@ -179,11 +180,11 @@ export function BibleVerseActionSheet(props: VerseActionSheetProps) {
         </View>
       </Animated.View>
 
-      <BibleAddToStudyModal 
+      <BibleAddToStudyModal
         visible={studyModalVisible}
         onClose={() => {
-            setStudyModalVisible(false);
-            onClose();
+          setStudyModalVisible(false);
+          onClose();
         }}
         selectedVerses={selectedVerses}
         onShowToast={props.onShowToast}
@@ -207,17 +208,6 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.15,
     shadowRadius: 12,
-  },
-  closeBtn: {
-    position: 'absolute',
-    top: 12,
-    right: 16,
-    width: 32,
-    height: 32,
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 10,
   },
   topRow: {
     flexDirection: 'row',

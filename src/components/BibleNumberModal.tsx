@@ -3,8 +3,11 @@ import React from 'react';
 import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useResponsive } from '../hooks/use-responsive';
 import { useTheme } from '../hooks/use-theme';
+import { BibleCountPill } from './BibleCountPill';
 import { BibleGridBlock } from './BibleGridBlock';
+import { BibleIcon } from './BibleIcon';
 import { BibleText } from './BibleText';
+import { BibleDivider } from './BibleDivider';
 
 type BibleNumberModalProps = {
   visible: boolean;
@@ -37,20 +40,25 @@ export function BibleNumberModal({ visible, onClose, onBack, items, title, iconN
       <View style={styles.header} testID="bible-number-header">
         {onBack ? (
           <TouchableOpacity onPress={onBack} style={[styles.iconBtn, styles.headerIconWrap, { backgroundColor: colors.primary + '25' }]}>
-            <Feather name="arrow-left" size={ms(16)} color={colors.primary} />
+            <BibleIcon name="arrow-left" size={ms(16)} color={colors.primary} />
           </TouchableOpacity>
         ) : (
           <View style={[styles.iconBtn, styles.headerIconWrap, { backgroundColor: colors.primary + '25' }]}>
-            <Feather name={iconName} size={ms(16)} color={colors.primary} />
+            <BibleIcon name={iconName} size={ms(16)} color={colors.primary} />
           </View>
         )}
         <BibleText style={[styles.title, { fontSize: ms(18), color: colors.primary, fontWeight: '800' }]}>{title}</BibleText>
-        <TouchableOpacity onPress={onClose} style={[styles.iconBtn, styles.closeBtn, { backgroundColor: colors.surfaceHighlight }]}>
-          <Feather name="x" size={ms(16)} color={colors.error} />
-        </TouchableOpacity>
+
+        <BibleIcon
+          name="x"
+          color={colors.error}
+          backgroundColor={colors.error + '20'}
+          onPress={onClose}
+        />
+
       </View>
 
-      <View style={[styles.divider, { backgroundColor: colors.border }]} />
+      <BibleDivider />
 
       <ScrollView
         ref={scrollViewRef}
@@ -89,13 +97,14 @@ export function BibleNumberModal({ visible, onClose, onBack, items, title, iconN
         </View>
       </ScrollView>
 
-      <View style={[styles.divider, { backgroundColor: colors.border }]} />
+      <BibleDivider />
 
       <View style={styles.footer}>
-        <View style={[styles.countPill, { backgroundColor: colors.surfaceHighlight, borderColor: colors.primary + '30' }]}>
-          <BibleText style={[styles.countNumber, { color: colors.primary, fontWeight: '700' }]}>{items.length}</BibleText>
-          <BibleText style={[styles.countText, { color: colors.primary, fontWeight: '600' }]}> {footerText ? footerText : title.toLowerCase()}</BibleText>
-        </View>
+        <BibleCountPill
+          count={items.length}
+          label={footerText ? footerText : title.toLowerCase()}
+          labelPlural={footerText ? footerText : title.toLowerCase()}
+        />
       </View>
     </View>
   );
@@ -109,10 +118,6 @@ const styles = StyleSheet.create({
   title: { flex: 1, fontWeight: '700' },
   closeBtn: { marginLeft: 8 },
   list: { paddingBottom: 12, gap: 8 },
-  divider: { height: 1, marginVertical: 8 },
   footer: { paddingTop: 4 },
-  countPill: { flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start', borderWidth: 1, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 16 },
-  countNumber: { fontWeight: '800', fontSize: 13 },
-  countText: { fontWeight: '600', fontSize: 13 },
   gridContainer: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, justifyContent: 'flex-start' },
 });

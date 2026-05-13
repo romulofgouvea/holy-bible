@@ -85,7 +85,7 @@ export function BibleBottomSheet({ visible, onClose, children }: BibleBottomShee
           styles.bottomSheet,
           {
             height: animatedHeight,
-            backgroundColor: colors.surface,
+            backgroundColor: colors.background,
             paddingBottom: Math.max(8, insets.bottom + 8),
             shadowColor: colors.shadow
           }

@@ -1,4 +1,3 @@
-import { Feather } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
@@ -7,9 +6,12 @@ import { Book } from '../data';
 import bibleBooks from '../data/bible-books.json';
 import { useResponsive } from '../hooks/use-responsive';
 import { useTheme } from '../hooks/use-theme';
+import { BibleCountPill } from './BibleCountPill';
 import { BibleGridBlock } from './BibleGridBlock';
+import { BibleIcon } from './BibleIcon';
 import { BibleListCard } from './BibleListCard';
 import { BibleText } from './BibleText';
+import { BibleDivider } from './BibleDivider';
 
 type BibleBookModalProps = {
   visible: boolean;
@@ -130,12 +132,12 @@ export function BibleBookModal({ visible, onClose, books, versionSigla, onVersio
           {versionSigla && onVersionPress ? (
             <TouchableOpacity activeOpacity={0.7} style={[styles.versionPill, { backgroundColor: colors.primary + '25' }]} onPress={onVersionPress}>
               <BibleText style={[styles.versionPillText, { fontSize: ms(13), color: colors.primary, fontWeight: '700' }]}>{versionSigla}</BibleText>
-              <Feather name="chevron-down" size={ms(16)} color={colors.primary} style={{ marginLeft: 2 }} />
+              <BibleIcon name="chevron-down" size={ms(16)} color={colors.primary} style={{ marginLeft: 2 }} />
             </TouchableOpacity>
           ) : (
             <>
               <View style={[styles.iconBtn, styles.headerIconWrap, { backgroundColor: colors.primary + '25' }]}>
-                <Feather name="book" size={ms(16)} color={colors.primary} />
+                <BibleIcon name="book" size={ms(16)} color={colors.primary} />
               </View>
               <BibleText style={[styles.title, { flex: 0, flexShrink: 1, fontSize: ms(18), color: colors.primary, fontWeight: '800' }]}>Livros</BibleText>
             </>
@@ -144,27 +146,32 @@ export function BibleBookModal({ visible, onClose, books, versionSigla, onVersio
 
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <TouchableOpacity onPress={() => setIsSearchVisible(!isSearchVisible)} style={[styles.iconBtn, styles.headerActionSpacing, { backgroundColor: colors.surfaceHighlight }]}>
-            <Feather name="search" size={ms(16)} color={isSearchVisible ? colors.primary : colors.onSurface} />
+            <BibleIcon name="search" size={ms(16)} color={isSearchVisible ? colors.primary : colors.onSurface} />
           </TouchableOpacity>
 
           <View style={[styles.viewToggles, { backgroundColor: colors.surfaceHighlight }]}>
             <TouchableOpacity onPress={() => handleSetViewMode('grid')} style={[styles.toggleBtn, viewMode === 'grid' && { backgroundColor: colors.surface }]}>
-              <Feather name="grid" size={ms(16)} color={viewMode === 'grid' ? colors.primary : colors.onSurface} />
+              <BibleIcon name="grid" size={ms(16)} color={viewMode === 'grid' ? colors.primary : colors.onSurface} />
             </TouchableOpacity>
             <TouchableOpacity onPress={() => handleSetViewMode('list')} style={[styles.toggleBtn, viewMode === 'list' && { backgroundColor: colors.surface }]}>
-              <Feather name="list" size={ms(16)} color={viewMode === 'list' ? colors.primary : colors.onSurface} />
+              <BibleIcon name="list" size={ms(16)} color={viewMode === 'list' ? colors.primary : colors.onSurface} />
             </TouchableOpacity>
           </View>
 
-          <TouchableOpacity onPress={onClose} style={[styles.iconBtn, styles.headerActionSpacing, { backgroundColor: colors.surfaceHighlight }]}>
-            <Feather name="x" size={ms(16)} color={colors.error} />
-          </TouchableOpacity>
+          <BibleIcon
+            name="x"
+            color={colors.error}
+            backgroundColor={colors.error + '20'}
+            onPress={onClose}
+            style={styles.headerActionSpacing}
+          />
+
         </View>
       </View>
 
       {isSearchVisible && (
         <View style={[styles.searchContainer, { backgroundColor: colors.surfaceHighlight, borderColor: colors.border }]} testID="bible-book-search-container">
-          <Feather name="search" size={ms(16)} color={colors.primary} style={styles.searchIcon} />
+          <BibleIcon name="search" size={ms(16)} color={colors.primary} style={styles.searchIcon} />
           <TextInput
             style={[styles.searchInput, { fontSize: ms(14), color: colors.onSurface }]}
             placeholder="Pesquisar livro..."
@@ -176,7 +183,7 @@ export function BibleBookModal({ visible, onClose, books, versionSigla, onVersio
         </View>
       )}
 
-      <View style={[styles.divider, { backgroundColor: colors.border }]} />
+      <BibleDivider margin={4} />
 
       <ScrollView
         testID="bible-book-list"
@@ -257,13 +264,13 @@ export function BibleBookModal({ visible, onClose, books, versionSigla, onVersio
         })}
       </ScrollView>
 
-      <View style={[styles.divider, { backgroundColor: colors.border }]} />
+      <BibleDivider margin={4} />
 
       <View style={styles.footer} testID="bible-book-footer">
-        <View style={[styles.countPill, { backgroundColor: colors.surfaceHighlight, borderColor: colors.primary + '30' }]}>
-          <BibleText style={[styles.countNumber, { color: colors.primary, fontWeight: '700' }]}>{filteredBooks.length}</BibleText>
-          <BibleText style={[styles.countText, { color: colors.primary, fontWeight: '600' }]}> {filteredBooks.length === 1 ? 'livro' : 'livros'}</BibleText>
-        </View>
+        <BibleCountPill
+          count={filteredBooks.length}
+          label="livro"
+        />
       </View>
     </View>
   );
@@ -282,11 +289,7 @@ const styles = StyleSheet.create({
   searchIcon: { marginRight: 8 },
   searchInput: { flex: 1, height: '100%', ...({ outlineStyle: 'none' } as any) },
   scrollContent: { paddingVertical: 4 },
-  divider: { height: 1, marginVertical: 4 },
   footer: { paddingTop: 4 },
-  countPill: { flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start', borderWidth: 1, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 16 },
-  countNumber: { fontWeight: '800', fontSize: 13 },
-  countText: { fontWeight: '600', fontSize: 13 },
   viewToggles: { flexDirection: 'row', alignItems: 'center', borderRadius: 6, padding: 3, gap: 2, marginLeft: 8, height: 32 },
   toggleBtn: { width: 26, height: 26, justifyContent: 'center', alignItems: 'center', borderRadius: 4 },
   gridContainer: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, justifyContent: 'flex-start', marginBottom: 8 },

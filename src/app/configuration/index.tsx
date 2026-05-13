@@ -1,5 +1,5 @@
+import { BibleIcon } from '@/components/BibleIcon';
 import { COLOR_THEMES, ColorThemeKey } from '@/constants/colors';
-import { Feather } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system/legacy';
@@ -14,7 +14,6 @@ import { BibleSwitch } from '../../components/BibleSwitch';
 import { BibleText } from '../../components/BibleText';
 import { DonateModal } from '../../components/DonateModal';
 import { SettingsItem } from '../../components/SettingsItem';
-import { ThemedIcon } from '../../components/ThemedIcon';
 import { ROUTES, ROUTE_LABELS } from '../../constants/routes';
 import { STORAGE_KEYS } from '../../constants/storage';
 import { useReaderSettings } from '../../hooks/use-reader-settings';
@@ -216,7 +215,7 @@ export default function ConfigurationScreen() {
 
           <View style={[styles.cardHeader, { flexDirection: 'column', alignItems: 'flex-start', gap: 12 }]}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-              <ThemedIcon name="droplet" />
+              <BibleIcon name="droplet" />
               <View style={styles.cardTextContainer}>
                 <BibleText style={[styles.cardTitle, { fontSize: ms(16), color: colors.onBackground }]}>
                   Cor do Aplicativo
@@ -250,7 +249,7 @@ export default function ConfigurationScreen() {
                   >
                     <View style={[styles.swatchDot, { backgroundColor: swatchColor }]}>
                       {isActive && (
-                        <Feather name="check" size={ms(14)} color={colors.onPrimary} />
+                        <BibleIcon name="check" color={colors.onPrimary} />
                       )}
                     </View>
                     <BibleText style={[

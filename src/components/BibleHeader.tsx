@@ -3,6 +3,7 @@ import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useResponsive } from '../hooks/use-responsive';
 import { useTheme } from '../hooks/use-theme';
+import { BibleIcon } from './BibleIcon';
 import { BibleText } from './BibleText';
 
 export type BibleHeaderProps = {
@@ -43,12 +44,12 @@ export function BibleHeader({
         <View style={styles.leftButtonContainer}>
           {showMenu && (
             <TouchableOpacity style={[styles.menuBtn, { backgroundColor: menuBtnBackgroundColor || 'transparent', width: ms(40), height: ms(40), borderRadius: ms(10) }]} onPress={onMenuPress} activeOpacity={0.7}>
-              <Feather name="menu" size={ms(20)} color={contentColor || colors.onPrimary} />
+              <BibleIcon name="menu" size={ms(20)} color={contentColor || colors.onPrimary} />
             </TouchableOpacity>
           )}
           {showBack && (
             <TouchableOpacity style={[styles.menuBtn, { backgroundColor: menuBtnBackgroundColor || 'transparent', width: ms(40), height: ms(40), borderRadius: ms(10) }]} onPress={onBack} activeOpacity={0.7}>
-              <Feather name={backIcon} size={ms(22)} color={contentColor || colors.onPrimary} />
+              <BibleIcon name={backIcon} size={ms(22)} color={contentColor || colors.onPrimary} />
             </TouchableOpacity>
           )}
         </View>

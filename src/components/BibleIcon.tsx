@@ -22,7 +22,7 @@ export function BibleIcon({
   size,
   color,
   backgroundColor,
-  borderRadius = 10,
+  borderRadius = 6,
   containerSize = 32,
   onPress,
   style,
@@ -33,9 +33,9 @@ export function BibleIcon({
   const { colors } = useTheme();
 
   const Container = onPress ? TouchableOpacity : View;
-  
+
   const finalContainerSize = ms(containerSize);
-  const finalIconSize = size || ms(containerSize * 0.5); // Default icon size is 50% of container
+  const finalIconSize = size || ms(containerSize * 0.5);
 
   return (
     <Container
@@ -53,10 +53,10 @@ export function BibleIcon({
         style
       ]}
     >
-      <Feather 
-        name={name} 
-        size={finalIconSize} 
-        color={color || colors.onSurface} 
+      <Feather
+        name={name}
+        size={finalIconSize}
+        color={color || colors.onSurface}
       />
     </Container>
   );

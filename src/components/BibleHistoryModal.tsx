@@ -1,4 +1,3 @@
-import { Feather } from '@expo/vector-icons';
 import { FlashList } from '@shopify/flash-list';
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
@@ -7,7 +6,10 @@ import { HistoryItem, useHistory } from '../hooks/use-history';
 import { useResponsive } from '../hooks/use-responsive';
 import { useTheme } from '../hooks/use-theme';
 import { BibleBottomSheet } from './BibleBottomSheet';
+import { BibleCountPill } from './BibleCountPill';
+import { BibleIcon } from './BibleIcon';
 import { BibleText } from './BibleText';
+import { BibleDivider } from './BibleDivider';
 
 type BibleHistoryModalProps = {
   visible: boolean;
@@ -37,14 +39,18 @@ export function BibleHistoryModal({ visible, onClose, onSelect }: BibleHistoryMo
       <View style={styles.container} testID="bible-history-modal">
         <View style={styles.header} testID="bible-history-header">
           <View style={[styles.iconBtn, styles.headerIconWrap, { backgroundColor: colors.primary + '25' }]} testID="bible-history-icon">
-            <Feather name="clock" size={ms(14)} color={colors.primary} />
+            <BibleIcon name="clock" color={colors.primary} />
           </View>
           <BibleText style={[styles.title, { fontSize: ms(16), color: colors.primary, fontWeight: '800' }]} testID="bible-history-title">{ROUTE_LABELS.HISTORY}</BibleText>
-          <TouchableOpacity onPress={onClose} style={[styles.iconBtn, styles.closeBtn, { backgroundColor: colors.surfaceHighlight }]} testID="bible-history-close-btn">
-            <Feather name="x" size={ms(14)} color={colors.error} />
-          </TouchableOpacity>
+          <BibleIcon
+            name="x"
+            color={colors.error}
+            backgroundColor={colors.error + '20'}
+            onPress={onClose}
+            testID="bible-history-close-btn"
+          />
         </View>
-        <View style={[styles.divider, { backgroundColor: colors.border }]} />
+        <BibleDivider />
         {history.length > 0 ? (
           <>
             <View style={styles.list}>
@@ -54,12 +60,13 @@ export function BibleHistoryModal({ visible, onClose, onSelect }: BibleHistoryMo
                 keyExtractor={(item) => `${item.timestamp}`}
                 // @ts-ignore
                 estimatedItemSize={70}
+                showsVerticalScrollIndicator={false}
                 contentContainerStyle={styles.listContent}
                 ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
                 renderItem={({ item }) => (
                   <TouchableOpacity
                     activeOpacity={0.7}
-                    style={[styles.card, { borderColor: colors.border, backgroundColor: colors.surfaceHighlight }]}
+                    style={[styles.card, { borderColor: colors.border, backgroundColor: colors.surface }]}
                     onPress={() => {
                       onSelect(item);
                       onClose();
@@ -84,18 +91,19 @@ export function BibleHistoryModal({ visible, onClose, onSelect }: BibleHistoryMo
                 )}
               />
             </View>
-            <View style={[styles.divider, { backgroundColor: colors.border }]} />
+            <BibleDivider />
 
             <View style={styles.footer}>
-              <View style={[styles.countPill, { backgroundColor: colors.surfaceHighlight, borderColor: colors.primary + '30' }]}>
-                <BibleText style={[styles.countNumber, { color: colors.primary, fontWeight: '700' }]}>{history.length}</BibleText>
-                <BibleText style={[styles.countText, { color: colors.primary, fontWeight: '600' }]}> {history.length === 1 ? 'item' : 'itens'}</BibleText>
-              </View>
+              <BibleCountPill
+                count={history.length}
+                label="item"
+                labelPlural="itens"
+              />
             </View>
           </>
         ) : (
           <View style={styles.empty}>
-            <Feather name="clock" size={ms(48)} color={colors.border} />
+            <BibleIcon name="clock" size={ms(48)} color={colors.border} />
             <BibleText style={[styles.emptyTitle, { color: colors.textMuted, fontSize: ms(15), marginTop: 12 }]}>
               Nenhum histórico encontrado
             </BibleText>
@@ -136,10 +144,6 @@ const styles = StyleSheet.create({
   closeBtn: {
     marginLeft: 8,
   },
-  divider: {
-    height: 1,
-    marginVertical: 8,
-  },
   list: {
     flex: 1,
     width: '100%',
@@ -151,23 +155,6 @@ const styles = StyleSheet.create({
   footer: {
     paddingTop: 4,
   },
-  countPill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    alignSelf: 'flex-start',
-    borderWidth: 1,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 16,
-  },
-  countNumber: {
-    fontWeight: '800',
-    fontSize: 13,
-  },
-  countText: {
-    fontWeight: '600',
-    fontSize: 13,
-  },
   card: {
     borderRadius: 12,
     borderWidth: 1,
@@ -176,14 +163,6 @@ const styles = StyleSheet.create({
   cardBody: {
     flexDirection: 'row',
     alignItems: 'center',
-  },
-  iconBox: {
-    width: 36,
-    height: 36,
-    borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 12,
   },
   refText: {
     fontWeight: '700',
@@ -200,15 +179,6 @@ const styles = StyleSheet.create({
   versionBadgeText: {
     fontWeight: '800',
     textTransform: 'uppercase',
-  },
-  clearButton: {
-    alignItems: 'center',
-    paddingVertical: 16,
-    marginTop: 8,
-  },
-  clearButtonText: {
-    fontSize: 14,
-    fontWeight: '600',
   },
   empty: {
     flex: 1,

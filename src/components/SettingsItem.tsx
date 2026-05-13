@@ -3,8 +3,8 @@ import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useResponsive } from '../hooks/use-responsive';
 import { useTheme } from '../hooks/use-theme';
+import { BibleIcon } from './BibleIcon';
 import { BibleText } from './BibleText';
-import { ThemedIcon } from './ThemedIcon';
 
 interface SettingsItemProps {
   label: string;
@@ -33,7 +33,7 @@ export function SettingsItem({
 
   const Content = (
     <View style={[styles.container, showDivider && { borderBottomWidth: 1, borderBottomColor: colors.border }]}>
-      <ThemedIcon name={icon} color={iconColor} />
+      <BibleIcon name={icon} color={iconColor} />
       <View style={styles.textContainer}>
         <BibleText style={[styles.label, { fontSize: ms(16), color: labelColor }]} numberOfLines={2}>
           {label}

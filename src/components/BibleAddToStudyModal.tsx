@@ -1,4 +1,3 @@
-import { Feather } from '@expo/vector-icons';
 import { FlashList } from '@shopify/flash-list';
 import React, { useState } from 'react';
 import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
@@ -6,7 +5,9 @@ import { useResponsive } from '../hooks/use-responsive';
 import { useStudies } from '../hooks/use-studies';
 import { useTheme } from '../hooks/use-theme';
 import { BibleBottomSheet } from './BibleBottomSheet';
+import { BibleIcon } from './BibleIcon';
 import { BibleText } from './BibleText';
+import { BibleDivider } from './BibleDivider';
 import { SelectedVerse } from './BibleVerseActionSheet';
 
 type BibleAddToStudyModalProps = {
@@ -80,18 +81,25 @@ export function BibleAddToStudyModal({ visible, onClose, selectedVerses, onShowT
     <BibleBottomSheet visible={visible} onClose={onClose}>
       <View style={styles.container} testID="bible-add-to-study-modal">
         <View style={styles.header}>
-          <View style={[styles.iconWrap, { backgroundColor: colors.primary + '25' }]}>
-            <Feather name="plus-circle" size={ms(16)} color={colors.primary} />
-          </View>
+          <BibleIcon
+            name="plus-circle"
+            size={ms(16)}
+            color={colors.primary}
+            backgroundColor={colors.primary + '25'}
+            style={styles.headerIconWrap}
+          />
           <BibleText style={[styles.title, { color: colors.primary, fontSize: ms(16), fontWeight: '800' }]}>
             {isCreating ? 'Novo Estudo' : 'Adicionar ao Estudo'}
           </BibleText>
-          <TouchableOpacity onPress={onClose} style={[styles.closeBtn, { backgroundColor: colors.surfaceHighlight }]}>
-            <Feather name="x" size={ms(14)} color={colors.error} />
-          </TouchableOpacity>
+          <BibleIcon
+            name="x"
+            color={colors.error}
+            backgroundColor={colors.error + '20'}
+            onPress={onClose}
+          />
         </View>
 
-        <View style={[styles.divider, { backgroundColor: colors.border }]} />
+        <BibleDivider />
 
         {isCreating ? (
           <View style={styles.createArea}>
@@ -124,7 +132,7 @@ export function BibleAddToStudyModal({ visible, onClose, selectedVerses, onShowT
               style={[styles.createToggle, { borderColor: colors.primary + '30', backgroundColor: colors.primary + '10' }]}
               onPress={() => setIsCreating(true)}
             >
-              <Feather name="plus" size={ms(18)} color={colors.primary} />
+              <BibleIcon name="plus" size={ms(18)} color={colors.primary} />
               <BibleText style={{ color: colors.primary, fontWeight: '700', marginLeft: 8 }}>Criar novo estudo</BibleText>
             </TouchableOpacity>
 
@@ -133,6 +141,7 @@ export function BibleAddToStudyModal({ visible, onClose, selectedVerses, onShowT
               keyExtractor={(item) => item.id}
               // @ts-ignore
               estimatedItemSize={60}
+              showsVerticalScrollIndicator={false}
               contentContainerStyle={{ paddingBottom: 20 }}
               ListEmptyComponent={
                 <View style={styles.empty}>
@@ -145,7 +154,7 @@ export function BibleAddToStudyModal({ visible, onClose, selectedVerses, onShowT
                   onPress={() => handleAddToStudy(item.id, item.content)}
                 >
                   <View style={[styles.studyIcon, { backgroundColor: colors.surfaceHighlight }]}>
-                    <Feather name="book" size={ms(16)} color={colors.onSurface} />
+                    <BibleIcon name="book" size={ms(16)} color={colors.onSurface} />
                   </View>
                   <View style={{ flex: 1 }}>
                     <BibleText style={{ color: colors.onSurface, fontWeight: '600', fontSize: ms(15) }} numberOfLines={1}>
@@ -155,7 +164,7 @@ export function BibleAddToStudyModal({ visible, onClose, selectedVerses, onShowT
                       {item.createdAt}
                     </BibleText>
                   </View>
-                  <Feather name="chevron-right" size={ms(16)} color={colors.textMuted} />
+                  <BibleIcon name="chevron-right" size={ms(16)} color={colors.textMuted} />
                 </TouchableOpacity>
               )}
             />
@@ -169,10 +178,8 @@ export function BibleAddToStudyModal({ visible, onClose, selectedVerses, onShowT
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 12, minHeight: 300 },
   header: { flexDirection: 'row', alignItems: 'center', marginBottom: 4 },
-  iconWrap: { width: 32, height: 32, borderRadius: 8, justifyContent: 'center', alignItems: 'center', marginRight: 10 },
+  headerIconWrap: { marginRight: 8 },
   title: { flex: 1 },
-  closeBtn: { width: 32, height: 32, borderRadius: 8, justifyContent: 'center', alignItems: 'center' },
-  divider: { height: 1, marginVertical: 12 },
   createToggle: { flexDirection: 'row', alignItems: 'center', padding: 14, borderRadius: 12, borderWidth: 1, marginBottom: 16, borderStyle: 'dashed' },
   studyItem: { flexDirection: 'row', alignItems: 'center', paddingVertical: 12, borderBottomWidth: 1 },
   studyIcon: { width: 36, height: 36, borderRadius: 10, justifyContent: 'center', alignItems: 'center', marginRight: 12 },

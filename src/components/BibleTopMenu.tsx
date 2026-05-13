@@ -4,6 +4,7 @@ import { Modal, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useResponsive } from '../hooks/use-responsive';
 import { useTheme } from '../hooks/use-theme';
+import { BibleIcon } from './BibleIcon';
 import { BibleText } from './BibleText';
 
 export type BibleTopMenuItem = {
@@ -64,7 +65,7 @@ export function BibleTopMenu({ visible, onClose, items }: BibleTopMenuProps) {
               }}
             >
               <View style={{ width: ms(28), alignItems: 'center' }}>
-                <Feather name={item.icon} size={ms(18)} color={item.iconColor || colors.primary} />
+                <BibleIcon name={item.icon} size={ms(18)} color={item.iconColor || colors.primary} />
               </View>
               <BibleText style={{ fontSize: ms(15), color: item.color || colors.onSurface, fontWeight: '700', marginLeft: ms(8) }}>
                 {item.label}

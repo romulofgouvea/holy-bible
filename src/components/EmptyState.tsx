@@ -4,8 +4,8 @@ import { StyleSheet, View } from 'react-native';
 import { useResponsive } from '../hooks/use-responsive';
 import { useTheme } from '../hooks/use-theme';
 import { BibleButton } from './BibleButton';
+import { BibleIcon } from './BibleIcon';
 import { BibleText } from './BibleText';
-import { ThemedIcon } from './ThemedIcon';
 
 interface EmptyStateProps {
   title: string;
@@ -27,7 +27,7 @@ export function EmptyState({
 
   return (
     <View style={styles.container}>
-      <ThemedIcon name={icon} size={40} />
+      <BibleIcon name={icon} size={40} />
       <BibleText style={[styles.title, { fontSize: ms(18), color: colors.onBackground, marginTop: 16 }]}>
         {title}
       </BibleText>
@@ -37,9 +37,9 @@ export function EmptyState({
         </BibleText>
       )}
       {actionLabel && onAction && (
-        <BibleButton 
-          label={actionLabel} 
-          onPress={onAction} 
+        <BibleButton
+          label={actionLabel}
+          onPress={onAction}
           style={{ marginTop: 24 }}
           variant="outline"
         />

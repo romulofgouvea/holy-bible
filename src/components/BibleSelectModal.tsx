@@ -1,4 +1,3 @@
-import { Feather } from '@expo/vector-icons';
 import React from 'react';
 import {
   Modal,
@@ -11,6 +10,7 @@ import {
 } from 'react-native';
 import { useResponsive } from '../hooks/use-responsive';
 import { useTheme } from '../hooks/use-theme';
+import { BibleIcon } from './BibleIcon';
 import { BibleText } from './BibleText';
 
 type SelectModalProps<T> = {
@@ -41,14 +41,17 @@ export const BibleSelectModal = React.memo(function BibleSelectModal<T>(props: S
           <View style={[styles.modalContentBig, { backgroundColor: colors.surface, shadowColor: colors.shadow }]} testID="bible-select-modal">
             <View style={styles.modalHeader}>
               <BibleText style={[styles.modalTitle, { fontSize: ms(20), color: colors.onSurface, fontWeight: '700' }]}>{title}</BibleText>
-              <TouchableOpacity onPress={onClose}>
-                <Feather name="x" size={ms(24)} color={colors.onSurface} />
-              </TouchableOpacity>
+              <BibleIcon
+                name="x"
+                color={colors.error}
+                backgroundColor={colors.error + '20'}
+                onPress={onClose}
+              />
             </View>
 
             {!hideSearch && (
               <View style={[styles.searchContainer, { backgroundColor: colors.surfaceHighlight }]}>
-                <Feather name="search" size={ms(16)} color={colors.primary} style={styles.searchIcon} />
+                <BibleIcon name="search" size={ms(16)} color={colors.primary} style={styles.searchIcon} />
                 <TextInput
                   style={[styles.searchInput, { fontSize: ms(14), color: colors.onSurface }]}
                   placeholder={placeholder}

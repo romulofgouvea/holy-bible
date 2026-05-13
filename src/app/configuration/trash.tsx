@@ -1,10 +1,10 @@
 import { BibleConfirmModal } from '@/components/BibleConfirmModal';
-import { FlashList } from '@shopify/flash-list';
+import { BibleIcon } from '@/components/BibleIcon';
 import { Feather } from '@expo/vector-icons';
+import { FlashList } from '@shopify/flash-list';
 import { usePathname, useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
-  FlatList,
   StyleSheet,
   TouchableOpacity,
   View
@@ -42,7 +42,7 @@ export default function TrashScreen() {
 
   const renderEmpty = () => (
     <View style={styles.emptyContainer}>
-      <Feather name="trash-2" size={ms(64)} color={colors.primary} />
+      <BibleIcon name="trash" size={ms(64)} color={colors.primary} />
       <BibleText style={[styles.emptyTitle, { fontSize: ms(20), color: colors.onBackground }]}>
         Lixeira vazia
       </BibleText>
@@ -104,10 +104,10 @@ export default function TrashScreen() {
                 restoreMultiple(Array.from(selectedIds));
                 setSelectedIds(new Set());
               }}>
-                <Feather name="corner-up-left" size={ms(20)} color={colors.onPrimary} />
+                <BibleIcon name="corner-up-left" size={ms(20)} color={colors.onPrimary} />
               </TouchableOpacity>
               <TouchableOpacity onPress={() => setMultiDeleteVisible(true)}>
-                <Feather name="trash-2" size={ms(20)} color={colors.onPrimary} />
+                <BibleIcon name="trash-2" size={ms(20)} color={colors.onPrimary} />
               </TouchableOpacity>
             </View>
           }
@@ -187,5 +187,4 @@ const styles = StyleSheet.create({
   cardText: { flex: 1, gap: 4 },
   cardTitle: { fontWeight: '700' },
   cardDate: { marginTop: 2 },
-  deleteBtn: { width: 38, height: 38, alignItems: 'center', justifyContent: 'center', borderRadius: 10 },
 });

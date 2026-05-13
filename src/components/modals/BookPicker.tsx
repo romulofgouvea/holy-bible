@@ -1,10 +1,10 @@
-import { Feather } from '@expo/vector-icons';
 import { FlashList } from '@shopify/flash-list';
 import React, { useState } from 'react';
 import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import { Book } from '../../data';
 import { useResponsive } from '../../hooks/use-responsive';
 import { useTheme } from '../../hooks/use-theme';
+import { BibleIcon } from '../BibleIcon';
 import { BibleText } from '../BibleText';
 
 interface BookPickerProps {
@@ -29,13 +29,17 @@ export function BookPicker({ books, onSelect, onClose }: BookPickerProps) {
         <BibleText style={[styles.title, { fontSize: ms(16), color: colors.onBackground }]} testID="book-picker-title">
           Livros
         </BibleText>
-        <TouchableOpacity onPress={onClose} style={[styles.iconBtn, { backgroundColor: colors.error }]} testID="book-picker-close-btn">
-          <Feather name="x" size={ms(14)} color={colors.error} />
-        </TouchableOpacity>
+        <BibleIcon
+          name="x"
+          color={colors.error}
+          backgroundColor={colors.error + '20'}
+          onPress={onClose}
+          testID="book-picker-close-btn"
+        />
       </View>
 
       <View style={[styles.searchContainer, { backgroundColor: colors.surfaceHighlight }]}>
-        <Feather name="search" size={ms(16)} color={colors.textMuted} />
+        <BibleIcon name="search" size={ms(16)} color={colors.textMuted} />
         <TextInput
           style={[styles.searchInput, { color: colors.onBackground, fontSize: ms(14) }]}
           placeholder="Pesquisar livro..."
@@ -52,6 +56,7 @@ export function BookPicker({ books, onSelect, onClose }: BookPickerProps) {
           numColumns={2}
           // @ts-ignore
           estimatedItemSize={50}
+          showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.list}
           renderItem={({ item }) => (
             <TouchableOpacity
@@ -82,13 +87,6 @@ const styles = StyleSheet.create({
   },
   title: {
     fontWeight: '800',
-  },
-  iconBtn: {
-    width: 32,
-    height: 32,
-    borderRadius: 6,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   searchContainer: {
     flexDirection: 'row',

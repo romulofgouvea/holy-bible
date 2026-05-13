@@ -6,7 +6,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { DRAWER_ITEMS } from '../constants/routes';
 import { useResponsive } from '../hooks/use-responsive';
 import { useTheme } from '../hooks/use-theme';
+import { BibleIcon } from './BibleIcon';
 import { BibleText } from './BibleText';
+import { BibleDivider } from './BibleDivider';
 
 type MenuItem = {
   key: string;
@@ -118,7 +120,7 @@ export function BibleDrawerMenu(props: DrawerMenuProps) {
           { width: ms(38), height: ms(38), borderRadius: ms(10), marginRight: ms(12) },
           isActive ? { backgroundColor: colors.primary } : { backgroundColor: colors.surfaceHighlight },
         ]}>
-          <Feather name={item.icon} size={ms(18)} color={isActive ? colors.onPrimary : (item.tint || colors.onSurface)} />
+          <BibleIcon name={item.icon} size={ms(18)} color={isActive ? colors.onPrimary : (item.tint || colors.onSurface)} />
         </View>
         <BibleText
           style={[
@@ -144,7 +146,7 @@ export function BibleDrawerMenu(props: DrawerMenuProps) {
         <Animated.View style={[styles.drawer, { width: drawerWidth, transform: [{ translateX }], backgroundColor: colors.surface, shadowColor: colors.shadow }]}>
           <View style={[styles.drawerHeader, { backgroundColor: colors.primary, paddingTop: Math.max(ms(20), insets.top + ms(16)), paddingBottom: ms(20), paddingHorizontal: ms(16) }]}>
             <View style={[styles.drawerLogo, { width: ms(44), height: ms(44), borderRadius: ms(12), marginRight: ms(12), backgroundColor: colors.onPrimary + '25' }]}>
-              <Feather name="book" size={ms(21)} color={colors.onPrimary} />
+              <BibleIcon name="book" size={ms(21)} color={colors.onPrimary} />
             </View>
             <View style={{ flex: 1, justifyContent: 'center' }}>
               <BibleText style={[styles.drawerTitle, { fontSize: ms(17), color: colors.onPrimary }]} numberOfLines={1}>
@@ -161,7 +163,7 @@ export function BibleDrawerMenu(props: DrawerMenuProps) {
           </View>
 
           <View style={[styles.bottomSection, { paddingHorizontal: ms(8), paddingBottom: Math.max(ms(16), insets.bottom + ms(8)) }]}>
-            <View style={[styles.divider, { backgroundColor: colors.border }]} />
+            <BibleDivider />
             {BOTTOM_ITEMS.map(renderItem)}
           </View>
         </Animated.View>
@@ -218,16 +220,5 @@ const styles = StyleSheet.create({
   },
   bottomSection: {
     gap: 4,
-  },
-  divider: {
-    height: 1,
-    marginBottom: 8,
-  },
-  versionRow: {
-    alignItems: 'center',
-    paddingTop: 4,
-  },
-  footerText: {
-    fontWeight: '600',
   },
 });

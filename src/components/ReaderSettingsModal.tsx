@@ -8,11 +8,13 @@ import { impactLight, selectionHaptic } from '../utils/haptics';
 import { BibleBottomSheet } from './BibleBottomSheet';
 import { BibleIcon } from './BibleIcon';
 import { BibleText } from './BibleText';
+import { BibleDivider } from './BibleDivider';
 
 export function ReaderSettingsModal({ visible, onClose }: { visible: boolean; onClose: () => void }) {
   const { ms } = useResponsive();
-  const { colors, toggleDarkMode } = useTheme();
+  const { colors, toggleDarkMode, isDarkMode } = useTheme();
   const { fontSizeMultiplier, setFontSizeMultiplier, textAlign, setTextAlign, readerTheme, setReaderTheme, readerFont, setReaderFont } = useReaderSettings();
+
 
   const handleSetTheme = (theme: 'light' | 'dark' | 'sepia') => {
     selectionHaptic();
@@ -33,22 +35,19 @@ export function ReaderSettingsModal({ visible, onClose }: { visible: boolean; on
             size={ms(16)}
             color={colors.primary}
             backgroundColor={colors.primary + '25'}
-            borderRadius={6}
             style={styles.headerIconWrap}
           />
           <BibleText style={[styles.title, { fontSize: ms(16), color: colors.primary }]}>{ROUTE_LABELS.APPEARANCE}</BibleText>
           <BibleIcon
             name="x"
-            size={ms(16)}
             color={colors.error}
-            backgroundColor={colors.surfaceHighlight}
-            borderRadius={6}
+            backgroundColor={colors.error + '20'}
             onPress={onClose}
             style={styles.closeBtn}
           />
         </View>
 
-        <View style={[styles.divider, { backgroundColor: colors.border }]} />
+        <BibleDivider />
 
         <View style={styles.settingsWrapper}>
           {/* Section: Font Size */}
@@ -61,7 +60,7 @@ export function ReaderSettingsModal({ visible, onClose }: { visible: boolean; on
               >
                 <BibleText style={[styles.controlText, { color: colors.onBackground }]}>A-</BibleText>
               </TouchableOpacity>
-              
+
               <View style={[styles.percentageDisplay, { borderColor: dividerColor }]}>
                 <BibleText style={[styles.percentageText, { color: colors.primary }]}>
                   {Math.round(fontSizeMultiplier * 100)}%
@@ -86,7 +85,7 @@ export function ReaderSettingsModal({ visible, onClose }: { visible: boolean; on
                   <TouchableOpacity
                     style={[
                       styles.segmentBtn,
-                      textAlign === align && { backgroundColor: colors.primary }
+                      textAlign === align && { backgroundColor: colors.primary, borderRadius: 8 }
                     ]}
                     onPress={() => { impactLight(); setTextAlign(align); }}
                   >
@@ -97,7 +96,9 @@ export function ReaderSettingsModal({ visible, onClose }: { visible: boolean; on
                       containerSize={44}
                     />
                   </TouchableOpacity>
-                  {index < 3 && <View style={[styles.innerDivider, { backgroundColor: dividerColor }]} />}
+                  {index < 3 && textAlign !== align && (['left', 'center', 'right', 'justify'] as const)[index + 1] !== textAlign && (
+                    <BibleDivider vertical height="60%" color={dividerColor} />
+                  )}
                 </React.Fragment>
               ))}
             </View>
@@ -112,7 +113,7 @@ export function ReaderSettingsModal({ visible, onClose }: { visible: boolean; on
                   <TouchableOpacity
                     style={[
                       styles.segmentBtn,
-                      readerTheme === t && { backgroundColor: colors.primary }
+                      readerTheme === t && { backgroundColor: colors.primary, borderRadius: 8 }
                     ]}
                     onPress={() => handleSetTheme(t)}
                   >
@@ -123,7 +124,9 @@ export function ReaderSettingsModal({ visible, onClose }: { visible: boolean; on
                       containerSize={44}
                     />
                   </TouchableOpacity>
-                  {index < 2 && <View style={[styles.innerDivider, { backgroundColor: dividerColor }]} />}
+                  {index < 2 && readerTheme !== t && (['light', 'dark', 'sepia'] as const)[index + 1] !== readerTheme && (
+                    <BibleDivider vertical height="60%" color={dividerColor} />
+                  )}
                 </React.Fragment>
               ))}
             </View>
@@ -138,12 +141,12 @@ export function ReaderSettingsModal({ visible, onClose }: { visible: boolean; on
                   <TouchableOpacity
                     style={[
                       styles.segmentBtn,
-                      readerFont === f && { backgroundColor: colors.primary }
+                      readerFont === f && { backgroundColor: colors.primary, borderRadius: 8 }
                     ]}
                     onPress={() => { selectionHaptic(); setReaderFont(f); }}
                   >
-                    <BibleText style={{ 
-                      fontSize: ms(13), 
+                    <BibleText style={{
+                      fontSize: ms(13),
                       fontWeight: '700',
                       color: readerFont === f ? colors.onPrimary : colors.onBackground,
                       fontFamily: f === 'monospace' ? 'monospace' : undefined
@@ -151,7 +154,9 @@ export function ReaderSettingsModal({ visible, onClose }: { visible: boolean; on
                       {f.charAt(0).toUpperCase() + f.slice(1)}
                     </BibleText>
                   </TouchableOpacity>
-                  {index < 1 && <View style={[styles.innerDivider, { backgroundColor: dividerColor }]} />}
+                  {index < 1 && readerFont !== f && (['poppins', 'monospace'] as const)[index + 1] !== readerFont && (
+                    <BibleDivider vertical height="60%" color={dividerColor} />
+                  )}
                 </React.Fragment>
               ))}
             </View>
@@ -164,7 +169,7 @@ export function ReaderSettingsModal({ visible, onClose }: { visible: boolean; on
 
 const styles = StyleSheet.create({
   content: {
-    paddingHorizontal: 20,
+    paddingHorizontal: 8,
     paddingTop: 8,
   },
   header: {
@@ -181,10 +186,6 @@ const styles = StyleSheet.create({
   },
   closeBtn: {
     marginLeft: 8,
-  },
-  divider: {
-    height: 1,
-    marginVertical: 8,
   },
   settingsWrapper: {
     gap: 22,
@@ -234,9 +235,5 @@ const styles = StyleSheet.create({
     height: '100%',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  innerDivider: {
-    width: 1,
-    height: '60%',
   },
 });

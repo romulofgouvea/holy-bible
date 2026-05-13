@@ -1,13 +1,13 @@
-import { Feather } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { ROUTES, ROUTE_LABELS } from '../constants/routes';
 import { useReaderSettings } from '../hooks/use-reader-settings';
 import { useResponsive } from '../hooks/use-responsive';
 import { useTheme } from '../hooks/use-theme';
+import { BibleActionsSheet } from './BibleActionsSheet';
 import { BibleHeader } from './BibleHeader';
+import { BibleIcon } from './BibleIcon';
 import { BibleText } from './BibleText';
-import { BibleTopMenu } from './BibleTopMenu';
 
 export type BibleTopBarProps = {
     version: string;
@@ -62,14 +62,15 @@ export const BibleTopBar = React.memo((props: BibleTopBarProps) => {
                         style={[styles.menuButton, { backgroundColor: 'transparent', width: ms(38), height: ms(38), borderRadius: ms(10), marginLeft: ms(4), alignItems: 'center', justifyContent: 'center' }]}
                         onPress={() => setDotsMenuVisible(true)}
                     >
-                        <Feather name="more-vertical" size={ms(20)} color={headerContent} />
+                        <BibleIcon name="more-vertical" size={ms(20)} color={headerContent} />
                     </TouchableOpacity>
                 }
             />
 
-            <BibleTopMenu
+            <BibleActionsSheet
                 visible={dotsMenuVisible}
                 onClose={() => setDotsMenuVisible(false)}
+                title="Ações"
                 items={[
                     {
                         icon: 'search',

@@ -1,6 +1,7 @@
+import { BibleActionsSheet } from '@/components/BibleActionsSheet';
 import { BibleConfirmModal } from '@/components/BibleConfirmModal';
+import { BibleIcon } from '@/components/BibleIcon';
 import { FlashList } from '@shopify/flash-list';
-import { Feather } from '@expo/vector-icons';
 import * as FileSystem from 'expo-file-system/legacy';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
@@ -19,7 +20,6 @@ import { BibleDrawerMenu } from '../../components/BibleDrawerMenu';
 import { BibleHeader } from '../../components/BibleHeader';
 import { BibleSkeleton } from '../../components/BibleSkeleton';
 import { BibleText } from '../../components/BibleText';
-import { BibleTopMenu } from '../../components/BibleTopMenu';
 import { DonateModal } from '../../components/DonateModal';
 import { ROUTES, ROUTE_LABELS } from '../../constants/routes';
 import { useResponsive } from '../../hooks/use-responsive';
@@ -150,7 +150,7 @@ export default function EstudosScreen() {
 
   const renderEmpty = () => (
     <View style={styles.emptyContainer}>
-      <Feather name="book" size={ms(64)} color={colors.primaryVariant} />
+      <BibleIcon name="book" size={ms(64)} color={colors.primaryVariant} />
       <BibleText style={[styles.emptyTitle, { fontSize: ms(20), color: colors.onBackground }]}>Nenhum estudo ainda</BibleText>
       <BibleText style={[styles.emptySubtitle, { fontSize: ms(14), color: colors.textMuted }]}>
         Abra o menu superior nos três pontos para criar seu primeiro estudo
@@ -177,9 +177,9 @@ export default function EstudosScreen() {
         <View style={styles.cardContent}>
           <TouchableOpacity onPress={() => toggleSelection(item.id)} style={[styles.cardIcon, { backgroundColor: isSelected ? colors.primary : colors.surfaceHighlight }]}>
             {isSelected ? (
-              <Feather name="check" size={ms(18)} color={colors.onPrimary} />
+              <BibleIcon name="check" color={colors.onPrimary} />
             ) : (
-              <Feather name="book-open" size={ms(18)} color={colors.primary} />
+              <BibleIcon name="book-open" color={colors.primary} />
             )}
           </TouchableOpacity>
           <View style={styles.cardText}>
@@ -188,7 +188,7 @@ export default function EstudosScreen() {
           </View>
           {!isSelectionMode && (
             <TouchableOpacity onPress={() => setStudyToDelete(item.id)} style={[styles.deleteBtn, { backgroundColor: colors.error + '20' }]}>
-              <Feather name="trash-2" size={ms(18)} color={colors.error} />
+              <BibleIcon name="trash-2" color={colors.error} />
             </TouchableOpacity>
           )}
         </View>
@@ -208,10 +208,10 @@ export default function EstudosScreen() {
           rightContent={
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
               <TouchableOpacity onPress={() => setShareMenuVisible(true)}>
-                <Feather name="share-2" size={ms(20)} color={colors.onPrimary} />
+                <BibleIcon name="share-2" color={colors.onPrimary} />
               </TouchableOpacity>
               <TouchableOpacity onPress={() => setMultiDeleteVisible(true)}>
-                <Feather name="trash-2" size={ms(20)} color={colors.onPrimary} />
+                <BibleIcon name="trash-2" color={colors.onPrimary} />
               </TouchableOpacity>
             </View>
           }
@@ -219,7 +219,7 @@ export default function EstudosScreen() {
       ) : (
         <BibleHeader title={ROUTE_LABELS[ROUTES.STUDIES]} onMenuPress={() => setDrawerVisible(true)} rightContent={
           <TouchableOpacity onPress={() => setHeaderMenuVisible(true)} style={{ padding: 4 }}>
-            <Feather name="more-vertical" size={ms(24)} color={colors.onPrimary} />
+            <BibleIcon name="more-vertical" color={colors.onPrimary} />
           </TouchableOpacity>
         } />
       )}
@@ -313,33 +313,25 @@ export default function EstudosScreen() {
         onOpenDonate={() => { setDrawerVisible(false); setTimeout(() => setDonateVisible(true), 250); }}
       />
 
-      <BibleTopMenu
+      <BibleActionsSheet
         visible={headerMenuVisible}
         onClose={() => setHeaderMenuVisible(false)}
+        title="Ações"
         items={[
           { icon: 'file-plus', label: 'Novo Estudo', onPress: () => setModalVisible(true) },
           { icon: 'trash', label: 'Lixeira', onPress: () => router.push(ROUTES.TRASH as any) }
         ]}
       />
 
-      <Modal visible={shareMenuVisible} transparent animationType="fade">
-        <TouchableOpacity style={{ flex: 1, backgroundColor: colors.overlay, justifyContent: 'center', alignItems: 'center' }} activeOpacity={1} onPress={() => setShareMenuVisible(false)}>
-          <View style={{ backgroundColor: colors.surface, borderRadius: 16, padding: 20, width: '80%', gap: 16, shadowColor: colors.shadow, elevation: 12 }}>
-            <BibleText style={{ fontSize: ms(18), fontWeight: '700', color: colors.onSurface }}>Como deseja compartilhar?</BibleText>
-            <TouchableOpacity style={{ flexDirection: 'row', gap: 12, alignItems: 'center', backgroundColor: colors.surfaceHighlight, padding: 16, borderRadius: 12 }} onPress={() => exportPDFs(selectedIds)}>
-              <Feather name="file-text" size={ms(20)} color={colors.primary} />
-              <BibleText style={{ fontSize: ms(15), color: colors.onSurface, fontWeight: '600' }}>Compartilhar em PDF</BibleText>
-            </TouchableOpacity>
-            <TouchableOpacity style={{ flexDirection: 'row', gap: 12, alignItems: 'center', backgroundColor: colors.surfaceHighlight, padding: 16, borderRadius: 12 }} onPress={() => exportBackup(selectedIds)}>
-              <Feather name="file" size={ms(20)} color={colors.primary} />
-              <BibleText style={{ fontSize: ms(15), color: colors.onSurface, fontWeight: '600' }}>Compartilhar em arquivo</BibleText>
-            </TouchableOpacity>
-            <TouchableOpacity style={{ alignItems: 'center', marginTop: 8 }} onPress={() => setShareMenuVisible(false)}>
-              <BibleText style={{ fontSize: ms(15), color: colors.primary, fontWeight: '700' }}>Cancelar</BibleText>
-            </TouchableOpacity>
-          </View>
-        </TouchableOpacity>
-      </Modal>
+      <BibleActionsSheet
+        visible={shareMenuVisible}
+        onClose={() => setShareMenuVisible(false)}
+        title="Compartilhar"
+        items={[
+          { icon: 'file-text', label: 'Compartilhar em PDF', onPress: () => exportPDFs(selectedIds) },
+          { icon: 'file', label: 'Compartilhar em arquivo', onPress: () => exportBackup(selectedIds) }
+        ]}
+      />
 
       <DonateModal visible={donateVisible} onClose={() => setDonateVisible(false)} />
     </View>
@@ -370,7 +362,6 @@ const styles = StyleSheet.create({
   cardIcon: { width: 38, height: 38, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
   cardText: { flex: 1, gap: 4 },
   cardTitle: { fontWeight: '700' },
-  cardDesc: { lineHeight: 18 },
   cardDate: { marginTop: 2 },
   deleteBtn: { width: 38, height: 38, alignItems: 'center', justifyContent: 'center', borderRadius: 10 },
   modalWrapper: { flex: 1, justifyContent: 'flex-end' },

@@ -215,8 +215,6 @@ const styles = StyleSheet.create({
         borderLeftWidth: 3,
         borderLeftColor: 'transparent',
     },
-    selectedRow: {
-    },
     verseText: {
         flexWrap: 'wrap',
         textAlignVertical: 'top',

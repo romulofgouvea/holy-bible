@@ -1,4 +1,5 @@
-import { Feather } from '@expo/vector-icons';
+import { BibleCountPill } from '@/components/BibleCountPill';
+import { BibleIcon } from '@/components/BibleIcon';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FlashList } from '@shopify/flash-list';
 import { useLocalSearchParams, usePathname, useRouter } from 'expo-router';
@@ -302,7 +303,7 @@ export default function SearchScreen() {
 
       <View style={[styles.searchContainer, { backgroundColor: colors.background, borderBottomColor: colors.border }]} testID="search-container">
         <View style={[styles.searchBox, { backgroundColor: colors.surfaceHighlight, borderColor: colors.border }]}>
-          <Feather name="search" size={ms(16)} color={colors.primary} style={{ marginRight: 8 }} />
+          <BibleIcon name="search" size={ms(16)} color={colors.primary} style={{ marginRight: 8 }} />
           <TextInput
             ref={inputRef}
             style={[styles.input, Platform.select({ web: { outline: 'none', outlineWidth: 0 } as any, default: {} }), { fontSize: ms(14), color: colors.onSurface }]}
@@ -317,9 +318,12 @@ export default function SearchScreen() {
             {...({ outlineStyle: 'none' } as any)}
           />
           {query.length > 0 && (
-            <TouchableOpacity onPress={handleClearQuery} style={{ padding: 4 }}>
-              <Feather name="x" size={ms(16)} color={colors.textMuted} />
-            </TouchableOpacity>
+            <BibleIcon
+              name="x"
+              color={colors.error}
+              backgroundColor={colors.error + '20'}
+              onPress={handleClearQuery}
+            />
           )}
         </View>
 
@@ -348,7 +352,7 @@ export default function SearchScreen() {
         <BibleSkeleton onlyContent />
       ) : showEmpty ? (
         <View style={styles.centerBox}>
-          <Feather name="search" size={ms(48)} color={colors.border} />
+          <BibleIcon name="search" size={ms(48)} color={colors.border} />
           <BibleText style={[styles.hint, { color: colors.textMuted, fontSize: ms(15), marginTop: 12 }]}>
             Pesquise uma palavra ou frase
           </BibleText>
@@ -363,6 +367,7 @@ export default function SearchScreen() {
             keyExtractor={(item) => item}
             // @ts-ignore
             estimatedItemSize={60}
+            showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
             contentContainerStyle={{ padding: 16 }}
             ItemSeparatorComponent={() => <View style={{ height: 8 }} />}
@@ -384,15 +389,16 @@ export default function SearchScreen() {
                 onPress={() => handleHistorySelect(item)}
                 activeOpacity={0.7}
               >
-                <View style={{ width: ms(32), height: ms(32), borderRadius: ms(10), backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center', marginRight: 12 }}>
-                  <Feather name="clock" size={ms(14)} color={colors.onPrimary} />
-                </View>
-                <BibleText style={[styles.historyText, { color: colors.onSurface, fontSize: ms(15), flex: 1 }]}>
+                <BibleIcon name="clock" backgroundColor={colors.primary + '20'} color={colors.primary} />
+                <BibleText style={[styles.historyText, { marginLeft: ms(8), color: colors.onSurface, fontSize: ms(15), flex: 1 }]}>
                   {item}
                 </BibleText>
-                <TouchableOpacity onPress={() => removeFromHistory(item)} style={{ padding: 6, backgroundColor: colors.error + '20', borderRadius: ms(14) }}>
-                  <Feather name="x" size={ms(12)} color={colors.error} />
-                </TouchableOpacity>
+                <BibleIcon
+                  name="x"
+                  color={colors.error}
+                  backgroundColor={colors.error + '20'}
+                  onPress={() => removeFromHistory(item)}
+                />
               </TouchableOpacity>
             )}
           />
@@ -418,15 +424,16 @@ export default function SearchScreen() {
             keyExtractor={(_, i) => String(i)}
             // @ts-ignore
             estimatedItemSize={100}
+            showsVerticalScrollIndicator={false}
             contentContainerStyle={{ padding: 12 }}
             ItemSeparatorComponent={() => <View style={{ height: 8 }} />}
             keyboardShouldPersistTaps="handled"
             ListHeaderComponent={
-              <View style={{ alignSelf: 'flex-start', backgroundColor: colors.surfaceHighlight, paddingHorizontal: 10, paddingVertical: 2, borderRadius: 12, marginBottom: 8 }}>
-                <BibleText style={[styles.resultCount, { color: colors.primary, fontSize: ms(12), marginBottom: 0 }]}>
-                  {results.length >= 300 ? '300+ resultados' : `${results.length} resultado${results.length !== 1 ? 's' : ''}`}
-                </BibleText>
-              </View>
+              <BibleCountPill
+                count={results.length}
+                label="resultado"
+                labelPlural="resultados"
+              />
             }
             renderItem={({ item }) => (
               <SearchResultItem
@@ -521,27 +528,7 @@ const styles = StyleSheet.create({
     padding: 32,
   },
   hint: { textAlign: 'center' },
-  historyHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-  },
-  historyTitle: { fontWeight: '700', letterSpacing: 0.5 },
-  historyItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    borderBottomWidth: 1,
-  },
   historyText: { fontWeight: '500' },
-  resultCount: {
-    marginBottom: 8,
-    fontWeight: '600',
-  },
   resultCard: {
     borderRadius: 12,
     borderWidth: 1,
@@ -555,6 +542,4 @@ const styles = StyleSheet.create({
   },
   refText: { fontWeight: '700' },
   verseText: { fontSize: 14, lineHeight: 20 },
-  navBtn: { height: 38, paddingHorizontal: 12, marginHorizontal: 3, borderRadius: 10, justifyContent: 'center', alignItems: 'center' },
-  navBtnText: { fontSize: 15, fontWeight: '700' },
 });

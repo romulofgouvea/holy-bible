@@ -1,4 +1,3 @@
-import { Feather } from '@expo/vector-icons';
 import * as Clipboard from 'expo-clipboard';
 import React, { useState } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
@@ -7,6 +6,7 @@ import { useTheme } from '../hooks/use-theme';
 import { BibleBottomSheet } from './BibleBottomSheet';
 import { BibleIcon } from './BibleIcon';
 import { BibleText } from './BibleText';
+import { BibleDivider } from './BibleDivider';
 
 const PIX_KEY = 'romulo-gouvea@hotmail.com';
 
@@ -34,25 +34,21 @@ export function DonateModal({ visible, onClose }: Props) {
         <View style={styles.header}>
           <BibleIcon
             name="heart"
-            size={ms(16)}
             color={colors.primary}
-            backgroundColor={colors.primary + '25'}
-            borderRadius={6}
+            backgroundColor={colors.primary + '20'}
             style={styles.headerIconWrap}
           />
           <BibleText style={[styles.headerTitle, { fontSize: ms(16), color: colors.primary }]}>Apoie este Projeto</BibleText>
           <BibleIcon
             name="x"
-            size={ms(16)}
             color={colors.error}
-            backgroundColor={colors.surfaceHighlight}
-            borderRadius={6}
+            backgroundColor={colors.error + '20'}
             onPress={onClose}
             style={styles.closeBtn}
           />
         </View>
 
-        <View style={[styles.divider, { backgroundColor: colors.border }]} />
+        <BibleDivider margin={4} />
 
         <View style={styles.bodyContent}>
           <BibleText style={[styles.body, { color: colors.onSurface, fontSize: ms(14), opacity: 0.8 }]}>
@@ -84,7 +80,7 @@ export function DonateModal({ visible, onClose }: Props) {
               onPress={handleCopy}
               activeOpacity={0.8}
             >
-              <Feather name={copied ? 'check' : 'copy'} size={ms(16)} color={colors.onPrimary} />
+              <BibleIcon name={copied ? 'check' : 'copy'} size={ms(16)} color={colors.onPrimary} />
               <BibleText style={[styles.copyBtnText, { fontSize: ms(14), color: colors.onPrimary, fontWeight: '700' }]}>
                 {copied ? 'Chave Copiada!' : 'Copiar Chave Pix'}
               </BibleText>
@@ -120,10 +116,6 @@ const styles = StyleSheet.create({
   },
   closeBtn: {
     marginLeft: 8,
-  },
-  divider: {
-    height: 1,
-    marginVertical: 4,
   },
   bodyContent: {
     alignItems: 'center',

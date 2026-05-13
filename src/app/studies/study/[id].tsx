@@ -1,4 +1,3 @@
-import { Feather } from '@expo/vector-icons';
 import * as FileSystem from 'expo-file-system/legacy';
 import * as Print from 'expo-print';
 import { useLocalSearchParams, usePathname, useRouter } from 'expo-router';
@@ -7,6 +6,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Alert,
   DeviceEventEmitter,
+  Keyboard,
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
@@ -16,6 +16,8 @@ import {
 } from 'react-native';
 import { handleSmartBack } from '../../../utils/navigation';
 
+import { BibleActionsSheet } from '@/components/BibleActionsSheet';
+import { BibleIcon } from '@/components/BibleIcon';
 import { COLOR_THEMES } from '@/constants/colors';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BibleBookModal } from '../../../components/BibleBookModal';
@@ -23,7 +25,6 @@ import { BibleBottomSheet } from '../../../components/BibleBottomSheet';
 import { BibleHeader } from '../../../components/BibleHeader';
 import { BibleNumberModal } from '../../../components/BibleNumberModal';
 import { BibleSkeleton } from '../../../components/BibleSkeleton';
-import { BibleTopMenu } from '../../../components/BibleTopMenu';
 import { BibleVersionModal } from '../../../components/BibleVersionModal';
 import { ReaderSettingsModal } from '../../../components/ReaderSettingsModal';
 import { RichTextEditor, RichTextEditorRef } from '../../../components/study/RichTextEditor';
@@ -65,6 +66,8 @@ export default function StudyEditorScreen() {
   const [versionModalVisible, setVersionModalVisible] = useState(false);
   const [vpVersion, setVpVersion] = useState(availableVersions[0]);
   const [vpBook, setVpBook] = useState<Book | null>(null);
+
+  const [showToolbar, setShowToolbar] = useState(true);
 
   useEffect(() => {
     AsyncStorage.getItem(STORAGE_KEYS.BIBLE_VERSION_GLOBAL).then(val => {
@@ -266,9 +269,23 @@ export default function StudyEditorScreen() {
           />
         }
         rightContent={
-          <TouchableOpacity style={{ width: ms(40), height: ms(40), borderRadius: ms(10), alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent' }} onPress={() => setMenuVisible(true)}>
-            <Feather name="more-vertical" size={ms(20)} color={colors.onPrimary} />
-          </TouchableOpacity>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: ms(4) }}>
+            <TouchableOpacity
+              style={{ width: ms(38), height: ms(38), borderRadius: ms(10), alignItems: 'center', justifyContent: 'center' }}
+              onPress={() => {
+                if (showToolbar) Keyboard.dismiss();
+                setShowToolbar(!showToolbar);
+              }}
+            >
+              <BibleIcon name={showToolbar ? "edit-2" : "eye"} color={colors.onPrimary} size={ms(18)} />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{ width: ms(38), height: ms(38), borderRadius: ms(10), alignItems: 'center', justifyContent: 'center' }}
+              onPress={() => setMenuVisible(true)}
+            >
+              <BibleIcon name="more-vertical" color={colors.onPrimary} size={ms(18)} />
+            </TouchableOpacity>
+          </View>
         }
       />
 
@@ -279,13 +296,15 @@ export default function StudyEditorScreen() {
             initialHtml={initialHtml}
             onChange={setHtmlContent}
             onOpenVersePicker={openVersePicker}
+            showToolbar={showToolbar}
           />
         ) : null}
       </KeyboardAvoidingView>
 
-      <BibleTopMenu
+      <BibleActionsSheet
         visible={menuVisible}
         onClose={() => setMenuVisible(false)}
+        title="Ações"
         items={[
           { icon: 'file-text', label: 'Exportar em PDF', onPress: exportPDF }
         ]}
