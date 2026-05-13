@@ -215,9 +215,9 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
           background-size: 12px; background-repeat: no-repeat; background-position: center;
         }
         ul.task-list li[data-checked="true"] { text-decoration: line-through; opacity: 0.6; }
-        .verse-line { margin-bottom: 10px; display: flex; gap: 8px; }
-        .verse-num { font-weight: 800; color: ${colors.primary}; font-size: 12px; margin-top: 2px; }
-        .verse-text { font-style: italic; color: ${colors.onSurface}; }
+        .verse-line { margin-bottom: 10px; display: flex; gap: 8px; align-items: flex-start; }
+        .verse-num { font-weight: 800; color: ${colors.primary}; font-size: 12px; margin-top: 2px; min-width: 24px; text-align: right; flex-shrink: 0; white-space: nowrap; }
+        .verse-text { font-style: italic; color: ${colors.onSurface}; flex: 1; }
       </style>
     </head>
     <body onclick="document.getElementById('editor').focus();">

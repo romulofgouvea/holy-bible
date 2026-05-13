@@ -2,8 +2,8 @@ import { Feather } from '@expo/vector-icons';
 import { FlashList } from '@shopify/flash-list';
 import React, { useState } from 'react';
 import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
-import { useStudies } from '../hooks/use-studies';
 import { useResponsive } from '../hooks/use-responsive';
+import { useStudies } from '../hooks/use-studies';
 import { useTheme } from '../hooks/use-theme';
 import { BibleBottomSheet } from './BibleBottomSheet';
 import { BibleText } from './BibleText';
@@ -26,37 +26,37 @@ export function BibleAddToStudyModal({ visible, onClose, selectedVerses, onShowT
   const buildVersesHtml = () => {
     if (selectedVerses.length === 0) return '';
     const sorted = [...selectedVerses].sort((a, b) => a.chapter !== b.chapter ? a.chapter - b.chapter : a.verse - b.verse);
-    
+
     const sameChapter = sorted.every((v) => v.chapter === sorted[0].chapter);
     const bookName = sorted[0].bookName;
     const chapter = sorted[0].chapter;
-    
+
     let ref = '';
     if (sameChapter) {
-        const groups: string[] = [];
-        let start = sorted[0].verse;
-        let end = sorted[0].verse;
-        for (let i = 1; i < sorted.length; i++) {
-          if (sorted[i].verse === end + 1) {
-            end = sorted[i].verse;
-          } else {
-            groups.push(start === end ? `${start}` : `${start}-${end}`);
-            start = sorted[i].verse;
-            end = sorted[i].verse;
-          }
+      const groups: string[] = [];
+      let start = sorted[0].verse;
+      let end = sorted[0].verse;
+      for (let i = 1; i < sorted.length; i++) {
+        if (sorted[i].verse === end + 1) {
+          end = sorted[i].verse;
+        } else {
+          groups.push(start === end ? `${start}` : `${start}-${end}`);
+          start = sorted[i].verse;
+          end = sorted[i].verse;
         }
-        groups.push(start === end ? `${start}` : `${start}-${end}`);
-        ref = `${bookName} ${chapter}:${groups.join(', ')}`;
+      }
+      groups.push(start === end ? `${start}` : `${start}-${end}`);
+      ref = `${bookName} ${chapter}:${groups.join(', ')}`;
     } else {
-        ref = `${bookName} ${sorted[0].chapter}:${sorted[0].verse}–${sorted[sorted.length - 1].chapter}:${sorted[sorted.length - 1].verse}`;
+      ref = `${bookName} ${sorted[0].chapter}:${sorted[0].verse}–${sorted[sorted.length - 1].chapter}:${sorted[sorted.length - 1].verse}`;
     }
 
     const version = sorted[0].version;
     ref = `${ref} (${version})`;
 
     const versesBody = sorted.map(v => `<div class="verse-line"><span class="verse-num">${v.verse}</span> <span class="verse-text">${v.text}</span></div>`).join('');
-    
-    return `<p><br></p><blockquote class="bible-verse"><div class="remove-verse-btn" contenteditable="false">×</div><b>${ref}</b>${versesBody}</blockquote><p><br></p>`;
+
+    return `<blockquote class="bible-verse"><div class="remove-verse-btn" contenteditable="false">×</div><b>${ref}</b>${versesBody}</blockquote>`;
   };
 
   const handleAddToStudy = (studyId: string, currentContent: string) => {
@@ -104,14 +104,14 @@ export function BibleAddToStudyModal({ visible, onClose, selectedVerses, onShowT
               autoFocus
             />
             <View style={styles.createActions}>
-              <TouchableOpacity 
-                style={[styles.btn, { backgroundColor: colors.surfaceHighlight }]} 
+              <TouchableOpacity
+                style={[styles.btn, { backgroundColor: colors.surfaceHighlight }]}
                 onPress={() => setIsCreating(false)}
               >
                 <BibleText style={{ color: colors.onSurface, fontWeight: '600' }}>Cancelar</BibleText>
               </TouchableOpacity>
-              <TouchableOpacity 
-                style={[styles.btn, { backgroundColor: colors.primary }]} 
+              <TouchableOpacity
+                style={[styles.btn, { backgroundColor: colors.primary }]}
                 onPress={handleCreateAndAdd}
               >
                 <BibleText style={{ color: colors.onPrimary, fontWeight: '700' }}>Criar e Adicionar</BibleText>
@@ -120,7 +120,7 @@ export function BibleAddToStudyModal({ visible, onClose, selectedVerses, onShowT
           </View>
         ) : (
           <View style={{ flex: 1 }}>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={[styles.createToggle, { borderColor: colors.primary + '30', backgroundColor: colors.primary + '10' }]}
               onPress={() => setIsCreating(true)}
             >
@@ -140,7 +140,7 @@ export function BibleAddToStudyModal({ visible, onClose, selectedVerses, onShowT
                 </View>
               }
               renderItem={({ item }) => (
-                <TouchableOpacity 
+                <TouchableOpacity
                   style={[styles.studyItem, { borderBottomColor: colors.border }]}
                   onPress={() => handleAddToStudy(item.id, item.content)}
                 >

@@ -175,8 +175,8 @@ export default function StudyEditorScreen() {
         .meta { color: #888; font-size: 13px; margin-bottom: 32px; font-weight: 600; }
         .bible-verse { border-left: 4px solid #008080; padding: 16px 24px; background: #f4faf9; border-radius: 8px; margin: 24px 0; page-break-inside: avoid; overflow-wrap: break-word; word-wrap: break-word; word-break: break-word; }
         .bible-verse b, .bible-verse .verse-title { color: #008080; display: block; margin-bottom: 12px; font-size: 16px; font-weight: bold; letter-spacing: 0.5px; text-transform: uppercase; }
-        .verse-line { margin-bottom: 10px; line-height: 1.7; display: flex; gap: 8px; }
-        .verse-num { font-weight: 800; color: #008080; font-size: 12px; margin-top: 2px; }
+        .verse-line { margin-bottom: 10px; line-height: 1.7; display: flex; gap: 8px; align-items: flex-start; }
+        .verse-num { font-weight: 800; color: #008080; font-size: 12px; margin-top: 2px; min-width: 24px; text-align: right; flex-shrink: 0; white-space: nowrap; }
         .verse-text { font-style: italic; color: #333; flex: 1; }
         img { max-width: 100%; border-radius: 12px; margin: 24px 0; box-shadow: 0 4px 12px rgba(0,0,0,0.1); page-break-inside: avoid; }
         ul, ol { padding-left: 24px; margin-top: 8px; margin-bottom: 8px; }
