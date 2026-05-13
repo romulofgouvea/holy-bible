@@ -340,9 +340,31 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
         ensureTrailingParagraph();
 
         window.insertHtml = function(html) {
-          editor.focus();
+          const sel = window.getSelection();
+          const isInEditor = sel && sel.rangeCount > 0 && editor.contains(sel.anchorNode);
+          
+          if (!isInEditor) {
+            moveCursorToTrailingParagraph();
+          } else {
+            editor.focus();
+          }
+
           document.execCommand('insertHTML', false, html);
           setTimeout(function() {
+            if (!isInEditor) {
+              moveCursorToTrailingParagraph();
+            } else {
+              // Try to move cursor to the P that was just inserted after the block
+              const sel2 = window.getSelection();
+              if (sel2.rangeCount > 0) {
+                const node = sel2.anchorNode;
+                const container = node.nodeType === 3 ? node.parentNode : node;
+                if (container.nodeName !== 'P') {
+                   // Fallback to end if we are stuck
+                   moveCursorToTrailingParagraph();
+                }
+              }
+            }
             updateFormatState();
           }, 80);
         };
@@ -415,6 +437,58 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
         };
 
         document.addEventListener('click', function(e) {
+          let block = e.target.closest('.bible-verse');
+          let insertBefore = false;
+          
+          // Check for click on editor background near any block
+          if (e.target === editor) {
+            const y = e.clientY;
+            const blocks = document.querySelectorAll('.bible-verse');
+            let closest = null;
+            let minDist = Infinity;
+            
+            for (let b of blocks) {
+              const rect = b.getBoundingClientRect();
+              const dTop = Math.abs(y - rect.top);
+              const dBottom = Math.abs(y - rect.bottom);
+              if (dTop < minDist) { minDist = dTop; closest = b; insertBefore = true; }
+              if (dBottom < minDist) { minDist = dBottom; closest = b; insertBefore = false; }
+            }
+            
+            if (closest && minDist < 50) {
+              block = closest;
+            }
+          }
+
+          if (block && !e.target.classList.contains('remove-verse-btn')) {
+            const targetEl = insertBefore ? block.previousElementSibling : block.nextElementSibling;
+            
+            if (!targetEl || targetEl.nodeName !== 'P') {
+              var p = document.createElement('p');
+              p.innerHTML = '<br>';
+              if (insertBefore) block.parentNode.insertBefore(p, block);
+              else block.parentNode.insertBefore(p, block.nextSibling);
+              
+              const range = document.createRange();
+              const sel = window.getSelection();
+              range.setStart(p, 0);
+              range.collapse(true);
+              sel.removeAllRanges();
+              sel.addRange(range);
+
+              const msg = JSON.stringify({ type: 'contentChanged', data: editor.innerHTML });
+              if (window.ReactNativeWebView) window.ReactNativeWebView.postMessage(msg);
+              else window.parent.postMessage(msg, '*');
+            } else {
+              const range = document.createRange();
+              const sel = window.getSelection();
+              range.setStart(targetEl, 0);
+              range.collapse(true);
+              sel.removeAllRanges();
+              sel.addRange(range);
+            }
+          }
+
           if (e.target.classList.contains('remove-verse-btn')) {
             let block = e.target.closest('.bible-verse');
             if (block) {
@@ -446,6 +520,51 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
         });
 
         editor.addEventListener('keydown', function(e) {
+          if (e.key === 'Backspace' || e.key === 'Delete') {
+            let sel = window.getSelection();
+            if (sel && sel.isCollapsed) {
+              let node = sel.anchorNode;
+              if (!node) return;
+              let container = node.nodeType === 3 ? node.parentNode : node;
+              let blockParent = (container.closest ? container.closest('p, div, li') : null) || container;
+              
+              if (e.key === 'Backspace' && sel.anchorOffset === 0) {
+                if (blockParent.previousElementSibling && blockParent.previousElementSibling.classList.contains('bible-verse')) {
+                  // If paragraph is empty, allow deleting the paragraph itself
+                  if (blockParent.textContent.trim() === '' && !blockParent.querySelector('img')) {
+                    const toFocus = blockParent.previousElementSibling.previousElementSibling;
+                    blockParent.remove();
+                    if (toFocus) {
+                      const range = document.createRange();
+                      const sel = window.getSelection();
+                      range.selectNodeContents(toFocus);
+                      range.collapse(false);
+                      sel.removeAllRanges();
+                      sel.addRange(range);
+                    }
+                    e.preventDefault();
+                    return;
+                  }
+                  // If not empty, just prevent merging with the block
+                  e.preventDefault();
+                  return;
+                }
+              }
+
+              if (e.key === 'Delete') {
+                if (blockParent.nextElementSibling && blockParent.nextElementSibling.classList.contains('bible-verse')) {
+                   const range = sel.getRangeAt(0);
+                   const postRange = document.createRange();
+                   postRange.selectNodeContents(blockParent);
+                   postRange.setStart(range.endContainer, range.endOffset);
+                   if (postRange.toString().trim().length === 0) {
+                      e.preventDefault();
+                      return;
+                   }
+                }
+              }
+            }
+          }
           if (e.key === 'Enter') {
              let sel = window.getSelection();
              let li = sel.anchorNode ? (sel.anchorNode.nodeType === 3 ? sel.anchorNode.parentNode : sel.anchorNode).closest('ul.task-list li') : null;
