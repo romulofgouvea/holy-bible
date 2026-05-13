@@ -58,24 +58,24 @@ export function BibleVersionModal({ visible, onClose, onSelect, currentVersionSi
   if (!visible) return null;
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <View style={[styles.iconBtn, styles.headerIconWrap, { backgroundColor: colors.primary + '15' }]}>
+    <View style={styles.container} testID="bible-version-modal">
+      <View style={styles.header} testID="bible-version-header">
+        <View style={[styles.iconBtn, styles.headerIconWrap, { backgroundColor: colors.primary + '15' }]} testID="bible-version-icon">
           <Feather name="book-open" size={ms(16)} color={colors.primary} />
         </View>
-        <BibleText style={[styles.title, { fontSize: ms(18), color: colors.primary, fontWeight: '800' }]}>Versões</BibleText>
-        <TouchableOpacity onPress={() => setIsSearchVisible(!isSearchVisible)} style={[styles.iconBtn, styles.headerActionSpacing, { backgroundColor: colors.surfaceHighlight }]}>
+        <BibleText style={[styles.title, { fontSize: ms(18), color: colors.primary, fontWeight: '800' }]} testID="bible-version-title">Versões</BibleText>
+        <TouchableOpacity onPress={() => setIsSearchVisible(!isSearchVisible)} style={[styles.iconBtn, styles.headerActionSpacing, { backgroundColor: colors.surfaceHighlight }]} testID="bible-version-search-btn">
           <Feather name="search" size={ms(16)} color={isSearchVisible ? colors.primary : colors.onSurface} />
         </TouchableOpacity>
-        <View style={[styles.viewToggles, { backgroundColor: colors.surfaceHighlight }]}>
-          <TouchableOpacity onPress={() => handleSetViewMode('grid')} style={[styles.toggleBtn, viewMode === 'grid' && { backgroundColor: colors.surface }]}>
+        <View style={[styles.viewToggles, { backgroundColor: colors.surfaceHighlight }]} testID="bible-version-view-toggles">
+          <TouchableOpacity onPress={() => handleSetViewMode('grid')} style={[styles.toggleBtn, viewMode === 'grid' && { backgroundColor: colors.surface }]} testID="bible-version-grid-view-btn">
             <Feather name="grid" size={ms(16)} color={viewMode === 'grid' ? colors.primary : colors.onSurface} />
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => handleSetViewMode('list')} style={[styles.toggleBtn, viewMode === 'list' && { backgroundColor: colors.surface }]}>
+          <TouchableOpacity onPress={() => handleSetViewMode('list')} style={[styles.toggleBtn, viewMode === 'list' && { backgroundColor: colors.surface }]} testID="bible-version-list-view-btn">
             <Feather name="list" size={ms(16)} color={viewMode === 'list' ? colors.primary : colors.onSurface} />
           </TouchableOpacity>
         </View>
-        <TouchableOpacity onPress={onClose} style={[styles.iconBtn, styles.headerActionSpacing, { backgroundColor: colors.surfaceHighlight }]}>
+        <TouchableOpacity onPress={onClose} style={[styles.iconBtn, styles.headerActionSpacing, { backgroundColor: colors.surfaceHighlight }]} testID="bible-version-close-btn">
           <Feather name="x" size={ms(16)} color={colors.error} />
         </TouchableOpacity>
       </View>
@@ -84,7 +84,7 @@ export function BibleVersionModal({ visible, onClose, onSelect, currentVersionSi
         <View style={[styles.searchContainer, { backgroundColor: colors.surfaceHighlight, borderColor: colors.border }]}>
           <Feather name="search" size={ms(16)} color={colors.primary} style={styles.searchIcon} />
           <TextInput
-            style={[styles.searchInput, { fontSize: ms(16), color: colors.onSurface }]}
+            style={[styles.searchInput, { fontSize: ms(14), color: colors.onSurface }]}
             placeholder="Pesquisar versão..."
             placeholderTextColor={colors.textMuted}
             value={searchQuery}

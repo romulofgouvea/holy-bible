@@ -288,7 +288,8 @@ export default function StudyEditorScreen() {
           visible={versePickerVisible && vpStep === 'chapter'}
           onClose={() => setVersePickerVisible(false)}
           onBack={() => setVpStep('book')}
-          title={vpBook?.name ? `Capítulos - ${vpBook.name}` : 'Capítulos'}
+          title={vpBook?.name ? vpBook.name : 'Capítulos'}
+          footerText="capítulos"
           iconName="list"
           items={vpChapters}
           onSelect={(n: number) => { setVpChapter(n); setVpStep('verses'); }}

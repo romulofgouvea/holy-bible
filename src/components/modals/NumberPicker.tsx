@@ -20,19 +20,19 @@ export function NumberPicker({ title, items, onSelect, onClose, onBack, activeNu
   const { ms } = useResponsive();
 
   return (
-    <View style={styles.container}>
-      <View style={[styles.header, { borderBottomColor: colors.border }]}>
+    <View style={styles.container} testID="number-picker-modal">
+      <View style={[styles.header, { borderBottomColor: colors.border }]} testID="number-picker-header">
         <View style={styles.titleArea}>
           {onBack && (
-            <TouchableOpacity onPress={onBack} style={styles.backBtn}>
-              <Feather name="chevron-left" size={ms(16)} color={colors.primary} />
+            <TouchableOpacity onPress={onBack} style={[styles.iconBtn, { backgroundColor: colors.primary + '15', marginRight: 8 }]} testID="number-picker-back-btn">
+              <Feather name="arrow-left" size={ms(16)} color={colors.primary} />
             </TouchableOpacity>
           )}
-          <BibleText style={[styles.title, { fontSize: ms(15), color: colors.onBackground }]}>
+          <BibleText style={[styles.title, { fontSize: ms(15), color: colors.onBackground }]} testID="number-picker-title">
             {title}
           </BibleText>
         </View>
-        <TouchableOpacity onPress={onClose} style={[styles.iconBtn, { backgroundColor: colors.error + '15' }]}>
+        <TouchableOpacity onPress={onClose} style={[styles.iconBtn, { backgroundColor: colors.error + '15' }]} testID="number-picker-close-btn">
           <Feather name="x" size={ms(14)} color={colors.error} />
         </TouchableOpacity>
       </View>

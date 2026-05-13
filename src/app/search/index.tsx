@@ -1,12 +1,11 @@
 import { Feather } from '@expo/vector-icons';
-import { FlashList } from '@shopify/flash-list';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { FlashList } from '@shopify/flash-list';
 import { useLocalSearchParams, usePathname, useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Platform,
   StyleSheet,
-  Text,
   TextInput,
   TouchableOpacity,
   View
@@ -16,14 +15,14 @@ import { BibleHeader } from '../../components/BibleHeader';
 import { BibleModals } from '../../components/BibleModals';
 import { BibleSkeleton } from '../../components/BibleSkeleton';
 import { BibleText } from '../../components/BibleText';
-import { EmptyState } from '../../components/EmptyState';
 import { DonateModal } from '../../components/DonateModal';
+import { EmptyState } from '../../components/EmptyState';
+import { ROUTES } from '../../constants/routes';
 import { useBible } from '../../hooks/use-bible';
 import { useReaderSettings } from '../../hooks/use-reader-settings';
 import { useResponsive } from '../../hooks/use-responsive';
 import { useTheme } from '../../hooks/use-theme';
 import { impactLight, selectionHaptic } from '../../utils/haptics';
-import { ROUTES } from '../../constants/routes';
 import { handleSmartBack } from '../../utils/navigation';
 
 
@@ -60,12 +59,12 @@ const HighlightText = React.memo(({ text, query, colors, fontSizeMultiplier, ms 
     </BibleText>
   );
 });
-const SearchResultItem = React.memo(({ item, query, colors, fontSizeMultiplier, ms, onPress }: { 
-  item: SearchResult; 
-  query: string; 
-  colors: any; 
-  fontSizeMultiplier: number; 
-  ms: (v: number) => number; 
+const SearchResultItem = React.memo(({ item, query, colors, fontSizeMultiplier, ms, onPress }: {
+  item: SearchResult;
+  query: string;
+  colors: any;
+  fontSizeMultiplier: number;
+  ms: (v: number) => number;
   onPress: (item: SearchResult) => void;
 }) => (
   <TouchableOpacity
@@ -303,10 +302,10 @@ export default function SearchScreen() {
 
       <View style={[styles.searchContainer, { backgroundColor: colors.background, borderBottomColor: colors.border }]}>
         <View style={[styles.searchBox, { backgroundColor: colors.surfaceHighlight, borderColor: colors.border }]}>
-          <Feather name="search" size={ms(18)} color={colors.primary} style={{ marginRight: 8 }} />
+          <Feather name="search" size={ms(16)} color={colors.primary} style={{ marginRight: 8 }} />
           <TextInput
             ref={inputRef}
-            style={[styles.input, Platform.select({ web: { outline: 'none', outlineWidth: 0 } as any, default: {} }), { fontSize: ms(15), color: colors.onSurface }]}
+            style={[styles.input, Platform.select({ web: { outline: 'none', outlineWidth: 0 } as any, default: {} }), { fontSize: ms(14), color: colors.onSurface }]}
             placeholder="Pesquisar na Bíblia..."
             placeholderTextColor={colors.textMuted}
             value={query}
@@ -399,13 +398,13 @@ export default function SearchScreen() {
           />
         </View>
       ) : showTooShort ? (
-        <EmptyState 
+        <EmptyState
           title="Pesquisa"
           description="Digite ao menos 2 caracteres para pesquisar"
           icon="search"
         />
       ) : showNoResults ? (
-        <EmptyState 
+        <EmptyState
           title="Sem resultados"
           description={`Nenhum versículo encontrado para "${query.trim()}"`}
           icon="slash"
@@ -428,13 +427,13 @@ export default function SearchScreen() {
               </BibleText>
             }
             renderItem={({ item }) => (
-              <SearchResultItem 
-                item={item} 
-                query={query.trim()} 
-                colors={colors} 
-                fontSizeMultiplier={fontSizeMultiplier} 
-                ms={ms} 
-                onPress={handleNavigate} 
+              <SearchResultItem
+                item={item}
+                query={query.trim()}
+                colors={colors}
+                fontSizeMultiplier={fontSizeMultiplier}
+                ms={ms}
+                onPress={handleNavigate}
               />
             )}
           />

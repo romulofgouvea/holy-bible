@@ -111,7 +111,8 @@ export function BibleModals(props: BibleModalsProps) {
           setChapterModalVisible(false);
           setBookModalVisible(true);
         }}
-        title="Capítulos"
+        title={activeBook?.name || 'Capítulos'}
+        footerText="capítulos"
         iconName="list"
         items={activeChapterNumbers}
         currentItem={highlightedChapter}
@@ -135,7 +136,8 @@ export function BibleModals(props: BibleModalsProps) {
           setVerseModalVisible(false);
           setChapterModalVisible(true);
         }}
-        title="Versículos"
+        title={activeBook?.name ? `${activeBook.name} ${navChapter || chapter}` : 'Versículos'}
+        footerText="versículos"
         iconName="hash"
         items={activeVerseNumbers}
         currentItem={highlightedVerse}

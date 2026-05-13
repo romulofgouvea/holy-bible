@@ -24,12 +24,12 @@ export function BookPicker({ books, onSelect, onClose }: BookPickerProps) {
   );
 
   return (
-    <View style={styles.container}>
-      <View style={[styles.header, { borderBottomColor: colors.border }]}>
-        <BibleText style={[styles.title, { fontSize: ms(16), color: colors.onBackground }]}>
+    <View style={styles.container} testID="book-picker-modal">
+      <View style={[styles.header, { borderBottomColor: colors.border }]} testID="book-picker-header">
+        <BibleText style={[styles.title, { fontSize: ms(16), color: colors.onBackground }]} testID="book-picker-title">
           Livros
         </BibleText>
-        <TouchableOpacity onPress={onClose} style={[styles.iconBtn, { backgroundColor: colors.error }]}>
+        <TouchableOpacity onPress={onClose} style={[styles.iconBtn, { backgroundColor: colors.error }]} testID="book-picker-close-btn">
           <Feather name="x" size={ms(14)} color={colors.error} />
         </TouchableOpacity>
       </View>

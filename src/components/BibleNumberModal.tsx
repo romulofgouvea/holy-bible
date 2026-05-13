@@ -15,9 +15,10 @@ type BibleNumberModalProps = {
   iconName: keyof typeof Feather.glyphMap;
   onSelect: (item: number) => void;
   currentItem?: number;
+  footerText?: string;
 };
 
-export function BibleNumberModal({ visible, onClose, onBack, items, title, iconName, onSelect, currentItem }: BibleNumberModalProps) {
+export function BibleNumberModal({ visible, onClose, onBack, items, title, iconName, onSelect, currentItem, footerText }: BibleNumberModalProps) {
   const { ms, height, width } = useResponsive();
   const { colors } = useTheme();
   const scrollViewRef = React.useRef<any>(null);
@@ -32,19 +33,19 @@ export function BibleNumberModal({ visible, onClose, onBack, items, title, iconN
   if (!visible) return null;
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
+    <View style={styles.container} testID="bible-number-modal">
+      <View style={styles.header} testID="bible-number-header">
         {onBack ? (
-          <TouchableOpacity onPress={onBack} style={[styles.iconBtn, styles.headerIconWrap, { backgroundColor: colors.primary }]}>
-            <Feather name="arrow-left" size={ms(16)} color={colors.onPrimary} />
+          <TouchableOpacity onPress={onBack} style={[styles.iconBtn, styles.headerIconWrap, { backgroundColor: colors.primary + '15' }]} testID="bible-number-back-btn">
+            <Feather name="arrow-left" size={ms(16)} color={colors.primary} />
           </TouchableOpacity>
         ) : (
-          <View style={[styles.iconBtn, styles.headerIconWrap, { backgroundColor: colors.primary }]}>
+          <View style={[styles.iconBtn, styles.headerIconWrap, { backgroundColor: colors.primary + '15' }]} testID="bible-number-icon">
             <Feather name={iconName} size={ms(16)} color={colors.primary} />
           </View>
         )}
-        <BibleText style={[styles.title, { fontSize: ms(18), color: colors.primary, fontWeight: '800' }]}>{title}</BibleText>
-        <TouchableOpacity onPress={onClose} style={[styles.iconBtn, styles.closeBtn, { backgroundColor: colors.surfaceHighlight }]}>
+        <BibleText style={[styles.title, { fontSize: ms(18), color: colors.primary, fontWeight: '800' }]} testID="bible-number-title">{title}</BibleText>
+        <TouchableOpacity onPress={onClose} style={[styles.iconBtn, styles.closeBtn, { backgroundColor: colors.surfaceHighlight }]} testID="bible-number-close-btn">
           <Feather name="x" size={ms(16)} color={colors.error} />
         </TouchableOpacity>
       </View>
@@ -93,7 +94,7 @@ export function BibleNumberModal({ visible, onClose, onBack, items, title, iconN
       <View style={styles.footer}>
         <View style={[styles.countPill, { backgroundColor: colors.surfaceHighlight, borderColor: colors.primary + '30' }]}>
           <BibleText style={[styles.countNumber, { color: colors.primary, fontWeight: '700' }]}>{items.length}</BibleText>
-          <BibleText style={[styles.countText, { color: colors.primary, fontWeight: '600' }]}> {`${title.toLowerCase()}`}</BibleText>
+          <BibleText style={[styles.countText, { color: colors.primary, fontWeight: '600' }]}> {footerText ? footerText : title.toLowerCase()}</BibleText>
         </View>
       </View>
     </View>

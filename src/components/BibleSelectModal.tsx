@@ -48,9 +48,9 @@ export const BibleSelectModal = React.memo(function BibleSelectModal<T>(props: S
 
             {!hideSearch && (
               <View style={[styles.searchContainer, { backgroundColor: colors.surfaceHighlight }]}>
-                <Feather name="search" size={ms(20)} color={colors.primary} style={styles.searchIcon} />
+                <Feather name="search" size={ms(16)} color={colors.primary} style={styles.searchIcon} />
                 <TextInput
-                  style={[styles.searchInput, { fontSize: ms(16), color: colors.onSurface }]}
+                  style={[styles.searchInput, { fontSize: ms(14), color: colors.onSurface }]}
                   placeholder={placeholder}
                   placeholderTextColor={colors.textMuted}
                   value={value}

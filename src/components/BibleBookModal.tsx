@@ -120,11 +120,11 @@ export function BibleBookModal({ visible, onClose, books, versionSigla, onVersio
   let lastTestament: string | null = null;
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
+    <View style={styles.container} testID="bible-book-modal">
+      <View style={styles.header} testID="bible-book-header">
         <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
           {versionSigla && onVersionPress ? (
-            <TouchableOpacity activeOpacity={0.7} style={[styles.versionPill, { backgroundColor: colors.primary + '15' }]} onPress={onVersionPress}>
+            <TouchableOpacity activeOpacity={0.7} style={[styles.versionPill, { backgroundColor: colors.primary + '15' }]} onPress={onVersionPress} testID="bible-book-version-pill">
               <BibleText style={[styles.versionPillText, { fontSize: ms(13), color: colors.primary, fontWeight: '700' }]}>{versionSigla}</BibleText>
               <Feather name="chevron-down" size={ms(16)} color={colors.primary} style={{ marginLeft: 2 }} />
             </TouchableOpacity>
@@ -133,26 +133,26 @@ export function BibleBookModal({ visible, onClose, books, versionSigla, onVersio
               <View style={[styles.iconBtn, styles.headerIconWrap, { backgroundColor: colors.primary + '15' }]}>
                 <Feather name="book" size={ms(16)} color={colors.primary} />
               </View>
-              <BibleText style={[styles.title, { flex: 0, flexShrink: 1, fontSize: ms(18), color: colors.primary, fontWeight: '800' }]}>Livros</BibleText>
+              <BibleText style={[styles.title, { flex: 0, flexShrink: 1, fontSize: ms(18), color: colors.primary, fontWeight: '800' }]} testID="bible-book-title">Livros</BibleText>
             </>
           )}
         </View>
 
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <TouchableOpacity onPress={() => setIsSearchVisible(!isSearchVisible)} style={[styles.iconBtn, styles.headerActionSpacing, { backgroundColor: colors.surfaceHighlight }]}>
+          <TouchableOpacity onPress={() => setIsSearchVisible(!isSearchVisible)} style={[styles.iconBtn, styles.headerActionSpacing, { backgroundColor: colors.surfaceHighlight }]} testID="bible-book-search-btn">
             <Feather name="search" size={ms(16)} color={isSearchVisible ? colors.primary : colors.onSurface} />
           </TouchableOpacity>
 
-          <View style={[styles.viewToggles, { backgroundColor: colors.surfaceHighlight }]}>
-            <TouchableOpacity onPress={() => handleSetViewMode('grid')} style={[styles.toggleBtn, viewMode === 'grid' && { backgroundColor: colors.surface }]}>
+          <View style={[styles.viewToggles, { backgroundColor: colors.surfaceHighlight }]} testID="bible-book-view-toggles">
+            <TouchableOpacity onPress={() => handleSetViewMode('grid')} style={[styles.toggleBtn, viewMode === 'grid' && { backgroundColor: colors.surface }]} testID="bible-book-grid-view-btn">
               <Feather name="grid" size={ms(16)} color={viewMode === 'grid' ? colors.primary : colors.onSurface} />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => handleSetViewMode('list')} style={[styles.toggleBtn, viewMode === 'list' && { backgroundColor: colors.surface }]}>
+            <TouchableOpacity onPress={() => handleSetViewMode('list')} style={[styles.toggleBtn, viewMode === 'list' && { backgroundColor: colors.surface }]} testID="bible-book-list-view-btn">
               <Feather name="list" size={ms(16)} color={viewMode === 'list' ? colors.primary : colors.onSurface} />
             </TouchableOpacity>
           </View>
 
-          <TouchableOpacity onPress={onClose} style={[styles.iconBtn, styles.headerActionSpacing, { backgroundColor: colors.surfaceHighlight }]}>
+          <TouchableOpacity onPress={onClose} style={[styles.iconBtn, styles.headerActionSpacing, { backgroundColor: colors.surfaceHighlight }]} testID="bible-book-close-btn">
             <Feather name="x" size={ms(16)} color={colors.error} />
           </TouchableOpacity>
         </View>
@@ -266,7 +266,7 @@ export function BibleBookModal({ visible, onClose, books, versionSigla, onVersio
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 8 },
-  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 0 },
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 },
   iconBtn: { width: 32, height: 32, borderRadius: 6, justifyContent: 'center', alignItems: 'center' },
   headerActionSpacing: { marginLeft: 8 },
   headerIconWrap: { marginRight: 8 },

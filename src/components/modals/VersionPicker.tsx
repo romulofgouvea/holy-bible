@@ -26,20 +26,20 @@ export function VersionPicker({ onSelect, onClose }: VersionPickerProps) {
   );
 
   return (
-    <View style={styles.container}>
-      <View style={[styles.header, { borderBottomColor: colors.border }]}>
-        <BibleText style={[styles.title, { fontSize: ms(16), color: colors.onBackground }]}>
+    <View style={styles.container} testID="version-picker-modal">
+      <View style={[styles.header, { borderBottomColor: colors.border }]} testID="version-picker-header">
+        <BibleText style={[styles.title, { fontSize: ms(16), color: colors.onBackground }]} testID="version-picker-title">
           Versão da Bíblia
         </BibleText>
-        <TouchableOpacity onPress={onClose} style={[styles.closeBtn, { backgroundColor: colors.error }]}>
+        <TouchableOpacity onPress={onClose} style={[styles.closeBtn, { backgroundColor: colors.error }]} testID="version-picker-close-btn">
           <Feather name="x" size={ms(14)} color={colors.error} />
         </TouchableOpacity>
       </View>
 
       <View style={[styles.searchContainer, { backgroundColor: colors.surfaceHighlight }]}>
-        <Feather name="search" size={ms(14)} color={colors.textMuted} />
+        <Feather name="search" size={ms(16)} color={colors.textMuted} />
         <TextInput
-          style={[styles.searchInput, { color: colors.onBackground, fontSize: ms(16) }]}
+          style={[styles.searchInput, { color: colors.onBackground, fontSize: ms(14) }]}
           placeholder="Pesquisar versão..."
           placeholderTextColor={colors.textMuted}
           value={search}

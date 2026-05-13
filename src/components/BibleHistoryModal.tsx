@@ -33,13 +33,13 @@ export function BibleHistoryModal({ visible, onClose, onSelect }: BibleHistoryMo
 
   return (
     <BibleBottomSheet visible={visible} onClose={onClose}>
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <View style={[styles.iconBtn, styles.headerIconWrap, { backgroundColor: colors.primary + '15' }]}>
+      <View style={styles.container} testID="bible-history-modal">
+        <View style={styles.header} testID="bible-history-header">
+          <View style={[styles.iconBtn, styles.headerIconWrap, { backgroundColor: colors.primary + '15' }]} testID="bible-history-icon">
             <Feather name="clock" size={ms(14)} color={colors.primary} />
           </View>
-          <BibleText style={[styles.title, { fontSize: ms(16), color: colors.primary, fontWeight: '800' }]}>Histórico</BibleText>
-          <TouchableOpacity onPress={onClose} style={[styles.iconBtn, styles.closeBtn, { backgroundColor: colors.surfaceHighlight }]}>
+          <BibleText style={[styles.title, { fontSize: ms(16), color: colors.primary, fontWeight: '800' }]} testID="bible-history-title">Histórico</BibleText>
+          <TouchableOpacity onPress={onClose} style={[styles.iconBtn, styles.closeBtn, { backgroundColor: colors.surfaceHighlight }]} testID="bible-history-close-btn">
             <Feather name="x" size={ms(14)} color={colors.error} />
           </TouchableOpacity>
         </View>

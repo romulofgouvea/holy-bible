@@ -40,24 +40,24 @@ export function StudyVerseSelectModal({ visible, onClose, onBack, bookName, chap
   if (!visible) return null;
 
   return (
-    <View style={{ flex: 1 }}>
-      <View style={styles.header}>
+    <View style={styles.container} testID="study-verse-modal">
+      <View style={styles.header} testID="study-verse-header">
         {onBack ? (
-          <TouchableOpacity onPress={onBack} style={[styles.headerIconWrap, { backgroundColor: colors.surfaceHighlight }]}>
-            <Feather name="arrow-left" size={ms(18)} color={colors.onSurface} />
+          <TouchableOpacity onPress={onBack} style={[styles.iconBtn, styles.headerIconWrap, { backgroundColor: colors.primary + '15' }]} testID="study-verse-back-btn">
+            <Feather name="arrow-left" size={ms(16)} color={colors.primary} />
           </TouchableOpacity>
         ) : (
-          <View style={[styles.headerIconWrap, { backgroundColor: colors.primary + '15' }]}>
-            <Feather name="list" size={ms(18)} color={colors.primary} />
+          <View style={[styles.iconBtn, styles.headerIconWrap, { backgroundColor: colors.primary + '15' }]} testID="study-verse-icon">
+            <Feather name="list" size={ms(16)} color={colors.primary} />
           </View>
         )}
-        <BibleText style={[styles.title, { fontSize: ms(18), color: colors.onSurface, fontWeight: '700' }]}>{bookName} {chapter}</BibleText>
-        <TouchableOpacity onPress={onClose} style={[styles.closeBtn, { backgroundColor: colors.surfaceHighlight }]}>
-          <Feather name="x" size={ms(18)} color={colors.error} />
+        <BibleText style={[styles.title, { fontSize: ms(18), color: colors.primary, fontWeight: '800' }]} testID="study-verse-title">{bookName} {chapter}</BibleText>
+        <TouchableOpacity onPress={onClose} style={[styles.iconBtn, styles.closeBtn, { backgroundColor: colors.surfaceHighlight }]} testID="study-verse-close-btn">
+          <Feather name="x" size={ms(16)} color={colors.error} />
         </TouchableOpacity>
       </View>
       <View style={[styles.divider, { backgroundColor: colors.border }]} />
-      <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }} bounces={true} overScrollMode="always">
+      <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }} bounces={true} overScrollMode="always" testID="study-verse-list">
         {verses.map(({ verse, text }) => {
           const selected = selectedNums.has(verse);
           const primaryLow = colors.primary + '20'; // 12.5% opacity
@@ -81,11 +81,11 @@ export function StudyVerseSelectModal({ visible, onClose, onBack, bookName, chap
 }
 
 const styles = StyleSheet.create({
-  sheet: { borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 8, flex: 1 },
-  modalHandle: { width: 40, height: 4, borderRadius: 2, alignSelf: 'center', marginBottom: 4, marginTop: 4 },
-  header: { flexDirection: 'row', alignItems: 'center', padding: 8 },
-  headerIconWrap: { width: 42, height: 42, borderRadius: 12, justifyContent: 'center', alignItems: 'center', marginRight: 12 },
-  closeBtn: { width: 42, height: 42, justifyContent: 'center', alignItems: 'center', borderRadius: 8, marginLeft: 12 },
+  container: { flex: 1, padding: 8 },
+  header: { flexDirection: 'row', alignItems: 'center', marginBottom: 0 },
+  iconBtn: { width: 32, height: 32, borderRadius: 6, justifyContent: 'center', alignItems: 'center' },
+  headerIconWrap: { marginRight: 8 },
+  closeBtn: { marginLeft: 8 },
   title: { flex: 1, fontWeight: '700' },
   verseRow: { flexDirection: 'row', alignItems: 'flex-start', paddingVertical: 12, paddingHorizontal: 8, borderBottomWidth: 1, gap: 10 },
   verseRowSelected: { borderLeftWidth: 3, paddingLeft: 6 },
