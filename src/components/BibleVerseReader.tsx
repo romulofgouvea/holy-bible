@@ -1,6 +1,7 @@
 import { VERSE_HIGHLIGHTS } from '@/constants/colors';
-import React from 'react';
-import { SectionList, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { FlashList } from '@shopify/flash-list';
+import React, { useEffect, useMemo, useRef } from 'react';
+import { Animated, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { ALIASES } from '../data';
 import { useReaderSettings } from '../hooks/use-reader-settings';
 import { useResponsive } from '../hooks/use-responsive';
@@ -29,105 +30,165 @@ type VerseReaderProps = {
     onVersePress: (item: VerseItem) => void;
     onViewableItemsChanged?: ({ viewableItems }: { viewableItems: any[] }) => void;
     viewabilityConfig?: any;
-    listRef?: React.RefObject<SectionList<VerseItem>>;
-    onScrollToIndexFailed?: (info: {
-        index: number;
-        highestMeasuredFrameIndex: number;
-        averageItemLength: number;
-    }) => void;
+    listRef?: React.RefObject<any>;
 };
+
+const VerseRow = React.memo(({
+    item, isSelected, isHighlighted, isBlinking, highlightColorHex, primaryColor, readerColors,
+    fontSizeMultiplier, textAlign, ms, onVersePress
+}: any) => {
+    const blinkAnim = useRef(new Animated.Value(0)).current;
+
+    useEffect(() => {
+        if (isBlinking) {
+            Animated.sequence([
+                Animated.timing(blinkAnim, { toValue: 1, duration: 250, useNativeDriver: false }),
+                Animated.timing(blinkAnim, { toValue: 0, duration: 450, delay: 500, useNativeDriver: false })
+            ]).start();
+        }
+    }, [isBlinking, blinkAnim]);
+
+    const primaryLow = `${primaryColor}20`; // 12.5% opacity
+
+    const animatedBackgroundColor = blinkAnim.interpolate({
+        inputRange: [0, 1],
+        outputRange: [
+            isHighlighted ? highlightColorHex : (isSelected ? primaryLow : 'transparent'),
+            primaryLow
+        ]
+    });
+
+    return (
+        <TouchableOpacity onPress={() => { impactLight(); onVersePress(item); }} activeOpacity={0.7}>
+            <Animated.View style={[
+                styles.verseRow,
+                { backgroundColor: animatedBackgroundColor },
+                isSelected && [styles.selectedRow, { borderLeftColor: primaryColor }],
+            ]}>
+                <BibleText
+                    variant="reading"
+                    style={[styles.verseText, {
+                        fontSize: ms(20 * fontSizeMultiplier),
+                        lineHeight: ms(28 * fontSizeMultiplier),
+                        color: readerColors.onBackground,
+                        textAlign: textAlign as any,
+                    }]}
+                >
+                    <BibleText style={{ color: primaryColor, fontWeight: '700', fontSize: ms(16 * fontSizeMultiplier) }}>
+                        {item.verse}
+                    </BibleText>
+                    {'\u00A0\u00A0'}{item.text}
+                </BibleText>
+            </Animated.View>
+        </TouchableOpacity>
+    );
+}, (prevProps, nextProps) => {
+    return (
+        prevProps.item === nextProps.item &&
+        prevProps.isSelected === nextProps.isSelected &&
+        prevProps.isHighlighted === nextProps.isHighlighted &&
+        prevProps.isBlinking === nextProps.isBlinking &&
+        prevProps.fontSizeMultiplier === nextProps.fontSizeMultiplier &&
+        prevProps.textAlign === nextProps.textAlign &&
+        prevProps.readerColors.background === nextProps.readerColors.background &&
+        prevProps.primaryColor === nextProps.primaryColor
+    );
+});
 
 export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
     const {
         sections, blinkingVerse, highlights, selectedKeys, bookAbbrev, version,
-        onVersePress, onViewableItemsChanged, viewabilityConfig, listRef, onScrollToIndexFailed
+        onVersePress, onViewableItemsChanged, viewabilityConfig, listRef
     } = props;
     const { ms } = useResponsive();
     const { colors } = useTheme();
-    const { fontSizeMultiplier, textAlign, readerColors, readerTheme, readerFontFamily } = useReaderSettings();
+    const { fontSizeMultiplier, textAlign, readerColors, readerTheme } = useReaderSettings();
 
     const getHighlightColorValue = (colorId: string) => {
         const h = VERSE_HIGHLIGHTS.find(v => v.id === colorId);
-        // Append '4D' (30% opacity) to make the highlight subtle and readable in both light and dark modes
         return h ? `${h.hex}4D` : colors.surfaceHighlight;
     };
 
-    return (
-        <SectionList
-            ref={listRef}
-            style={[styles.verseList, { backgroundColor: readerColors.background }]}
-            sections={sections}
-            extraData={{ blinkingVerse, highlights, selectedKeys, version, readerColors, fontSizeMultiplier, textAlign }}
-            keyExtractor={(item, idx) => `${item.chapter}-${item.verse}-${idx}`}
-            onScrollToIndexFailed={onScrollToIndexFailed}
-            renderSectionHeader={({ section: { title } }) => (
-                <View style={[styles.chapterHeader, { backgroundColor: readerColors.background }]}>
-                    <BibleText style={[styles.chapterHeaderText, { fontSize: ms(28 * fontSizeMultiplier), color: readerColors.onBackground }]}>{title}</BibleText>
-                </View>
-            )}
-            renderItem={({ item }) => {
-                const isBlinking = blinkingVerse === `${item.chapter}-${item.verse}`;
-                const highlightColorId = highlights[`${bookAbbrev}-${item.chapter}-${item.verse}`];
-                const isSelected = selectedKeys[`${bookAbbrev}-${item.chapter}-${item.verse}`];
-                const primaryColor = readerTheme === 'sepia' ? readerColors.primary : colors.primary;
-                const primaryLow = `${primaryColor}20`; // 12.5% opacity
+    const flatData = useMemo(() => {
+        const data: any[] = [];
+        sections.forEach(sec => {
+            data.push({ type: 'header', title: sec.title });
+            sec.data.forEach(v => {
+                data.push({ type: 'verse', ...v });
+            });
+            const versionInfo = ALIASES.find(v => v.sigla === version);
+            const copyright = (versionInfo as any)?.copyright;
+            if (copyright) {
+                data.push({ type: 'footer', versionInfo, copyright });
+            }
+        });
+        return data;
+    }, [sections, version]);
 
-                return (
-                    <TouchableOpacity
-                        onPress={() => { impactLight(); onVersePress(item); }}
-                        activeOpacity={0.7}
-                    >
-                        <View style={[
-                            styles.verseRow,
-                            highlightColorId && [styles.highlightedRow, { backgroundColor: getHighlightColorValue(highlightColorId) }],
-                            isBlinking && [styles.blinkingRow, { backgroundColor: primaryLow }],
-                            isSelected && [styles.selectedRow, { backgroundColor: primaryLow, borderLeftColor: primaryColor }],
-                        ]}>
-                            <BibleText
-                                variant="reading"
-                                style={[styles.verseText, {
-                                    fontSize: ms(20 * fontSizeMultiplier),
-                                    lineHeight: ms(28 * fontSizeMultiplier),
-                                    color: readerColors.onBackground,
-                                    textAlign: textAlign as any,
-                                }]}
-                            >
-                                <BibleText style={{ color: primaryColor, fontWeight: '700', fontSize: ms(16 * fontSizeMultiplier) }}>
-                                    {item.verse}
+    const primaryColor = readerTheme === 'sepia' ? readerColors.primary : colors.primary;
+
+    return (
+        <View style={[styles.verseList, { backgroundColor: readerColors.background }]}>
+            <FlashList
+                ref={listRef}
+                data={flatData}
+                getItemType={(item) => item.type}
+                // @ts-ignore - necessary for FlashList performance despite missing in updated types
+                estimatedItemSize={70 * fontSizeMultiplier}
+                keyExtractor={(item, idx) => {
+                    if (item.type === 'header') return `header-${item.title}`;
+                    if (item.type === 'footer') return `footer-${item.versionInfo?.sigla}-${idx}`;
+                    return `verse-${item.chapter}-${item.verse}`;
+                }}
+                renderItem={({ item }) => {
+                    if (item.type === 'header') {
+                        return (
+                            <View style={[styles.chapterHeader, { backgroundColor: readerColors.background }]}>
+                                <BibleText style={[styles.chapterHeaderText, { fontSize: ms(28 * fontSizeMultiplier), color: readerColors.onBackground }]}>{item.title}</BibleText>
+                            </View>
+                        );
+                    }
+                    if (item.type === 'footer') {
+                        const primaryLow = primaryColor + '1A';
+                        return (
+                            <View style={[styles.copyrightCard, { backgroundColor: primaryLow, borderLeftColor: primaryColor }]}>
+                                <BibleText style={[styles.copyrightTitle, { color: primaryColor }]}>
+                                    {item.versionInfo?.name} ({item.versionInfo?.sigla})
                                 </BibleText>
-                                {'\u00A0\u00A0'}{item.text}
-                            </BibleText>
-                        </View>
-                    </TouchableOpacity>
-                );
-            }}
-            renderSectionFooter={() => {
-                const versionInfo = ALIASES.find(v => v.sigla === version);
-                const copyright = (versionInfo as any)?.copyright;
-                if (!copyright) return null;
-                const primaryColor = readerTheme === 'sepia' ? readerColors.primary : colors.primary;
-                const primaryLow = primaryColor + '1A'; // 10% opacity
-                return (
-                    <View style={[
-                        styles.copyrightCard,
-                        { backgroundColor: primaryLow, borderLeftColor: primaryColor }
-                    ]}>
-                        <BibleText style={[styles.copyrightTitle, { color: primaryColor }]}>
-                            {versionInfo?.name} ({versionInfo?.sigla})
-                        </BibleText>
-                        <BibleText style={[styles.copyrightText, { color: readerColors.onBackground, opacity: 0.6 }]}>
-                            {copyright}
-                        </BibleText>
-                    </View>
-                );
-            }}
-            contentContainerStyle={styles.readerContent}
-            initialNumToRender={180}
-            onViewableItemsChanged={onViewableItemsChanged}
-            viewabilityConfig={viewabilityConfig}
-            stickySectionHeadersEnabled={false}
-            showsVerticalScrollIndicator={false}
-        />
+                                <BibleText style={[styles.copyrightText, { color: readerColors.onBackground, opacity: 0.6 }]}>
+                                    {item.copyright}
+                                </BibleText>
+                            </View>
+                        );
+                    }
+
+                    const isBlinking = blinkingVerse === `${item.chapter}-${item.verse}`;
+                    const highlightColorId = highlights[`${bookAbbrev}-${item.chapter}-${item.verse}`];
+                    const isSelected = selectedKeys[`${bookAbbrev}-${item.chapter}-${item.verse}`];
+                    const highlightColorHex = getHighlightColorValue(highlightColorId);
+
+                    return (
+                        <VerseRow
+                            item={item}
+                            isSelected={isSelected}
+                            isHighlighted={!!highlightColorId}
+                            isBlinking={isBlinking}
+                            highlightColorHex={highlightColorHex}
+                            primaryColor={primaryColor}
+                            readerColors={readerColors}
+                            fontSizeMultiplier={fontSizeMultiplier}
+                            textAlign={textAlign}
+                            ms={ms}
+                            onVersePress={onVersePress}
+                        />
+                    );
+                }}
+                contentContainerStyle={styles.readerContent}
+                onViewableItemsChanged={onViewableItemsChanged}
+                viewabilityConfig={viewabilityConfig}
+                showsVerticalScrollIndicator={false}
+            />
+        </View>
     );
 });
 
@@ -152,14 +213,8 @@ const styles = StyleSheet.create({
         borderRadius: 0,
         marginHorizontal: 0,
     },
-    highlightedRow: {},
-    blinkingRow: {},
     selectedRow: {
         borderLeftWidth: 3,
-    },
-    verseNumber: {
-        fontWeight: '700',
-        marginBottom: 4,
     },
     verseText: {
         flexWrap: 'wrap',

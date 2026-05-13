@@ -61,29 +61,21 @@ export default function BibleScreen() {
     chapterRef.current = chapter;
   }, [chapter]);
 
-  const scrollToVerse = useCallback((targetVerse: number, targetChapter: number, retryCount = 0) => {
+  const scrollToVerse = useCallback((targetVerse: number, targetChapter: number) => {
     if (sectionListRef.current) {
       isAutoScrolling.current = true;
-      const sectionIndex = 0;
-      const itemIndex = Math.max(0, targetVerse - 1);
+      
+      const targetIndex = targetVerse; // Em nossa lista achatada, 0 é o header, 1 é o v1, etc.
 
-      targetScrollIndex.current = { sectionIndex, itemIndex };
-
-      sectionListRef.current?.scrollToLocation({
-        sectionIndex,
-        itemIndex,
-        animated: retryCount > 0 ? false : true, // Primeira tentativa animada, retentativas instantâneas para correção
-        viewPosition: 0,
-        viewOffset: -1
+      sectionListRef.current?.scrollToIndex({
+        index: targetIndex,
+        animated: false,
+        viewPosition: 0.05,
+        viewOffset: 0
       });
 
-      // Tenta novamente após um pequeno delay para corrigir possíveis erros de layout
-      if (retryCount < 2) {
-        setTimeout(() => scrollToVerse(targetVerse, targetChapter, retryCount + 1), 150 * (retryCount + 1));
-      }
-
       setBlinkingVerse(`${targetChapter}-${targetVerse}`);
-      setTimeout(() => setBlinkingVerse(null), 500);
+      setTimeout(() => setBlinkingVerse(null), 1000);
 
       setTimeout(() => {
         isAutoScrolling.current = false;
@@ -126,22 +118,7 @@ export default function BibleScreen() {
     });
   }, [changeChapter, scrollToVerse]);
 
-  const onScrollToIndexFailed = useCallback((info: any) => {
-    try {
-      const offset = (info.averageItemLength || 50) * info.index;
-      sectionListRef.current?.getScrollResponder()?.scrollTo({ y: offset, animated: false });
-    } catch (e) { }
 
-    setTimeout(() => {
-      try {
-        sectionListRef.current?.scrollToLocation({
-          ...targetScrollIndex.current,
-          animated: true,
-          viewPosition: 0,
-        });
-      } catch (error) { }
-    }, 100);
-  }, []);
 
   const onVersePress = (item: any) => {
     const verseText = sectionData[0]?.data.find((v: any) => v.verse === item.verse)?.text || '';
@@ -238,7 +215,6 @@ export default function BibleScreen() {
               selectedKeys={selectedVerses.reduce((acc, v) => { acc[`${v.bookAbbrev}-${v.chapter}-${v.verse}`] = true; return acc; }, {} as Record<string, boolean>)}
               bookAbbrev={currentBook.abbrev}
               onVersePress={onVersePress}
-              onScrollToIndexFailed={onScrollToIndexFailed}
             />
           )}
         </View>
