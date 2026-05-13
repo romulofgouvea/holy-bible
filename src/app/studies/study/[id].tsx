@@ -157,7 +157,7 @@ export default function StudyEditorScreen() {
       return `<div class="verse-line"><span class="verse-num">${n}</span> <span class="verse-text">${v?.text ?? ''}</span></div>`;
     }).join('');
 
-    const html = `<br><blockquote class="bible-verse"><div class="verse-title">${ref}</div>${lines}</blockquote><p><br></p>`;
+    const html = `<br><blockquote class="bible-verse"><div class="remove-verse-btn" contenteditable="false">×</div><div class="verse-title">${ref}</div>${lines}</blockquote><p><br></p>`;
     editorRef.current?.insertVerseHtml(html);
     setVersePickerVisible(false);
   };
@@ -181,6 +181,7 @@ export default function StudyEditorScreen() {
         img { max-width: 100%; border-radius: 12px; margin: 24px 0; box-shadow: 0 4px 12px rgba(0,0,0,0.1); page-break-inside: avoid; }
         ul, ol { padding-left: 24px; margin-top: 8px; margin-bottom: 8px; }
         li { margin-bottom: 4px; }
+        .remove-verse-btn { display: none; }
         ul.task-list { list-style: none; padding-left: 28px; }
         ul.task-list li { position: relative; margin-bottom: 8px; }
         ul.task-list li::before {

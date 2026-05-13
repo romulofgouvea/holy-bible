@@ -56,7 +56,7 @@ export function BibleAddToStudyModal({ visible, onClose, selectedVerses, onShowT
 
     const versesBody = sorted.map(v => `<div class="verse-line"><span class="verse-num">${v.verse}</span> <span class="verse-text">${v.text}</span></div>`).join('');
     
-    return `<p><br></p><blockquote class="bible-verse"><b>${ref}</b>${versesBody}</blockquote><p><br></p>`;
+    return `<p><br></p><blockquote class="bible-verse"><div class="remove-verse-btn" contenteditable="false">×</div><b>${ref}</b>${versesBody}</blockquote><p><br></p>`;
   };
 
   const handleAddToStudy = (studyId: string, currentContent: string) => {

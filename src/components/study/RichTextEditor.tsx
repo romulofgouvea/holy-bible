@@ -155,11 +155,29 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
           display: block;
         }
         .bible-verse {
+          position: relative;
           margin: 16px 0;
           padding: 12px 16px;
           background-color: ${colors.primary}15;
           border-left: 4px solid ${colors.primary};
           border-radius: 8px;
+        }
+        .remove-verse-btn {
+          position: absolute;
+          top: 0;
+          right: 0;
+          width: 44px;
+          height: 44px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: ${colors.primary};
+          font-size: 24px;
+          font-weight: bold;
+          cursor: pointer;
+          user-select: none;
+          z-index: 100;
+          opacity: 0.5;
         }
         .bible-verse b, .bible-verse .verse-title {
           color: ${colors.primary};
@@ -377,6 +395,17 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
         };
 
         document.addEventListener('click', function(e) {
+          if (e.target.classList.contains('remove-verse-btn')) {
+            let block = e.target.closest('.bible-verse');
+            if (block) {
+                block.remove();
+                const msg = JSON.stringify({ type: 'contentChanged', data: editor.innerHTML });
+                if (window.ReactNativeWebView) window.ReactNativeWebView.postMessage(msg);
+                else window.parent.postMessage(msg, '*');
+            }
+            return;
+          }
+
           let li = e.target.closest ? e.target.closest('ul.task-list li') : null;
           if (!li) return;
           let rect = li.getBoundingClientRect();
