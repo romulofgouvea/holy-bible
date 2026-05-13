@@ -25,7 +25,6 @@ export function ReaderSettingsModal({ visible, onClose }: { visible: boolean; on
   return (
     <BibleBottomSheet visible={visible} onClose={onClose}>
       <View style={styles.content}>
-        {/* Header (Exact clone of History Modal) */}
         <View style={styles.header}>
           <View style={[styles.iconBtn, styles.headerIconWrap, { backgroundColor: colors.primary + '25' }]}>
             <Feather name="type" size={ms(16)} color={colors.primary} />
@@ -38,32 +37,32 @@ export function ReaderSettingsModal({ visible, onClose }: { visible: boolean; on
 
         <View style={[styles.divider, { backgroundColor: colors.border }]} />
 
-        <View style={styles.settingsContent}>
-          {/* Section: Font Size */}
+        <View style={styles.settingsWrapper}>
           <View style={styles.section}>
             <BibleText style={[styles.sectionTitle, { color: colors.textMuted }]}>Tamanho da Fonte</BibleText>
-            <View style={styles.row}>
+            <View style={[styles.unifiedRow, { backgroundColor: colors.surfaceHighlight }]}>
               <TouchableOpacity
-                style={[styles.squareBtn, { backgroundColor: colors.surfaceHighlight }]}
+                style={styles.controlBtn}
                 onPress={() => { impactLight(); setFontSizeMultiplier(Math.max(0.7, fontSizeMultiplier - 0.1)); }}
               >
-                <BibleText style={[{ fontSize: ms(14), color: colors.onBackground, fontWeight: '800' }]}>A-</BibleText>
+                <BibleText style={[styles.controlText, { color: colors.onBackground }]}>A-</BibleText>
               </TouchableOpacity>
 
-              <View style={[styles.previewWrap, { backgroundColor: colors.surfaceHighlight }]}>
-                <BibleText style={{ fontSize: ms(16), color: colors.textMuted, fontWeight: '800' }}>{Math.round(fontSizeMultiplier * 100)}%</BibleText>
+              <View style={styles.percentageDisplay}>
+                <BibleText style={[styles.percentageText, { color: colors.primary }]}>
+                  {Math.round(fontSizeMultiplier * 100)}%
+                </BibleText>
               </View>
 
               <TouchableOpacity
-                style={[styles.squareBtn, { backgroundColor: colors.surfaceHighlight }]}
+                style={styles.controlBtn}
                 onPress={() => { impactLight(); setFontSizeMultiplier(Math.min(2.0, fontSizeMultiplier + 0.1)); }}
               >
-                <BibleText style={[{ fontSize: ms(14), color: colors.onBackground, fontWeight: '800' }]}>A+</BibleText>
+                <BibleText style={[styles.controlText, { color: colors.onBackground }]}>A+</BibleText>
               </TouchableOpacity>
             </View>
           </View>
 
-          {/* Section: Alignment */}
           <View style={styles.section}>
             <BibleText style={[styles.sectionTitle, { color: colors.textMuted }]}>Alinhamento</BibleText>
             <View style={styles.row}>
@@ -72,58 +71,61 @@ export function ReaderSettingsModal({ visible, onClose }: { visible: boolean; on
                   key={align}
                   style={[
                     styles.squareBtn,
-                    { backgroundColor: textAlign === align ? colors.primary + '25' : colors.surfaceHighlight }
+                    { backgroundColor: textAlign === align ? colors.primary : colors.surfaceHighlight }
                   ]}
                   onPress={() => { impactLight(); setTextAlign(align); }}
                 >
-                  <Feather name={`align-${align}` as any} size={ms(16)} color={textAlign === align ? colors.primary : colors.onBackground} />
+                  <Feather
+                    name={`align-${align}` as any}
+                    size={ms(18)}
+                    color={textAlign === align ? colors.onPrimary : colors.onBackground}
+                  />
                 </TouchableOpacity>
               ))}
             </View>
           </View>
 
-          {/* Section: Theme */}
           <View style={styles.section}>
             <BibleText style={[styles.sectionTitle, { color: colors.textMuted }]}>Tema de Leitura</BibleText>
-            <View style={styles.themeRow}>
+            <View style={styles.multiSelectRow}>
               {(['light', 'dark', 'sepia'] as const).map((t) => (
                 <TouchableOpacity
                   key={t}
                   style={[
-                    styles.themeBtn,
+                    styles.multiSelectBtn,
                     { backgroundColor: readerTheme === t ? colors.primary : colors.surfaceHighlight }
                   ]}
                   onPress={() => handleSetTheme(t)}
                 >
-                  <BibleText style={[styles.btnLabel, { fontSize: ms(16), color: readerTheme === t ? colors.onPrimary : colors.onBackground }]}>
-                    {t === 'light' ? 'Claro' : t === 'dark' ? 'Escuro' : 'Leitura'}
-                  </BibleText>
+                  <Feather
+                    name={t === 'light' ? 'sun' : t === 'dark' ? 'moon' : 'coffee'}
+                    size={ms(18)}
+                    color={readerTheme === t ? colors.onPrimary : colors.onBackground}
+                  />
                 </TouchableOpacity>
               ))}
             </View>
           </View>
 
-          {/* Section: Font Family */}
           <View style={styles.section}>
             <BibleText style={[styles.sectionTitle, { color: colors.textMuted }]}>Fonte</BibleText>
-            <View style={styles.themeRow}>
+            <View style={styles.multiSelectRow}>
               {(['poppins', 'monospace'] as const).map((f) => (
                 <TouchableOpacity
                   key={f}
                   style={[
-                    styles.themeBtn,
+                    styles.multiSelectBtn,
                     { backgroundColor: readerFont === f ? colors.primary : colors.surfaceHighlight }
                   ]}
                   onPress={() => { selectionHaptic(); setReaderFont(f); }}
                 >
-                  <BibleText style={[
-                    styles.btnLabel,
-                    {
-                      fontSize: ms(16), color: readerFont === f ? colors.onPrimary : colors.onBackground,
-                      fontFamily: f === 'monospace' ? 'monospace' : undefined
-                    }
-                  ]}>
-                    {f === 'poppins' ? 'Poppins' : 'Mono'}
+                  <BibleText style={{
+                    fontSize: ms(16),
+                    fontWeight: '800',
+                    color: readerFont === f ? colors.onPrimary : colors.onBackground,
+                    fontFamily: f === 'monospace' ? 'monospace' : undefined
+                  }}>
+                    {f === 'poppins' ? 'P' : 'M'}
                   </BibleText>
                 </TouchableOpacity>
               ))}
@@ -165,52 +167,70 @@ const styles = StyleSheet.create({
     height: 1,
     marginVertical: 8,
   },
-  settingsContent: {
-    gap: 18,
-    marginTop: 8,
+  settingsWrapper: {
+    gap: 22,
+    paddingBottom: 10,
   },
   section: {
-    gap: 8,
+    gap: 10,
   },
   sectionTitle: {
-    fontSize: 9,
+    fontSize: 10,
     fontWeight: '800',
     textTransform: 'uppercase',
-    letterSpacing: 0.8,
-    opacity: 0.7
+    letterSpacing: 1,
+    opacity: 0.6,
+  },
+  unifiedRow: {
+    flexDirection: 'row',
+    height: 44,
+    borderRadius: 12,
+    alignItems: 'center',
+    overflow: 'hidden',
+  },
+  controlBtn: {
+    width: 60,
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  controlText: {
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  percentageDisplay: {
+    flex: 1,
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderLeftWidth: 1,
+    borderRightWidth: 1,
+    borderColor: 'rgba(0,0,0,0.05)',
+  },
+  percentageText: {
+    fontSize: 15,
+    fontWeight: '800',
   },
   row: {
     flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  themeRow: {
-    flexDirection: 'row',
-    gap: 12,
+    gap: 10,
   },
   squareBtn: {
-    width: 36,
-    height: 36,
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  themeBtn: {
     flex: 1,
-    height: 36,
-    borderRadius: 10,
+    height: 44,
+    borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  btnLabel: {
-    fontWeight: '700',
+  multiSelectRow: {
+    flexDirection: 'row',
+    gap: 10,
   },
-  previewWrap: {
+  multiSelectBtn: {
     flex: 1,
-    height: 36,
-    borderRadius: 10,
+    height: 44,
+    borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 12,
   },
 });
