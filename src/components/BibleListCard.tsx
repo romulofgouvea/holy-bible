@@ -9,13 +9,15 @@ type BibleListCardProps = {
   pillText?: string | number;
   isSelected?: boolean;
   onPress: () => void;
+  testID?: string;
 };
 
-export function BibleListCard({ title, pillText, isSelected, onPress }: BibleListCardProps) {
+export function BibleListCard({ title, pillText, isSelected, onPress, testID }: BibleListCardProps) {
   const { ms } = useResponsive();
   const { colors } = useTheme();
   return (
     <TouchableOpacity 
+      testID={testID}
       activeOpacity={0.7} 
       style={[
         styles.card, 

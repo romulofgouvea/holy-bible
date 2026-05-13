@@ -1,5 +1,5 @@
-import React from 'react';
-import { Modal, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { Animated, Dimensions, Modal, PanResponder, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../hooks/use-theme';
 
@@ -9,9 +9,70 @@ type BibleBottomSheetProps = {
   children: React.ReactNode;
 };
 
+const SCREEN_HEIGHT = Dimensions.get('window').height;
+
 export function BibleBottomSheet({ visible, onClose, children }: BibleBottomSheetProps) {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
+
+  const snapPoints = {
+    half: SCREEN_HEIGHT * 0.7,
+    full: SCREEN_HEIGHT * 0.95,
+  };
+
+  const animatedHeight = useRef(new Animated.Value(snapPoints.half)).current;
+  const currentHeight = useRef(snapPoints.half);
+
+  useEffect(() => {
+    if (visible) {
+      currentHeight.current = snapPoints.half;
+      animatedHeight.setValue(snapPoints.half);
+    }
+  }, [visible, animatedHeight, snapPoints.half]);
+
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponder: (_, gestureState) => {
+        return Math.abs(gestureState.dy) > 10;
+      },
+      onPanResponderMove: (_, gestureState) => {
+        let newHeight = currentHeight.current - gestureState.dy;
+        if (newHeight > snapPoints.full) newHeight = snapPoints.full + (newHeight - snapPoints.full) * 0.1;
+        animatedHeight.setValue(newHeight);
+      },
+      onPanResponderRelease: (_, gestureState) => {
+        const draggedDown = gestureState.dy > 40;
+        const draggedUp = gestureState.dy < -40;
+
+        let targetHeight = currentHeight.current;
+
+        if (currentHeight.current === snapPoints.half) {
+          if (gestureState.dy < -40 || gestureState.vy < -0.5) {
+            targetHeight = snapPoints.full;
+          } else if (gestureState.dy > 60 || gestureState.vy > 0.5) {
+            return onClose();
+          } else {
+            targetHeight = snapPoints.half;
+          }
+        } else {
+          if (gestureState.dy > 60 || gestureState.vy > 0.5) {
+            if (gestureState.dy > 200 || gestureState.vy > 1.5) return onClose();
+            targetHeight = snapPoints.half;
+          } else {
+            targetHeight = snapPoints.full;
+          }
+        }
+
+        currentHeight.current = targetHeight;
+        Animated.spring(animatedHeight, {
+          toValue: targetHeight,
+          useNativeDriver: false,
+          bounciness: 4,
+        }).start();
+      },
+    })
+  ).current;
 
   return (
     <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
@@ -19,19 +80,21 @@ export function BibleBottomSheet({ visible, onClose, children }: BibleBottomShee
         <TouchableWithoutFeedback onPress={onClose}>
           <View style={[styles.backdrop, { backgroundColor: colors.overlay }]} />
         </TouchableWithoutFeedback>
-        
-        <View style={[
-          styles.bottomSheet, 
-          { 
-            maxHeight: '85%', 
-            backgroundColor: colors.surface, 
-            paddingBottom: Math.max(8, insets.bottom + 8), 
-            shadowColor: colors.shadow 
+
+        <Animated.View style={[
+          styles.bottomSheet,
+          {
+            height: animatedHeight,
+            backgroundColor: colors.surface,
+            paddingBottom: Math.max(8, insets.bottom + 8),
+            shadowColor: colors.shadow
           }
         ]}>
-          <View style={[styles.modalHandle, { backgroundColor: colors.primary }]} />
+          <View {...panResponder.panHandlers} style={styles.handleContainer}>
+            <View style={[styles.modalHandle, { backgroundColor: colors.primary }]} />
+          </View>
           {children}
-        </View>
+        </Animated.View>
       </View>
     </Modal>
   );
@@ -60,7 +123,12 @@ const styles = StyleSheet.create({
     height: 4,
     borderRadius: 2,
     alignSelf: 'center',
-    marginBottom: 4,
-    marginTop: 4,
+    marginBottom: 8,
   },
+  handleContainer: {
+    width: '100%',
+    paddingTop: 4,
+    alignItems: 'center',
+    justifyContent: 'center',
+  }
 });

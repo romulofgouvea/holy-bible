@@ -69,13 +69,17 @@ export function StudyVerseSelectModal({ visible, onClose, onBack, bookName, chap
           );
         })}
       </ScrollView>
-      <View style={[styles.divider, { backgroundColor: colors.border }]} />
-      <TouchableOpacity style={[styles.confirmBtn, { backgroundColor: colors.primary }, selectedNums.size === 0 && { backgroundColor: colors.primary }]} onPress={handleConfirm} disabled={selectedNums.size === 0}>
-        <Feather name="check" size={ms(16)} color={selectedNums.size === 0 ? colors.textMuted : colors.onPrimary} />
-        <BibleText style={[styles.confirmText, { fontSize: ms(14), color: colors.onPrimary }, selectedNums.size === 0 && { color: colors.textMuted }]}>
-          {selectedNums.size === 0 ? 'Versículos' : `Inserir ${selectedNums.size} ${selectedNums.size === 1 ? 'versículo' : 'versículos'}`}
-        </BibleText>
-      </TouchableOpacity>
+      {selectedNums.size > 0 && (
+        <>
+          <View style={[styles.divider, { backgroundColor: colors.border }]} />
+          <TouchableOpacity style={[styles.confirmBtn, { backgroundColor: colors.primary }]} onPress={handleConfirm}>
+            <Feather name="check" size={ms(16)} color={colors.onPrimary} />
+            <BibleText style={[styles.confirmText, { fontSize: ms(14), color: colors.onPrimary }]}>
+              {`Inserir ${selectedNums.size} ${selectedNums.size === 1 ? 'versículo' : 'versículos'}`}
+            </BibleText>
+          </TouchableOpacity>
+        </>
+      )}
     </View>
   );
 }

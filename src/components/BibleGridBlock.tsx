@@ -10,13 +10,15 @@ type BibleGridBlockProps = {
   exactWidth?: number;
   isSelected?: boolean;
   onPress: () => void;
+  testID?: string;
 };
 
-export function BibleGridBlock({ title, widthPercentage, exactWidth, isSelected, onPress }: BibleGridBlockProps) {
+export function BibleGridBlock({ title, widthPercentage, exactWidth, isSelected, onPress, testID }: BibleGridBlockProps) {
   const { ms } = useResponsive();
   const { colors } = useTheme();
   return (
     <TouchableOpacity
+      testID={testID}
       activeOpacity={0.7}
       style={[
         styles.gridItem,

@@ -159,9 +159,10 @@ export function BibleBookModal({ visible, onClose, books, versionSigla, onVersio
       </View>
 
       {isSearchVisible && (
-        <View style={[styles.searchContainer, { backgroundColor: colors.surfaceHighlight, borderColor: colors.border }]}>
+        <View style={[styles.searchContainer, { backgroundColor: colors.surfaceHighlight, borderColor: colors.border }]} testID="bible-book-search-container">
           <Feather name="search" size={ms(16)} color={colors.primary} style={styles.searchIcon} />
           <TextInput
+            testID="bible-book-search-input"
             style={[styles.searchInput, { fontSize: ms(14), color: colors.onSurface }]}
             placeholder="Pesquisar livro..."
             placeholderTextColor={colors.textMuted}
@@ -175,6 +176,7 @@ export function BibleBookModal({ visible, onClose, books, versionSigla, onVersio
       <View style={[styles.divider, { backgroundColor: colors.border }]} />
 
       <ScrollView
+        testID="bible-book-list"
         ref={scrollViewRef}
         style={{ flex: 1 }}
         contentContainerStyle={styles.scrollContent}
@@ -217,6 +219,7 @@ export function BibleBookModal({ visible, onClose, books, versionSigla, onVersio
                     return (
                       <BibleListCard
                         key={`${item.abbrev || item.name}-${index}`}
+                        testID={`bible-book-list-item-${item.abbrev || index}`}
                         title={item.name}
                         pillText={item.abbrev}
                         isSelected={isSelected}
@@ -235,6 +238,7 @@ export function BibleBookModal({ visible, onClose, books, versionSigla, onVersio
                     return (
                       <BibleGridBlock
                         key={`grid-${item.abbrev || item.name}-${index}`}
+                        testID={`bible-book-grid-item-${item.abbrev || index}`}
                         title={item.abbrev || item.name.substring(0, 3)}
                         exactWidth={itemWidth}
                         isSelected={isSelected}
@@ -254,10 +258,10 @@ export function BibleBookModal({ visible, onClose, books, versionSigla, onVersio
 
       <View style={[styles.divider, { backgroundColor: colors.border }]} />
 
-      <View style={styles.footer}>
-        <View style={[styles.countPill, { backgroundColor: colors.surfaceHighlight, borderColor: colors.primary + '30' }]}>
-          <BibleText style={[styles.countNumber, { color: colors.primary, fontWeight: '700' }]}>{filteredBooks.length}</BibleText>
-          <BibleText style={[styles.countText, { color: colors.primary, fontWeight: '600' }]}> {filteredBooks.length === 1 ? 'livro' : 'livros'}</BibleText>
+      <View style={styles.footer} testID="bible-book-footer">
+        <View style={[styles.countPill, { backgroundColor: colors.surfaceHighlight, borderColor: colors.primary + '30' }]} testID="bible-book-count-pill">
+          <BibleText style={[styles.countNumber, { color: colors.primary, fontWeight: '700' }]} testID="bible-book-count-number">{filteredBooks.length}</BibleText>
+          <BibleText style={[styles.countText, { color: colors.primary, fontWeight: '600' }]} testID="bible-book-count-text"> {filteredBooks.length === 1 ? 'livro' : 'livros'}</BibleText>
         </View>
       </View>
     </View>
