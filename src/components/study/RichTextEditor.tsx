@@ -137,6 +137,9 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
           line-height: 1.6;
           color: ${readerColors.onBackground || colors.onBackground};
           background-color: ${colors.background};
+          overflow-wrap: break-word;
+          word-wrap: break-word;
+          word-break: break-word;
         }
         font[size="1"] { font-size: 11px; line-height: 1.4; }
         font[size="2"] { font-size: 13px; line-height: 1.5; }
