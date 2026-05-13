@@ -6,9 +6,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { VERSE_HIGHLIGHTS as HIGHLIGHT_COLORS } from '../constants/colors';
 import { useResponsive } from '../hooks/use-responsive';
 import { useTheme } from '../hooks/use-theme';
-import { BibleButton } from './BibleButton';
-
 import { BibleAddToStudyModal } from './BibleAddToStudyModal';
+import { BibleText } from './BibleText';
 
 export type SelectedVerse = {
   chapter: number;
@@ -28,18 +27,17 @@ type VerseActionSheetProps = {
   onShowToast?: (msg: string, type?: 'success' | 'info' | 'warning') => void;
 };
 
-
 export function BibleVerseActionSheet(props: VerseActionSheetProps) {
   const { visible, selectedVerses, highlights, onClose, onBulkHighlight } = props;
   const { ms } = useResponsive();
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
-  const translateY = React.useRef(new Animated.Value(100)).current;
+  const translateY = React.useRef(new Animated.Value(200)).current;
   const [studyModalVisible, setStudyModalVisible] = React.useState(false);
 
   React.useEffect(() => {
     Animated.spring(translateY, {
-      toValue: visible ? 0 : 100,
+      toValue: visible ? 0 : 200,
       useNativeDriver: true,
       bounciness: 4,
     }).start();
@@ -48,14 +46,10 @@ export function BibleVerseActionSheet(props: VerseActionSheetProps) {
   if (!visible && selectedVerses.length === 0) return null;
 
   const count = selectedVerses.length;
-  const hasAnyHighlight = count > 0 && selectedVerses.some(
-    (v) => !!highlights[`${v.bookAbbrev}-${v.chapter}-${v.verse}`]
-  );
-
+  
   const buildText = () => {
     if (count === 0) return '';
     const sorted = [...selectedVerses].sort((a, b) => a.chapter !== b.chapter ? a.chapter - b.chapter : a.verse - b.verse);
-
     const sameChapter = sorted.every((v) => v.chapter === sorted[0].chapter);
 
     let formattedRanges = '';
@@ -119,61 +113,69 @@ export function BibleVerseActionSheet(props: VerseActionSheetProps) {
     if (allSame) activeColorId = firstColor || null;
   }
 
-  const iconSize = ms(22);
   const iconColor = colors.onBackground;
 
   return (
     <>
-      <Animated.View style={[styles.bar, { transform: [{ translateY }], backgroundColor: colors.background, shadowColor: colors.shadow, borderWidth: 1, borderColor: colors.border }]} id="bible-verse-action-sheet">
-        <View style={styles.actions}>
-          <TouchableOpacity style={styles.iconBtn} onPress={onShare} disabled={count === 0}>
-            <Feather name="share-2" size={iconSize} color={count === 0 ? colors.textMuted : iconColor} />
+      <Animated.View style={[styles.bar, { 
+        transform: [{ translateY }], 
+        backgroundColor: colors.background, 
+        paddingBottom: Math.max(16, insets.bottom + 8),
+        borderColor: colors.border 
+      }]} id="bible-verse-action-sheet">
+        
+        {/* Top Right Close Button */}
+        <TouchableOpacity onPress={onClose} style={[styles.closeBtn, { backgroundColor: colors.surfaceHighlight }]}>
+          <Feather name="x" size={ms(14)} color={colors.error} />
+        </TouchableOpacity>
+
+        {/* Row 1: Actions */}
+        <View style={styles.topRow}>
+          <TouchableOpacity 
+            style={[styles.iconBtn, { backgroundColor: count === 0 ? colors.surfaceHighlight : colors.primary + '25' }]} 
+            onPress={onShare} 
+            disabled={count === 0}
+          >
+            <Feather name="share-2" size={ms(16)} color={count === 0 ? colors.textMuted : colors.primary} />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.iconBtn} onPress={onCopy} disabled={count === 0}>
-            <Feather name="copy" size={iconSize} color={count === 0 ? colors.textMuted : iconColor} />
+          <TouchableOpacity 
+            style={[styles.iconBtn, { backgroundColor: count === 0 ? colors.surfaceHighlight : colors.primary + '25' }]} 
+            onPress={onCopy} 
+            disabled={count === 0}
+          >
+            <Feather name="copy" size={ms(16)} color={count === 0 ? colors.textMuted : colors.primary} />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.iconBtn} onPress={() => setStudyModalVisible(true)} disabled={count === 0}>
-            <Feather name="book-open" size={iconSize} color={count === 0 ? colors.textMuted : iconColor} />
+          <TouchableOpacity 
+            style={[styles.iconBtn, { backgroundColor: count === 0 ? colors.surfaceHighlight : colors.primary + '25' }]} 
+            onPress={() => setStudyModalVisible(true)} 
+            disabled={count === 0}
+          >
+            <Feather name="book-open" size={ms(16)} color={count === 0 ? colors.textMuted : colors.primary} />
           </TouchableOpacity>
+        </View>
 
-          <View style={[styles.divider, { backgroundColor: colors.border }]} />
+        {/* Row 2: Colors */}
+        <View style={styles.bottomRow}>
+          <TouchableOpacity style={{ paddingRight: 6 }} onPress={() => onHighlight(null)}>
+            <View style={[styles.colorBox, { backgroundColor: colors.surfaceHighlight }]}>
+              <Feather name="slash" size={ms(14)} color={colors.error} />
+            </View>
+          </TouchableOpacity>
 
           {HIGHLIGHT_COLORS.map(c => {
             const isSelectedColor = activeColorId === c.id;
             return (
-              <TouchableOpacity key={c.id} style={{ padding: 3 }} onPress={() => onHighlight(c.id)}>
-                <View style={{
-                  width: ms(24),
-                  height: ms(24),
-                  borderRadius: ms(12),
-                  backgroundColor: c.hex,
-                  borderWidth: isSelectedColor ? 3 : 1,
-                  borderColor: isSelectedColor ? colors.primaryVariant : colors.onPrimary,
-                  transform: [{ scale: isSelectedColor ? 1.2 : 1 }]
-                }} />
+              <TouchableOpacity key={c.id} style={{ paddingHorizontal: 3 }} onPress={() => onHighlight(c.id)}>
+                <View style={[styles.colorBox, { backgroundColor: c.hex }]}>
+                  {isSelectedColor && (
+                    <Feather name="check" size={ms(16)} color="#FFFFFF" />
+                  )}
+                </View>
               </TouchableOpacity>
             );
           })}
-
-          {hasAnyHighlight && (
-            <TouchableOpacity style={styles.iconBtn} onPress={() => onHighlight(null)}>
-              <Feather name="slash" size={ms(20)} color={colors.error} />
-            </TouchableOpacity>
-          )}
-        </View>
-        <View style={styles.removeActions}>
-          <View style={[styles.divider, { backgroundColor: colors.border }]} />
-
-          <BibleButton
-            label="Limpar"
-            variant="ghost"
-            size="sm"
-            onPress={onClose}
-            style={styles.clearBtn}
-            textStyle={{ color: colors.onBackground, fontSize: ms(13) }}
-          />
         </View>
       </Animated.View>
 
@@ -196,46 +198,51 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
+    paddingHorizontal: 16,
+    paddingTop: 12,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    borderWidth: 1,
     elevation: 20,
     shadowOffset: { width: 0, height: -4 },
-    shadowOpacity: 0.12,
+    shadowOpacity: 0.15,
     shadowRadius: 12,
   },
-  leftSection: {
-    flex: 1,
+  closeBtn: {
+    position: 'absolute',
+    top: 12,
+    right: 16,
+    width: 32,
+    height: 32,
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 10,
   },
-  countText: {
-    fontWeight: '700',
-  },
-  actions: {
+  topRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-start',
-    gap: 2,
+    gap: 10,
+    marginBottom: 16,
   },
-  removeActions: {
+  bottomRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 0,
+    justifyContent: 'flex-start',
   },
   iconBtn: {
-    padding: 6,
+    width: 36,
+    height: 36,
     borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  divider: {
-    width: 1,
-    height: 24,
-    marginHorizontal: 4,
-  },
-  clearBtn: {
-    marginLeft: 2,
-    paddingHorizontal: 4,
+  colorBox: {
+    width: 32,
+    height: 32,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
