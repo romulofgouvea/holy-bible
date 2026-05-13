@@ -157,7 +157,7 @@ export default function StudyEditorScreen() {
       return `<div class="verse-line"><span class="verse-num">${n}</span> <span class="verse-text">${v?.text ?? ''}</span></div>`;
     }).join('');
 
-    const html = `<br><blockquote class="bible-verse"><div class="remove-verse-btn" contenteditable="false">×</div><div class="verse-title">${ref}</div>${lines}</blockquote><p><br></p>`;
+    const html = `<blockquote class="bible-verse" contenteditable="false"><div class="remove-verse-btn" contenteditable="false">×</div><div class="verse-title">${ref}</div>${lines}</blockquote><p><br></p>`;
     editorRef.current?.insertVerseHtml(html);
     setVersePickerVisible(false);
   };
@@ -170,10 +170,10 @@ export default function StudyEditorScreen() {
       const css = `
         @import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap');
         @media print { @page { margin: 0; size: auto; } body { padding: 20mm; } }
-        body { font-family: 'Inter', -apple-system, sans-serif; color: #222; max-width: 800px; margin: 0 auto; line-height: 1.6; padding: 24px; overflow-wrap: break-word; word-wrap: break-word; word-break: break-word; }
+        body { font-family: 'Inter', -apple-system, sans-serif; color: #222; max-width: 800px; margin: 0 auto; line-height: 1.6; padding: 24px; }
         h1.main-title { color: #008080; font-size: 32px; font-weight: 800; margin-bottom: 8px; border-bottom: 2px solid #e0f2f1; padding-bottom: 12px; }
         .meta { color: #888; font-size: 13px; margin-bottom: 32px; font-weight: 600; }
-        .bible-verse { border-left: 4px solid #008080; padding: 16px 24px; background: #f4faf9; border-radius: 8px; margin: 24px 0; page-break-inside: avoid; }
+        .bible-verse { border-left: 4px solid #008080; padding: 16px 24px; background: #f4faf9; border-radius: 8px; margin: 24px 0; page-break-inside: avoid; overflow-wrap: break-word; word-wrap: break-word; word-break: break-word; }
         .bible-verse b, .bible-verse .verse-title { color: #008080; display: block; margin-bottom: 12px; font-size: 16px; font-weight: bold; letter-spacing: 0.5px; text-transform: uppercase; }
         .verse-line { margin-bottom: 10px; line-height: 1.7; display: flex; gap: 8px; }
         .verse-num { font-weight: 800; color: #008080; font-size: 12px; margin-top: 2px; }

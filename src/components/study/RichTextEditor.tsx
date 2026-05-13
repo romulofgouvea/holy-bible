@@ -164,6 +164,11 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
           background-color: ${colors.primary}15;
           border-left: 4px solid ${colors.primary};
           border-radius: 8px;
+          overflow-wrap: break-word;
+          word-wrap: break-word;
+          word-break: break-word;
+          user-select: text;
+          cursor: default;
         }
         .remove-verse-btn {
           position: absolute;
@@ -316,8 +321,21 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
             p.innerHTML = '<br>';
             editor.appendChild(p);
           }
+          document.querySelectorAll('.bible-verse').forEach(el => {
+            if (el.getAttribute('contenteditable') !== 'false') {
+              el.setAttribute('contenteditable', 'false');
+            }
+          });
         });
-        guardObserver.observe(editor, { childList: true });
+        guardObserver.observe(editor, { childList: true, subtree: true });
+
+        function forceReadOnly() {
+          document.querySelectorAll('.bible-verse').forEach(el => {
+            el.setAttribute('contenteditable', 'false');
+          });
+        }
+        setTimeout(forceReadOnly, 100);
+        setTimeout(forceReadOnly, 500);
 
         ensureTrailingParagraph();
 
