@@ -128,7 +128,7 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
     const primaryColor = readerTheme === 'sepia' ? readerColors.primary : colors.primary;
 
     return (
-        <View style={[styles.verseList, { backgroundColor: readerColors.background }]}>
+        <View style={[styles.verseList, { backgroundColor: readerColors.background }]} testID="bible-verse-reader">
             <FlashList
                 ref={listRef}
                 data={flatData}

@@ -38,7 +38,7 @@ export const BibleSelectModal = React.memo(function BibleSelectModal<T>(props: S
     <Modal visible={visible} animationType="fade" transparent>
       <TouchableOpacity activeOpacity={1} style={[styles.modalBackdrop, { backgroundColor: colors.overlay }]} onPress={onClose}>
         <TouchableWithoutFeedback>
-          <View style={[styles.modalContentBig, { backgroundColor: colors.surface, shadowColor: colors.shadow }]}>
+          <View style={[styles.modalContentBig, { backgroundColor: colors.surface, shadowColor: colors.shadow }]} testID="bible-select-modal">
             <View style={styles.modalHeader}>
               <BibleText style={[styles.modalTitle, { fontSize: ms(20), color: colors.onSurface, fontWeight: '700' }]}>{title}</BibleText>
               <TouchableOpacity onPress={onClose}>

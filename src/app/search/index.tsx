@@ -279,7 +279,7 @@ export default function SearchScreen() {
   const btnText = colors.onPrimary;
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
+    <View style={[styles.container, { backgroundColor: colors.background }]} testID="search-screen">
       <BibleHeader
         showMenu={params.from !== 'bible'}
         showBack={params.from === 'bible'}
@@ -300,7 +300,7 @@ export default function SearchScreen() {
         }
       />
 
-      <View style={[styles.searchContainer, { backgroundColor: colors.background, borderBottomColor: colors.border }]}>
+      <View style={[styles.searchContainer, { backgroundColor: colors.background, borderBottomColor: colors.border }]} testID="search-container">
         <View style={[styles.searchBox, { backgroundColor: colors.surfaceHighlight, borderColor: colors.border }]}>
           <Feather name="search" size={ms(16)} color={colors.primary} style={{ marginRight: 8 }} />
           <TextInput

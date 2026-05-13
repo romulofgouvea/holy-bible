@@ -43,16 +43,16 @@ export function StudyVerseSelectModal({ visible, onClose, onBack, bookName, chap
     <View style={styles.container} testID="study-verse-modal">
       <View style={styles.header} testID="study-verse-header">
         {onBack ? (
-          <TouchableOpacity onPress={onBack} style={[styles.iconBtn, styles.headerIconWrap, { backgroundColor: colors.primary + '15' }]} testID="study-verse-back-btn">
+          <TouchableOpacity onPress={onBack} style={[styles.iconBtn, styles.headerIconWrap, { backgroundColor: colors.primary + '15' }]}>
             <Feather name="arrow-left" size={ms(16)} color={colors.primary} />
           </TouchableOpacity>
         ) : (
-          <View style={[styles.iconBtn, styles.headerIconWrap, { backgroundColor: colors.primary + '15' }]} testID="study-verse-icon">
+          <View style={[styles.iconBtn, styles.headerIconWrap, { backgroundColor: colors.primary + '15' }]}>
             <Feather name="list" size={ms(16)} color={colors.primary} />
           </View>
         )}
-        <BibleText style={[styles.title, { fontSize: ms(18), color: colors.primary, fontWeight: '800' }]} testID="study-verse-title">{bookName} {chapter}</BibleText>
-        <TouchableOpacity onPress={onClose} style={[styles.iconBtn, styles.closeBtn, { backgroundColor: colors.surfaceHighlight }]} testID="study-verse-close-btn">
+        <BibleText style={[styles.title, { fontSize: ms(18), color: colors.primary, fontWeight: '800' }]}>{bookName} {chapter}</BibleText>
+        <TouchableOpacity onPress={onClose} style={[styles.iconBtn, styles.closeBtn, { backgroundColor: colors.surfaceHighlight }]}>
           <Feather name="x" size={ms(16)} color={colors.error} />
         </TouchableOpacity>
       </View>

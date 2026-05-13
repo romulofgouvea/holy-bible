@@ -75,13 +75,13 @@ export function BibleBottomSheet({ visible, onClose, children }: BibleBottomShee
   ).current;
 
   return (
-    <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
-      <View style={styles.modalContainer}>
+    <Modal visible={visible} animationType="none" transparent onRequestClose={onClose}>
+      <View style={styles.modalContainer} testID="bible-bottom-sheet-container">
         <TouchableWithoutFeedback onPress={onClose}>
           <View style={[styles.backdrop, { backgroundColor: colors.overlay }]} />
         </TouchableWithoutFeedback>
 
-        <Animated.View style={[
+        <Animated.View testID="bible-bottom-sheet" style={[
           styles.bottomSheet,
           {
             height: animatedHeight,

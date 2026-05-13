@@ -60,28 +60,28 @@ export function BibleVersionModal({ visible, onClose, onSelect, currentVersionSi
   return (
     <View style={styles.container} testID="bible-version-modal">
       <View style={styles.header} testID="bible-version-header">
-        <View style={[styles.iconBtn, styles.headerIconWrap, { backgroundColor: colors.primary + '15' }]} testID="bible-version-icon">
+        <View style={[styles.iconBtn, styles.headerIconWrap, { backgroundColor: colors.primary + '15' }]}>
           <Feather name="book-open" size={ms(16)} color={colors.primary} />
         </View>
-        <BibleText style={[styles.title, { fontSize: ms(18), color: colors.primary, fontWeight: '800' }]} testID="bible-version-title">Versões</BibleText>
-        <TouchableOpacity onPress={() => setIsSearchVisible(!isSearchVisible)} style={[styles.iconBtn, styles.headerActionSpacing, { backgroundColor: colors.surfaceHighlight }]} testID="bible-version-search-btn">
+        <BibleText style={[styles.title, { fontSize: ms(18), color: colors.primary, fontWeight: '800' }]}>Versões</BibleText>
+        <TouchableOpacity onPress={() => setIsSearchVisible(!isSearchVisible)} style={[styles.iconBtn, styles.headerActionSpacing, { backgroundColor: colors.surfaceHighlight }]}>
           <Feather name="search" size={ms(16)} color={isSearchVisible ? colors.primary : colors.onSurface} />
         </TouchableOpacity>
-        <View style={[styles.viewToggles, { backgroundColor: colors.surfaceHighlight }]} testID="bible-version-view-toggles">
-          <TouchableOpacity onPress={() => handleSetViewMode('grid')} style={[styles.toggleBtn, viewMode === 'grid' && { backgroundColor: colors.surface }]} testID="bible-version-grid-view-btn">
+        <View style={[styles.viewToggles, { backgroundColor: colors.surfaceHighlight }]}>
+          <TouchableOpacity onPress={() => handleSetViewMode('grid')} style={[styles.toggleBtn, viewMode === 'grid' && { backgroundColor: colors.surface }]}>
             <Feather name="grid" size={ms(16)} color={viewMode === 'grid' ? colors.primary : colors.onSurface} />
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => handleSetViewMode('list')} style={[styles.toggleBtn, viewMode === 'list' && { backgroundColor: colors.surface }]} testID="bible-version-list-view-btn">
+          <TouchableOpacity onPress={() => handleSetViewMode('list')} style={[styles.toggleBtn, viewMode === 'list' && { backgroundColor: colors.surface }]}>
             <Feather name="list" size={ms(16)} color={viewMode === 'list' ? colors.primary : colors.onSurface} />
           </TouchableOpacity>
         </View>
-        <TouchableOpacity onPress={onClose} style={[styles.iconBtn, styles.headerActionSpacing, { backgroundColor: colors.surfaceHighlight }]} testID="bible-version-close-btn">
+        <TouchableOpacity onPress={onClose} style={[styles.iconBtn, styles.headerActionSpacing, { backgroundColor: colors.surfaceHighlight }]}>
           <Feather name="x" size={ms(16)} color={colors.error} />
         </TouchableOpacity>
       </View>
 
       {isSearchVisible && (
-        <View style={[styles.searchContainer, { backgroundColor: colors.surfaceHighlight, borderColor: colors.border }]}>
+        <View style={[styles.searchContainer, { backgroundColor: colors.surfaceHighlight, borderColor: colors.border }]} testID="bible-version-search-container">
           <Feather name="search" size={ms(16)} color={colors.primary} style={styles.searchIcon} />
           <TextInput
             style={[styles.searchInput, { fontSize: ms(14), color: colors.onSurface }]}
@@ -96,7 +96,7 @@ export function BibleVersionModal({ visible, onClose, onSelect, currentVersionSi
 
       <View style={[styles.divider, { backgroundColor: colors.border }]} />
 
-      <ScrollView ref={scrollViewRef} style={{ flex: 1 }} contentContainerStyle={styles.list} showsVerticalScrollIndicator={false} bounces={true} overScrollMode="always" keyboardShouldPersistTaps="handled" keyboardDismissMode="interactive">
+      <ScrollView testID="bible-version-list" ref={scrollViewRef} style={{ flex: 1 }} contentContainerStyle={styles.list} showsVerticalScrollIndicator={false} bounces={true} overScrollMode="always" keyboardShouldPersistTaps="handled" keyboardDismissMode="interactive">
         {viewMode === 'list' ? (
           filteredVersions.map((item) => {
             const isSelected = item.sigla === currentVersionSigla;
@@ -153,7 +153,7 @@ export function BibleVersionModal({ visible, onClose, onSelect, currentVersionSi
 
       <View style={[styles.divider, { backgroundColor: colors.border }]} />
 
-      <View style={styles.footer}>
+      <View style={styles.footer} testID="bible-version-footer">
         <View style={[styles.countPill, { backgroundColor: colors.surfaceHighlight, borderColor: colors.primary + '30' }]}>
           <BibleText style={[styles.countNumber, { color: colors.primary, fontWeight: '700' }]}>{filteredVersions.length}</BibleText>
           <BibleText style={[styles.countText, { color: colors.primary, fontWeight: '600' }]}> {filteredVersions.length === 1 ? 'versão' : 'versões'}</BibleText>
