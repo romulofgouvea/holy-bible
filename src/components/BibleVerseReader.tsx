@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
         textAlignVertical: 'top',
     },
     readerContent: {
-        paddingBottom: 600,
+        paddingBottom: 100,
     },
     copyrightCard: {
         marginHorizontal: 16,

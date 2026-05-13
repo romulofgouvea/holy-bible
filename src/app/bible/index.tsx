@@ -61,7 +61,7 @@ export default function BibleScreen() {
     chapterRef.current = chapter;
   }, [chapter]);
 
-  const scrollToVerse = useCallback((targetVerse: number, targetChapter: number) => {
+  const scrollToVerse = useCallback((targetVerse: number, targetChapter: number, retryCount = 0) => {
     if (sectionListRef.current) {
       isAutoScrolling.current = true;
       const sectionIndex = 0;
@@ -72,16 +72,22 @@ export default function BibleScreen() {
       sectionListRef.current?.scrollToLocation({
         sectionIndex,
         itemIndex,
-        animated: true,
+        animated: retryCount > 0 ? false : true, // Primeira tentativa animada, retentativas instantâneas para correção
         viewPosition: 0,
+        viewOffset: -1
       });
 
+      // Tenta novamente após um pequeno delay para corrigir possíveis erros de layout
+      if (retryCount < 2) {
+        setTimeout(() => scrollToVerse(targetVerse, targetChapter, retryCount + 1), 150 * (retryCount + 1));
+      }
+
       setBlinkingVerse(`${targetChapter}-${targetVerse}`);
-      setTimeout(() => setBlinkingVerse(null), 1500);
+      setTimeout(() => setBlinkingVerse(null), 500);
 
       setTimeout(() => {
         isAutoScrolling.current = false;
-      }, 1000);
+      }, 500);
     }
   }, [setBlinkingVerse]);
 
@@ -255,10 +261,11 @@ export default function BibleScreen() {
         setVerseModalVisible={setVerseModalVisible}
         onVersionSelect={(v) => {
           const savedVerse = verse;
+          const savedChapter = chapter;
           setVersion(v);
           setTimeout(() => {
-            scrollToVerse(savedVerse, chapterRef.current);
-          }, 400);
+            scrollToVerse(savedVerse, savedChapter);
+          }, 600);
         }}
         onBookSelect={(b) => {
           setBook(b);
