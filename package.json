@@ -10,14 +10,16 @@
     "web": "expo start --web",
     "lint": "expo lint",
     "build:apk": "npx expo run:android --variant release",
+    "local:build:preview": "powershell -ExecutionPolicy Bypass -File \"./local-builds/build.ps1\"",
+    "local:submit:preview": "npm run local:build:preview && npm run local:deploy:preview",
+    "local:deploy:preview": "powershell -ExecutionPolicy Bypass -File \"./local-builds/deploy.ps1\" -Track preview",
+    "local:deploy:production": "powershell -ExecutionPolicy Bypass -File \"./local-builds/deploy.ps1\" -Track production",
     "eas:build:preview": "eas build -p android --profile preview",
     "eas:build:production": "eas build -p android --profile production",
     "eas:submit:preview": "eas submit -p android --profile preview",
     "eas:submit:production": "eas submit -p android --profile production",
     "eas:deploy:preview": "eas build -p android --profile preview --auto-submit",
-    "eas:deploy:production": "eas build -p android --profile production --auto-submit",
-    "local:build:preview": "powershell -ExecutionPolicy Bypass -File \"./local-builds/holy-bible-build-local.ps1\"",
-    "local:deploy:preview": "powershell -ExecutionPolicy Bypass -File \"./local-builds/holy-bible-deploy-playstore-preview.ps1\""
+    "eas:deploy:production": "eas build -p android --profile production --auto-submit"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "2.2.0",
