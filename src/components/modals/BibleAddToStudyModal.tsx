@@ -1,6 +1,6 @@
 import { FlashList } from '@shopify/flash-list';
 import React, { useState } from 'react';
-import { ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
+import { Platform, ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import { useResponsive } from '../../hooks/use-responsive';
 import { useStudies } from '../../hooks/use-studies';
 import { useTheme } from '../../hooks/use-theme';
@@ -121,12 +121,17 @@ export function BibleAddToStudyModal({ visible, onClose, selectedVerses, onShowT
         {isCreating ? (
           <ScrollView style={{ flex: 1 }} keyboardShouldPersistTaps="handled">
             <TextInput
-              style={[styles.input, { color: colors.onSurface, borderColor: colors.border, backgroundColor: colors.surfaceHighlight }]}
+              style={[
+                styles.input, 
+                { color: colors.onSurface, backgroundColor: colors.surfaceHighlight },
+                Platform.select({ web: { outline: 'none' } as any, default: {} })
+              ]}
               placeholder="Título do estudo..."
               placeholderTextColor={colors.textMuted}
               value={newTitle}
               onChangeText={setNewTitle}
               autoFocus
+              underlineColorAndroid="transparent"
             />
           </ScrollView>
         ) : (
@@ -177,7 +182,7 @@ const styles = StyleSheet.create({
   createText: { fontWeight: '700' },
   studyItem: { flexDirection: 'row', alignItems: 'center', paddingVertical: 12, borderBottomWidth: 1 },
   empty: { padding: 40, alignItems: 'center' },
-  input: { height: 48, borderWidth: 1, borderRadius: 12, paddingHorizontal: 16, fontSize: 16, marginBottom: 8 },
+  input: { height: 48, borderRadius: 12, paddingHorizontal: 16, fontSize: 16, marginBottom: 8 },
   createActions: { flexDirection: 'row', gap: 12 },
   cancelBtn: { flex: 1, paddingVertical: 14, borderRadius: 14, alignItems: 'center' },
   cancelText: { fontWeight: '700' },
