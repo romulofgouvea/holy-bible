@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
-import { Animated, Dimensions, Modal, PanResponder, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
+import { Animated, Dimensions, KeyboardAvoidingView, Modal, PanResponder, Platform, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { DESIGN_TOKENS } from '../constants/design';
 import { useTheme } from '../hooks/use-theme';
 import { BibleDivider } from './BibleDivider';
 
@@ -10,11 +11,14 @@ type BibleBottomSheetProps = {
   children: React.ReactNode;
   header?: React.ReactNode;
   footer?: React.ReactNode;
+  animated?: boolean;
+  resizable?: boolean;
 };
 
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 
-export function BibleBottomSheet({ visible, onClose, children, header, footer }: BibleBottomSheetProps) {
+export function BibleBottomSheet({ visible, onClose, children, header, footer, animated = true, resizable }: BibleBottomSheetProps) {
+  const isResizable = resizable !== undefined ? resizable : animated;
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
 
@@ -78,7 +82,7 @@ export function BibleBottomSheet({ visible, onClose, children, header, footer }:
   ).current;
 
   return (
-    <Modal visible={visible} animationType="none" transparent onRequestClose={onClose}>
+    <Modal visible={visible} animationType={animated ? "slide" : "none"} transparent onRequestClose={onClose}>
       <View style={styles.modalContainer} testID="bible-bottom-sheet-container">
         <TouchableWithoutFeedback onPress={onClose}>
           <View style={[styles.backdrop, { backgroundColor: colors.overlay }]} />
@@ -87,20 +91,38 @@ export function BibleBottomSheet({ visible, onClose, children, header, footer }:
         <Animated.View testID="bible-bottom-sheet" style={[
           styles.bottomSheet,
           {
-            height: animatedHeight,
+            height: isResizable ? animatedHeight : undefined,
+            maxHeight: snapPoints.full,
             backgroundColor: colors.background,
             paddingBottom: Math.max(8, insets.bottom + 8),
             shadowColor: colors.shadow
           }
         ]}>
-          <View {...panResponder.panHandlers} style={styles.handleContainer}>
-            <View style={[styles.modalHandle, { backgroundColor: colors.primary }]} />
-          </View>
-          {header && <><View style={styles.content}>{header}</View> <BibleDivider margin={16} /></>}
-          <View style={[styles.content, { flex: 1 }]}>
-            {children}
-          </View>
-          {footer && <><BibleDivider margin={8} /><View style={styles.content}>{footer}</View></>}
+          <KeyboardAvoidingView
+            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+            style={{ flex: isResizable ? 1 : 0, flexShrink: 1 }}
+          >
+            {isResizable && (
+              <View {...panResponder.panHandlers} style={styles.handleContainer}>
+                <View style={[styles.modalHandle, { backgroundColor: colors.primary }]} />
+              </View>
+            )}
+            {header && (
+              <View style={{ paddingTop: DESIGN_TOKENS.padding.lg }}>
+                <View style={styles.content}>{header}</View>
+                <BibleDivider margin={DESIGN_TOKENS.spacing.md} />
+              </View>
+            )}
+            <View style={[styles.content, { flex: isResizable ? 1 : 0, flexShrink: 1 }]}>
+              {children}
+            </View>
+            {footer && (
+              <View style={{ paddingBottom: DESIGN_TOKENS.padding.xs }}>
+                <BibleDivider margin={DESIGN_TOKENS.spacing.xs} />
+                <View style={styles.content}>{footer}</View>
+              </View>
+            )}
+          </KeyboardAvoidingView>
         </Animated.View>
       </View>
     </Modal>
@@ -139,5 +161,9 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingHorizontal: 16,
+  },
+  contentNotResizable: {
+    paddingHorizontal: 16,
+    paddingTop: 16,
   }
 });

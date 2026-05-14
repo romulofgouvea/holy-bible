@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { Book } from '../../data';
 import { useResponsive } from '../../hooks/use-responsive';
 import { selectionHaptic } from '../../utils/haptics';
-import { BibleBookModal } from '../BibleBookModal';
+import { BibleBookModal } from './BibleBookModal';
 import { BibleBottomSheet } from '../BibleBottomSheet';
 import { BibleNumberModal } from './BibleNumberModal';
 import { BibleVersionModal } from './BibleVersionModal';

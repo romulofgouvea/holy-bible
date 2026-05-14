@@ -1,4 +1,5 @@
 import { BibleActionsSheet } from '@/components/BibleActionsSheet';
+import { BibleBottomSheet } from '@/components/BibleBottomSheet';
 import { BibleIcon } from '@/components/BibleIcon';
 import { BibleConfirmModal } from '@/components/modals/BibleConfirmModal';
 import { FlashList } from '@shopify/flash-list';
@@ -8,7 +9,6 @@ import React, { useState } from 'react';
 import {
   Alert,
   KeyboardAvoidingView,
-  Modal,
   Platform,
   StyleSheet,
   TextInput,
@@ -65,13 +65,30 @@ export default function EstudosScreen() {
     try {
       const selectedStudies = studies.filter(s => ids.has(s.id));
       if (selectedStudies.length === 0) return;
-      const Sharing = require('expo-sharing');
+
       const safeTitle = selectedStudies.length === 1 ? selectedStudies[0].title.replace(/[^a-zA-Z0-9]/g, '_') : 'backup_estudos';
-      const newUri = `${(FileSystem as any).documentDirectory}${safeTitle}.json`;
-      await FileSystem.writeAsStringAsync(newUri, JSON.stringify(selectedStudies, null, 2));
-      await Sharing.shareAsync(newUri, { mimeType: 'application/json' });
+      const jsonString = JSON.stringify(selectedStudies, null, 2);
+
+      if (Platform.OS === 'web') {
+        const blob = new Blob([jsonString], { type: 'application/json;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${safeTitle}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      } else {
+        const Sharing = require('expo-sharing');
+        const newUri = `${(FileSystem as any).documentDirectory}${safeTitle}.json`;
+        await FileSystem.writeAsStringAsync(newUri, jsonString);
+        await Sharing.shareAsync(newUri, { mimeType: 'application/json' });
+      }
       setSelectedIds(new Set());
-    } catch (e) { }
+    } catch (e) {
+      console.error('Export failed', e);
+    }
   };
 
   const exportPDFs = async (ids: Set<string>) => {
@@ -150,7 +167,7 @@ export default function EstudosScreen() {
 
   const renderEmpty = () => (
     <View style={styles.emptyContainer}>
-      <BibleIcon name="book" size={ms(64)} color={colors.primaryVariant} />
+      <BibleIcon name="book" size={ms(64)} color={colors.primaryVariant} style={{ marginBottom: ms(16) }} />
       <BibleText style={[styles.emptyTitle, { fontSize: ms(20), color: colors.onBackground }]}>Nenhum estudo ainda</BibleText>
       <BibleText style={[styles.emptySubtitle, { fontSize: ms(14), color: colors.textMuted }]}>
         Abra o menu superior nos três pontos para criar seu primeiro estudo
@@ -237,44 +254,47 @@ export default function EstudosScreen() {
         />
       </View>
 
-      <Modal visible={modalVisible} transparent animationType="slide">
-        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.modalWrapper}>
-          <TouchableOpacity style={[styles.modalBackdrop, { backgroundColor: colors.overlay }]} activeOpacity={1} onPress={() => setModalVisible(false)} />
-          <View style={[styles.modalSheet, { backgroundColor: colors.surface, paddingBottom: Math.max(32, insets.bottom + 16) }]}>
-            <View style={[styles.modalHandle, { backgroundColor: colors.border }]} />
-            <BibleText style={[styles.modalTitle, { fontSize: ms(20), color: colors.onSurface, fontWeight: '700' }]}>Novo Estudo</BibleText>
-            <TextInput
-              style={[styles.input, { fontSize: ms(16), backgroundColor: colors.surfaceHighlight, color: colors.onSurface }]}
-              placeholder="Título do estudo"
-              placeholderTextColor={colors.textMuted}
-              value={newTitle}
-              onChangeText={setNewTitle}
-              {...({ outlineStyle: 'none' } as any)}
-            />
-            <TextInput
-              style={[styles.input, styles.inputMultiline, { fontSize: ms(15), backgroundColor: colors.surfaceHighlight, color: colors.onSurface }]}
-              placeholder="Descrição inicial (opcional)"
-              placeholderTextColor={colors.textMuted}
-              value={newDescription}
-              onChangeText={setNewDescription}
-              multiline
-              numberOfLines={3}
-              {...({ outlineStyle: 'none' } as any)}
-            />
-            <View style={styles.modalActions}>
-              <TouchableOpacity style={[styles.cancelBtn, { backgroundColor: colors.surfaceHighlight }]} onPress={() => setModalVisible(false)}>
-                <BibleText style={[styles.cancelText, { fontSize: ms(15), color: colors.onSurface }]}>Cancelar</BibleText>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.createBtn, { backgroundColor: colors.primary }, !newTitle.trim() && styles.createBtnDisabled]}
-                onPress={handleCreate}
-              >
-                <BibleText style={[styles.createText, { fontSize: ms(15), color: colors.onPrimary }]}>Criar</BibleText>
-              </TouchableOpacity>
-            </View>
+      <BibleBottomSheet
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        resizable={false}
+        header={
+          <View style={styles.modalHeader}>
+            <BibleIcon name="file-plus" color={colors.primary} backgroundColor={colors.primary + '15'} style={{ marginRight: 8 }} />
+            <BibleText style={[styles.modalTitle, { fontSize: ms(16), color: colors.onSurface, fontWeight: '700' }]}>Novo Estudo</BibleText>
+            <BibleIcon name="x" color={colors.error} backgroundColor={colors.error + '20'} onPress={() => setModalVisible(false)} style={{ marginLeft: 'auto' }} />
+          </View>
+        }
+      >
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+          <TextInput
+            style={[styles.input, { fontSize: ms(16), backgroundColor: colors.surfaceHighlight, color: colors.onSurface }]}
+            placeholder="Título do estudo"
+            placeholderTextColor={colors.textMuted}
+            value={newTitle}
+            onChangeText={setNewTitle}
+            {...({ outlineStyle: 'none' } as any)}
+          />
+          <TextInput
+            style={[styles.input, styles.inputMultiline, { fontSize: ms(15), backgroundColor: colors.surfaceHighlight, color: colors.onSurface }]}
+            placeholder="Descrição (opcional)"
+            placeholderTextColor={colors.textMuted}
+            value={newDescription}
+            onChangeText={setNewDescription}
+            multiline
+            numberOfLines={3}
+            {...({ outlineStyle: 'none' } as any)}
+          />
+          <View style={styles.modalActions}>
+            <TouchableOpacity
+              style={[styles.createBtn, { backgroundColor: colors.primary }, !newTitle.trim() && styles.createBtnDisabled]}
+              onPress={handleCreate}
+            >
+              <BibleText style={[styles.createText, { fontSize: ms(15), color: colors.onPrimary }]}>Criar</BibleText>
+            </TouchableOpacity>
           </View>
         </KeyboardAvoidingView>
-      </Modal>
+      </BibleBottomSheet>
 
       <BibleConfirmModal
         visible={!!studyToDelete}
@@ -364,12 +384,9 @@ const styles = StyleSheet.create({
   cardTitle: { fontWeight: '700' },
   cardDate: { marginTop: 2 },
   deleteBtn: { width: 38, height: 38, alignItems: 'center', justifyContent: 'center', borderRadius: 10 },
-  modalWrapper: { flex: 1, justifyContent: 'flex-end' },
-  modalBackdrop: { ...StyleSheet.absoluteFillObject },
-  modalSheet: { borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24, paddingBottom: 40, gap: 16 },
-  modalHandle: { width: 40, height: 4, borderRadius: 2, alignSelf: 'center', marginBottom: 8 },
+  modalHeader: { flexDirection: 'row', alignItems: 'center' },
   modalTitle: { fontWeight: '800' },
-  input: { borderRadius: 14, paddingHorizontal: 16, paddingVertical: 14 },
+  input: { borderRadius: 12, paddingHorizontal: 16, paddingVertical: 14, marginBottom: 8 },
   inputMultiline: { minHeight: 90, textAlignVertical: 'top' },
   modalActions: { flexDirection: 'row', gap: 12, marginTop: 4 },
   cancelBtn: { flex: 1, paddingVertical: 14, borderRadius: 14, alignItems: 'center' },

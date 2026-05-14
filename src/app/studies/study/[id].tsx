@@ -20,7 +20,7 @@ import { BibleActionsSheet } from '@/components/BibleActionsSheet';
 import { BibleIcon } from '@/components/BibleIcon';
 import { COLOR_THEMES } from '@/constants/colors';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { BibleBookModal } from '../../../components/BibleBookModal';
+import { BibleBookModal } from '../../../components/modals/BibleBookModal';
 import { BibleBottomSheet } from '../../../components/BibleBottomSheet';
 import { BibleHeader } from '../../../components/BibleHeader';
 import { BibleSkeleton } from '../../../components/BibleSkeleton';

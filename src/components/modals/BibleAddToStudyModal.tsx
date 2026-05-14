@@ -5,7 +5,6 @@ import { useResponsive } from '../../hooks/use-responsive';
 import { useStudies } from '../../hooks/use-studies';
 import { useTheme } from '../../hooks/use-theme';
 import { BibleBottomSheet } from '../BibleBottomSheet';
-import { BibleDivider } from '../BibleDivider';
 import { BibleIcon } from '../BibleIcon';
 import { BibleText } from '../BibleText';
 import { SelectedVerse } from './BibleVerseActionSheet';
@@ -78,31 +77,49 @@ export function BibleAddToStudyModal({ visible, onClose, selectedVerses, onShowT
   };
 
   return (
-    <BibleBottomSheet visible={visible} onClose={onClose}>
-      <View style={styles.container} testID="bible-add-to-study-modal">
-        <View style={styles.header}>
-          <BibleIcon
-            name="plus-circle"
-            size={ms(16)}
-            color={colors.primary}
-            backgroundColor={colors.primary + '25'}
-            style={styles.headerIconWrap}
-          />
-          <BibleText style={[styles.title, { color: colors.primary, fontSize: ms(16), fontWeight: '800' }]}>
-            {isCreating ? 'Novo Estudo' : 'Adicionar ao Estudo'}
-          </BibleText>
-          <BibleIcon
-            name="x"
-            color={colors.error}
-            backgroundColor={colors.error + '20'}
-            onPress={onClose}
-          />
+    <BibleBottomSheet visible={visible} onClose={onClose}
+      resizable={isCreating ? false : true}
+      header={<View style={styles.header}>
+        <BibleIcon
+          name={isCreating ? "arrow-left" : "plus-circle"}
+          size={ms(16)}
+          color={colors.primary}
+          backgroundColor={colors.primary + '25'}
+          style={styles.headerIconWrap}
+          onPress={isCreating ? () => setIsCreating(false) : undefined}
+        />
+        <BibleText style={[styles.title, { color: colors.primary, fontSize: ms(16), fontWeight: '800' }]}>
+          {isCreating ? 'Novo Estudo' : 'Adicionar ao Estudo'}
+        </BibleText>
+        <BibleIcon
+          name="x"
+          color={colors.error}
+          backgroundColor={colors.error + '20'}
+          onPress={onClose}
+          style={{ marginLeft: 'auto' }}
+        />
+      </View>}
+      footer={isCreating ? (
+        <View style={styles.createActions}>
+          <TouchableOpacity
+            style={[styles.createBtn, { backgroundColor: colors.primary, flex: 1.5 }]}
+            onPress={handleCreateAndAdd}
+          >
+            <BibleText style={[styles.createText, { color: colors.onPrimary, fontSize: ms(16) }]}>Criar e Adicionar</BibleText>
+          </TouchableOpacity>
         </View>
-
-        <BibleDivider margin={8} />
-
+      ) : (
+        <TouchableOpacity
+          style={[styles.createBtn, { backgroundColor: colors.primary }]}
+          onPress={() => setIsCreating(true)}
+        >
+          <BibleText style={[styles.createText, { color: colors.onPrimary, fontSize: ms(16) }]}>Criar Novo Estudo</BibleText>
+        </TouchableOpacity>
+      )}
+    >
+      <View style={[styles.container]}>
         {isCreating ? (
-          <View style={styles.createArea}>
+          <View>
             <TextInput
               style={[styles.input, { color: colors.onSurface, borderColor: colors.border, backgroundColor: colors.surfaceHighlight }]}
               placeholder="Título do estudo..."
@@ -111,38 +128,16 @@ export function BibleAddToStudyModal({ visible, onClose, selectedVerses, onShowT
               onChangeText={setNewTitle}
               autoFocus
             />
-            <View style={styles.createActions}>
-              <TouchableOpacity
-                style={[styles.btn, { backgroundColor: colors.surfaceHighlight }]}
-                onPress={() => setIsCreating(false)}
-              >
-                <BibleText style={{ color: colors.onSurface, fontWeight: '600' }}>Cancelar</BibleText>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.btn, { backgroundColor: colors.primary }]}
-                onPress={handleCreateAndAdd}
-              >
-                <BibleText style={{ color: colors.onPrimary, fontWeight: '700' }}>Criar e Adicionar</BibleText>
-              </TouchableOpacity>
-            </View>
           </View>
         ) : (
           <View style={{ flex: 1 }}>
-            <TouchableOpacity
-              style={[styles.createToggle, { borderColor: colors.primary + '30', backgroundColor: colors.primary + '10' }]}
-              onPress={() => setIsCreating(true)}
-            >
-              <BibleIcon name="plus" size={ms(18)} color={colors.primary} />
-              <BibleText style={{ color: colors.primary, fontWeight: '700', marginLeft: 8 }}>Criar novo estudo</BibleText>
-            </TouchableOpacity>
-
             <FlashList
               data={studies}
               keyExtractor={(item) => item.id}
               // @ts-ignore
               estimatedItemSize={60}
               showsVerticalScrollIndicator={false}
-              contentContainerStyle={{ paddingBottom: 20 }}
+              contentContainerStyle={{ paddingBottom: 10 }}
               ListEmptyComponent={
                 <View style={styles.empty}>
                   <BibleText style={{ color: colors.textMuted, textAlign: 'center' }}>Você ainda não tem estudos ativos.</BibleText>
@@ -153,9 +148,7 @@ export function BibleAddToStudyModal({ visible, onClose, selectedVerses, onShowT
                   style={[styles.studyItem, { borderBottomColor: colors.border }]}
                   onPress={() => handleAddToStudy(item.id, item.content)}
                 >
-                  <View style={[styles.studyIcon, { backgroundColor: colors.surfaceHighlight }]}>
-                    <BibleIcon name="book" size={ms(16)} color={colors.onSurface} />
-                  </View>
+                  <BibleIcon name="book" color={colors.onSurface} backgroundColor={colors.surfaceHighlight} />
                   <View style={{ flex: 1 }}>
                     <BibleText style={{ color: colors.onSurface, fontWeight: '600', fontSize: ms(15) }} numberOfLines={1}>
                       {item.title}
@@ -164,7 +157,7 @@ export function BibleAddToStudyModal({ visible, onClose, selectedVerses, onShowT
                       {item.createdAt}
                     </BibleText>
                   </View>
-                  <BibleIcon name="chevron-right" size={ms(16)} color={colors.textMuted} />
+                  <BibleIcon name="chevron-right" color={colors.textMuted} />
                 </TouchableOpacity>
               )}
             />
@@ -176,16 +169,16 @@ export function BibleAddToStudyModal({ visible, onClose, selectedVerses, onShowT
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 12, minHeight: 300 },
-  header: { flexDirection: 'row', alignItems: 'center', marginBottom: 4 },
+  container: { flex: 1 },
+  header: { flexDirection: 'row', alignItems: 'center' },
   headerIconWrap: { marginRight: 8 },
   title: { flex: 1 },
-  createToggle: { flexDirection: 'row', alignItems: 'center', padding: 14, borderRadius: 12, borderWidth: 1, marginBottom: 16, borderStyle: 'dashed' },
+  createBtn: { paddingVertical: 14, borderRadius: 14, alignItems: 'center' },
+  createText: { fontWeight: '700' },
   studyItem: { flexDirection: 'row', alignItems: 'center', paddingVertical: 12, borderBottomWidth: 1 },
-  studyIcon: { width: 36, height: 36, borderRadius: 10, justifyContent: 'center', alignItems: 'center', marginRight: 12 },
   empty: { padding: 40, alignItems: 'center' },
-  createArea: { gap: 12 },
-  input: { height: 48, borderWidth: 1, borderRadius: 12, paddingHorizontal: 16, fontSize: 16 },
-  createActions: { flexDirection: 'row', justifyContent: 'flex-end', gap: 8 },
-  btn: { paddingHorizontal: 20, paddingVertical: 10, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
+  input: { height: 48, borderWidth: 1, borderRadius: 12, paddingHorizontal: 16, fontSize: 16, marginBottom: 8 },
+  createActions: { flexDirection: 'row', gap: 12 },
+  cancelBtn: { flex: 1, paddingVertical: 14, borderRadius: 14, alignItems: 'center' },
+  cancelText: { fontWeight: '700' },
 });

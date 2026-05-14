@@ -1,17 +1,17 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
-import { STORAGE_KEYS } from '../constants/storage';
-import { Book } from '../data';
-import bibleBooks from '../data/bible-books.json';
-import { useResponsive } from '../hooks/use-responsive';
-import { useTheme } from '../hooks/use-theme';
-import { BibleCountPill } from './BibleCountPill';
-import { BibleGridBlock } from './BibleGridBlock';
-import { BibleIcon } from './BibleIcon';
-import { BibleListCard } from './BibleListCard';
-import { BibleText } from './BibleText';
-import { BibleDivider } from './BibleDivider';
+import { STORAGE_KEYS } from '../../constants/storage';
+import { Book } from '../../data';
+import bibleBooks from '../../data/bible-books.json';
+import { useResponsive } from '../../hooks/use-responsive';
+import { useTheme } from '../../hooks/use-theme';
+import { BibleCountPill } from '../BibleCountPill';
+import { BibleGridBlock } from '../BibleGridBlock';
+import { BibleIcon } from '../BibleIcon';
+import { BibleListCard } from '../BibleListCard';
+import { BibleText } from '../BibleText';
+import { BibleDivider } from '../BibleDivider';
 
 type BibleBookModalProps = {
   visible: boolean;

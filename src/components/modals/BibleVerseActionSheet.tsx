@@ -123,38 +123,42 @@ export function BibleVerseActionSheet(props: VerseActionSheetProps) {
         borderColor: colors.border
       }]} id="bible-verse-action-sheet">
 
-        <BibleIcon
-          name="x"
-          color={colors.error}
-          backgroundColor={colors.error + '20'}
-          onPress={onClose}
-        />
+
 
         {/* Row 1: Actions */}
-        <View style={styles.topRow}>
-          <TouchableOpacity
-            style={[styles.iconBtn, { backgroundColor: count === 0 ? colors.surfaceHighlight : colors.primary + '25' }]}
-            onPress={onShare}
-            disabled={count === 0}
-          >
-            <BibleIcon name="share-2" size={ms(16)} color={count === 0 ? colors.textMuted : colors.primary} />
-          </TouchableOpacity>
+        <View style={styles.topRowContainer}>
+          <View style={styles.topRow}>
+            <TouchableOpacity
+              style={[styles.iconBtn, { backgroundColor: count === 0 ? colors.surfaceHighlight : colors.primary + '25' }]}
+              onPress={onShare}
+              disabled={count === 0}
+            >
+              <BibleIcon name="share-2" size={ms(16)} color={count === 0 ? colors.textMuted : colors.primary} />
+            </TouchableOpacity>
 
-          <TouchableOpacity
-            style={[styles.iconBtn, { backgroundColor: count === 0 ? colors.surfaceHighlight : colors.primary + '25' }]}
-            onPress={onCopy}
-            disabled={count === 0}
-          >
-            <BibleIcon name="copy" size={ms(16)} color={count === 0 ? colors.textMuted : colors.primary} />
-          </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.iconBtn, { backgroundColor: count === 0 ? colors.surfaceHighlight : colors.primary + '25' }]}
+              onPress={onCopy}
+              disabled={count === 0}
+            >
+              <BibleIcon name="copy" size={ms(16)} color={count === 0 ? colors.textMuted : colors.primary} />
+            </TouchableOpacity>
 
-          <TouchableOpacity
-            style={[styles.iconBtn, { backgroundColor: count === 0 ? colors.surfaceHighlight : colors.primary + '25' }]}
-            onPress={() => setStudyModalVisible(true)}
-            disabled={count === 0}
-          >
-            <BibleIcon name="book-open" size={ms(16)} color={count === 0 ? colors.textMuted : colors.primary} />
-          </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.iconBtn, { backgroundColor: count === 0 ? colors.surfaceHighlight : colors.primary + '25' }]}
+              onPress={() => setStudyModalVisible(true)}
+              disabled={count === 0}
+            >
+              <BibleIcon name="book-open" size={ms(16)} color={count === 0 ? colors.textMuted : colors.primary} />
+            </TouchableOpacity>
+          </View>
+
+          <BibleIcon
+            name="x"
+            color={colors.error}
+            backgroundColor={colors.error + '20'}
+            onPress={onClose}
+          />
         </View>
 
         {/* Row 2: Colors */}
@@ -212,8 +216,13 @@ const styles = StyleSheet.create({
   topRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'flex-start',
-    gap: 10,
+    justifyContent: 'space-between',
+    gap: 8,
+  },
+  topRowContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     marginBottom: 16,
   },
   bottomRow: {
