@@ -16,6 +16,7 @@
     },
     "android": {
       "package": "br.com.stevanini.holybible",
+      "versionCode": 20,
       "adaptiveIcon": {
         "backgroundColor": "#008080",
         "foregroundImage": "./assets/images/adaptive-icon.png"
