@@ -9,7 +9,6 @@ import { BibleBottomSheet } from './BibleBottomSheet';
 import { BibleCountPill } from './BibleCountPill';
 import { BibleIcon } from './BibleIcon';
 import { BibleText } from './BibleText';
-import { BibleDivider } from './BibleDivider';
 
 type BibleHistoryModalProps = {
   visible: boolean;
@@ -35,12 +34,13 @@ export function BibleHistoryModal({ visible, onClose, onSelect }: BibleHistoryMo
   }, [visible, loadHistory]);
 
   return (
-    <BibleBottomSheet visible={visible} onClose={onClose}>
-      <View style={styles.container} testID="bible-history-modal">
+    <BibleBottomSheet visible={visible} onClose={onClose}
+      header={
         <View style={styles.header} testID="bible-history-header">
-          <View style={[styles.iconBtn, styles.headerIconWrap, { backgroundColor: colors.primary + '25' }]} testID="bible-history-icon">
-            <BibleIcon name="clock" color={colors.primary} />
-          </View>
+          <BibleIcon name="clock"
+            color={colors.primary}
+            backgroundColor={`${colors.primary}20`}
+            style={{ marginRight: 8 }} />
           <BibleText style={[styles.title, { fontSize: ms(16), color: colors.primary, fontWeight: '800' }]} testID="bible-history-title">{ROUTE_LABELS.HISTORY}</BibleText>
           <BibleIcon
             name="x"
@@ -50,7 +50,15 @@ export function BibleHistoryModal({ visible, onClose, onSelect }: BibleHistoryMo
             testID="bible-history-close-btn"
           />
         </View>
-        <BibleDivider />
+      }
+      footer={
+        history.length ? <BibleCountPill
+          count={history.length}
+          label="item"
+          labelPlural="itens"
+        /> : null
+      }>
+      <View style={styles.container} testID="bible-history-modal">
         {history.length > 0 ? (
           <>
             <View style={styles.list}>
@@ -61,7 +69,7 @@ export function BibleHistoryModal({ visible, onClose, onSelect }: BibleHistoryMo
                 // @ts-ignore
                 estimatedItemSize={70}
                 showsVerticalScrollIndicator={false}
-                contentContainerStyle={styles.listContent}
+
                 ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
                 renderItem={({ item }) => (
                   <TouchableOpacity
@@ -91,15 +99,6 @@ export function BibleHistoryModal({ visible, onClose, onSelect }: BibleHistoryMo
                 )}
               />
             </View>
-            <BibleDivider />
-
-            <View style={styles.footer}>
-              <BibleCountPill
-                count={history.length}
-                label="item"
-                labelPlural="itens"
-              />
-            </View>
           </>
         ) : (
           <View style={styles.empty}>
@@ -120,22 +119,10 @@ export function BibleHistoryModal({ visible, onClose, onSelect }: BibleHistoryMo
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 8,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 0,
-  },
-  iconBtn: {
-    width: 32,
-    height: 32,
-    borderRadius: 6,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  headerIconWrap: {
-    marginRight: 8,
   },
   title: {
     flex: 1,
@@ -147,13 +134,6 @@ const styles = StyleSheet.create({
   list: {
     flex: 1,
     width: '100%',
-  },
-  listContent: {
-    gap: 10,
-    paddingBottom: 10,
-  },
-  footer: {
-    paddingTop: 4,
   },
   card: {
     borderRadius: 12,

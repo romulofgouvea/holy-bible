@@ -1,6 +1,6 @@
 import { BibleActionsSheet } from '@/components/BibleActionsSheet';
-import { BibleConfirmModal } from '@/components/BibleConfirmModal';
 import { BibleIcon } from '@/components/BibleIcon';
+import { BibleConfirmModal } from '@/components/modals/BibleConfirmModal';
 import { FlashList } from '@shopify/flash-list';
 import * as FileSystem from 'expo-file-system/legacy';
 import { useRouter } from 'expo-router';
@@ -20,7 +20,7 @@ import { BibleDrawerMenu } from '../../components/BibleDrawerMenu';
 import { BibleHeader } from '../../components/BibleHeader';
 import { BibleSkeleton } from '../../components/BibleSkeleton';
 import { BibleText } from '../../components/BibleText';
-import { DonateModal } from '../../components/DonateModal';
+import { DonateModal } from '../../components/modals/DonateModal';
 import { ROUTES, ROUTE_LABELS } from '../../constants/routes';
 import { useResponsive } from '../../hooks/use-responsive';
 import { Study, useStudies } from '../../hooks/use-studies';

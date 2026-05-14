@@ -6,11 +6,11 @@ import { ALIASES, BibleVersionInfo } from '../data';
 import { useResponsive } from '../hooks/use-responsive';
 import { useTheme } from '../hooks/use-theme';
 import { BibleCountPill } from './BibleCountPill';
+import { BibleDivider } from './BibleDivider';
 import { BibleGridBlock } from './BibleGridBlock';
 import { BibleIcon } from './BibleIcon';
 import { BibleListCard } from './BibleListCard';
 import { BibleText } from './BibleText';
-import { BibleDivider } from './BibleDivider';
 
 type BibleVersionModalProps = {
   visible: boolean;
@@ -66,7 +66,7 @@ export function BibleVersionModal({ visible, onClose, onSelect, currentVersionSi
           name="book-open"
           color={colors.primary}
           backgroundColor={colors.primary + '20'}
-          style={styles.headerIconWrap}
+          style={{ marginRight: 8 }}
         />
         <BibleText style={[styles.title, { fontSize: ms(18), color: colors.primary, fontWeight: '800' }]}>Versões</BibleText>
         <TouchableOpacity onPress={() => setIsSearchVisible(!isSearchVisible)} style={[styles.iconBtn, styles.headerActionSpacing, { backgroundColor: colors.surfaceHighlight }]}>
@@ -103,7 +103,7 @@ export function BibleVersionModal({ visible, onClose, onSelect, currentVersionSi
         </View>
       )}
 
-      <BibleDivider />
+      <BibleDivider margin={8} />
 
       <ScrollView testID="bible-version-list" ref={scrollViewRef} style={{ flex: 1 }} contentContainerStyle={styles.list} showsVerticalScrollIndicator={false} bounces={true} overScrollMode="always" keyboardShouldPersistTaps="handled" keyboardDismissMode="interactive">
         {viewMode === 'list' ? (
@@ -160,15 +160,13 @@ export function BibleVersionModal({ visible, onClose, onSelect, currentVersionSi
         )}
       </ScrollView>
 
-      <BibleDivider />
+      <BibleDivider margin={8} />
 
-      <View style={styles.footer} testID="bible-version-footer">
-        <BibleCountPill
-          count={filteredVersions.length}
-          label="versão"
-          labelPlural="versões"
-        />
-      </View>
+      <BibleCountPill
+        count={filteredVersions.length}
+        label="versão"
+        labelPlural="versões"
+      />
     </View>
   );
 }
@@ -181,10 +179,6 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 0,
-  },
-  headerIconWrap: {
-    marginRight: 8,
   },
   title: {
     flex: 1,
@@ -218,9 +212,6 @@ const styles = StyleSheet.create({
     ...({ outlineStyle: 'none' } as any),
   },
   list: { flexGrow: 1, gap: 8 },
-  footer: {
-    paddingTop: 4,
-  },
   viewToggles: { flexDirection: 'row', alignItems: 'center', borderRadius: 6, padding: 3, gap: 2, marginLeft: 8, height: 32 },
   toggleBtn: { width: 26, height: 26, justifyContent: 'center', alignItems: 'center', borderRadius: 4 },
   gridContainer: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, justifyContent: 'flex-start' },

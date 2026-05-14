@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useResponsive } from '../../hooks/use-responsive';
 import { useTheme } from '../../hooks/use-theme';
+import { BibleDivider } from '../BibleDivider';
 import { BibleIcon } from '../BibleIcon';
 import { BibleText } from '../BibleText';
-import { BibleDivider } from '../BibleDivider';
 
 type StudyVerseSelectModalProps = {
   visible: boolean;
@@ -60,7 +60,7 @@ export function StudyVerseSelectModal({ visible, onClose, onBack, bookName, chap
           onPress={onClose}
         />
       </View>
-      <BibleDivider />
+      <BibleDivider margin={8} />
       <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }} bounces={true} overScrollMode="always" testID="study-verse-list">
         {verses.map(({ verse, text }) => {
           const selected = selectedNums.has(verse);
@@ -75,7 +75,7 @@ export function StudyVerseSelectModal({ visible, onClose, onBack, bookName, chap
       </ScrollView>
       {selectedNums.size > 0 && (
         <>
-          <BibleDivider />
+          <BibleDivider margin={8} />
           <TouchableOpacity style={[styles.confirmBtn, { backgroundColor: colors.primary }]} onPress={handleConfirm}>
             <BibleIcon name="check" size={ms(16)} color={colors.onPrimary} />
             <BibleText style={[styles.confirmText, { fontSize: ms(14), color: colors.onPrimary }]}>

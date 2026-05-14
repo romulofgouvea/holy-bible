@@ -13,11 +13,11 @@ import {
 } from 'react-native';
 import { BibleDrawerMenu } from '../../components/BibleDrawerMenu';
 import { BibleHeader } from '../../components/BibleHeader';
-import { BibleModals } from '../../components/BibleModals';
 import { BibleSkeleton } from '../../components/BibleSkeleton';
 import { BibleText } from '../../components/BibleText';
-import { DonateModal } from '../../components/DonateModal';
 import { EmptyState } from '../../components/EmptyState';
+import { BibleModals } from '../../components/modals/BibleModals';
+import { DonateModal } from '../../components/modals/DonateModal';
 import { ROUTES } from '../../constants/routes';
 import { useBible } from '../../hooks/use-bible';
 import { useReaderSettings } from '../../hooks/use-reader-settings';

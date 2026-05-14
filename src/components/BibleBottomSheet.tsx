@@ -2,16 +2,19 @@ import React, { useEffect, useRef } from 'react';
 import { Animated, Dimensions, Modal, PanResponder, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../hooks/use-theme';
+import { BibleDivider } from './BibleDivider';
 
 type BibleBottomSheetProps = {
   visible: boolean;
   onClose: () => void;
   children: React.ReactNode;
+  header?: React.ReactNode;
+  footer?: React.ReactNode;
 };
 
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 
-export function BibleBottomSheet({ visible, onClose, children }: BibleBottomSheetProps) {
+export function BibleBottomSheet({ visible, onClose, children, header, footer }: BibleBottomSheetProps) {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
 
@@ -93,7 +96,11 @@ export function BibleBottomSheet({ visible, onClose, children }: BibleBottomShee
           <View {...panResponder.panHandlers} style={styles.handleContainer}>
             <View style={[styles.modalHandle, { backgroundColor: colors.primary }]} />
           </View>
-          {children}
+          {header && <><View style={styles.content}>{header}</View> <BibleDivider margin={16} /></>}
+          <View style={[styles.content, { flex: 1 }]}>
+            {children}
+          </View>
+          {footer && <><BibleDivider margin={8} /><View style={styles.content}>{footer}</View></>}
         </Animated.View>
       </View>
     </Modal>
@@ -112,7 +119,6 @@ const styles = StyleSheet.create({
     width: '100%',
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
-    padding: 8,
     elevation: 24,
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.15,
@@ -123,12 +129,15 @@ const styles = StyleSheet.create({
     height: 4,
     borderRadius: 2,
     alignSelf: 'center',
-    marginBottom: 8,
+    marginTop: 12,
+    marginBottom: 12,
   },
   handleContainer: {
     width: '100%',
-    paddingTop: 4,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  content: {
+    paddingHorizontal: 16,
   }
 });

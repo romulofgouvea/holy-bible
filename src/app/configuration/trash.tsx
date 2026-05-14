@@ -1,5 +1,5 @@
-import { BibleConfirmModal } from '@/components/BibleConfirmModal';
 import { BibleIcon } from '@/components/BibleIcon';
+import { BibleConfirmModal } from '@/components/modals/BibleConfirmModal';
 import { Feather } from '@expo/vector-icons';
 import { FlashList } from '@shopify/flash-list';
 import { usePathname, useRouter } from 'expo-router';

@@ -6,7 +6,6 @@ import { useTheme } from '../hooks/use-theme';
 import { BibleBottomSheet } from './BibleBottomSheet';
 import { BibleIcon } from './BibleIcon';
 import { BibleText } from './BibleText';
-import { BibleDivider } from './BibleDivider';
 
 const PIX_KEY = 'romulo-gouvea@hotmail.com';
 
@@ -29,8 +28,8 @@ export function DonateModal({ visible, onClose }: Props) {
   if (!visible) return null;
 
   return (
-    <BibleBottomSheet visible={visible} onClose={onClose}>
-      <View style={styles.content}>
+    <BibleBottomSheet visible={visible} onClose={onClose}
+      header={
         <View style={styles.header}>
           <BibleIcon
             name="heart"
@@ -47,9 +46,8 @@ export function DonateModal({ visible, onClose }: Props) {
             style={styles.closeBtn}
           />
         </View>
-
-        <BibleDivider margin={4} />
-
+      }>
+      <View style={styles.content}>
         <View style={styles.bodyContent}>
           <BibleText style={[styles.body, { color: colors.onSurface, fontSize: ms(14), opacity: 0.8 }]}>
             Este aplicativo é gratuito e feito com muito cuidado para levar a Palavra de Deus às suas mãos.
@@ -98,14 +96,11 @@ export function DonateModal({ visible, onClose }: Props) {
 
 const styles = StyleSheet.create({
   content: {
-    paddingHorizontal: 8,
-    paddingTop: 8,
-    paddingBottom: 16,
+
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 4,
   },
   headerIconWrap: {
     marginRight: 8,
@@ -119,7 +114,6 @@ const styles = StyleSheet.create({
   },
   bodyContent: {
     alignItems: 'center',
-    paddingTop: 8,
   },
   body: {
     textAlign: 'center',

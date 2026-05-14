@@ -1,18 +1,17 @@
-import { BibleModals } from '@/components/BibleModals';
-import { BibleVerseActionSheet, SelectedVerse } from '@/components/BibleVerseActionSheet';
-import { ReaderSettingsModal } from '@/components/ReaderSettingsModal';
-import { Feather } from '@expo/vector-icons';
+import { BibleModals } from '@/components/modals/BibleModals';
+import { BibleVerseActionSheet, SelectedVerse } from '@/components/modals/BibleVerseActionSheet';
+import { ReaderSettingsModal } from '@/components/modals/ReaderSettingsModal';
 import { useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Animated, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Animated, StyleSheet, View } from 'react-native';
 import { BibleDrawerMenu } from '../../components/BibleDrawerMenu';
-import { BibleHistoryModal } from '../../components/BibleHistoryModal';
 import { BibleIcon } from '../../components/BibleIcon';
 import { BibleSkeleton } from '../../components/BibleSkeleton';
 import { BibleToast } from '../../components/BibleToast';
 import { BibleTopBar } from '../../components/BibleTopBar';
 import { BibleVerseReader } from '../../components/BibleVerseReader';
-import { DonateModal } from '../../components/DonateModal';
+import { BibleHistoryModal } from '../../components/modals/BibleHistoryModal';
+import { DonateModal } from '../../components/modals/DonateModal';
 import { useBible } from '../../hooks/use-bible';
 import { useHistory } from '../../hooks/use-history';
 import { useReaderSettings } from '../../hooks/use-reader-settings';
@@ -216,7 +215,7 @@ export default function BibleScreen() {
                 bookAbbrev={currentBook.abbrev}
                 onVersePress={onVersePress}
               />
-              
+
               {/* Floating Navigation Buttons - Hidden when actions are open */}
               {!actionSheetVisible && (
                 <View style={styles.floatingNav}>

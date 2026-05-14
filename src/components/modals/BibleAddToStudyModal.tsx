@@ -5,9 +5,9 @@ import { useResponsive } from '../hooks/use-responsive';
 import { useStudies } from '../hooks/use-studies';
 import { useTheme } from '../hooks/use-theme';
 import { BibleBottomSheet } from './BibleBottomSheet';
+import { BibleDivider } from './BibleDivider';
 import { BibleIcon } from './BibleIcon';
 import { BibleText } from './BibleText';
-import { BibleDivider } from './BibleDivider';
 import { SelectedVerse } from './BibleVerseActionSheet';
 
 type BibleAddToStudyModalProps = {
@@ -99,7 +99,7 @@ export function BibleAddToStudyModal({ visible, onClose, selectedVerses, onShowT
           />
         </View>
 
-        <BibleDivider />
+        <BibleDivider margin={8} />
 
         {isCreating ? (
           <View style={styles.createArea}>

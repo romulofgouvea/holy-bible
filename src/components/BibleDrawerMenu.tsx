@@ -6,9 +6,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { DRAWER_ITEMS } from '../constants/routes';
 import { useResponsive } from '../hooks/use-responsive';
 import { useTheme } from '../hooks/use-theme';
+import { BibleDivider } from './BibleDivider';
 import { BibleIcon } from './BibleIcon';
 import { BibleText } from './BibleText';
-import { BibleDivider } from './BibleDivider';
 
 type MenuItem = {
   key: string;
@@ -163,7 +163,7 @@ export function BibleDrawerMenu(props: DrawerMenuProps) {
           </View>
 
           <View style={[styles.bottomSection, { paddingHorizontal: ms(8), paddingBottom: Math.max(ms(16), insets.bottom + ms(8)) }]}>
-            <BibleDivider />
+            <BibleDivider margin={8} />
             {BOTTOM_ITEMS.map(renderItem)}
           </View>
         </Animated.View>
