@@ -1,11 +1,11 @@
 import * as Clipboard from 'expo-clipboard';
 import React, { useState } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
-import { useResponsive } from '../hooks/use-responsive';
-import { useTheme } from '../hooks/use-theme';
-import { BibleBottomSheet } from './BibleBottomSheet';
-import { BibleIcon } from './BibleIcon';
-import { BibleText } from './BibleText';
+import { useResponsive } from '../../hooks/use-responsive';
+import { useTheme } from '../../hooks/use-theme';
+import { BibleBottomSheet } from '../BibleBottomSheet';
+import { BibleIcon } from '../BibleIcon';
+import { BibleText } from '../BibleText';
 
 const PIX_KEY = 'romulo-gouvea@hotmail.com';
 

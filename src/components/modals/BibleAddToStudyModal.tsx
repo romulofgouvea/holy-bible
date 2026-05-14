@@ -1,13 +1,13 @@
 import { FlashList } from '@shopify/flash-list';
 import React, { useState } from 'react';
 import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
-import { useResponsive } from '../hooks/use-responsive';
-import { useStudies } from '../hooks/use-studies';
-import { useTheme } from '../hooks/use-theme';
-import { BibleBottomSheet } from './BibleBottomSheet';
-import { BibleDivider } from './BibleDivider';
-import { BibleIcon } from './BibleIcon';
-import { BibleText } from './BibleText';
+import { useResponsive } from '../../hooks/use-responsive';
+import { useStudies } from '../../hooks/use-studies';
+import { useTheme } from '../../hooks/use-theme';
+import { BibleBottomSheet } from '../BibleBottomSheet';
+import { BibleDivider } from '../BibleDivider';
+import { BibleIcon } from '../BibleIcon';
+import { BibleText } from '../BibleText';
 import { SelectedVerse } from './BibleVerseActionSheet';
 
 type BibleAddToStudyModalProps = {

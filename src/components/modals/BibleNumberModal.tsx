@@ -1,13 +1,13 @@
 import { Feather } from '@expo/vector-icons';
 import React from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
-import { useResponsive } from '../hooks/use-responsive';
-import { useTheme } from '../hooks/use-theme';
-import { BibleCountPill } from './BibleCountPill';
-import { BibleDivider } from './BibleDivider';
-import { BibleGridBlock } from './BibleGridBlock';
-import { BibleIcon } from './BibleIcon';
-import { BibleText } from './BibleText';
+import { useResponsive } from '../../hooks/use-responsive';
+import { useTheme } from '../../hooks/use-theme';
+import { BibleCountPill } from '../BibleCountPill';
+import { BibleDivider } from '../BibleDivider';
+import { BibleGridBlock } from '../BibleGridBlock';
+import { BibleIcon } from '../BibleIcon';
+import { BibleText } from '../BibleText';
 
 type BibleNumberModalProps = {
   visible: boolean;

@@ -8,10 +8,10 @@ import {
   TouchableWithoutFeedback,
   View
 } from 'react-native';
-import { useResponsive } from '../hooks/use-responsive';
-import { useTheme } from '../hooks/use-theme';
-import { BibleIcon } from './BibleIcon';
-import { BibleText } from './BibleText';
+import { useResponsive } from '../../hooks/use-responsive';
+import { useTheme } from '../../hooks/use-theme';
+import { BibleIcon } from '../BibleIcon';
+import { BibleText } from '../BibleText';
 
 type SelectModalProps<T> = {
   visible: boolean;

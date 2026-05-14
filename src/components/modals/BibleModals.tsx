@@ -1,11 +1,11 @@
 import React, { useMemo } from 'react';
-import { Book } from '../data';
-import { useResponsive } from '../hooks/use-responsive';
-import { BibleBookModal } from './BibleBookModal';
+import { Book } from '../../data';
+import { useResponsive } from '../../hooks/use-responsive';
+import { selectionHaptic } from '../../utils/haptics';
+import { BibleBookModal } from '../BibleBookModal';
+import { BibleBottomSheet } from '../BibleBottomSheet';
 import { BibleNumberModal } from './BibleNumberModal';
 import { BibleVersionModal } from './BibleVersionModal';
-import { BibleBottomSheet } from './BibleBottomSheet';
-import { selectionHaptic } from '../utils/haptics';
 
 export type BibleModalsProps = {
   versionBooks: Book[];
@@ -144,11 +144,11 @@ export function BibleModals(props: BibleModalsProps) {
         onSelect={(num) => {
           selectionHaptic();
           if (navBook) onBookSelect(navBook.name);
-          
+
           if (navChapter !== null) {
             onChapterSelect(navChapter);
           }
-          
+
           onVerseSelect(num);
           setVerseModalVisible(false);
         }}
