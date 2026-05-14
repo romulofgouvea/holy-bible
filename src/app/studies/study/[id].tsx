@@ -181,13 +181,16 @@ export default function StudyEditorScreen() {
         contentColor={colors.onPrimary}
         leftContent={
           <TextInput
-            style={[styles.titleInput, { flex: 1, fontSize: ms(16), color: colors.onPrimary }, noOutline]}
+            style={[
+              styles.titleInput, 
+              { flex: 1, fontSize: ms(16), color: colors.onPrimary }, 
+              noOutline
+            ]}
             value={title}
             onChangeText={setTitle}
             placeholder="Nome do estudo"
             placeholderTextColor={colors.onPrimary + '80'}
             editable={!isReadonly}
-            {...({ outlineStyle: 'none' } as any)}
             underlineColorAndroid="transparent"
           />
         }

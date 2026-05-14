@@ -99,7 +99,7 @@ export function BibleBottomSheet({ visible, onClose, children, header, footer, a
           }
         ]}>
           <KeyboardAvoidingView
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            behavior="padding"
             style={{ flex: 1 }}
           >
             {isResizable && (

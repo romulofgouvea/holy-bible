@@ -247,24 +247,33 @@ export default function EstudosScreen() {
           </View>
         }
       >
-        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+        <View style={{ gap: 8 }}>
           <TextInput
-            style={[styles.input, { fontSize: ms(16), backgroundColor: colors.surfaceHighlight, color: colors.onSurface }]}
+            style={[
+              styles.input, 
+              { fontSize: ms(16), backgroundColor: colors.surfaceHighlight, color: colors.onSurface },
+              Platform.select({ web: { outline: 'none' } as any, default: {} })
+            ]}
             placeholder="Título do estudo"
             placeholderTextColor={colors.textMuted}
             value={newTitle}
             onChangeText={setNewTitle}
-            {...({ outlineStyle: 'none' } as any)}
+            underlineColorAndroid="transparent"
           />
           <TextInput
-            style={[styles.input, styles.inputMultiline, { fontSize: ms(15), backgroundColor: colors.surfaceHighlight, color: colors.onSurface }]}
+            style={[
+              styles.input, 
+              styles.inputMultiline, 
+              { fontSize: ms(15), backgroundColor: colors.surfaceHighlight, color: colors.onSurface },
+              Platform.select({ web: { outline: 'none' } as any, default: {} })
+            ]}
             placeholder="Descrição (opcional)"
             placeholderTextColor={colors.textMuted}
             value={newDescription}
             onChangeText={setNewDescription}
             multiline
             numberOfLines={3}
-            {...({ outlineStyle: 'none' } as any)}
+            underlineColorAndroid="transparent"
           />
           <View style={styles.modalActions}>
             <TouchableOpacity
@@ -274,7 +283,7 @@ export default function EstudosScreen() {
               <BibleText style={[styles.createText, { fontSize: ms(15), color: colors.onPrimary }]}>Criar</BibleText>
             </TouchableOpacity>
           </View>
-        </KeyboardAvoidingView>
+        </View>
       </BibleBottomSheet>
 
       <BibleConfirmModal
