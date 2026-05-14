@@ -47,3 +47,4 @@ tsc_errors.*
 log.*
 
 scripts/scrapper_progress_*.json
+local-builds/

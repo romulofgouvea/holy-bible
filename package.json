@@ -15,7 +15,9 @@
     "eas:submit:preview": "eas submit -p android --profile preview",
     "eas:submit:production": "eas submit -p android --profile production",
     "eas:deploy:preview": "eas build -p android --profile preview --auto-submit",
-    "eas:deploy:production": "eas build -p android --profile production --auto-submit"
+    "eas:deploy:production": "eas build -p android --profile production --auto-submit",
+    "local:build:preview": "powershell -ExecutionPolicy Bypass -File \"./local-builds/holy-bible-build-local.ps1\"",
+    "local:deploy:preview": "powershell -ExecutionPolicy Bypass -File \"./local-builds/holy-bible-deploy-playstore-preview.ps1\""
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "2.2.0",
@@ -62,6 +64,7 @@
   "devDependencies": {
     "@types/react": "~19.1.10",
     "cheerio": "^1.2.0",
+    "googleapis": "^171.4.0",
     "jimp": "^0.16.13",
     "typescript": "~5.9.2"
   },
