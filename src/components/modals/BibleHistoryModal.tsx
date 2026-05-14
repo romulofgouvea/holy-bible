@@ -102,7 +102,7 @@ export function BibleHistoryModal({ visible, onClose, onSelect }: BibleHistoryMo
           </>
         ) : (
           <View style={styles.empty}>
-            <BibleIcon name="clock" size={ms(48)} color={colors.border} />
+            <BibleIcon name="clock" size={ms(48)} containerSize={64} color={colors.border} />
             <BibleText style={[styles.emptyTitle, { color: colors.textMuted, fontSize: ms(15), marginTop: 12 }]}>
               Nenhum histórico encontrado
             </BibleText>
