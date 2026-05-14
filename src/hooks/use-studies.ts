@@ -1,4 +1,4 @@
-﻿import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useCallback, useEffect, useState } from 'react';
 import { STORAGE_KEYS } from '../constants/storage';
 
@@ -47,7 +47,7 @@ export function useStudies() {
         const parsed = JSON.parse(raw);
         const now = Date.now();
         const THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;
-        
+
         const migrated = parsed.filter((s: any) => {
           if (s.isActive === false && s.deletedAt && now - s.deletedAt > THIRTY_DAYS) return false;
           return true;
@@ -67,7 +67,7 @@ export function useStudies() {
 
   const persist = useCallback((updated: Study[]) => {
     setStudies(updated);
-    AsyncStorage.setItem(STORAGE_KEYS.STUDIES, JSON.stringify(updated)).catch(() => {});
+    AsyncStorage.setItem(STORAGE_KEYS.STUDIES, JSON.stringify(updated)).catch(() => { });
 
     AsyncStorage.getItem(STORAGE_KEYS.AUTO_BACKUP).then(val => {
       if (val === 'true') {
@@ -77,25 +77,34 @@ export function useStudies() {
           if (Platform.OS === 'android') {
             AsyncStorage.getItem(STORAGE_KEYS.AUTO_BACKUP_FILE_URI).then(fileUri => {
               if (fileUri) {
-                FileSystem.writeAsStringAsync(fileUri, JSON.stringify(updated, null, 2)).catch(() => {});
+                FileSystem.writeAsStringAsync(fileUri, JSON.stringify(updated, null, 2)).catch(() => { });
               }
-            }).catch(() => {});
+            }).catch(() => { });
           } else {
             const path = `${FileSystem.documentDirectory}backup_estudos_automatico.json`;
-            FileSystem.writeAsStringAsync(path, JSON.stringify(updated, null, 2)).catch(() => {});
+            FileSystem.writeAsStringAsync(path, JSON.stringify(updated, null, 2)).catch(() => { });
           }
         }
       }
-    }).catch(() => {});
+    }).catch(() => { });
   }, []);
 
-  const createStudy = useCallback((title: string, description?: string) => {
+  const createStudy = useCallback((title: string, content?: string, description?: string) => {
+    let finalContent = '<p><br></p>';
+    if (description && content) {
+      finalContent = `<p>${description}</p>${content}`;
+    } else if (description) {
+      finalContent = `<p>${description}</p>`;
+    } else if (content) {
+      finalContent = content;
+    }
+
     const study: Study = {
       id: makeId(),
       title,
       createdAt: new Date().toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }),
       timestamp: Date.now(),
-      content: description ? `<p>${description}</p>` : '<p><br></p>',
+      content: finalContent,
       isActive: true,
     };
     persist([study, ...studies]);
@@ -119,7 +128,7 @@ export function useStudies() {
         isActive: s.isActive !== false,
       };
     });
-    
+
     if (newStudies.length > 0) {
       const combined = [...newStudies, ...studies];
       combined.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
@@ -160,18 +169,18 @@ export function useStudies() {
   const activeStudies = studies.filter(s => s.isActive !== false);
   const trashedStudies = studies.filter(s => s.isActive === false);
 
-  return { 
-    studies: activeStudies, 
-    trashedStudies, 
-    allStudies: studies, 
-    loaded, 
-    createStudy, 
-    importBulk, 
-    updateStudy, 
-    deleteStudy, 
-    deleteMultiple, 
-    restoreMultiple, 
-    deleteMultiplePermanently, 
-    getStudy 
+  return {
+    studies: activeStudies,
+    trashedStudies,
+    allStudies: studies,
+    loaded,
+    createStudy,
+    importBulk,
+    updateStudy,
+    deleteStudy,
+    deleteMultiple,
+    restoreMultiple,
+    deleteMultiplePermanently,
+    getStudy
   };
 }

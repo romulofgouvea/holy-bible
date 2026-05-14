@@ -115,7 +115,7 @@ export default function EstudosScreen() {
 
   const handleCreate = () => {
     if (!newTitle.trim()) return;
-    const id = createStudy(newTitle.trim(), newDescription.trim());
+    const id = createStudy(newTitle.trim(), undefined, newDescription.trim());
     setNewTitle('');
     setNewDescription('');
     setModalVisible(false);

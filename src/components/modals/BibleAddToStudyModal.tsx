@@ -78,7 +78,7 @@ export function BibleAddToStudyModal({ visible, onClose, selectedVerses, onShowT
 
   return (
     <BibleBottomSheet visible={visible} onClose={onClose}
-      resizable={true}
+      resizable={!isCreating}
       header={<View style={styles.header}>
         <BibleIcon
           name={isCreating ? "arrow-left" : "plus-circle"}
@@ -122,11 +122,11 @@ export function BibleAddToStudyModal({ visible, onClose, selectedVerses, onShowT
           <ScrollView style={{ flex: 1 }} keyboardShouldPersistTaps="handled">
             <TextInput
               style={[
-                styles.input, 
+                styles.input,
                 { color: colors.onSurface, backgroundColor: colors.surfaceHighlight },
                 Platform.select({ web: { outline: 'none' } as any, default: {} })
               ]}
-              placeholder="Título do estudo..."
+              placeholder="Título do estudo"
               placeholderTextColor={colors.textMuted}
               value={newTitle}
               onChangeText={setNewTitle}
@@ -182,7 +182,8 @@ const styles = StyleSheet.create({
   createText: { fontWeight: '700' },
   studyItem: { flexDirection: 'row', alignItems: 'center', paddingVertical: 12, borderBottomWidth: 1 },
   empty: { padding: 40, alignItems: 'center' },
-  input: { height: 48, borderRadius: 12, paddingHorizontal: 16, fontSize: 16, marginBottom: 8 },
+  input: { borderRadius: 12, paddingHorizontal: 16, paddingVertical: 14, marginBottom: 8 },
+  inputMultiline: { minHeight: 90, textAlignVertical: 'top' },
   createActions: { flexDirection: 'row', gap: 12 },
   cancelBtn: { flex: 1, paddingVertical: 14, borderRadius: 14, alignItems: 'center' },
   cancelText: { fontWeight: '700' },
