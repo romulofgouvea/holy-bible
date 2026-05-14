@@ -62,10 +62,10 @@ const EXPORT_CSS = `
   ul, ol { padding-left: 20px; margin: 8px 0; }
 `;
 
-export async function exportToPDF(title: string, htmlContent: string) {
+export async function exportToPDF(title: string, htmlContent: string, showTitle: boolean = true) {
   try {
     const htmlDocument = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${title}</title><style>${EXPORT_CSS}</style></head><body>
-      <h1 class="main-title">${title}</h1>
+      ${showTitle ? `<h1 class="main-title">${title}</h1>` : ''}
       ${htmlContent.replace(/<p>\s*<br\s*\/?>\s*<\/p>/gi, '')}
     </body></html>`;
 

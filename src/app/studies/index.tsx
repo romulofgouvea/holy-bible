@@ -99,14 +99,13 @@ export default function EstudosScreen() {
 
     const bodyHtml = selectedStudies.map((study, index) => `
       <div style="${index > 0 ? 'page-break-before: always;' : ''}">
-        <h1 class="main-title">${study.title}</h1>
-        <div class="meta">Criado em ${study.createdAt} • Exportado em ${new Date().toLocaleDateString('pt-BR')}</div>
+        <h1 class="main-title">Estudo: ${study.title}</h1>
         ${study.content}
       </div>
     `).join('');
 
     const title = selectedStudies.length === 1 ? `Estudo: ${selectedStudies[0].title}` : 'Meus Estudos';
-    await exportToPDF(title, bodyHtml);
+    await exportToPDF(title, bodyHtml, false);
     setSelectedIds(new Set());
   };
 
