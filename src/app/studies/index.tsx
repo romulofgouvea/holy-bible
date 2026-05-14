@@ -41,6 +41,7 @@ export default function EstudosScreen() {
   const [headerMenuVisible, setHeaderMenuVisible] = useState(false);
   const [shareMenuVisible, setShareMenuVisible] = useState(false);
   const [donateVisible, setDonateVisible] = useState(false);
+  const [selectionPurpose, setSelectionPurpose] = useState<'delete' | 'share' | null>(null);
   const insets = useSafeAreaInsets();
 
   const { deleteMultiple, studies, createStudy, deleteStudy, importBulk, loaded } = useStudies();
@@ -50,7 +51,7 @@ export default function EstudosScreen() {
     return <BibleSkeleton />;
   }
 
-  const isSelectionMode = selectedIds.size > 0;
+  const isSelectionMode = selectedIds.size > 0 || !!selectionPurpose;
 
   const toggleSelection = (id: string) => {
     setSelectedIds(prev => {
@@ -87,6 +88,7 @@ export default function EstudosScreen() {
         await Sharing.shareAsync(newUri, { mimeType: 'application/json' });
       }
       setSelectedIds(new Set());
+      setSelectionPurpose(null);
     } catch (e) {
       console.error('Export failed', e);
     }
@@ -107,6 +109,7 @@ export default function EstudosScreen() {
     const title = selectedStudies.length === 1 ? `Estudo: ${selectedStudies[0].title}` : 'Meus Estudos';
     await exportToPDF(title, bodyHtml, false);
     setSelectedIds(new Set());
+    setSelectionPurpose(null);
   };
 
   const handleCreate = () => {
@@ -129,38 +132,48 @@ export default function EstudosScreen() {
   );
 
   const renderItem = ({ item }: { item: Study }) => {
-    const rawText = (item.content || '').replace(/<[^>]+>/g, ' ').trim();
-    const firstPara = rawText.length > 80 ? rawText.substring(0, 80) + '...' : rawText;
     const isSelected = selectedIds.has(item.id);
 
     return (
       <TouchableOpacity
         style={[styles.card, {
-          backgroundColor: isSelected ? colors.primary + '20' : colors.surface,
+          backgroundColor: isSelected ? colors.primary + '15' : colors.surface,
           borderColor: isSelected ? colors.primary : colors.border,
           borderWidth: isSelected ? 2 : 1
         }]}
         onPress={() => isSelectionMode ? toggleSelection(item.id) : router.push(ROUTES.STUDY_EDITOR(item.id) as any)}
         onLongPress={() => toggleSelection(item.id)}
-        activeOpacity={0.75}
+        activeOpacity={0.7}
       >
         <View style={styles.cardContent}>
-          <TouchableOpacity onPress={() => toggleSelection(item.id)} style={[styles.cardIcon, { backgroundColor: isSelected ? colors.primary : colors.surfaceHighlight }]}>
-            {isSelected ? (
-              <BibleIcon name="check" color={colors.onPrimary} />
-            ) : (
-              <BibleIcon name="book-open" color={colors.primary} />
-            )}
-          </TouchableOpacity>
+          {isSelectionMode ? (
+            <TouchableOpacity 
+              onPress={() => toggleSelection(item.id)}
+              style={[
+                styles.cardIcon, 
+                { 
+                  backgroundColor: isSelected ? colors.primary : 'transparent',
+                  borderWidth: isSelected ? 0 : 1.5,
+                  borderColor: isSelected ? 'transparent' : colors.border
+                }
+              ]}
+            >
+              {isSelected ? (
+                <BibleIcon name="check" color={colors.onPrimary} size={ms(16)} />
+              ) : null}
+            </TouchableOpacity>
+          ) : (
+            <View style={[styles.cardIcon, { backgroundColor: colors.surfaceHighlight, borderWidth: 0 }]}>
+              <BibleIcon name="book-open" color={colors.primary} size={ms(18)} />
+            </View>
+          )}
           <View style={styles.cardText}>
             <BibleText style={[styles.cardTitle, { fontSize: ms(16), color: colors.onSurface, fontWeight: '600' }]} numberOfLines={2}>{item.title}</BibleText>
             <BibleText style={[styles.cardDate, { fontSize: ms(12), color: colors.textMuted }]}>{item.createdAt}</BibleText>
           </View>
-          {!isSelectionMode && (
-            <TouchableOpacity onPress={() => setStudyToDelete(item.id)} style={[styles.deleteBtn, { backgroundColor: colors.error + '20' }]}>
-              <BibleIcon name="trash-2" color={colors.error} />
-            </TouchableOpacity>
-          )}
+          <View style={{ opacity: isSelectionMode ? 0.2 : 0.8 }}>
+            <BibleIcon name="chevron-right" color={colors.textMuted} size={ms(18)} />
+          </View>
         </View>
       </TouchableOpacity>
     );
@@ -174,15 +187,30 @@ export default function EstudosScreen() {
           showMenu={false}
           showBack={true}
           backIcon="x"
-          onBack={() => setSelectedIds(new Set())}
+          onBack={() => {
+            setSelectedIds(new Set());
+            setSelectionPurpose(null);
+          }}
           rightContent={
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
-              <TouchableOpacity onPress={() => setShareMenuVisible(true)}>
-                <BibleIcon name="share-2" color={colors.onPrimary} />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => setMultiDeleteVisible(true)}>
-                <BibleIcon name="trash-2" color={colors.onPrimary} />
-              </TouchableOpacity>
+              {(!selectionPurpose || selectionPurpose === 'share') && (
+                <TouchableOpacity 
+                  onPress={() => setShareMenuVisible(true)}
+                  disabled={selectedIds.size === 0}
+                  style={{ opacity: selectedIds.size === 0 ? 0.3 : 1 }}
+                >
+                  <BibleIcon name="share-2" color={colors.onPrimary} />
+                </TouchableOpacity>
+              )}
+              {(!selectionPurpose || selectionPurpose === 'delete') && (
+                <TouchableOpacity 
+                  onPress={() => setMultiDeleteVisible(true)}
+                  disabled={selectedIds.size === 0}
+                  style={{ opacity: selectedIds.size === 0 ? 0.3 : 1 }}
+                >
+                  <BibleIcon name="trash-2" color={colors.onPrimary} />
+                </TouchableOpacity>
+              )}
             </View>
           }
         />
@@ -274,6 +302,7 @@ export default function EstudosScreen() {
         onConfirm={() => {
           deleteMultiple(Array.from(selectedIds));
           setSelectedIds(new Set());
+          setSelectionPurpose(null);
           setMultiDeleteVisible(false);
         }}
       />
@@ -292,6 +321,8 @@ export default function EstudosScreen() {
         title="Ações"
         items={[
           { icon: 'file-plus', label: 'Novo Estudo', onPress: () => setModalVisible(true) },
+          { icon: 'trash-2', label: 'Excluir Estudos', onPress: () => setSelectionPurpose('delete') },
+          { icon: 'share-2', label: 'Compartilhar', onPress: () => setSelectionPurpose('share') },
           { icon: 'trash', label: 'Lixeira', onPress: () => router.push(ROUTES.TRASH as any) }
         ]}
       />
@@ -332,7 +363,7 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
   },
   cardContent: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12, paddingVertical: 12, gap: 14 },
-  cardIcon: { width: 38, height: 38, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
+  cardIcon: { width: 24, height: 24, borderRadius: 6, alignItems: 'center', justifyContent: 'center' },
   cardText: { flex: 1, gap: 4 },
   cardTitle: { fontWeight: '700' },
   cardDate: { marginTop: 2 },
