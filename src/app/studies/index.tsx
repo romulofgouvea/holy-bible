@@ -1,4 +1,5 @@
 import { BibleActionsSheet } from '@/components/BibleActionsSheet';
+import { exportToPDF } from '../../utils/export';
 import { BibleBottomSheet } from '@/components/BibleBottomSheet';
 import { BibleIcon } from '@/components/BibleIcon';
 import { BibleConfirmModal } from '@/components/modals/BibleConfirmModal';
@@ -93,67 +94,20 @@ export default function EstudosScreen() {
 
   const exportPDFs = async (ids: Set<string>) => {
     setShareMenuVisible(false);
-    try {
-      const selectedStudies = studies.filter(s => ids.has(s.id));
-      if (selectedStudies.length === 0) return;
+    const selectedStudies = studies.filter(s => ids.has(s.id));
+    if (selectedStudies.length === 0) return;
 
-      const css = `
-        @import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap');
-        @media print { @page { margin: 0; size: auto; } body { padding: 20mm; } }
-        body { font-family: 'Inter', -apple-system, sans-serif; color: #222; max-width: 800px; margin: 0 auto; line-height: 1.6; padding: 24px; }
-        h1.main-title { color: #008080; font-size: 32px; font-weight: 800; margin-bottom: 8px; border-bottom: 2px solid #e0f2f1; padding-bottom: 12px; }
-        .meta { color: #888; font-size: 13px; margin-bottom: 32px; font-weight: 600; }
-        .bible-verse { border-left: 4px solid #008080; padding: 16px 24px; background: #f4faf9; border-radius: 8px; margin: 24px 0; page-break-inside: avoid; }
-        .bible-verse b, .bible-verse .verse-title { color: #008080; display: block; margin-bottom: 12px; font-size: 16px; font-weight: bold; letter-spacing: 0.5px; text-transform: uppercase; }
-        .verse-line { margin-bottom: 10px; line-height: 1.7; display: flex; gap: 8px; }
-        .verse-num { font-weight: 800; color: #008080; font-size: 12px; margin-top: 2px; }
-        .verse-text { font-style: italic; color: #333; flex: 1; }
-        img { max-width: 100%; border-radius: 12px; margin: 24px 0; box-shadow: 0 4px 12px rgba(0,0,0,0.1); page-break-inside: avoid; }
-        .study-divider { border-top: 2px dashed #ccc; margin: 40px 0; }
-        ul, ol { padding-left: 24px; margin-top: 8px; margin-bottom: 8px; }
-        li { margin-bottom: 4px; }
-        ul.task-list { list-style: none; padding-left: 28px; }
-        ul.task-list li { position: relative; margin-bottom: 8px; }
-        ul.task-list li::before {
-          content: ''; position: absolute; left: -26px; top: 4px; width: 18px; height: 18px;
-          border: 2px solid #008080; border-radius: 4px; background-color: transparent; box-sizing: border-box;
-        }
-        ul.task-list li[data-checked="true"]::before {
-          background-color: #008080;
-          background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>');
-          background-size: 12px; background-repeat: no-repeat; background-position: center;
-        }
-        ul.task-list li[data-checked="true"] { text-decoration: line-through; opacity: 0.6; }
-      `;
+    const bodyHtml = selectedStudies.map((study, index) => `
+      <div style="${index > 0 ? 'page-break-before: always;' : ''}">
+        <h1 class="main-title">${study.title}</h1>
+        <div class="meta">Criado em ${study.createdAt} • Exportado em ${new Date().toLocaleDateString('pt-BR')}</div>
+        ${study.content}
+      </div>
+    `).join('');
 
-      const bodyHtml = selectedStudies.map(study => `
-        <div style="page-break-after: always;">
-          <h1 class="main-title">${study.title}</h1>
-          <div class="meta">Criado em ${study.createdAt} • Exportado em ${new Date().toLocaleDateString('pt-BR')}</div>
-          ${study.content}
-        </div>
-      `).join('');
-
-      const htmlDocument = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Estudos Exportados</title><style>${css}</style></head><body>${bodyHtml}</body></html>`;
-
-      if (Platform.OS === 'web') {
-        const htmlWithScript = htmlDocument.replace('</body>', '<script>setTimeout(()=>window.print(),500);</script></body>');
-        const blob = new Blob([htmlWithScript], { type: 'text/html;charset=utf-8' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a'); a.href = url; a.target = '_blank';
-        document.body.appendChild(a); a.click(); document.body.removeChild(a);
-      } else {
-        const Print = require('expo-print');
-        const Sharing = require('expo-sharing');
-        const { uri } = await Print.printToFileAsync({ html: htmlDocument, width: 612, height: 792 });
-        const safeTitle = selectedStudies.length === 1 ? selectedStudies[0].title.replace(/[^a-zA-Z0-9]/g, '_') : 'estudos_exportados';
-        const newUri = `${(FileSystem as any).documentDirectory}${safeTitle}.pdf`;
-        try { await FileSystem.deleteAsync(newUri, { idempotent: true }); } catch (e) { }
-        await FileSystem.copyAsync({ from: uri, to: newUri });
-        await Sharing.shareAsync(newUri, { mimeType: 'application/pdf', UTI: 'com.adobe.pdf' });
-      }
-      setSelectedIds(new Set());
-    } catch (e: any) { Alert.alert('Erro', String(e?.message || e)); }
+    const title = selectedStudies.length === 1 ? `Estudo: ${selectedStudies[0].title}` : 'Meus Estudos';
+    await exportToPDF(title, bodyHtml);
+    setSelectedIds(new Set());
   };
 
   const handleCreate = () => {
