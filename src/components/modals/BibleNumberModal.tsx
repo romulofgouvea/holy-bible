@@ -74,7 +74,7 @@ export function BibleNumberModal({ visible, onClose, onBack, items, title, iconN
       >
         <View style={styles.gridContainer}>
           {items.map((item) => {
-            const availableWidth = width - 32;
+            const availableWidth = width - 48;
             const numCols = 5;
             const itemWidth = ((availableWidth - (numCols - 1) * 8) / numCols) - 0.01;
             const isSelected = item === currentItem;

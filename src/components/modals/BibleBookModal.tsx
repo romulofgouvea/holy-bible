@@ -97,7 +97,7 @@ export function BibleBookModal({ visible, onClose, books, versionSigla, onVersio
     ];
   }, [searchQuery, enrichedBooks]);
 
-  const availableWidth = width - 32;
+  const availableWidth = width - 48;
   const numCols = Math.max(4, Math.floor(availableWidth / ms(72)));
   const itemWidth = ((availableWidth - (numCols - 1) * 8) / numCols) - 0.01;
 
