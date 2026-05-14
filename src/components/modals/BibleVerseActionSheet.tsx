@@ -6,7 +6,6 @@ import { VERSE_HIGHLIGHTS as HIGHLIGHT_COLORS } from '../../constants/colors';
 import { useResponsive } from '../../hooks/use-responsive';
 import { useTheme } from '../../hooks/use-theme';
 import { BibleIcon } from '../BibleIcon';
-import { exportToPDF } from '../../utils/export';
 import { BibleAddToStudyModal } from './BibleAddToStudyModal';
 
 export type SelectedVerse = {
@@ -92,37 +91,6 @@ export function BibleVerseActionSheet(props: VerseActionSheetProps) {
     try { await Share.share({ message: buildText() }); } catch (e) { }
   };
 
-  const onExportPDF = async () => {
-    if (count === 0) return;
-    const sorted = [...selectedVerses].sort((a, b) => a.chapter !== b.chapter ? a.chapter - b.chapter : a.verse - b.verse);
-    const sameChapter = sorted.every((v) => v.chapter === sorted[0].chapter);
-
-    let ref = '';
-    if (sameChapter) {
-      const groups: string[] = [];
-      let start = sorted[0].verse;
-      let end = sorted[0].verse;
-      for (let i = 1; i < sorted.length; i++) {
-        if (sorted[i].verse === end + 1) end = sorted[i].verse;
-        else {
-          groups.push(start === end ? `${start}` : `${start}-${end}`);
-          start = sorted[i].verse; end = sorted[i].verse;
-        }
-      }
-      groups.push(start === end ? `${start}` : `${start}-${end}`);
-      ref = `${sorted[0].bookName} ${sorted[0].chapter}: ${groups.join(', ')} (${sorted[0].version.toUpperCase()})`;
-    } else {
-      ref = `${sorted[0].bookName} (${sorted[0].version.toUpperCase()})`;
-    }
-
-    const lines = sorted.map(v => {
-      return `<div class="verse-line"><span class="verse-num">${v.verse}</span> <span class="verse-text">${v.text}</span></div>`;
-    }).join('');
-
-    const html = `<blockquote class="bible-verse">${sameChapter ? `<div class="verse-title">${ref}</div>` : ''}${lines}</blockquote>`;
-    await exportToPDF(ref, html);
-    onClose();
-  };
 
   const onHighlight = (color: string | null) => {
     onBulkHighlight(selectedVerses, color);
@@ -152,7 +120,7 @@ export function BibleVerseActionSheet(props: VerseActionSheetProps) {
       <Animated.View style={[styles.bar, {
         transform: [{ translateY }],
         backgroundColor: colors.background,
-        paddingBottom: Math.max(16, insets.bottom + 8),
+        paddingBottom: Math.max(12, insets.bottom),
         borderColor: colors.border
       }]} id="bible-verse-action-sheet">
 
@@ -185,13 +153,6 @@ export function BibleVerseActionSheet(props: VerseActionSheetProps) {
               <BibleIcon name="book-open" size={ms(16)} color={count === 0 ? colors.textMuted : colors.primary} />
             </TouchableOpacity>
 
-            <TouchableOpacity
-              style={[styles.iconBtn, { backgroundColor: count === 0 ? colors.surfaceHighlight : colors.primary + '25' }]}
-              onPress={onExportPDF}
-              disabled={count === 0}
-            >
-              <BibleIcon name="file-text" size={ms(16)} color={count === 0 ? colors.textMuted : colors.primary} />
-            </TouchableOpacity>
           </View>
 
           <BibleIcon
