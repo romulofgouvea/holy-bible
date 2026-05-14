@@ -4,7 +4,7 @@ import { ROUTES, ROUTE_LABELS } from '../constants/routes';
 import { useReaderSettings } from '../hooks/use-reader-settings';
 import { useResponsive } from '../hooks/use-responsive';
 import { useTheme } from '../hooks/use-theme';
-import { BibleActionsSheet } from './BibleActionsSheet';
+import { BibleActionsDrawer } from './BibleActionsDrawer';
 import { BibleHeader } from './BibleHeader';
 import { BibleIcon } from './BibleIcon';
 import { BibleText } from './BibleText';
@@ -67,7 +67,7 @@ export const BibleTopBar = React.memo((props: BibleTopBarProps) => {
                 }
             />
 
-            <BibleActionsSheet
+            <BibleActionsDrawer
                 visible={dotsMenuVisible}
                 onClose={() => setDotsMenuVisible(false)}
                 title="Ações"

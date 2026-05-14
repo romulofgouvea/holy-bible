@@ -1,8 +1,7 @@
+import { BibleActionsDrawer } from '@/components/BibleActionsDrawer';
 import { BibleIcon } from '@/components/BibleIcon';
 import { BibleSkeleton } from '@/components/BibleSkeleton';
-import { BibleActionsSheet } from '@/components/BibleActionsSheet';
 import { BibleConfirmModal } from '@/components/modals/BibleConfirmModal';
-import { Feather } from '@expo/vector-icons';
 import { FlashList } from '@shopify/flash-list';
 import { usePathname, useRouter } from 'expo-router';
 import React, { useState } from 'react';
@@ -78,11 +77,11 @@ export default function TrashScreen() {
       >
         <View style={styles.cardContent}>
           {isSelectionMode ? (
-            <TouchableOpacity 
+            <TouchableOpacity
               onPress={() => toggleSelection(item.id)}
               style={[
-                styles.cardIcon, 
-                { 
+                styles.cardIcon,
+                {
                   backgroundColor: isSelected ? colors.primary : 'transparent',
                   borderWidth: isSelected ? 0 : 1.5,
                   borderColor: isSelected ? 'transparent' : colors.border
@@ -138,7 +137,7 @@ export default function TrashScreen() {
           rightContent={
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
               {(!selectionPurpose || selectionPurpose === 'restore') && (
-                <TouchableOpacity 
+                <TouchableOpacity
                   onPress={handleRestore}
                   disabled={selectedIds.size === 0}
                   style={{ opacity: selectedIds.size === 0 ? 0.3 : 1 }}
@@ -147,7 +146,7 @@ export default function TrashScreen() {
                 </TouchableOpacity>
               )}
               {(!selectionPurpose || selectionPurpose === 'delete') && (
-                <TouchableOpacity 
+                <TouchableOpacity
                   onPress={() => setMultiDeleteVisible(true)}
                   disabled={selectedIds.size === 0}
                   style={{ opacity: selectedIds.size === 0 ? 0.3 : 1 }}
@@ -165,7 +164,7 @@ export default function TrashScreen() {
           showBack={true}
           onBack={() => handleSmartBack(pathname)}
           rightContent={
-            <TouchableOpacity 
+            <TouchableOpacity
               onPress={() => setMenuVisible(true)}
               style={{ width: ms(44), height: ms(44), alignItems: 'center', justifyContent: 'center' }}
             >
@@ -188,7 +187,7 @@ export default function TrashScreen() {
         />
       </View>
 
-      <BibleActionsSheet
+      <BibleActionsDrawer
         visible={menuVisible}
         onClose={() => setMenuVisible(false)}
         title="Ações"

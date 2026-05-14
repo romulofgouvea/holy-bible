@@ -1,3 +1,4 @@
+import { BibleActionsDrawer } from '@/components/BibleActionsDrawer';
 import { BibleActionsSheet } from '@/components/BibleActionsSheet';
 import { exportToPDF } from '../../utils/export';
 import { BibleBottomSheet } from '@/components/BibleBottomSheet';
@@ -324,7 +325,7 @@ export default function EstudosScreen() {
         onOpenDonate={() => { setDrawerVisible(false); setTimeout(() => setDonateVisible(true), 250); }}
       />
 
-      <BibleActionsSheet
+      <BibleActionsDrawer
         visible={headerMenuVisible}
         onClose={() => setHeaderMenuVisible(false)}
         title="Ações"

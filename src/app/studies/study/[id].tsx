@@ -1,8 +1,6 @@
 import { useLocalSearchParams, usePathname, useRouter } from 'expo-router';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { exportToPDF } from '../../../utils/export';
 import {
-  Alert,
   DeviceEventEmitter,
   Keyboard,
   KeyboardAvoidingView,
@@ -12,16 +10,17 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
+import { exportToPDF } from '../../../utils/export';
 import { handleSmartBack } from '../../../utils/navigation';
 
 import { BibleActionsSheet } from '@/components/BibleActionsSheet';
 import { BibleIcon } from '@/components/BibleIcon';
 import { COLOR_THEMES } from '@/constants/colors';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { BibleBookModal } from '../../../components/modals/BibleBookModal';
 import { BibleBottomSheet } from '../../../components/BibleBottomSheet';
 import { BibleHeader } from '../../../components/BibleHeader';
 import { BibleSkeleton } from '../../../components/BibleSkeleton';
+import { BibleBookModal } from '../../../components/modals/BibleBookModal';
 import { BibleNumberModal } from '../../../components/modals/BibleNumberModal';
 import { BibleVersionModal } from '../../../components/modals/BibleVersionModal';
 import { ReaderSettingsModal } from '../../../components/modals/ReaderSettingsModal';
@@ -182,8 +181,8 @@ export default function StudyEditorScreen() {
         leftContent={
           <TextInput
             style={[
-              styles.titleInput, 
-              { flex: 1, fontSize: ms(16), color: colors.onPrimary }, 
+              styles.titleInput,
+              { flex: 1, fontSize: ms(16), color: colors.onPrimary },
               noOutline
             ]}
             value={title}
