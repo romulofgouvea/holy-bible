@@ -1,6 +1,6 @@
 import { FlashList } from '@shopify/flash-list';
 import React, { useState } from 'react';
-import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import { useResponsive } from '../../hooks/use-responsive';
 import { useStudies } from '../../hooks/use-studies';
 import { useTheme } from '../../hooks/use-theme';
@@ -78,7 +78,7 @@ export function BibleAddToStudyModal({ visible, onClose, selectedVerses, onShowT
 
   return (
     <BibleBottomSheet visible={visible} onClose={onClose}
-      resizable={isCreating ? false : true}
+      resizable={true}
       header={<View style={styles.header}>
         <BibleIcon
           name={isCreating ? "arrow-left" : "plus-circle"}
@@ -119,7 +119,7 @@ export function BibleAddToStudyModal({ visible, onClose, selectedVerses, onShowT
     >
       <View style={[styles.container]}>
         {isCreating ? (
-          <View>
+          <ScrollView style={{ flex: 1 }} keyboardShouldPersistTaps="handled">
             <TextInput
               style={[styles.input, { color: colors.onSurface, borderColor: colors.border, backgroundColor: colors.surfaceHighlight }]}
               placeholder="Título do estudo..."
@@ -128,7 +128,7 @@ export function BibleAddToStudyModal({ visible, onClose, selectedVerses, onShowT
               onChangeText={setNewTitle}
               autoFocus
             />
-          </View>
+          </ScrollView>
         ) : (
           <View style={{ flex: 1 }}>
             <FlashList

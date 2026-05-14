@@ -99,8 +99,8 @@ export function BibleBottomSheet({ visible, onClose, children, header, footer, a
           }
         ]}>
           <KeyboardAvoidingView
-            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-            style={{ flex: isResizable ? 1 : 0, flexShrink: 1 }}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            style={{ flex: 1 }}
           >
             {isResizable && (
               <View {...panResponder.panHandlers} style={styles.handleContainer}>
@@ -113,7 +113,7 @@ export function BibleBottomSheet({ visible, onClose, children, header, footer, a
                 <BibleDivider margin={DESIGN_TOKENS.spacing.md} />
               </View>
             )}
-            <View style={[styles.content, { flex: isResizable ? 1 : 0, flexShrink: 1 }]}>
+            <View style={[styles.content, { flex: 1 }]}>
               {children}
             </View>
             {footer && (
