@@ -19,9 +19,10 @@ type Props = {
   onChange: (html: string) => void;
   onOpenVersePicker: () => void;
   showToolbar?: boolean;
+  readonly?: boolean;
 };
 
-export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ initialHtml, onChange, onOpenVersePicker, showToolbar = true }, ref) => {
+export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ initialHtml, onChange, onOpenVersePicker, showToolbar = true, readonly = false }, ref) => {
   const webViewRef = useRef<WebView>(null);
   const webIframeRef = useRef<any>(null);
   const { colors: themeColors, colorTheme, isDarkMode } = useTheme();
@@ -220,10 +221,11 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
         .verse-line { margin-bottom: 10px; display: flex; gap: 8px; align-items: flex-start; }
         .verse-num { font-weight: 800; color: ${colors.primary}; font-size: 12px; margin-top: 2px; min-width: 24px; text-align: right; flex-shrink: 0; white-space: nowrap; }
         .verse-text { font-style: italic; color: ${colors.onSurface}; flex: 1; }
+        ${readonly ? '.remove-verse-btn { display: none !important; }' : ''}
       </style>
     </head>
     <body onclick="document.getElementById('editor').focus();">
-      <div id="editor" contenteditable="true" placeholder="Comece a escrever seu estudo aqui...">${initialHtml}</div>
+      <div id="editor" contenteditable="${readonly ? 'false' : 'true'}" placeholder="Comece a escrever seu estudo aqui...">${initialHtml}</div>
       <script>
         const editor = document.getElementById('editor');
         let debounceTimer;
@@ -599,7 +601,7 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
 
   return (
     <View style={{ flex: 1 }}>
-      {showToolbar && (
+      {showToolbar && !readonly && (
         <View style={[styles.toolbar, { backgroundColor: colors.surface, borderBottomColor: colors.border }]}>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} keyboardShouldPersistTaps="always" style={{ flex: 1 }} contentContainerStyle={{ paddingLeft: 8, paddingRight: 48, alignItems: 'center' }}>
             <View style={[styles.rowGroup, { backgroundColor: colors.surfaceHighlight, borderColor: colors.border }]}>

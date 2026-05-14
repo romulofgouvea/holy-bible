@@ -37,7 +37,8 @@ import { useTheme } from '../../../hooks/use-theme';
 const noOutline = Platform.select({ web: { outline: 'none', outlineWidth: 0 } as any, default: {} });
 
 export default function StudyEditorScreen() {
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id, readonly } = useLocalSearchParams<{ id: string; readonly?: string }>();
+  const isReadonly = readonly === 'true';
   const pathname = usePathname();
   const { getStudy, updateStudy, loaded } = useStudies();
   const { ms } = useResponsive();
@@ -185,27 +186,32 @@ export default function StudyEditorScreen() {
             onChangeText={setTitle}
             placeholder="Nome do estudo"
             placeholderTextColor={colors.onPrimary + '80'}
+            editable={!isReadonly}
             {...({ outlineStyle: 'none' } as any)}
             underlineColorAndroid="transparent"
           />
         }
         rightContent={
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: ms(4) }}>
-            <TouchableOpacity
-              style={{ width: ms(38), height: ms(38), borderRadius: ms(10), alignItems: 'center', justifyContent: 'center' }}
-              onPress={() => {
-                if (showToolbar) Keyboard.dismiss();
-                setShowToolbar(!showToolbar);
-              }}
-            >
-              <BibleIcon name={showToolbar ? "edit-2" : "eye"} color={colors.onPrimary} size={ms(18)} />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{ width: ms(38), height: ms(38), borderRadius: ms(10), alignItems: 'center', justifyContent: 'center' }}
-              onPress={() => setMenuVisible(true)}
-            >
-              <BibleIcon name="more-vertical" color={colors.onPrimary} size={ms(18)} />
-            </TouchableOpacity>
+            {!isReadonly && (
+              <TouchableOpacity
+                style={{ width: ms(38), height: ms(38), borderRadius: ms(10), alignItems: 'center', justifyContent: 'center' }}
+                onPress={() => {
+                  if (showToolbar) Keyboard.dismiss();
+                  setShowToolbar(!showToolbar);
+                }}
+              >
+                <BibleIcon name={showToolbar ? "edit-2" : "eye"} color={colors.onPrimary} size={ms(18)} />
+              </TouchableOpacity>
+            )}
+            {!isReadonly && (
+              <TouchableOpacity
+                style={{ width: ms(38), height: ms(38), borderRadius: ms(10), alignItems: 'center', justifyContent: 'center' }}
+                onPress={() => setMenuVisible(true)}
+              >
+                <BibleIcon name="more-vertical" color={colors.onPrimary} size={ms(18)} />
+              </TouchableOpacity>
+            )}
           </View>
         }
       />
@@ -218,6 +224,7 @@ export default function StudyEditorScreen() {
             onChange={setHtmlContent}
             onOpenVersePicker={openVersePicker}
             showToolbar={showToolbar}
+            readonly={isReadonly}
           />
         ) : null}
       </KeyboardAvoidingView>

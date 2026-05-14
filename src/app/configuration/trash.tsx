@@ -1,4 +1,6 @@
 import { BibleIcon } from '@/components/BibleIcon';
+import { BibleSkeleton } from '@/components/BibleSkeleton';
+import { BibleActionsSheet } from '@/components/BibleActionsSheet';
 import { BibleConfirmModal } from '@/components/modals/BibleConfirmModal';
 import { Feather } from '@expo/vector-icons';
 import { FlashList } from '@shopify/flash-list';
@@ -22,14 +24,19 @@ export default function TrashScreen() {
   const router = useRouter();
   const pathname = usePathname();
   const { colors } = useTheme();
-  const [studyToDelete, setStudyToDelete] = useState<string | null>(null);
   const [multiDeleteVisible, setMultiDeleteVisible] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [selectionPurpose, setSelectionPurpose] = useState<'delete' | 'restore' | null>(null);
+  const [menuVisible, setMenuVisible] = useState(false);
 
-  const { restoreMultiple, deleteMultiplePermanently, trashedStudies } = useStudies();
+  const { restoreMultiple, deleteMultiplePermanently, trashedStudies, loaded } = useStudies();
   const currentStudies = trashedStudies;
 
-  const isSelectionMode = selectedIds.size > 0;
+  if (!loaded) {
+    return <BibleSkeleton />;
+  }
+
+  const isSelectionMode = selectedIds.size > 0 || !!selectionPurpose;
 
   const toggleSelection = (id: string) => {
     setSelectedIds(prev => {
@@ -42,7 +49,7 @@ export default function TrashScreen() {
 
   const renderEmpty = () => (
     <View style={styles.emptyContainer}>
-      <BibleIcon name="trash" size={ms(64)} color={colors.primary} />
+      <BibleIcon name="trash-2" size={ms(64)} color={colors.primaryVariant} style={{ marginBottom: ms(16) }} />
       <BibleText style={[styles.emptyTitle, { fontSize: ms(20), color: colors.onBackground }]}>
         Lixeira vazia
       </BibleText>
@@ -60,33 +67,60 @@ export default function TrashScreen() {
         style={[
           styles.card,
           {
-            backgroundColor: isSelected ? colors.primary + '20' : colors.surface,
-            borderColor: isSelected ? colors.primary : colors.error + '40',
+            backgroundColor: isSelected ? colors.primary + '15' : colors.surface,
+            borderColor: isSelected ? colors.primary : colors.border,
             borderWidth: isSelected ? 2 : 1
           }
         ]}
-        onPress={() => toggleSelection(item.id)}
+        onPress={() => isSelectionMode ? toggleSelection(item.id) : router.push(`${ROUTES.STUDY_EDITOR(item.id)}?readonly=true` as any)}
         onLongPress={() => toggleSelection(item.id)}
-        activeOpacity={0.75}
+        activeOpacity={0.7}
       >
         <View style={styles.cardContent}>
-          <TouchableOpacity
-            onPress={() => toggleSelection(item.id)}
-            style={[styles.cardIcon, { backgroundColor: isSelected ? colors.primary : colors.error + '20' }]}
-          >
-            <Feather
-              name={isSelected ? "check" : "trash-2"}
-              size={ms(18)}
-              color={isSelected ? colors.onPrimary : colors.error}
-            />
-          </TouchableOpacity>
+          {isSelectionMode ? (
+            <TouchableOpacity 
+              onPress={() => toggleSelection(item.id)}
+              style={[
+                styles.cardIcon, 
+                { 
+                  backgroundColor: isSelected ? colors.primary : 'transparent',
+                  borderWidth: isSelected ? 0 : 1.5,
+                  borderColor: isSelected ? 'transparent' : colors.border
+                }
+              ]}
+            >
+              {isSelected ? (
+                <BibleIcon name="check" color={colors.onPrimary} size={ms(16)} />
+              ) : null}
+            </TouchableOpacity>
+          ) : (
+            <View style={[styles.cardIcon, { backgroundColor: colors.surfaceHighlight, borderWidth: 0 }]}>
+              <BibleIcon name="book-open" color={colors.primary} size={ms(18)} />
+            </View>
+          )}
           <View style={styles.cardText}>
             <BibleText style={[styles.cardTitle, { fontSize: ms(16), color: colors.onSurface, fontWeight: '600' }]} numberOfLines={2}>{item.title}</BibleText>
             <BibleText style={[styles.cardDate, { fontSize: ms(12), color: colors.textMuted }]}>{item.createdAt}</BibleText>
           </View>
+          <View style={{ opacity: isSelectionMode ? 0.2 : 0.8 }}>
+            <BibleIcon name="chevron-right" color={colors.textMuted} size={ms(18)} />
+          </View>
         </View>
       </TouchableOpacity>
     );
+  };
+
+  const handlePermanentDelete = () => {
+    deleteMultiplePermanently(Array.from(selectedIds));
+    setSelectedIds(new Set());
+    setSelectionPurpose(null);
+    setMultiDeleteVisible(false);
+  };
+
+  const handleRestore = () => {
+    restoreMultiple(Array.from(selectedIds));
+    setSelectedIds(new Set());
+    setSelectionPurpose(null);
   };
 
   return (
@@ -97,18 +131,30 @@ export default function TrashScreen() {
           showMenu={false}
           showBack={true}
           backIcon="x"
-          onBack={() => setSelectedIds(new Set())}
+          onBack={() => {
+            setSelectedIds(new Set());
+            setSelectionPurpose(null);
+          }}
           rightContent={
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
-              <TouchableOpacity onPress={() => {
-                restoreMultiple(Array.from(selectedIds));
-                setSelectedIds(new Set());
-              }}>
-                <BibleIcon name="corner-up-left" size={ms(20)} color={colors.onPrimary} />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => setMultiDeleteVisible(true)}>
-                <BibleIcon name="trash-2" size={ms(20)} color={colors.onPrimary} />
-              </TouchableOpacity>
+              {(!selectionPurpose || selectionPurpose === 'restore') && (
+                <TouchableOpacity 
+                  onPress={handleRestore}
+                  disabled={selectedIds.size === 0}
+                  style={{ opacity: selectedIds.size === 0 ? 0.3 : 1 }}
+                >
+                  <BibleIcon name="corner-up-left" color={colors.onPrimary} />
+                </TouchableOpacity>
+              )}
+              {(!selectionPurpose || selectionPurpose === 'delete') && (
+                <TouchableOpacity 
+                  onPress={() => setMultiDeleteVisible(true)}
+                  disabled={selectedIds.size === 0}
+                  style={{ opacity: selectedIds.size === 0 ? 0.3 : 1 }}
+                >
+                  <BibleIcon name="trash-2" color={colors.onPrimary} />
+                </TouchableOpacity>
+              )}
             </View>
           }
         />
@@ -118,6 +164,14 @@ export default function TrashScreen() {
           showMenu={false}
           showBack={true}
           onBack={() => handleSmartBack(pathname)}
+          rightContent={
+            <TouchableOpacity 
+              onPress={() => setMenuVisible(true)}
+              style={{ width: ms(44), height: ms(44), alignItems: 'center', justifyContent: 'center' }}
+            >
+              <BibleIcon name="more-vertical" color={colors.onPrimary} size={ms(20)} />
+            </TouchableOpacity>
+          }
         />
       )}
 
@@ -134,33 +188,24 @@ export default function TrashScreen() {
         />
       </View>
 
-      <BibleConfirmModal
-        visible={!!studyToDelete}
-        title="Excluir Permanentemente"
-        message="Tem certeza? Esta ação não pode ser desfeita e todos os blocos do estudo serão perdidos."
-        confirmText="Excluir"
-        isDanger={true}
-        onCancel={() => setStudyToDelete(null)}
-        onConfirm={() => {
-          if (studyToDelete) {
-            deleteMultiplePermanently([studyToDelete]);
-          }
-          setStudyToDelete(null);
-        }}
+      <BibleActionsSheet
+        visible={menuVisible}
+        onClose={() => setMenuVisible(false)}
+        title="Ações"
+        items={[
+          { icon: 'corner-up-left', label: 'Restaurar Estudos', onPress: () => setSelectionPurpose('restore') },
+          { icon: 'trash-2', label: 'Excluir Permanentemente', onPress: () => setSelectionPurpose('delete') }
+        ]}
       />
 
       <BibleConfirmModal
         visible={multiDeleteVisible}
-        title="Excluir selecionados permanentemente"
-        message={`Deseja apagar definitivamente ${selectedIds.size} estudo(s)?`}
+        title="Excluir Permanentemente"
+        message={`Deseja apagar definitivamente ${selectedIds.size} estudo(s)? Esta ação não pode ser desfeita.`}
         confirmText="Excluir"
         isDanger={true}
         onCancel={() => setMultiDeleteVisible(false)}
-        onConfirm={() => {
-          deleteMultiplePermanently(Array.from(selectedIds));
-          setSelectedIds(new Set());
-          setMultiDeleteVisible(false);
-        }}
+        onConfirm={handlePermanentDelete}
       />
     </View>
   );
@@ -173,7 +218,6 @@ const styles = StyleSheet.create({
   emptyTitle: { fontWeight: '700' },
   emptySubtitle: { textAlign: 'center', paddingHorizontal: 32 },
   card: {
-    borderWidth: 1,
     marginBottom: 8,
     borderRadius: 16,
     overflow: 'hidden',
@@ -183,7 +227,7 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
   },
   cardContent: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12, paddingVertical: 12, gap: 14 },
-  cardIcon: { width: 38, height: 38, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
+  cardIcon: { width: 24, height: 24, borderRadius: 6, alignItems: 'center', justifyContent: 'center' },
   cardText: { flex: 1, gap: 4 },
   cardTitle: { fontWeight: '700' },
   cardDate: { marginTop: 2 },
