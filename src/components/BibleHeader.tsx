@@ -43,13 +43,13 @@ export function BibleHeader({
       {hasLeftButton && (
         <View style={styles.leftButtonContainer}>
           {showMenu && (
-            <TouchableOpacity style={[styles.menuBtn, { backgroundColor: menuBtnBackgroundColor || 'transparent', width: ms(40), height: ms(40), borderRadius: ms(10) }]} onPress={onMenuPress} activeOpacity={0.7}>
-              <BibleIcon name="menu" size={ms(20)} color={contentColor || colors.onPrimary} />
+            <TouchableOpacity style={[styles.menuBtn, { backgroundColor: menuBtnBackgroundColor || 'transparent', width: ms(44), height: ms(44), borderRadius: ms(12) }]} onPress={onMenuPress} activeOpacity={0.7}>
+              <BibleIcon name="menu" size={ms(24)} containerSize={44} color={contentColor || colors.onPrimary} />
             </TouchableOpacity>
           )}
           {showBack && (
-            <TouchableOpacity style={[styles.menuBtn, { backgroundColor: menuBtnBackgroundColor || 'transparent', width: ms(40), height: ms(40), borderRadius: ms(10) }]} onPress={onBack} activeOpacity={0.7}>
-              <BibleIcon name={backIcon} size={ms(22)} color={contentColor || colors.onPrimary} />
+            <TouchableOpacity style={[styles.menuBtn, { backgroundColor: menuBtnBackgroundColor || 'transparent', width: ms(44), height: ms(44), borderRadius: ms(12) }]} onPress={onBack} activeOpacity={0.7}>
+              <BibleIcon name={backIcon} size={ms(26)} containerSize={44} color={contentColor || colors.onPrimary} />
             </TouchableOpacity>
           )}
         </View>

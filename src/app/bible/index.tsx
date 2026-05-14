@@ -221,10 +221,11 @@ export default function BibleScreen() {
                 <View style={styles.floatingNav}>
                   <BibleIcon
                     name="chevron-left"
-                    size={ms(20)}
+                    size={ms(26)}
+                    containerSize={44}
                     color={navIcon}
                     backgroundColor={navBg}
-                    borderRadius={10}
+                    borderRadius={12}
                     onPress={() => navigateChapter(-1)}
                     activeOpacity={0.8}
                     style={{ elevation: 4, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 3 }}
@@ -232,10 +233,11 @@ export default function BibleScreen() {
 
                   <BibleIcon
                     name="chevron-right"
-                    size={ms(20)}
+                    size={ms(26)}
+                    containerSize={44}
                     color={navIcon}
                     backgroundColor={navBg}
-                    borderRadius={10}
+                    borderRadius={12}
                     onPress={() => navigateChapter(1)}
                     activeOpacity={0.8}
                     style={{ elevation: 4, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 3 }}
