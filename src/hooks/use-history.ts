@@ -1,7 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useCallback, useEffect, useState } from 'react';
-
-const HISTORY_KEY = '@bible_history';
+import { STORAGE_KEYS } from '../constants/storage';
 
 export type HistoryItem = {
   version: string;
@@ -17,7 +16,7 @@ export function useHistory() {
 
   const loadHistory = useCallback(async () => {
     try {
-      const stored = await AsyncStorage.getItem(HISTORY_KEY);
+      const stored = await AsyncStorage.getItem(STORAGE_KEYS.BIBLE_HISTORY);
       if (stored) {
         setHistory(JSON.parse(stored));
       }
@@ -28,7 +27,7 @@ export function useHistory() {
 
   const addHistoryEntry = useCallback(async (entry: Omit<HistoryItem, 'timestamp'>) => {
     try {
-      const stored = await AsyncStorage.getItem(HISTORY_KEY);
+      const stored = await AsyncStorage.getItem(STORAGE_KEYS.BIBLE_HISTORY);
       let currentHistory: HistoryItem[] = stored ? JSON.parse(stored) : [];
 
 
@@ -44,7 +43,7 @@ export function useHistory() {
       const newEntry: HistoryItem = { ...entry, timestamp: Date.now() };
       const newHistory = [newEntry, ...currentHistory].slice(0, 50);
 
-      await AsyncStorage.setItem(HISTORY_KEY, JSON.stringify(newHistory));
+      await AsyncStorage.setItem(STORAGE_KEYS.BIBLE_HISTORY, JSON.stringify(newHistory));
       setHistory(newHistory);
     } catch (e) {
       console.error('Failed to save history', e);
@@ -52,7 +51,7 @@ export function useHistory() {
   }, []);
 
   const clearHistory = useCallback(async () => {
-    await AsyncStorage.removeItem(HISTORY_KEY);
+    await AsyncStorage.removeItem(STORAGE_KEYS.BIBLE_HISTORY);
     setHistory([]);
   }, []);
 

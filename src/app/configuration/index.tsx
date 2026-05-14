@@ -16,6 +16,7 @@ import { DonateModal } from '../../components/modals/DonateModal';
 import { SettingsItem } from '../../components/SettingsItem';
 import { ROUTES, ROUTE_LABELS } from '../../constants/routes';
 import { STORAGE_KEYS } from '../../constants/storage';
+import { useHistory } from '../../hooks/use-history';
 import { useReaderSettings } from '../../hooks/use-reader-settings';
 import { useResponsive } from '../../hooks/use-responsive';
 import { useStudies } from '../../hooks/use-studies';
@@ -31,6 +32,7 @@ export default function ConfigurationScreen() {
   const { ms } = useResponsive();
   const { isDarkMode, toggleDarkMode, colors, colorTheme, setColorTheme, hapticsEnabled, toggleHaptics } = useTheme();
   const { setReaderTheme, readerTheme } = useReaderSettings();
+  const { clearHistory } = useHistory();
   const [drawerVisible, setDrawerVisible] = useState(false);
   const { studies, importBulk } = useStudies();
   const router = useRouter();
@@ -41,10 +43,7 @@ export default function ConfigurationScreen() {
 
   const handleClearCache = async () => {
     try {
-      const keysToKeep = [STORAGE_KEYS.AUTO_BACKUP, STORAGE_KEYS.AUTO_BACKUP_FILE_URI];
-      const allKeys = await AsyncStorage.getAllKeys();
-      const keysToRemove = allKeys.filter(k => !keysToKeep.includes(k as any));
-      await AsyncStorage.multiRemove(keysToRemove);
+      await clearHistory();
       setClearCacheConfirmVisible(false);
       setAlertInfo({ title: 'Limpar Histórico', message: 'Histórico limpo com sucesso.' });
     } catch (e) {

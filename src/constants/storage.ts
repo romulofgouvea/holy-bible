@@ -17,4 +17,6 @@ export const STORAGE_KEYS = {
   HAPTICS_ENABLED: '@bible_haptics_enabled',
   LAST_ROUTE: 'last_route',
   LAST_ROUTE_PARAMS: 'last_route_params',
+  APP_CLEARED: 'app_cleared',
+  BIBLE_HISTORY: '@bible_history',
 };
