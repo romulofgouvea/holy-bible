@@ -1,6 +1,6 @@
 import * as Clipboard from 'expo-clipboard';
 import React from 'react';
-import { Animated, Share, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Animated, Platform, Share, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { VERSE_HIGHLIGHTS as HIGHLIGHT_COLORS } from '../../constants/colors';
 import { useResponsive } from '../../hooks/use-responsive';
@@ -83,7 +83,9 @@ export function BibleVerseActionSheet(props: VerseActionSheetProps) {
 
   const onCopy = async () => {
     await Clipboard.setStringAsync(buildText());
-    props.onShowToast?.('Copiado para a área de transferência', 'success');
+    if (Platform.OS !== 'android') {
+      props.onShowToast?.('Copiado para a área de transferência', 'success');
+    }
     onClose();
   };
 
