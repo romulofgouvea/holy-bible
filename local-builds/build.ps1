@@ -1,21 +1,21 @@
 $ErrorActionPreference = "Stop"
 
-$PROJECT_PATH     = "C:\workspace\holy-bible"
-$KEYSTORE_PATH    = "$PROJECT_PATH\local-builds\keystore.jks"
+$PROJECT_PATH = "C:\workspace\holy-bible"
+$KEYSTORE_PATH = "$PROJECT_PATH\local-builds\keystore.jks"
 $CREDENTIALS_FILE = "$PROJECT_PATH\local-builds\credentials.md"
-$STATE_FILE       = "$PROJECT_PATH\local-builds\deploy-state.json"
-$APP_JSON_PATH    = "$PROJECT_PATH\app.json"
-$KEYSTORE_FILE    = "keystore.jks"
+$STATE_FILE = "$PROJECT_PATH\local-builds\deploy-state.json"
+$APP_JSON_PATH = "$PROJECT_PATH\app.json"
+$KEYSTORE_FILE = "keystore.jks"
 
 Set-Location $PROJECT_PATH
 
-if (!(Test-Path $KEYSTORE_PATH))    { Write-Host "Keystore nao encontrado: $KEYSTORE_PATH" -ForegroundColor Red; exit 1 }
+if (!(Test-Path $KEYSTORE_PATH)) { Write-Host "Keystore nao encontrado: $KEYSTORE_PATH" -ForegroundColor Red; exit 1 }
 if (!(Test-Path $CREDENTIALS_FILE)) { Write-Host "Credenciais nao encontradas: $CREDENTIALS_FILE" -ForegroundColor Red; exit 1 }
 
 # Versao interativa (leitura via Node para preservar encoding)
-$appJson        = node -e "const d=JSON.parse(require('fs').readFileSync('app.json'));console.log(JSON.stringify({v:d.expo.version,c:d.expo.android.versionCode}))" | ConvertFrom-Json
+$appJson = node -e "const d=JSON.parse(require('fs').readFileSync('app.json'));console.log(JSON.stringify({v:d.expo.version,c:d.expo.android.versionCode}))" | ConvertFrom-Json
 $currentVersion = $appJson.v
-$currentCode    = $appJson.c
+$currentCode = $appJson.c
 
 Write-Host ""
 Write-Host "  Versao atual:   $currentVersion   (versionCode: $currentCode)" -ForegroundColor Yellow
@@ -25,7 +25,8 @@ $newVersion = if ($inputVersion.Trim() -ne '') { $inputVersion.Trim() } else { $
 # versionCode automatico via deploy-state
 $state = if (Test-Path $STATE_FILE) {
     Get-Content $STATE_FILE -Raw | ConvertFrom-Json
-} else {
+}
+else {
     [PSCustomObject]@{ deployed = $true }
 }
 
@@ -33,7 +34,8 @@ if ($state.deployed -eq $true) {
     $newCode = $currentCode + 1
     Write-Host "  versionCode:    $currentCode -> $newCode" -ForegroundColor Cyan
     '{"deployed":false}' | Set-Content $STATE_FILE -Encoding UTF8
-} else {
+}
+else {
     $newCode = $currentCode
     Write-Host "  versionCode:    $currentCode (retry - sem incremento)" -ForegroundColor Gray
 }
@@ -46,20 +48,20 @@ Write-Host ""
 # Barra de progresso
 function Show-Step {
     param([int]$Step, [int]$Total, [string]$Label)
-    $width  = 40
+    $width = 40
     $filled = [math]::Round(($Step / $Total) * $width)
-    $empty  = $width - $filled
-    $bar    = ([string][char]0x2588 * $filled) + ([string][char]0x2591 * $empty)
+    $empty = $width - $filled
+    $bar = ([string][char]0x2588 * $filled) + ([string][char]0x2591 * $empty)
     Write-Host ""
     Write-Host "  $bar" -ForegroundColor Cyan
     Write-Host "  $Label" -ForegroundColor White
 }
 
 # Credenciais
-$creds          = Get-Content $CREDENTIALS_FILE -Raw
+$creds = Get-Content $CREDENTIALS_FILE -Raw
 $STORE_PASSWORD = ([regex]::Match($creds, 'Android upload keystore password:\s*(.+)')).Groups[1].Value.Trim()
-$KEY_ALIAS      = ([regex]::Match($creds, 'Android key alias:\s*(.+)')).Groups[1].Value.Trim()
-$KEY_PASSWORD   = ([regex]::Match($creds, 'Android key password:\s*(.+)')).Groups[1].Value.Trim()
+$KEY_ALIAS = ([regex]::Match($creds, 'Android key alias:\s*(.+)')).Groups[1].Value.Trim()
+$KEY_PASSWORD = ([regex]::Match($creds, 'Android key password:\s*(.+)')).Groups[1].Value.Trim()
 
 Show-Step 1 3 "Preparando projeto..."
 
@@ -84,6 +86,7 @@ $KEYSTORE_FULL = "$PROJECT_PATH\android\app\$KEYSTORE_FILE"
 Set-Location "$PROJECT_PATH\android"
 
 .\gradlew.bat bundleRelease --quiet `
+    "-Dorg.gradle.jvmargs=-Xmx8g -XX:MaxMetaspaceSize=512m" `
     "-Pandroid.injected.signing.store.file=$KEYSTORE_FULL" `
     "-Pandroid.injected.signing.store.password=$STORE_PASSWORD" `
     "-Pandroid.injected.signing.key.alias=$KEY_ALIAS" `
@@ -104,10 +107,10 @@ if (!(Test-Path $AAB_PATH)) {
 }
 
 # Validar assinatura
-$aabCertLines = keytool -printcert -jarfile "$AAB_PATH" 2>&1
-$aabSHA1      = ($aabCertLines | Select-String 'SHA1:' | Select-Object -First 1).ToString().Trim() -replace '.*SHA1:\s*', ''
+$aabCertLines = keytool -printcert -jarfile "$AAB_PATH" 2>$null
+$aabSHA1 = ($aabCertLines | Select-String 'SHA1:' | Select-Object -First 1).ToString().Trim() -replace '.*SHA1:\s*', ''
 
-$jksCertLines = keytool -list -v -keystore "$KEYSTORE_PATH" -alias "$KEY_ALIAS" -storepass "$STORE_PASSWORD" 2>&1
+$jksCertLines = keytool -list -v -keystore "$KEYSTORE_PATH" -alias "$KEY_ALIAS" -storepass "$STORE_PASSWORD" 2>$null
 $keystoreSHA1 = ($jksCertLines | Select-String 'SHA1:' | Select-Object -First 1).ToString().Trim() -replace '.*SHA1:\s*', ''
 
 if ($aabSHA1 -ne $keystoreSHA1) {
@@ -124,8 +127,8 @@ if (!(Test-Path $OUTPUT_DIR)) {
     New-Item -ItemType Directory -Force -Path $OUTPUT_DIR | Out-Null
 }
 
-$TIMESTAMP   = Get-Date -Format "yyyy-MM-dd-HH-mm"
-$FILENAME    = "$TIMESTAMP-holy-bible.aab"
+$TIMESTAMP = Get-Date -Format "yyyy-MM-dd-HH-mm"
+$FILENAME = "$TIMESTAMP-holy-bible.aab"
 $DESTINATION = "$OUTPUT_DIR\$FILENAME"
 Copy-Item $AAB_PATH $DESTINATION -Force
 
