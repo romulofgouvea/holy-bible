@@ -20,6 +20,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BibleDrawerMenu } from '../../components/BibleDrawerMenu';
 import { BibleHeader } from '../../components/BibleHeader';
+import { BiblePageEmpty } from '../../components/BiblePageEmpty';
 import { BibleSkeleton } from '../../components/BibleSkeleton';
 import { BibleText } from '../../components/BibleText';
 import { DonateModal } from '../../components/modals/DonateModal';
@@ -123,13 +124,11 @@ export default function EstudosScreen() {
   };
 
   const renderEmpty = () => (
-    <View style={styles.emptyContainer}>
-      <BibleIcon name="book" size={ms(64)} color={colors.primaryVariant} style={{ marginBottom: ms(16) }} />
-      <BibleText style={[styles.emptyTitle, { fontSize: ms(20), color: colors.onBackground }]}>Nenhum estudo ainda</BibleText>
-      <BibleText style={[styles.emptySubtitle, { fontSize: ms(14), color: colors.textMuted }]}>
-        Abra o menu superior nos três pontos para criar seu primeiro estudo
-      </BibleText>
-    </View>
+    <BiblePageEmpty
+      title="Nenhum estudo ainda"
+      description="Abra o menu superior nos três pontos para criar seu primeiro estudo"
+      icon="book"
+    />
   );
 
   const renderItem = ({ item }: { item: Study }) => {

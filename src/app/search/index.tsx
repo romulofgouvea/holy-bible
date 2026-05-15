@@ -15,7 +15,7 @@ import { BibleDrawerMenu } from '../../components/BibleDrawerMenu';
 import { BibleHeader } from '../../components/BibleHeader';
 import { BibleSkeleton } from '../../components/BibleSkeleton';
 import { BibleText } from '../../components/BibleText';
-import { EmptyState } from '../../components/EmptyState';
+import { BiblePageEmpty } from '../../components/BiblePageEmpty';
 import { BibleModals } from '../../components/modals/BibleModals';
 import { DonateModal } from '../../components/modals/DonateModal';
 import { ROUTES } from '../../constants/routes';
@@ -351,15 +351,11 @@ export default function SearchScreen() {
       {searching ? (
         <BibleSkeleton onlyContent />
       ) : showEmpty ? (
-        <View style={styles.centerBox}>
-          <BibleIcon name="search" size={ms(48)} color={colors.border} />
-          <BibleText style={[styles.hint, { color: colors.textMuted, fontSize: ms(15), marginTop: 12 }]}>
-            Pesquise uma palavra ou frase
-          </BibleText>
-          <BibleText style={[styles.hint, { color: colors.textMuted, fontSize: ms(13), marginTop: 4 }]}>
-            Bíblia toda, livro ou capítulo
-          </BibleText>
-        </View>
+        <BiblePageEmpty
+          title="Pesquise uma palavra ou frase"
+          description="Bíblia toda, livro ou capítulo"
+          icon="search"
+        />
       ) : showHistory ? (
         <View style={{ flex: 1 }}>
           <FlashList
@@ -404,13 +400,13 @@ export default function SearchScreen() {
           />
         </View>
       ) : showTooShort ? (
-        <EmptyState
+        <BiblePageEmpty
           title="Pesquisa"
           description="Digite ao menos 2 caracteres para pesquisar"
           icon="search"
         />
       ) : showNoResults ? (
-        <EmptyState
+        <BiblePageEmpty
           title="Sem resultados"
           description={`Nenhum versículo encontrado para "${query.trim()}"`}
           icon="slash"

@@ -222,7 +222,7 @@ export default function BibleScreen() {
                   <BibleIcon
                     name="chevron-left"
                     size={ms(26)}
-                    containerSize={44}
+                    containerSize={40}
                     color={navIcon}
                     backgroundColor={navBg}
                     borderRadius={12}
@@ -234,7 +234,7 @@ export default function BibleScreen() {
                   <BibleIcon
                     name="chevron-right"
                     size={ms(26)}
-                    containerSize={44}
+                    containerSize={40}
                     color={navIcon}
                     backgroundColor={navBg}
                     borderRadius={12}

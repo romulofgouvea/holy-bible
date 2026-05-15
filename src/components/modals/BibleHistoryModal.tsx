@@ -8,6 +8,7 @@ import { useTheme } from '../../hooks/use-theme';
 import { BibleBottomSheet } from '../BibleBottomSheet';
 import { BibleCountPill } from '../BibleCountPill';
 import { BibleIcon } from '../BibleIcon';
+import { BiblePageEmpty } from '../BiblePageEmpty';
 import { BibleText } from '../BibleText';
 
 type BibleHistoryModalProps = {
@@ -101,15 +102,11 @@ export function BibleHistoryModal({ visible, onClose, onSelect }: BibleHistoryMo
             </View>
           </>
         ) : (
-          <View style={styles.empty}>
-            <BibleIcon name="clock" size={ms(48)} containerSize={64} color={colors.border} />
-            <BibleText style={[styles.emptyTitle, { color: colors.textMuted, fontSize: ms(15), marginTop: 12 }]}>
-              Nenhum histórico encontrado
-            </BibleText>
-            <BibleText style={[styles.emptySubtitle, { color: colors.textMuted, fontSize: ms(13), marginTop: 4 }]}>
-              Navegue pelos livros e capítulos para registrar
-            </BibleText>
-          </View>
+          <BiblePageEmpty
+            title="Nenhum histórico encontrado"
+            description="Navegue pelos livros e capítulos para registrar"
+            icon="clock"
+          />
         )}
       </View>
     </BibleBottomSheet>

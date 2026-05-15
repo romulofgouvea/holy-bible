@@ -7,7 +7,7 @@ import { BibleButton } from './BibleButton';
 import { BibleIcon } from './BibleIcon';
 import { BibleText } from './BibleText';
 
-interface EmptyStateProps {
+interface BiblePageEmptyProps {
   title: string;
   description?: string;
   icon: keyof typeof Feather.glyphMap;
@@ -15,20 +15,20 @@ interface EmptyStateProps {
   onAction?: () => void;
 }
 
-export function EmptyState({
+export function BiblePageEmpty({
   title,
   description,
   icon,
   actionLabel,
   onAction,
-}: EmptyStateProps) {
+}: BiblePageEmptyProps) {
   const { colors } = useTheme();
   const { ms } = useResponsive();
 
   return (
     <View style={styles.container}>
-      <BibleIcon name={icon} size={40} />
-      <BibleText style={[styles.title, { fontSize: ms(18), color: colors.onBackground, marginTop: 16 }]}>
+      <BibleIcon name={icon} size={ms(48)} containerSize={80} color={colors.textMuted} />
+      <BibleText style={[styles.title, { fontSize: ms(18), color: colors.textMuted, marginTop: 16 }]}>
         {title}
       </BibleText>
       {description && (

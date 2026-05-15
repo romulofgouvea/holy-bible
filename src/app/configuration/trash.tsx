@@ -11,6 +11,7 @@ import {
   View
 } from 'react-native';
 import { BibleHeader } from '../../components/BibleHeader';
+import { BiblePageEmpty } from '../../components/BiblePageEmpty';
 import { BibleText } from '../../components/BibleText';
 import { ROUTES, ROUTE_LABELS } from '../../constants/routes';
 import { useResponsive } from '../../hooks/use-responsive';
@@ -47,15 +48,11 @@ export default function TrashScreen() {
   };
 
   const renderEmpty = () => (
-    <View style={styles.emptyContainer}>
-      <BibleIcon name="trash-2" size={ms(64)} color={colors.primaryVariant} style={{ marginBottom: ms(16) }} />
-      <BibleText style={[styles.emptyTitle, { fontSize: ms(20), color: colors.onBackground }]}>
-        Lixeira vazia
-      </BibleText>
-      <BibleText style={[styles.emptySubtitle, { fontSize: ms(14), color: colors.textMuted }]}>
-        Nenhum estudo foi movido para a lixeira.
-      </BibleText>
-    </View>
+    <BiblePageEmpty
+      title="Lixeira vazia"
+      description="Nenhum estudo foi movido para a lixeira."
+      icon="trash-2"
+    />
   );
 
   const renderItem = ({ item }: { item: Study }) => {
@@ -71,7 +68,7 @@ export default function TrashScreen() {
             borderWidth: isSelected ? 2 : 1
           }
         ]}
-        onPress={() => isSelectionMode ? toggleSelection(item.id) : router.push(`${ROUTES.STUDY_EDITOR(item.id)}?readonly=true` as any)}
+        onPress={() => isSelectionMode ? toggleSelection(item.id) : router.push({ pathname: ROUTES.STUDY_EDITOR(item.id) as any, params: { readonly: 'true' } })}
         onLongPress={() => toggleSelection(item.id)}
         activeOpacity={0.7}
       >
@@ -126,7 +123,7 @@ export default function TrashScreen() {
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       {isSelectionMode ? (
         <BibleHeader
-          title={selectedIds.size === 0 ? "Lixeira" : `${selectedIds.size} selecionado${selectedIds.size > 1 ? 's' : ''}`}
+          title={`${selectedIds.size} selecionado${selectedIds.size !== 1 ? 's' : ''}`}
           showMenu={false}
           showBack={true}
           backIcon="x"
