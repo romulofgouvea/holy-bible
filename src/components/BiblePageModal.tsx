@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Animated, KeyboardAvoidingView, Platform, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { DESIGN_TOKENS } from '../constants/design';
 import { useTheme } from '../hooks/use-theme';
 import { BibleDivider } from './BibleDivider';
 
@@ -55,20 +54,20 @@ export function BiblePageModal({ visible, onClose, children, header, footer, ful
               behavior={Platform.OS === 'ios' ? 'padding' : undefined}
             >
               {header && (
-                <View style={{ paddingTop: DESIGN_TOKENS.padding.md }}>
-                  <View style={styles.content}>{header}</View>
-                  <BibleDivider margin={DESIGN_TOKENS.spacing.md} />
+                <View >
+                  <View style={styles.contentHeader}>{header}</View>
+                  <BibleDivider />
                 </View>
               )}
 
-              <View style={[styles.content, { flexShrink: 1, flexGrow: fullHeight ? 1 : 0 }]}>
+              <View style={[styles.contentHeader, { flexShrink: 1, flexGrow: fullHeight ? 1 : 0 }]}>
                 {children}
               </View>
 
               {footer && (
-                <View style={{ paddingBottom: DESIGN_TOKENS.padding.md }}>
-                  <BibleDivider margin={DESIGN_TOKENS.spacing.sm} />
-                  <View style={styles.content}>{footer}</View>
+                <View >
+                  <BibleDivider />
+                  <View style={styles.contentFooter}>{footer}</View>
                 </View>
               )}
             </KeyboardAvoidingView>
@@ -99,7 +98,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 10,
   },
-  content: {
-    paddingHorizontal: 16,
+  contentHeader: {
+    padding: 16
+  },
+  contentFooter: {
+    paddingHorizontal: 8,
+    paddingVertical: 8
   },
 });

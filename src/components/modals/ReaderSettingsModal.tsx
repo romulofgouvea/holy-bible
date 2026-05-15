@@ -5,9 +5,9 @@ import { useReaderSettings } from '../../hooks/use-reader-settings';
 import { useResponsive } from '../../hooks/use-responsive';
 import { useTheme } from '../../hooks/use-theme';
 import { impactLight, selectionHaptic } from '../../utils/haptics';
-import { BibleBottomSheet } from '../BibleBottomSheet';
 import { BibleDivider } from '../BibleDivider';
 import { BibleIcon } from '../BibleIcon';
+import { BiblePageModal } from '../BiblePageModal';
 import { BibleText } from '../BibleText';
 
 export function ReaderSettingsModal({ visible, onClose }: { visible: boolean; onClose: () => void }) {
@@ -27,7 +27,7 @@ export function ReaderSettingsModal({ visible, onClose }: { visible: boolean; on
   const dividerColor = 'rgba(0,0,0,0.05)';
 
   return (
-    <BibleBottomSheet
+    <BiblePageModal
       visible={visible}
       onClose={onClose}
       header={
@@ -164,7 +164,7 @@ export function ReaderSettingsModal({ visible, onClose }: { visible: boolean; on
           </View>
         </View>
       </View>
-    </BibleBottomSheet>
+    </BiblePageModal>
   );
 }
 
@@ -195,7 +195,6 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     letterSpacing: 1,
     opacity: 0.6,
-    paddingBottom: 8,
   },
   unifiedRow: {
     flexDirection: 'row',

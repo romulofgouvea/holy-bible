@@ -19,6 +19,7 @@ export const DESIGN_TOKENS = {
     full: 9999,
   },
   padding: {
+    none: 0,
     xs: 4,
     sm: 8,
     md: 12,
@@ -27,6 +28,7 @@ export const DESIGN_TOKENS = {
     xxl: 32,
   },
   spacing: {
+    none: 0,
     xs: 4,
     sm: 8,
     md: 12,
