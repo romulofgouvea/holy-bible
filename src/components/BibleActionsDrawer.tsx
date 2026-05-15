@@ -71,22 +71,25 @@ export function BibleActionsDrawer({ visible, onClose, title = "Ações", items 
       key={index}
       style={[
         styles.menuItem,
-        { paddingVertical: ms(10), paddingHorizontal: ms(12), borderRadius: ms(12), marginBottom: ms(4) }
+        { paddingVertical: ms(9), paddingHorizontal: ms(8), borderRadius: ms(12), marginBottom: ms(4) }
       ]}
       onPress={() => {
+        item.onPress();
         onClose();
-        setTimeout(item.onPress, 300);
       }}
       activeOpacity={0.7}
     >
       <View style={[
         styles.menuIconWrap,
-        { width: ms(40), height: ms(40), borderRadius: ms(12), marginRight: ms(14), backgroundColor: colors.surfaceHighlight }
+        { width: ms(38), height: ms(38), borderRadius: ms(10), marginRight: ms(12), backgroundColor: colors.surfaceHighlight }
       ]}>
         <BibleIcon name={item.icon} size={ms(18)} color={item.tint || colors.onSurface} />
       </View>
       <BibleText
-        style={[styles.menuLabel, { fontSize: ms(15), color: item.tint || colors.onSurface }]}
+        style={[
+          styles.menuLabel, 
+          { fontSize: ms(15), color: item.tint || colors.onSurface }
+        ]}
         numberOfLines={1}
       >
         {item.label}
@@ -145,13 +148,15 @@ const styles = StyleSheet.create({
   menuItem: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 0,
   },
   menuIconWrap: {
     alignItems: 'center',
     justifyContent: 'center',
+    flexShrink: 0,
   },
   menuLabel: {
-    fontWeight: '700',
+    fontWeight: '600',
     flex: 1,
   },
 });

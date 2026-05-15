@@ -26,13 +26,13 @@ export function BiblePageModal({ visible, onClose, children, header, footer, ful
       setRendered(true);
       Animated.timing(fadeAnim, {
         toValue: 1,
-        duration: 200,
+        duration: 150,
         useNativeDriver: true,
       }).start();
     } else {
       Animated.timing(fadeAnim, {
         toValue: 0,
-        duration: 150,
+        duration: 100,
         useNativeDriver: true,
       }).start(() => {
         setRendered(false);
