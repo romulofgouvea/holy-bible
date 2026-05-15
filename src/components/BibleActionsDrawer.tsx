@@ -75,7 +75,7 @@ export function BibleActionsDrawer({ visible, onClose, title = "Ações", items 
       ]}
       onPress={() => {
         onClose();
-        setTimeout(item.onPress, 200);
+        setTimeout(item.onPress, 300);
       }}
       activeOpacity={0.7}
     >

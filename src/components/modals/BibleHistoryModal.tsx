@@ -5,10 +5,10 @@ import { ROUTE_LABELS } from '../../constants/routes';
 import { HistoryItem, useHistory } from '../../hooks/use-history';
 import { useResponsive } from '../../hooks/use-responsive';
 import { useTheme } from '../../hooks/use-theme';
-import { BibleBottomSheet } from '../BibleBottomSheet';
 import { BibleCountPill } from '../BibleCountPill';
 import { BibleIcon } from '../BibleIcon';
 import { BiblePageEmpty } from '../BiblePageEmpty';
+import { BiblePageModal } from '../BiblePageModal';
 import { BibleText } from '../BibleText';
 
 type BibleHistoryModalProps = {
@@ -35,14 +35,14 @@ export function BibleHistoryModal({ visible, onClose, onSelect }: BibleHistoryMo
   }, [visible, loadHistory]);
 
   return (
-    <BibleBottomSheet visible={visible} onClose={onClose}
+    <BiblePageModal visible={visible} onClose={onClose} fullHeight={true}
       header={
         <View style={styles.header} testID="bible-history-header">
           <BibleIcon name="clock"
             color={colors.primary}
             backgroundColor={`${colors.primary}20`}
             style={{ marginRight: 8 }} />
-          <BibleText style={[styles.title, { fontSize: ms(16), color: colors.primary, fontWeight: '800' }]} testID="bible-history-title">{ROUTE_LABELS.HISTORY}</BibleText>
+          <BibleText style={[styles.title, { fontSize: ms(18), color: colors.primary, fontWeight: '800' }]} testID="bible-history-title">{ROUTE_LABELS.HISTORY}</BibleText>
           <BibleIcon
             name="x"
             color={colors.error}
@@ -109,7 +109,7 @@ export function BibleHistoryModal({ visible, onClose, onSelect }: BibleHistoryMo
           />
         )}
       </View>
-    </BibleBottomSheet>
+    </BiblePageModal>
   );
 }
 
