@@ -1,5 +1,5 @@
 import { Feather } from '@expo/vector-icons';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { Animated, Modal, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useResponsive } from '../../hooks/useResponsive';
@@ -22,11 +22,53 @@ type ActionsDrawerProps = {
 };
 
 export function BibleActionsDrawer({ visible, onClose, title = "Ações", items }: ActionsDrawerProps) {
-  const { ms, width } = useResponsive();
-  const drawerWidth = Math.min(ms(280), width * 0.75);
+  const { ms, width, DESIGN } = useResponsive();
+  const drawerWidth = Math.min(ms(DESIGN.maxWidth.sm * 0.7), width * 0.75);
   const { colors } = useTheme();
-  const [isModalVisible, setIsModalVisible] = useState(visible);
   const insets = useSafeAreaInsets();
+
+  const styles = useMemo(() => StyleSheet.create({
+    backdrop: {
+      ...StyleSheet.absoluteFillObject,
+    },
+    drawer: {
+      position: 'absolute',
+      top: 0,
+      right: 0,
+      bottom: 0,
+      elevation: 24,
+      shadowOffset: { width: ms(-DESIGN.spacing.xs), height: 0 },
+      shadowOpacity: 0.18,
+      shadowRadius: ms(DESIGN.borderRadius.md),
+    },
+    drawerHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    drawerTitle: {
+      fontWeight: '800',
+      letterSpacing: 0.5,
+    },
+    menuList: {
+      flex: 1,
+    },
+    menuItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 0,
+    },
+    menuIconWrap: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      flexShrink: 0,
+    },
+    menuLabel: {
+      fontWeight: '600',
+      flex: 1,
+    },
+  }), [ms, colors, DESIGN]);
+
+  const [isModalVisible, setIsModalVisible] = useState(visible);
 
   const translateX = useRef(new Animated.Value(drawerWidth)).current;
   const backdropOpacity = useRef(new Animated.Value(0)).current;
@@ -71,7 +113,12 @@ export function BibleActionsDrawer({ visible, onClose, title = "Ações", items 
       key={index}
       style={[
         styles.menuItem,
-        { paddingVertical: ms(9), paddingHorizontal: ms(8), borderRadius: ms(12), marginBottom: ms(4) }
+        { 
+          paddingVertical: ms(DESIGN.spacing.sm), 
+          paddingHorizontal: ms(DESIGN.spacing.sm), 
+          borderRadius: ms(DESIGN.borderRadius.md), 
+          marginBottom: ms(DESIGN.spacing.xs) 
+        }
       ]}
       onPress={() => {
         item.onPress();
@@ -81,14 +128,20 @@ export function BibleActionsDrawer({ visible, onClose, title = "Ações", items 
     >
       <View style={[
         styles.menuIconWrap,
-        { width: ms(38), height: ms(38), borderRadius: ms(10), marginRight: ms(12), backgroundColor: colors.surfaceHighlight }
+        { 
+          width: ms(DESIGN.icon.xl), 
+          height: ms(DESIGN.icon.xl), 
+          borderRadius: ms(DESIGN.borderRadius.sm), 
+          marginRight: ms(DESIGN.spacing.md), 
+          backgroundColor: colors.surfaceHighlight 
+        }
       ]}>
-        <BibleIcon name={item.icon} size={ms(18)} color={item.tint || colors.onSurface} />
+        <BibleIcon name={item.icon} size={ms(DESIGN.fontSize.xl)} color={item.tint || colors.onSurface} />
       </View>
       <BibleText
         style={[
           styles.menuLabel, 
-          { fontSize: ms(15), color: item.tint || colors.onSurface }
+          { fontSize: ms(DESIGN.fontSize.lg), color: item.tint || colors.onSurface }
         ]}
         numberOfLines={1}
       >
@@ -105,13 +158,21 @@ export function BibleActionsDrawer({ visible, onClose, title = "Ações", items 
         </TouchableWithoutFeedback>
 
         <Animated.View style={[styles.drawer, { width: drawerWidth, transform: [{ translateX }], backgroundColor: colors.surface, shadowColor: colors.shadow }]}>
-          <View style={[styles.drawerHeader, { backgroundColor: colors.primary, paddingTop: Math.max(ms(20), insets.top + ms(16)), paddingBottom: ms(20), paddingHorizontal: ms(20) }]}>
-            <BibleText style={[styles.drawerTitle, { fontSize: ms(18), color: colors.onPrimary }]} numberOfLines={1}>
+          <View style={[
+            styles.drawerHeader, 
+            { 
+              backgroundColor: colors.primary, 
+              paddingTop: Math.max(ms(DESIGN.fontSize.xxl), insets.top + ms(DESIGN.spacing.lg)), 
+              paddingBottom: ms(DESIGN.fontSize.xxl), 
+              paddingHorizontal: ms(DESIGN.fontSize.xxl) 
+            }
+          ]}>
+            <BibleText style={[styles.drawerTitle, { fontSize: ms(DESIGN.fontSize.xl), color: colors.onPrimary }]} numberOfLines={1}>
               {title}
             </BibleText>
           </View>
 
-          <View style={[styles.menuList, { paddingTop: ms(12), paddingHorizontal: ms(8) }]}>
+          <View style={[styles.menuList, { paddingTop: ms(DESIGN.spacing.md), paddingHorizontal: ms(DESIGN.spacing.sm) }]}>
             {items.map(renderItem)}
           </View>
         </Animated.View>
@@ -119,44 +180,3 @@ export function BibleActionsDrawer({ visible, onClose, title = "Ações", items 
     </Modal>
   );
 }
-
-const styles = StyleSheet.create({
-  backdrop: {
-    ...StyleSheet.absoluteFillObject,
-  },
-  drawer: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    bottom: 0,
-    elevation: 24,
-    shadowOffset: { width: -4, height: 0 },
-    shadowOpacity: 0.18,
-    shadowRadius: 12,
-  },
-  drawerHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  drawerTitle: {
-    fontWeight: '800',
-    letterSpacing: 0.5,
-  },
-  menuList: {
-    flex: 1,
-  },
-  menuItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 0,
-  },
-  menuIconWrap: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexShrink: 0,
-  },
-  menuLabel: {
-    fontWeight: '600',
-    flex: 1,
-  },
-});

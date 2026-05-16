@@ -1,11 +1,11 @@
 import * as Clipboard from 'expo-clipboard';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useResponsive } from '../../hooks/useResponsive';
 import { useTheme } from '../../hooks/useTheme';
 import { BibleIcon } from '../BibleIcon';
-import { BiblePageModal } from './BiblePageModal';
 import { BibleText } from '../BibleText';
+import { BiblePageModal } from './BiblePageModal';
 
 const PIX_KEY = 'romulo-gouvea@hotmail.com';
 
@@ -15,8 +15,82 @@ type Props = {
 };
 
 export function DonateModal({ visible, onClose }: Props) {
-  const { ms } = useResponsive();
+  const { ms, DESIGN } = useResponsive();
   const { colors } = useTheme();
+  
+  const styles = useMemo(() => StyleSheet.create({
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    headerIconWrap: {
+      marginRight: ms(DESIGN.spacing.sm),
+    },
+    headerTitle: {
+      flex: 1,
+      fontWeight: '700',
+    },
+    closeBtn: {
+      marginLeft: ms(DESIGN.spacing.sm),
+    },
+    bodyContent: {
+      alignItems: 'center',
+      padding: ms(DESIGN.spacing.lg),
+    },
+    body: {
+      textAlign: 'center',
+      lineHeight: ms(DESIGN.spacing.xl)
+    },
+    bodySmall: {
+      textAlign: 'center',
+      lineHeight: ms(DESIGN.fontSize.xl),
+    },
+    pixCard: {
+      width: '100%',
+      borderRadius: ms(DESIGN.borderRadius.xl),
+      padding: ms(DESIGN.spacing.lg),
+      borderWidth: 1,
+    },
+    pixHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: ms(DESIGN.spacing.lg),
+    },
+    pixIconCircle: {
+      width: ms(DESIGN.icon.lg),
+      height: ms(DESIGN.icon.lg),
+      borderRadius: ms(DESIGN.borderRadius.lg),
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginRight: ms(DESIGN.spacing.sm),
+    },
+    pixLabel: {
+      letterSpacing: 0.5,
+    },
+    pixKeyContainer: {
+      padding: ms(DESIGN.spacing.lg),
+      borderRadius: ms(DESIGN.borderRadius.md),
+      marginBottom: ms(DESIGN.spacing.lg),
+      alignItems: 'center',
+      borderWidth: 1,
+    },
+    pixKey: {
+      textAlign: 'center',
+    },
+    copyBtn: {
+      flexDirection: 'row',
+      height: ms(DESIGN.button.height.lg),
+      borderRadius: ms(DESIGN.borderRadius.md),
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: ms(DESIGN.spacing.sm),
+    },
+    thanks: {
+      textAlign: 'center',
+      marginTop: ms(DESIGN.spacing.sm),
+    },
+  }), [ms, colors, DESIGN]);
+
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -37,7 +111,7 @@ export function DonateModal({ visible, onClose }: Props) {
             backgroundColor={colors.primary + '20'}
             style={styles.headerIconWrap}
           />
-          <BibleText style={[styles.headerTitle, { fontSize: ms(16), color: colors.primary }]}>Apoie este Projeto</BibleText>
+          <BibleText style={[styles.headerTitle, { fontSize: ms(DESIGN.fontSize.lg), color: colors.primary }]}>Apoie este Projeto</BibleText>
           <BibleIcon
             name="x"
             color={colors.error}
@@ -47,131 +121,49 @@ export function DonateModal({ visible, onClose }: Props) {
           />
         </View>
       }>
-      <View style={styles.content}>
-        <View style={[styles.bodyContent, { gap: ms(16) }]}>
-          <View style={{ gap: ms(6) }}>
-            <BibleText style={[styles.body, { color: colors.onSurface, fontSize: ms(15), fontWeight: '600' }]}>
-              Este aplicativo é gratuito e feito com muito cuidado para levar a Palavra de Deus às suas mãos.
-            </BibleText>
+      <View style={[styles.bodyContent, { gap: ms(DESIGN.spacing.lg) }]}>
+        <View style={{ gap: ms(DESIGN.spacing.xs) }}>
+          <BibleText style={[styles.body, { color: colors.onSurface, fontSize: ms(DESIGN.fontSize.lg), fontWeight: '600' }]}>
+            Este aplicativo é gratuito e feito com muito cuidado para levar a Palavra de Deus às suas mãos.
+          </BibleText>
 
-            <BibleText style={[styles.bodySmall, { color: colors.textMuted, fontSize: ms(13) }]}>
-              Cada contribuição ajuda a manter os servidores e a adicionar novas funcionalidades. 🙏
-            </BibleText>
-          </View>
-
-          <View style={[styles.pixCard, { backgroundColor: colors.surfaceHighlight, borderColor: colors.border }]}>
-            <View style={styles.pixHeader}>
-              <View style={[styles.pixIconCircle, { backgroundColor: colors.primary }]}>
-                <BibleText style={{ color: colors.onPrimary, fontWeight: '900', fontSize: ms(10) }}>PIX</BibleText>
-              </View>
-              <BibleText style={[styles.pixLabel, { color: colors.textMuted, fontSize: ms(12), fontWeight: '700' }]}>
-                CHAVE (E-MAIL)
-              </BibleText>
-            </View>
-
-            <View style={[styles.pixKeyContainer, { backgroundColor: colors.surfaceHighlight, borderColor: colors.border }]}>
-              <BibleText style={[styles.pixKey, { color: colors.onSurface, fontSize: ms(16), fontWeight: '600' }]} selectable>
-                {PIX_KEY}
-              </BibleText>
-            </View>
-
-            <TouchableOpacity
-              style={[styles.copyBtn, { backgroundColor: copied ? '#4CAF50' : colors.primary }]}
-              onPress={handleCopy}
-              activeOpacity={0.8}
-            >
-              <BibleIcon name={copied ? 'check' : 'copy'} size={ms(16)} color={colors.onPrimary} />
-              <BibleText style={[styles.copyBtnText, { fontSize: ms(15), color: colors.onPrimary, fontWeight: '700' }]}>
-                {copied ? 'Chave Copiada!' : 'Copiar Chave Pix'}
-              </BibleText>
-            </TouchableOpacity>
-          </View>
-
-          <BibleText style={[styles.thanks, { color: colors.primary, fontSize: ms(14), fontWeight: '600' }]}>
-            Que Deus abençoe você em dobro!
+          <BibleText style={[styles.bodySmall, { color: colors.textMuted, fontSize: ms(DESIGN.fontSize.md) }]}>
+            Cada contribuição ajuda a manter os servidores e a adicionar novas funcionalidades. 🙏
           </BibleText>
         </View>
+
+        <View style={[styles.pixCard, { backgroundColor: colors.surfaceHighlight, borderColor: colors.border }]}>
+          <View style={styles.pixHeader}>
+            <View style={[styles.pixIconCircle, { backgroundColor: colors.primary }]}>
+              <BibleText style={{ color: colors.onPrimary, fontWeight: '900', fontSize: ms(DESIGN.fontSize.xs) }}>PIX</BibleText>
+            </View>
+            <BibleText style={[styles.pixLabel, { color: colors.textMuted, fontSize: ms(DESIGN.fontSize.md), fontWeight: '700' }]}>
+              CHAVE (E-MAIL)
+            </BibleText>
+          </View>
+
+          <View style={[styles.pixKeyContainer, { backgroundColor: colors.surfaceHighlight, borderColor: colors.border }]}>
+            <BibleText style={[styles.pixKey, { color: colors.onSurface, fontSize: ms(DESIGN.fontSize.lg), fontWeight: '600' }]} selectable>
+              {PIX_KEY}
+            </BibleText>
+          </View>
+
+          <TouchableOpacity
+            style={[styles.copyBtn, { backgroundColor: copied ? '#4CAF50' : colors.primary }]}
+            onPress={handleCopy}
+            activeOpacity={0.8}
+          >
+            <BibleIcon name={copied ? 'check' : 'copy'} size={ms(DESIGN.spacing.lg)} color={colors.onPrimary} />
+            <BibleText style={{ fontSize: ms(DESIGN.fontSize.lg), color: colors.onPrimary, fontWeight: '700' }}>
+              {copied ? 'Chave Copiada!' : 'Copiar Chave Pix'}
+            </BibleText>
+          </TouchableOpacity>
+        </View>
+
+        <BibleText style={[styles.thanks, { color: colors.primary, fontSize: ms(DESIGN.fontSize.md), fontWeight: '600' }]}>
+          Que Deus abençoe você em dobro!
+        </BibleText>
       </View>
     </BiblePageModal>
   );
 }
-
-const styles = StyleSheet.create({
-  content: {
-
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  headerIconWrap: {
-    marginRight: 8,
-  },
-  headerTitle: {
-    flex: 1,
-    fontWeight: '700',
-  },
-  closeBtn: {
-    marginLeft: 8,
-  },
-  bodyContent: {
-    alignItems: 'center',
-    paddingTop: 8,
-    paddingBottom: 16,
-  },
-  body: {
-    textAlign: 'center',
-    lineHeight: 22,
-    paddingHorizontal: 8,
-  },
-  bodySmall: {
-    textAlign: 'center',
-    lineHeight: 18,
-    paddingHorizontal: 12,
-  },
-  pixCard: {
-    width: '100%',
-    borderRadius: 24,
-    padding: 16,
-    borderWidth: 1,
-  },
-  pixHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  pixIconCircle: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 8,
-  },
-  pixLabel: {
-    letterSpacing: 0.5,
-  },
-  pixKeyContainer: {
-    padding: 16,
-    borderRadius: 14,
-    marginBottom: 16,
-    alignItems: 'center',
-    borderWidth: 1,
-  },
-  pixKey: {
-    textAlign: 'center',
-  },
-  copyBtn: {
-    flexDirection: 'row',
-    height: 52,
-    borderRadius: 14,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-  },
-  copyBtnText: {},
-  thanks: {
-    textAlign: 'center',
-    marginTop: 8,
-  },
-});

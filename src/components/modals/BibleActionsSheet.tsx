@@ -1,5 +1,5 @@
 import { Feather } from '@expo/vector-icons';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useResponsive } from '../../hooks/useResponsive';
 import { useTheme } from '../../hooks/useTheme';
@@ -24,7 +24,25 @@ type Props = {
 
 export function BibleActionsSheet({ visible, onClose, items, title }: Props) {
   const { colors } = useTheme();
-  const { ms } = useResponsive();
+  const { ms, DESIGN } = useResponsive();
+  const styles = useMemo(() => StyleSheet.create({
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    title: {
+      flex: 1,
+    },
+    item: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: ms(DESIGN.spacing.sm),
+    },
+    label: {
+      fontSize: ms(DESIGN.fontSize.lg),
+      fontWeight: '700',
+    },
+  }), [ms, colors, DESIGN]);
 
   return (
     <BibleBottomSheet
@@ -32,12 +50,16 @@ export function BibleActionsSheet({ visible, onClose, items, title }: Props) {
       onClose={onClose}
       resizable={false}
       header={
-        <View style={[styles.header]}>
-          <BibleIcon name="menu" color={colors.primary} backgroundColor={colors.primary + '25'} size={ms(16)}
-            style={{ marginRight: 8 }}
+        <View style={styles.header}>
+          <BibleIcon 
+            name="menu" 
+            color={colors.primary} 
+            backgroundColor={colors.primary + '25'} 
+            size={ms(DESIGN.spacing.lg)}
+            style={{ marginRight: ms(DESIGN.spacing.sm) }}
           />
 
-          <BibleText style={[styles.title, { fontSize: ms(16), color: colors.primary, fontWeight: '800' }]}>{title || 'Ações'}</BibleText>
+          <BibleText style={[styles.title, { fontSize: ms(DESIGN.fontSize.lg), color: colors.primary, fontWeight: '800' }]}>{title || 'Ações'}</BibleText>
           <BibleIcon
             name="x"
             color={colors.error}
@@ -47,7 +69,7 @@ export function BibleActionsSheet({ visible, onClose, items, title }: Props) {
         </View>
       }
     >
-      <View style={styles.itemsContainer}>
+      <View>
         {items.map((item, index) => (
           <TouchableOpacity
             key={index}
@@ -60,7 +82,7 @@ export function BibleActionsSheet({ visible, onClose, items, title }: Props) {
             <BibleIcon name={item.icon}
               color={item.iconColor || colors.primary}
               backgroundColor={(item.iconColor || colors.primary) + '15'}
-              style={{ marginRight: 8 }} />
+              style={{ marginRight: ms(DESIGN.spacing.sm) }} />
             <BibleText style={[styles.label, { color: item.color || colors.onSurface }]}>{item.label}</BibleText>
           </TouchableOpacity>
         ))}
@@ -68,23 +90,3 @@ export function BibleActionsSheet({ visible, onClose, items, title }: Props) {
     </BibleBottomSheet>
   );
 }
-
-const styles = StyleSheet.create({
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  title: {
-    flex: 1,
-  },
-  itemsContainer: {},
-  item: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 8,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: '700',
-  },
-});

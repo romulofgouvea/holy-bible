@@ -1,5 +1,5 @@
 import { Feather } from '@expo/vector-icons';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useResponsive } from '../hooks/useResponsive';
 import { useTheme } from '../hooks/useTheme';
@@ -34,21 +34,62 @@ export function BibleHeader({
   menuBtnBackgroundColor
 }: BibleHeaderProps) {
   const { colors } = useTheme();
-  const { ms } = useResponsive();
+  const { ms, DESIGN } = useResponsive();
+  const styles = useMemo(() => StyleSheet.create({
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    elevation: 6,
+    shadowOffset: { width: 0, height: ms(3) },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    zIndex: 10,
+  },
+  leftButtonContainer: {
+    flexShrink: 0,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginRight: ms(4),
+  },
+  centerContainer: {
+    flex: 1,
+    flexShrink: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    overflow: 'hidden',
+  },
+  rightContainer: {
+    flexShrink: 0,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: ms(4),
+  },
+  title: {
+    fontFamily: 'Poppins_600SemiBold',
+    fontWeight: '700',
+    includeFontPadding: false,
+    flexShrink: 1,
+  },
+  menuBtn: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+}), [ms, colors, DESIGN]);
+
 
   const hasLeftButton = showMenu || showBack;
 
   return (
-    <View testID="bible-header" style={[styles.header, { backgroundColor: backgroundColor || colors.primary, minHeight: ms(56), paddingHorizontal: ms(16), paddingVertical: ms(12), shadowColor: colors.shadow }]}>
+    <View testID="bible-header" style={[styles.header, { backgroundColor: backgroundColor || colors.primary, minHeight: ms(56), paddingHorizontal: ms(DESIGN.spacing.lg), paddingVertical: ms(DESIGN.spacing.md), shadowColor: colors.shadow }]}>
       {hasLeftButton && (
         <View style={styles.leftButtonContainer}>
           {showMenu && (
-            <TouchableOpacity style={[styles.menuBtn, { backgroundColor: menuBtnBackgroundColor || 'transparent', width: ms(44), height: ms(44), borderRadius: ms(12) }]} onPress={onMenuPress} activeOpacity={0.7}>
-              <BibleIcon name="menu" size={ms(24)} containerSize={44} color={contentColor || colors.onPrimary} />
+            <TouchableOpacity style={[styles.menuBtn, { backgroundColor: menuBtnBackgroundColor || 'transparent', width: ms(44), height: ms(44), borderRadius: ms(DESIGN.borderRadius.md) }]} onPress={onMenuPress} activeOpacity={0.7}>
+              <BibleIcon name="menu" size={ms(DESIGN.spacing.xl)} containerSize={44} color={contentColor || colors.onPrimary} />
             </TouchableOpacity>
           )}
           {showBack && (
-            <TouchableOpacity style={[styles.menuBtn, { backgroundColor: menuBtnBackgroundColor || 'transparent', width: ms(44), height: ms(44), borderRadius: ms(12) }]} onPress={onBack} activeOpacity={0.7}>
+            <TouchableOpacity style={[styles.menuBtn, { backgroundColor: menuBtnBackgroundColor || 'transparent', width: ms(44), height: ms(44), borderRadius: ms(DESIGN.borderRadius.md) }]} onPress={onBack} activeOpacity={0.7}>
               <BibleIcon name={backIcon} size={ms(26)} containerSize={44} color={contentColor || colors.onPrimary} />
             </TouchableOpacity>
           )}
@@ -58,7 +99,7 @@ export function BibleHeader({
       <View style={styles.centerContainer}>
         {leftContent}
         {title && (
-          <BibleText style={[styles.title, { fontSize: ms(16), color: contentColor || colors.onPrimary }]} numberOfLines={1}>
+          <BibleText style={[styles.title, { fontSize: ms(DESIGN.spacing.lg), color: contentColor || colors.onPrimary }]} numberOfLines={1}>
             {title}
           </BibleText>
         )}
@@ -73,43 +114,4 @@ export function BibleHeader({
   );
 }
 
-const styles = StyleSheet.create({
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    elevation: 6,
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    zIndex: 10,
-  },
-  leftButtonContainer: {
-    flexShrink: 0,
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginRight: 4,
-  },
-  centerContainer: {
-    flex: 1,
-    flexShrink: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    overflow: 'hidden',
-  },
-  rightContainer: {
-    flexShrink: 0,
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginLeft: 4,
-  },
-  title: {
-    fontFamily: 'Poppins_600SemiBold',
-    fontWeight: '700',
-    includeFontPadding: false,
-    flexShrink: 1,
-  },
-  menuBtn: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+

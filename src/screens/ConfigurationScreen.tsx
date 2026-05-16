@@ -6,7 +6,7 @@ import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system/legacy';
 import { useRouter } from 'expo-router';
 import * as Sharing from 'expo-sharing';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState , useMemo } from 'react';
 import { Platform, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { BibleDrawerMenu } from '../components/BibleDrawerMenu';
 import { BibleHeader } from '../components/BibleHeader';
@@ -30,8 +30,75 @@ const COLOR_THEME_OPTIONS = Object.entries(COLOR_THEMES).map(([key, value]) => (
 }));
 
 export default function ConfigurationScreen() {
-  const { ms } = useResponsive();
+  const { ms, DESIGN } = useResponsive();
   const { isDarkMode, toggleDarkMode, colors, colorTheme, setColorTheme, hapticsEnabled, toggleHaptics } = useTheme();
+  
+  const styles = useMemo(() => StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    content: {
+      padding: ms(DESIGN.spacing.lg),
+      paddingBottom: ms(DESIGN.spacing.xxl),
+    },
+    card: {
+      borderRadius: ms(DESIGN.borderRadius.lg),
+      borderWidth: 1,
+      overflow: 'hidden',
+      elevation: 1,
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.1,
+      shadowRadius: 2,
+    },
+    cardHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      padding: ms(DESIGN.spacing.lg),
+      gap: ms(DESIGN.spacing.lg),
+    },
+    cardTextContainer: {
+      flex: 1,
+      gap: ms(DESIGN.spacing.xs),
+    },
+    cardTitle: {
+      fontWeight: '700',
+    },
+    cardDesc: {
+      lineHeight: ms(DESIGN.fontSize.xl),
+    },
+    swatchGrid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      justifyContent: 'space-between',
+      marginTop: ms(DESIGN.spacing.md),
+      rowGap: ms(DESIGN.fontSize.xs),
+      width: '100%',
+    },
+    swatchItem: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: ms(DESIGN.spacing.xs),
+      paddingVertical: ms(DESIGN.spacing.sm),
+      borderRadius: ms(DESIGN.borderRadius.md),
+      borderWidth: 1.5,
+      width: '31.5%',
+      minHeight: ms(DESIGN.layout.emptyPaddingTop),
+    },
+    swatchDot: {
+      width: ms(DESIGN.icon.sm),
+      height: ms(DESIGN.icon.sm),
+      borderRadius: ms(DESIGN.borderRadius.sm),
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    swatchLabel: {
+      fontWeight: '600',
+      textAlign: 'center',
+    },
+    modalHeader: { flexDirection: 'row', alignItems: 'center' },
+    modalTitle: { fontWeight: '800' },
+  }), [ms, colors, DESIGN]);
+
   const { setReaderTheme, readerTheme } = useReaderSettings();
   const { clearHistory } = useHistory();
   const [isDrawerVisible, setIsDrawerVisible] = useState(false);
@@ -182,7 +249,7 @@ export default function ConfigurationScreen() {
       <BibleHeader title={ROUTE_LABELS[ROUTES.CONFIGURATION]} onMenuPress={() => setIsDrawerVisible(true)} />
 
       <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <BibleText style={{ marginLeft: 8, marginBottom: 8, fontSize: ms(14), fontWeight: '700', color: colors.textMuted }}>APARÊNCIA</BibleText>
+        <BibleText style={{ marginLeft: ms(DESIGN.spacing.sm), marginBottom: ms(DESIGN.spacing.sm), fontSize: ms(DESIGN.fontSize.md), fontWeight: '700', color: colors.textMuted }}>APARÊNCIA</BibleText>
         <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border, shadowColor: colors.shadow }]}>
           <SettingsItem
             label="Modo Escuro"
@@ -197,7 +264,7 @@ export default function ConfigurationScreen() {
             }
           />
 
-          <View style={{ height: 1, backgroundColor: colors.border, marginLeft: 70 }} />
+          <View style={{ height: 1, backgroundColor: colors.border, marginLeft: ms(DESIGN.layout.settingsIconOffset) }} />
 
           <SettingsItem
             label="Vibração"
@@ -212,7 +279,7 @@ export default function ConfigurationScreen() {
             }
           />
 
-          <View style={{ height: 1, backgroundColor: colors.border, marginLeft: 70 }} />
+          <View style={{ height: 1, backgroundColor: colors.border, marginLeft: ms(DESIGN.layout.settingsIconOffset) }} />
 
           <SettingsItem
             label="Cor do Aplicativo"
@@ -222,22 +289,22 @@ export default function ConfigurationScreen() {
             rightElement={
               <View style={{
                 backgroundColor: colors.primary,
-                paddingHorizontal: 16,
-                paddingVertical: 8,
-                borderRadius: 20,
+                paddingHorizontal: ms(DESIGN.spacing.lg),
+                paddingVertical: ms(DESIGN.spacing.sm),
+                borderRadius: ms(DESIGN.borderRadius.xl),
                 elevation: 2,
                 shadowColor: colors.primary,
-                shadowOffset: { width: 0, height: 2 },
+                shadowOffset: { width: 0, height: ms(DESIGN.spacing.tiny) },
                 shadowOpacity: 0.3,
                 shadowRadius: 4
               }}>
-                <BibleText style={{ fontSize: ms(12), color: colors.onPrimary, fontWeight: '800', textTransform: 'uppercase' }}>Escolher</BibleText>
+                <BibleText style={{ fontSize: ms(DESIGN.fontSize.md), color: colors.onPrimary, fontWeight: '800', textTransform: 'uppercase' }}>Escolher</BibleText>
               </View>
             }
           />
         </View>
 
-        <BibleText style={{ marginTop: 24, marginLeft: 8, marginBottom: 8, fontSize: ms(14), fontWeight: '700', color: colors.textMuted }}>GERENCIAMENTO</BibleText>
+        <BibleText style={{ marginTop: ms(DESIGN.spacing.xl), marginLeft: ms(DESIGN.spacing.sm), marginBottom: ms(DESIGN.spacing.sm), fontSize: ms(DESIGN.fontSize.md), fontWeight: '700', color: colors.textMuted }}>GERENCIAMENTO</BibleText>
         <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border, shadowColor: colors.shadow }]}>
           <SettingsItem
             label="Lixeira de Estudos"
@@ -245,7 +312,7 @@ export default function ConfigurationScreen() {
             icon="trash-2"
             onPress={() => router.push(ROUTES.TRASH as any)}
           />
-          <View style={{ height: 1, backgroundColor: colors.border, marginLeft: 70 }} />
+          <View style={{ height: 1, backgroundColor: colors.border, marginLeft: ms(DESIGN.layout.settingsIconOffset) }} />
           <SettingsItem
             label="Limpar Histórico"
             description="Remove todo o historico de pesquisa de versiculos"
@@ -254,7 +321,7 @@ export default function ConfigurationScreen() {
           />
         </View>
 
-        <BibleText style={{ marginTop: 24, marginLeft: 8, marginBottom: 8, fontSize: ms(14), fontWeight: '700', color: colors.textMuted }}>BACKUP E RESTAURAÇÃO</BibleText>
+        <BibleText style={{ marginTop: ms(DESIGN.spacing.xl), marginLeft: ms(DESIGN.spacing.sm), marginBottom: ms(DESIGN.spacing.sm), fontSize: ms(DESIGN.fontSize.md), fontWeight: '700', color: colors.textMuted }}>BACKUP E RESTAURAÇÃO</BibleText>
         <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border, shadowColor: colors.shadow }]}>
           <SettingsItem
             label="Backup Automático"
@@ -269,7 +336,7 @@ export default function ConfigurationScreen() {
             }
           />
 
-          <View style={{ height: 1, backgroundColor: colors.border, marginLeft: 70 }} />
+          <View style={{ height: 1, backgroundColor: colors.border, marginLeft: ms(DESIGN.layout.settingsIconOffset) }} />
 
           <SettingsItem
             label="Exportar Backup"
@@ -278,7 +345,7 @@ export default function ConfigurationScreen() {
             onPress={handleManualBackup}
           />
 
-          <View style={{ height: 1, backgroundColor: colors.border, marginLeft: 70 }} />
+          <View style={{ height: 1, backgroundColor: colors.border, marginLeft: ms(DESIGN.layout.settingsIconOffset) }} />
 
           <SettingsItem
             label="Restaurar do Backup"
@@ -316,34 +383,6 @@ export default function ConfigurationScreen() {
         onConfirm={() => setAlertInfo(null)}
       />
 
-
-      <BibleDrawerMenu
-        visible={isDrawerVisible}
-        activeItem="configuration"
-        onClose={() => setIsDrawerVisible(false)}
-        onSelectItem={() => { }}
-        onOpenDonate={() => { setIsDrawerVisible(false); setTimeout(() => setIsDonateVisible(true), 250); }}
-      />
-
-      <BibleConfirmModal
-        visible={isClearCacheConfirmVisible}
-        title="Limpar Histórico"
-        message="Tem certeza? Isso removerá sua posição de leitura salva."
-        confirmText="Limpar"
-        isDanger
-        onConfirm={handleClearCache}
-        onCancel={() => setIsClearCacheConfirmVisible(false)}
-      />
-
-      <BibleConfirmModal
-        visible={!!alertInfo}
-        title={alertInfo?.title || ''}
-        message={alertInfo?.message || ''}
-        confirmText="OK"
-        isDanger={alertInfo?.isDanger}
-        onConfirm={() => setAlertInfo(null)}
-      />
-
       <DonateModal visible={isDonateVisible} onClose={() => setIsDonateVisible(false)} />
 
       <BiblePageModal
@@ -351,8 +390,8 @@ export default function ConfigurationScreen() {
         onClose={() => setIsThemeModalVisible(false)}
         header={
           <View style={styles.modalHeader}>
-            <BibleIcon name="layers" color={colors.primary} backgroundColor={colors.primary + '15'} style={{ marginRight: 8 }} />
-            <BibleText style={[styles.modalTitle, { fontSize: ms(16), color: colors.onSurface, fontWeight: '700' }]}>Cor do Aplicativo</BibleText>
+            <BibleIcon name="layers" color={colors.primary} backgroundColor={colors.primary + '15'} style={{ marginRight: ms(DESIGN.spacing.sm) }} />
+            <BibleText style={[styles.modalTitle, { fontSize: ms(DESIGN.fontSize.lg), color: colors.onSurface, fontWeight: '700' }]}>Cor do Aplicativo</BibleText>
             <BibleIcon name="x" color={colors.error} backgroundColor={colors.error + '20'} onPress={() => setIsThemeModalVisible(false)} style={{ marginLeft: 'auto' }} />
           </View>
         }
@@ -375,17 +414,17 @@ export default function ConfigurationScreen() {
                     borderColor: isActive ? swatchColor : colors.border,
                     backgroundColor: isActive ? swatchColor + '15' : colors.surfaceHighlight
                   },
-                  isActive && { borderWidth: 2, borderColor: swatchColor },
+                  isActive && { borderWidth: ms(DESIGN.spacing.tiny), borderColor: swatchColor },
                 ]}
               >
                 <View style={[styles.swatchDot, { backgroundColor: swatchColor }]}>
                   {isActive && (
-                    <BibleIcon name="check" color={colors.onPrimary} size={ms(12)} />
+                    <BibleIcon name="check" color={colors.onPrimary} size={ms(DESIGN.fontSize.md)} />
                   )}
                 </View>
                 <BibleText style={[
                   styles.swatchLabel,
-                  { fontSize: ms(12), color: isActive ? swatchColor : colors.onSurface },
+                  { fontSize: ms(DESIGN.fontSize.md), color: isActive ? swatchColor : colors.onSurface },
                   isActive && { fontWeight: '800' },
                 ]}>
                   {theme.label}
@@ -399,70 +438,3 @@ export default function ConfigurationScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  content: {
-    padding: 16,
-    paddingBottom: 32,
-  },
-  card: {
-    borderRadius: 16,
-    borderWidth: 1,
-    overflow: 'hidden',
-    elevation: 1,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-  },
-  cardHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 16,
-    gap: 16,
-  },
-  cardTextContainer: {
-    flex: 1,
-    gap: 4,
-  },
-  cardTitle: {
-    fontWeight: '700',
-  },
-  cardDesc: {
-    lineHeight: 18,
-  },
-
-  swatchGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    marginTop: 12,
-    rowGap: 10,
-    width: '100%',
-  },
-  swatchItem: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 4,
-    paddingVertical: 10,
-    borderRadius: 14,
-    borderWidth: 1.5,
-    width: '31.5%',
-    minHeight: 80,
-  },
-  swatchDot: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  swatchLabel: {
-    fontWeight: '600',
-    textAlign: 'center',
-  },
-  modalHeader: { flexDirection: 'row', alignItems: 'center' },
-  modalTitle: { fontWeight: '800' },
-});

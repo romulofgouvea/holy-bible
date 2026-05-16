@@ -3,7 +3,7 @@ import { BibleIcon } from '@/components/BibleIcon';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FlashList } from '@shopify/flash-list';
 import { useLocalSearchParams, usePathname, useRouter } from 'expo-router';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState, useMemo } from 'react';
 import {
   Platform,
   StyleSheet,
@@ -42,10 +42,9 @@ export type SearchResult = {
 const MAX_HISTORY = 20;
 
 
-const HighlightText = React.memo(({ text, query, colors, fontSizeMultiplier, ms }: { text: string; query: string; colors: any; fontSizeMultiplier: number; ms: (v: number) => number }) => {
-  const baseSize = 20;
-  const currentSize = ms(baseSize * fontSizeMultiplier);
-  const currentLineHeight = ms(28 * fontSizeMultiplier);
+const HighlightText = React.memo(({ text, query, colors, fontSizeMultiplier, ms, DESIGN, styles }: { text: string; query: string; colors: any; fontSizeMultiplier: number; ms: (v: number) => number; DESIGN: any; styles: any }) => {
+  const currentSize = ms(DESIGN.fontSize.xxl * fontSizeMultiplier);
+  const currentLineHeight = ms(DESIGN.spacing.xxl * fontSizeMultiplier);
   const textStyle = { color: colors.onBackground, fontSize: currentSize, lineHeight: currentLineHeight };
 
   const cleanQuery = query.trim().toLowerCase();
@@ -53,16 +52,13 @@ const HighlightText = React.memo(({ text, query, colors, fontSizeMultiplier, ms 
     return <BibleText variant="reading" style={[styles.verseText, textStyle]}>{text}</BibleText>;
   }
 
-  // Tokenize by splitting on spaces, keeping each token (word or space run)
   const escapeRegExp = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  // Split text keeping the query as a whole token, then split non-match parts by space
   const rawParts = text.split(new RegExp(`(${escapeRegExp(cleanQuery)})`, 'gi'));
   const tokens: { text: string; highlighted: boolean }[] = [];
   for (const part of rawParts) {
     if (part.toLowerCase() === cleanQuery) {
       tokens.push({ text: part, highlighted: true });
     } else {
-      // Split non-highlighted part into individual words+spaces
       const words = part.split(/(\s+)/);
       for (const w of words) {
         if (w) tokens.push({ text: w, highlighted: false });
@@ -74,7 +70,7 @@ const HighlightText = React.memo(({ text, query, colors, fontSizeMultiplier, ms 
     <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center' }}>
       {tokens.map((token, i) =>
         token.highlighted ? (
-          <View key={i} style={{ backgroundColor: colors.primary + '20', borderRadius: 6, paddingHorizontal: 4, paddingVertical: 1, marginVertical: 1 }}>
+          <View key={i} style={{ backgroundColor: colors.primary + '20', borderRadius: ms(DESIGN.borderRadius.xs), paddingHorizontal: ms(DESIGN.spacing.xs), paddingVertical: ms(DESIGN.spacing.tiny), marginVertical: ms(DESIGN.spacing.tiny) }}>
             <BibleText variant="reading" style={[styles.verseText, { color: colors.primary, fontWeight: '800', fontSize: currentSize, lineHeight: currentLineHeight }]}>
               {token.text}
             </BibleText>
@@ -86,12 +82,15 @@ const HighlightText = React.memo(({ text, query, colors, fontSizeMultiplier, ms 
     </View>
   );
 });
-const SearchResultItem = React.memo(({ item, query, colors, fontSizeMultiplier, ms, onPress }: {
+
+const SearchResultItem = React.memo(({ item, query, colors, fontSizeMultiplier, ms, DESIGN, styles, onPress }: {
   item: SearchResult;
   query: string;
   colors: any;
   fontSizeMultiplier: number;
   ms: (v: number) => number;
+  DESIGN: any;
+  styles: any;
   onPress: (item: SearchResult) => void;
 }) => (
   <TouchableOpacity
@@ -99,20 +98,70 @@ const SearchResultItem = React.memo(({ item, query, colors, fontSizeMultiplier, 
     style={[styles.resultCard, { backgroundColor: colors.surface, borderColor: colors.border }]}
     onPress={() => onPress(item)}
   >
-    <View style={[styles.refBadge, { backgroundColor: colors.primary, paddingVertical: ms(4), paddingHorizontal: ms(10), borderRadius: ms(8) }]}>
-      <BibleText variant="reading" style={[styles.refText, { color: colors.onPrimary, fontSize: ms(12 * fontSizeMultiplier), fontWeight: '800' }]}>
+    <View style={[styles.refBadge, { backgroundColor: colors.primary, paddingVertical: ms(DESIGN.spacing.xs), paddingHorizontal: ms(DESIGN.spacing.sm), borderRadius: ms(DESIGN.borderRadius.sm) }]}>
+      <BibleText variant="reading" style={[styles.refText, { color: colors.onPrimary, fontSize: ms(DESIGN.fontSize.sm * fontSizeMultiplier), fontWeight: '800' }]}>
         {item.bookName} {item.chapter}:{item.verse}
       </BibleText>
     </View>
-    <View style={{ flex: 1, marginTop: 12 }}>
-      <HighlightText text={item.text} query={query} colors={colors} fontSizeMultiplier={fontSizeMultiplier} ms={ms} />
+    <View style={{ flex: 1, marginTop: ms(DESIGN.spacing.md) }}>
+      <HighlightText text={item.text} query={query} colors={colors} fontSizeMultiplier={fontSizeMultiplier} ms={ms} DESIGN={DESIGN} styles={styles} />
     </View>
   </TouchableOpacity>
 ));
 
 export default function SearchScreen() {
-  const { ms } = useResponsive();
+  const { ms, DESIGN } = useResponsive();
   const { colors } = useTheme();
+
+  const styles = useMemo(() => StyleSheet.create({
+    container: { flex: 1 },
+    searchContainer: {
+      padding: ms(DESIGN.spacing.lg),
+      gap: ms(DESIGN.spacing.sm),
+    },
+    searchBox: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      height: ms(DESIGN.button.height.md),
+      borderRadius: ms(DESIGN.borderRadius.md),
+      paddingHorizontal: ms(DESIGN.spacing.sm),
+    },
+    input: { flex: 1, height: '100%' },
+    segmentedControl: {
+      flexDirection: 'row',
+      borderRadius: ms(DESIGN.borderRadius.md),
+      borderWidth: 1,
+      overflow: 'hidden',
+      height: ms(DESIGN.button.height.sm),
+    },
+    segmentItem: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    scopeLabel: { fontWeight: '700' },
+    centerBox: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center'
+    },
+    hint: { textAlign: 'center' },
+    historyText: { fontWeight: '500' },
+    resultCard: {
+      borderRadius: ms(DESIGN.borderRadius.lg),
+      borderWidth: 1,
+      padding: ms(DESIGN.spacing.lg),
+    },
+    refBadge: {
+      alignSelf: 'flex-start',
+      borderRadius: ms(DESIGN.borderRadius.sm),
+      paddingHorizontal: ms(DESIGN.spacing.sm),
+      paddingVertical: ms(DESIGN.spacing.tiny),
+    },
+    refText: { fontWeight: '700' },
+    verseText: { fontSize: ms(DESIGN.fontSize.md), lineHeight: ms(DESIGN.fontSize.xxl) },
+  }), [ms, colors, DESIGN]);
+
   const { fontSizeMultiplier } = useReaderSettings();
   const router = useRouter();
   const pathname = usePathname();
@@ -319,14 +368,14 @@ export default function SearchScreen() {
         onMenuPress={() => setIsDrawerVisible(true)}
         leftContent={
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <TouchableOpacity style={{ backgroundColor: btnBg, height: ms(38), paddingHorizontal: ms(12), marginHorizontal: ms(3), borderRadius: ms(10), justifyContent: 'center' }} onPress={() => openModal({ initialStep: 'version', onSelect: (s) => s.version && setVersion(s.version) })}>
-              <BibleText style={{ color: btnText, fontSize: ms(15), fontWeight: '700' }}>{version}</BibleText>
+            <TouchableOpacity style={{ backgroundColor: btnBg, height: ms(DESIGN.button.height.sm), paddingHorizontal: ms(DESIGN.spacing.md), marginHorizontal: ms(DESIGN.spacing.tiny), borderRadius: ms(DESIGN.borderRadius.sm), justifyContent: 'center' }} onPress={() => openModal({ initialStep: 'version', onSelect: (s) => s.version && setVersion(s.version) })}>
+              <BibleText style={{ color: btnText, fontSize: ms(DESIGN.fontSize.md), fontWeight: '700' }}>{version}</BibleText>
             </TouchableOpacity>
-            <TouchableOpacity style={{ backgroundColor: btnBg, height: ms(38), paddingHorizontal: ms(12), marginHorizontal: ms(3), borderRadius: ms(10), justifyContent: 'center' }} onPress={() => openModal({ initialStep: 'book', onSelect: (s) => s.book && setBook(s.book.abbrev) })}>
-              <BibleText style={{ color: btnText, fontSize: ms(15), fontWeight: '700' }}>{currentBook.name}</BibleText>
+            <TouchableOpacity style={{ backgroundColor: btnBg, height: ms(DESIGN.button.height.sm), paddingHorizontal: ms(DESIGN.spacing.md), marginHorizontal: ms(DESIGN.spacing.tiny), borderRadius: ms(DESIGN.borderRadius.sm), justifyContent: 'center' }} onPress={() => openModal({ initialStep: 'book', onSelect: (s) => s.book && setBook(s.book.abbrev) })}>
+              <BibleText style={{ color: btnText, fontSize: ms(DESIGN.fontSize.md), fontWeight: '700' }}>{currentBook.name}</BibleText>
             </TouchableOpacity>
-            <TouchableOpacity style={{ backgroundColor: btnBg, height: ms(38), paddingHorizontal: ms(12), marginHorizontal: ms(3), borderRadius: ms(10), justifyContent: 'center' }} onPress={() => openModal({ initialStep: 'chapter', skipVerseSelection: true, onSelect: (s) => s.chapter && setChapter(s.chapter) })}>
-              <BibleText style={{ color: btnText, fontSize: ms(15), fontWeight: '700' }}>{chapter}</BibleText>
+            <TouchableOpacity style={{ backgroundColor: btnBg, height: ms(DESIGN.button.height.sm), paddingHorizontal: ms(DESIGN.spacing.md), marginHorizontal: ms(DESIGN.spacing.tiny), borderRadius: ms(DESIGN.borderRadius.sm), justifyContent: 'center' }} onPress={() => openModal({ initialStep: 'chapter', skipVerseSelection: true, onSelect: (s) => s.chapter && setChapter(s.chapter) })}>
+              <BibleText style={{ color: btnText, fontSize: ms(DESIGN.fontSize.md), fontWeight: '700' }}>{chapter}</BibleText>
             </TouchableOpacity>
           </View>
         }
@@ -334,10 +383,10 @@ export default function SearchScreen() {
 
       <View style={[styles.searchContainer, { backgroundColor: colors.background, borderBottomColor: colors.border }]} testID="search-container">
         <View style={[styles.searchBox, { backgroundColor: colors.surfaceHighlight, borderColor: colors.border }]}>
-          <BibleIcon name="search" size={ms(16)} color={colors.primary} style={{ marginRight: 8 }} />
+          <BibleIcon name="search" size={ms(DESIGN.spacing.lg)} color={colors.primary} style={{ marginRight: ms(DESIGN.spacing.sm) }} />
           <TextInput
             ref={inputRef}
-            style={[styles.input, Platform.select({ web: { outline: 'none', outlineWidth: 0 } as any, default: {} }), { fontSize: ms(14), color: colors.onSurface }]}
+            style={[styles.input, Platform.select({ web: { outline: 'none', outlineWidth: 0 } as any, default: {} }), { fontSize: ms(DESIGN.fontSize.md), color: colors.onSurface }]}
             placeholder="Pesquisar na Bíblia..."
             placeholderTextColor={colors.textMuted}
             value={query}
@@ -365,12 +414,12 @@ export default function SearchScreen() {
             { key: 'chapter' as SearchScope, label: `Capítulo: ${chapter}` },
           ].map((s, idx) => (
             <React.Fragment key={s.key}>
-              {idx > 0 && <View style={{ width: 1, backgroundColor: colors.border, marginVertical: 8 }} />}
+              {idx > 0 && <View style={{ width: 1, backgroundColor: colors.border, marginVertical: ms(DESIGN.spacing.sm) }} />}
               <TouchableOpacity
                 style={[styles.segmentItem, scope === s.key && { backgroundColor: colors.primary }]}
                 onPress={() => handleChangeScope(s.key)}
               >
-                <BibleText style={[styles.scopeLabel, { color: scope === s.key ? colors.onPrimary : colors.primary, fontSize: ms(11) }]} numberOfLines={1}>
+                <BibleText style={[styles.scopeLabel, { color: scope === s.key ? colors.onPrimary : colors.primary, fontSize: ms(DESIGN.fontSize.xs) }]} numberOfLines={1}>
                   {s.label}
                 </BibleText>
               </TouchableOpacity>
@@ -393,18 +442,18 @@ export default function SearchScreen() {
             data={history}
             keyExtractor={(item) => item}
             // @ts-ignore
-            estimatedItemSize={60}
+            estimatedItemSize={ms(DESIGN.layout.footerHeight)}
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
-            contentContainerStyle={{ padding: 16 }}
-            ItemSeparatorComponent={() => <View style={{ height: 8 }} />}
+            contentContainerStyle={{ padding: ms(DESIGN.spacing.lg) }}
+            ItemSeparatorComponent={() => <View style={{ height: ms(DESIGN.spacing.sm) }} />}
             ListHeaderComponent={
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                <BibleText style={{ fontSize: ms(10), fontWeight: '800', textTransform: 'uppercase', letterSpacing: 1, color: colors.textMuted, opacity: 0.6 }}>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: ms(DESIGN.spacing.sm) }}>
+                <BibleText style={{ fontSize: ms(DESIGN.fontSize.xs), fontWeight: '800', textTransform: 'uppercase', letterSpacing: 1, color: colors.textMuted, opacity: 0.6 }}>
                   BUSCAS RECENTES
                 </BibleText>
-                <TouchableOpacity onPress={clearHistory} style={{ paddingHorizontal: 12, paddingVertical: 6, backgroundColor: colors.primary + '20', borderRadius: 12 }}>
-                  <BibleText style={{ color: colors.primary, fontSize: ms(11), fontWeight: '800' }}>
+                <TouchableOpacity onPress={clearHistory} style={{ paddingHorizontal: ms(DESIGN.spacing.md), paddingVertical: ms(DESIGN.spacing.xs), backgroundColor: colors.primary + '20', borderRadius: ms(DESIGN.borderRadius.md) }}>
+                  <BibleText style={{ color: colors.primary, fontSize: ms(DESIGN.fontSize.xs), fontWeight: '800' }}>
                     Limpar
                   </BibleText>
                 </TouchableOpacity>
@@ -412,12 +461,12 @@ export default function SearchScreen() {
             }
             renderItem={({ item }) => (
               <TouchableOpacity
-                style={[styles.resultCard, { borderColor: colors.border, backgroundColor: colors.background, flexDirection: 'row', alignItems: 'center', paddingVertical: 10 }]}
+                style={[styles.resultCard, { borderColor: colors.border, backgroundColor: colors.background, flexDirection: 'row', alignItems: 'center', paddingVertical: ms(DESIGN.spacing.md) }]}
                 onPress={() => handleHistorySelect(item)}
                 activeOpacity={0.7}
               >
                 <BibleIcon name="clock" backgroundColor={colors.primary + '20'} color={colors.primary} />
-                <BibleText style={[styles.historyText, { marginLeft: ms(8), color: colors.onSurface, fontSize: ms(15), flex: 1 }]}>
+                <BibleText style={[styles.historyText, { marginLeft: ms(DESIGN.spacing.sm), color: colors.onSurface, fontSize: ms(DESIGN.fontSize.md), flex: 1 }]}>
                   {item}
                 </BibleText>
                 <BibleIcon
@@ -446,7 +495,7 @@ export default function SearchScreen() {
         />
       ) : showResults ? (
         <View style={{ flex: 1 }}>
-          <View style={{ marginHorizontal: 12, marginBottom: 8 }}>
+          <View style={{ marginHorizontal: ms(DESIGN.spacing.md), marginBottom: ms(DESIGN.spacing.sm) }}>
             <BibleCountPill
               count={results.length}
               label="resultado"
@@ -457,10 +506,10 @@ export default function SearchScreen() {
             data={results}
             keyExtractor={(_, i) => String(i)}
             // @ts-ignore
-            estimatedItemSize={100}
+            estimatedItemSize={ms(DESIGN.layout.listPaddingBottom)}
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ padding: 12 }}
-            ItemSeparatorComponent={() => <View style={{ height: 8 }} />}
+            contentContainerStyle={{ padding: ms(DESIGN.spacing.md) }}
+            ItemSeparatorComponent={() => <View style={{ height: ms(DESIGN.spacing.sm) }} />}
             keyboardShouldPersistTaps="handled"
             renderItem={({ item }) => (
               <SearchResultItem
@@ -469,6 +518,8 @@ export default function SearchScreen() {
                 colors={colors}
                 fontSizeMultiplier={fontSizeMultiplier}
                 ms={ms}
+                DESIGN={DESIGN}
+                styles={styles}
                 onPress={handleNavigate}
               />
             )}
@@ -488,52 +539,3 @@ export default function SearchScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1 },
-  searchContainer: {
-    padding: 16,
-    gap: 8,
-  },
-  searchBox: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    height: 46,
-    borderRadius: 12,
-    paddingHorizontal: 8,
-  },
-  input: { flex: 1, height: '100%' },
-  segmentedControl: {
-    flexDirection: 'row',
-    borderRadius: 12,
-    borderWidth: 1,
-    overflow: 'hidden',
-    height: 40,
-  },
-  segmentItem: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  scopeLabel: { fontWeight: '700' },
-  centerBox: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  hint: { textAlign: 'center' },
-  historyText: { fontWeight: '500' },
-  resultCard: {
-    borderRadius: 16,
-    borderWidth: 1,
-    padding: 16,
-  },
-  refBadge: {
-    alignSelf: 'flex-start',
-    borderRadius: 8,
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-  },
-  refText: { fontWeight: '700' },
-  verseText: { fontSize: 14, lineHeight: 20 },
-});

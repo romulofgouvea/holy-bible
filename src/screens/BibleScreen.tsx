@@ -2,7 +2,7 @@ import { BibleVerseActionSheet, SelectedVerse } from '@/components/modals/BibleV
 import { useBibleModals } from '../hooks/useBibleModals';
 import { ReaderSettingsModal } from '@/components/modals/ReaderSettingsModal';
 import { useRouter } from 'expo-router';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState , useMemo } from 'react';
 import { Animated, StyleSheet, View } from 'react-native';
 import { BibleDrawerMenu } from '../components/BibleDrawerMenu';
 import { BibleIcon } from '../components/BibleIcon';
@@ -35,9 +35,26 @@ export default function BibleScreen() {
   } = useBible();
 
   const router = useRouter();
-  const { ms } = useResponsive();
+  const { ms, DESIGN } = useResponsive();
   const { toast, opacity, show } = useToast();
   const { colors } = useTheme();
+  
+  const styles = useMemo(() => StyleSheet.create({
+    content: {
+      flex: 1,
+    },
+    floatingNav: {
+      position: 'absolute',
+      bottom: ms(DESIGN.spacing.xl),
+      left: 0,
+      right: 0,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      paddingHorizontal: ms(DESIGN.spacing.lg),
+      pointerEvents: 'box-none',
+    }
+  }), [ms, colors, DESIGN]);
+
   const { readerTheme, readerColors } = useReaderSettings();
 
   const [isActionSheetVisible, setIsActionSheetVisible] = useState(false);
@@ -251,26 +268,38 @@ export default function BibleScreen() {
                 <View style={styles.floatingNav}>
                   <BibleIcon
                     name="chevron-left"
-                    size={ms(26)}
-                    containerSize={40}
+                    size={ms(DESIGN.fontSize.xxxl)}
+                    containerSize={ms(DESIGN.spacing.xxxl)}
                     color={navIcon}
                     backgroundColor={navBg}
-                    borderRadius={12}
+                    borderRadius={ms(DESIGN.borderRadius.md)}
                     onPress={() => navigateChapter(-1)}
                     activeOpacity={0.8}
-                    style={{ elevation: 4, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 3 }}
+                    style={{ 
+                      elevation: 4, 
+                      shadowColor: '#000', 
+                      shadowOffset: { width: 0, height: ms(DESIGN.spacing.tiny) }, 
+                      shadowOpacity: 0.25, 
+                      shadowRadius: 3 
+                    }}
                   />
 
                   <BibleIcon
                     name="chevron-right"
-                    size={ms(26)}
-                    containerSize={40}
+                    size={ms(DESIGN.fontSize.xxxl)}
+                    containerSize={ms(DESIGN.spacing.xxxl)}
                     color={navIcon}
                     backgroundColor={navBg}
-                    borderRadius={12}
+                    borderRadius={ms(DESIGN.borderRadius.md)}
                     onPress={() => navigateChapter(1)}
                     activeOpacity={0.8}
-                    style={{ elevation: 4, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 3 }}
+                    style={{ 
+                      elevation: 4, 
+                      shadowColor: '#000', 
+                      shadowOffset: { width: 0, height: ms(DESIGN.spacing.tiny) }, 
+                      shadowOpacity: 0.25, 
+                      shadowRadius: 3 
+                    }}
                   />
                 </View>
               )}
@@ -319,19 +348,3 @@ export default function BibleScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  content: {
-    flex: 1,
-  },
-  floatingNav: {
-    position: 'absolute',
-    bottom: 24,
-    left: 0,
-    right: 0,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    pointerEvents: 'box-none',
-  }
-});

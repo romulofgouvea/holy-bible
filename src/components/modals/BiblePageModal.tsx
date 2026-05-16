@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { Animated, KeyboardAvoidingView, Platform, Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useResponsive } from '../../hooks/useResponsive';
@@ -16,7 +16,25 @@ type BiblePageModalProps = {
 
 export function BiblePageModal({ visible, onClose, children, header, footer, fullHeight }: BiblePageModalProps) {
   const { colors } = useTheme();
-  const { ms } = useResponsive();
+  const { ms, DESIGN } = useResponsive();
+  
+  const styles = useMemo(() => StyleSheet.create({
+    backdrop: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    modalContent: {
+      width: '100%',
+      maxHeight: '90%',
+      overflow: 'hidden',
+      elevation: 10,
+      shadowOffset: { width: 0, height: ms(DESIGN.spacing.xs) },
+      shadowOpacity: 0.3,
+      shadowRadius: ms(DESIGN.borderRadius.md),
+    },
+  }), [ms, colors, DESIGN]);
+
   const insets = useSafeAreaInsets();
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const [rendered, setRendered] = useState(visible);
@@ -45,7 +63,7 @@ export function BiblePageModal({ visible, onClose, children, header, footer, ful
   return (
     <Animated.View style={[StyleSheet.absoluteFill, { zIndex: 9999, elevation: 9999, opacity: fadeAnim }]}>
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'padding'}>
-        <View style={[styles.backdrop, { padding: ms(16) }]}>
+        <View style={[styles.backdrop, { padding: ms(DESIGN.spacing.lg), backgroundColor: colors.overlay }]}>
           <Pressable 
             style={StyleSheet.absoluteFill} 
             onPress={onClose} 
@@ -55,27 +73,28 @@ export function BiblePageModal({ visible, onClose, children, header, footer, ful
               styles.modalContent,
               {
                 backgroundColor: colors.background,
-                borderRadius: ms(16),
-                maxWidth: ms(500),
+                borderRadius: ms(DESIGN.borderRadius.lg),
+                maxWidth: ms(DESIGN.maxWidth.md),
+                shadowColor: colors.shadow,
               },
               fullHeight && { height: '90%' }
             ]}
           >
             {header && (
               <View >
-                <View style={[styles.contentHeader, { padding: ms(16) }]}>{header}</View>
+                <View style={{ padding: ms(DESIGN.spacing.lg) }}>{header}</View>
                 <BibleDivider />
               </View>
             )}
 
-            <View style={[styles.contentArea, { flexShrink: 1, flexGrow: fullHeight ? 1 : 0 }]}>
+            <View style={{ flexShrink: 1, flexGrow: fullHeight ? 1 : 0 }}>
               {children}
             </View>
 
             {footer && (
               <View >
                 <BibleDivider />
-                <View style={[styles.contentFooter, { paddingHorizontal: ms(8), paddingVertical: ms(8) }]}>{footer}</View>
+                <View style={{ paddingHorizontal: ms(DESIGN.spacing.sm), paddingVertical: ms(DESIGN.spacing.sm) }}>{footer}</View>
               </View>
             )}
           </View>
@@ -84,28 +103,3 @@ export function BiblePageModal({ visible, onClose, children, header, footer, ful
     </Animated.View>
   );
 }
-
-const styles = StyleSheet.create({
-  backdrop: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalContent: {
-    width: '100%',
-    maxHeight: '90%',
-    overflow: 'hidden',
-    elevation: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 10,
-  },
-  contentHeader: {
-  },
-  contentArea: {
-  },
-  contentFooter: {
-  },
-});

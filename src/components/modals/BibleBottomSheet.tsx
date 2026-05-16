@@ -1,8 +1,8 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useMemo } from 'react';
 import { Animated, Dimensions, KeyboardAvoidingView, Modal, PanResponder, Platform, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { DESIGN_TOKENS } from '../../constants/design';
 import { useTheme } from '../../hooks/useTheme';
+import { useResponsive } from '../../hooks/useResponsive';
 import { BibleDivider } from '../BibleDivider';
 
 type BibleBottomSheetProps = {
@@ -20,6 +20,7 @@ const SCREEN_HEIGHT = Dimensions.get('window').height;
 export function BibleBottomSheet({ visible, onClose, children, header, footer, animated = true, resizable }: BibleBottomSheetProps) {
   const isResizable = resizable !== undefined ? resizable : animated;
   const { colors } = useTheme();
+  const { ms, DESIGN } = useResponsive();
   const insets = useSafeAreaInsets();
 
   const snapPoints = {
@@ -41,7 +42,7 @@ export function BibleBottomSheet({ visible, onClose, children, header, footer, a
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
       onMoveShouldSetPanResponder: (_, gestureState) => {
-        return Math.abs(gestureState.dy) > 10;
+        return Math.abs(gestureState.dy) > ms(DESIGN.spacing.sm);
       },
       onPanResponderMove: (_, gestureState) => {
         let newHeight = currentHeight.current - gestureState.dy;
@@ -49,22 +50,22 @@ export function BibleBottomSheet({ visible, onClose, children, header, footer, a
         animatedHeight.setValue(newHeight);
       },
       onPanResponderRelease: (_, gestureState) => {
-        const draggedDown = gestureState.dy > 40;
-        const draggedUp = gestureState.dy < -40;
+        const draggedDown = gestureState.dy > ms(DESIGN.spacing.giant);
+        const draggedUp = gestureState.dy < -ms(DESIGN.spacing.giant);
 
         let targetHeight = currentHeight.current;
 
         if (currentHeight.current === snapPoints.half) {
-          if (gestureState.dy < -40 || gestureState.vy < -0.5) {
+          if (gestureState.dy < -ms(DESIGN.spacing.giant) || gestureState.vy < -0.5) {
             targetHeight = snapPoints.full;
-          } else if (gestureState.dy > 60 || gestureState.vy > 0.5) {
+          } else if (gestureState.dy > ms(DESIGN.layout.settingsIconOffset) || gestureState.vy > 0.5) {
             return onClose();
           } else {
             targetHeight = snapPoints.half;
           }
         } else {
-          if (gestureState.dy > 60 || gestureState.vy > 0.5) {
-            if (gestureState.dy > 200 || gestureState.vy > 1.5) return onClose();
+          if (gestureState.dy > ms(DESIGN.layout.settingsIconOffset) || gestureState.vy > 0.5) {
+            if (gestureState.dy > ms(200) || gestureState.vy > 1.5) return onClose();
             targetHeight = snapPoints.half;
           } else {
             targetHeight = snapPoints.full;
@@ -81,6 +82,41 @@ export function BibleBottomSheet({ visible, onClose, children, header, footer, a
     })
   ).current;
 
+  const styles = useMemo(() => StyleSheet.create({
+    modalContainer: {
+      flex: 1,
+      justifyContent: 'flex-end',
+    },
+    backdrop: {
+      ...StyleSheet.absoluteFillObject,
+    },
+    bottomSheet: {
+      width: '100%',
+      borderTopLeftRadius: ms(DESIGN.borderRadius.xl),
+      borderTopRightRadius: ms(DESIGN.borderRadius.xl),
+      elevation: 24,
+      shadowOffset: { width: 0, height: ms(-DESIGN.spacing.xs) },
+      shadowOpacity: 0.15,
+      shadowRadius: ms(DESIGN.borderRadius.lg),
+    },
+    modalHandle: {
+      width: ms(DESIGN.spacing.giant),
+      height: ms(DESIGN.spacing.xs),
+      borderRadius: ms(DESIGN.borderRadius.xs),
+      alignSelf: 'center',
+      marginTop: ms(DESIGN.spacing.md),
+      marginBottom: ms(DESIGN.spacing.md),
+    },
+    handleContainer: {
+      width: '100%',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    content: {
+      paddingHorizontal: ms(DESIGN.spacing.lg),
+    },
+  }), [ms, colors, DESIGN]);
+
   return (
     <Modal visible={visible} animationType={animated ? "slide" : "none"} transparent onRequestClose={onClose}>
       <View style={styles.modalContainer} testID="bible-bottom-sheet-container">
@@ -94,7 +130,7 @@ export function BibleBottomSheet({ visible, onClose, children, header, footer, a
             height: isResizable ? animatedHeight : undefined,
             maxHeight: snapPoints.full,
             backgroundColor: colors.background,
-            paddingBottom: Math.max(8, insets.bottom + 8),
+            paddingBottom: Math.max(ms(DESIGN.spacing.sm), insets.bottom + ms(DESIGN.spacing.sm)),
             shadowColor: colors.shadow
           }
         ]}>
@@ -108,17 +144,17 @@ export function BibleBottomSheet({ visible, onClose, children, header, footer, a
               </View>
             )}
             {header && (
-              <View style={{ paddingTop: DESIGN_TOKENS.padding.lg }}>
+              <View style={{ paddingTop: ms(DESIGN.spacing.lg) }}>
                 <View style={styles.content}>{header}</View>
-                <BibleDivider margin={DESIGN_TOKENS.spacing.md} />
+                <BibleDivider margin={ms(DESIGN.spacing.md)} />
               </View>
             )}
             <View style={[styles.content, { flex: 1 }]}>
               {children}
             </View>
             {footer && (
-              <View style={{ paddingBottom: DESIGN_TOKENS.padding.xs }}>
-                <BibleDivider margin={DESIGN_TOKENS.spacing.xs} />
+              <View style={{ paddingBottom: ms(DESIGN.spacing.xs) }}>
+                <BibleDivider margin={ms(DESIGN.spacing.xs)} />
                 <View style={styles.content}>{footer}</View>
               </View>
             )}
@@ -128,42 +164,3 @@ export function BibleBottomSheet({ visible, onClose, children, header, footer, a
     </Modal>
   );
 }
-
-const styles = StyleSheet.create({
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'flex-end',
-  },
-  backdrop: {
-    ...StyleSheet.absoluteFillObject,
-  },
-  bottomSheet: {
-    width: '100%',
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    elevation: 24,
-    shadowOffset: { width: 0, height: -4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 16,
-  },
-  modalHandle: {
-    width: 40,
-    height: 4,
-    borderRadius: 2,
-    alignSelf: 'center',
-    marginTop: 12,
-    marginBottom: 12,
-  },
-  handleContainer: {
-    width: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  content: {
-    paddingHorizontal: 16,
-  },
-  contentNotResizable: {
-    paddingHorizontal: 16,
-    paddingTop: 16,
-  }
-});

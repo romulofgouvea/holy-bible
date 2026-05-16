@@ -1,5 +1,5 @@
 import { Feather } from '@expo/vector-icons';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native';
 import { useResponsive } from '../hooks/useResponsive';
 import { useTheme } from '../hooks/useTheme';
@@ -29,8 +29,15 @@ export function BibleIcon({
   activeOpacity = 0.7,
   testID
 }: BibleIconProps) {
-  const { ms } = useResponsive();
+  const { ms, DESIGN } = useResponsive();
   const { colors } = useTheme();
+  const styles = useMemo(() => StyleSheet.create({
+  container: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+}), [ms, colors, DESIGN]);
+
 
   const Container = onPress ? TouchableOpacity : View;
 
@@ -62,9 +69,4 @@ export function BibleIcon({
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+

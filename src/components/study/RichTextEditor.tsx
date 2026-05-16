@@ -25,12 +25,40 @@ type Props = {
 export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ initialHtml, onChange, onOpenVersePicker, showToolbar = true, readonly = false }, ref) => {
   const webViewRef = useRef<WebView>(null);
   const webIframeRef = useRef<any>(null);
-  const { colors: themeColors, colorTheme, isDarkMode } = useTheme();
-  const { ms } = useResponsive();
+  const { colors: themeColors, colorTheme, isDarkMode, colors } = useTheme();
+  const { ms, DESIGN } = useResponsive();
   const { readerColors, readerTheme, readerFontFamily } = useReaderSettings();
 
+  const styles = useMemo(() => StyleSheet.create({
+    toolbar: {
+      flexDirection: 'row',
+      height: ms(DESIGN.button.height.lg),
+      borderBottomWidth: 1,
+      zIndex: 5,
+      // Soft shadow for premium feel
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.05,
+      shadowRadius: 2,
+      elevation: 2,
+    },
+    rowGroup: {
+      flexDirection: 'row',
+      borderRadius: ms(DESIGN.borderRadius.md),
+      overflow: 'hidden',
+      borderWidth: 1,
+      marginVertical: ms(DESIGN.spacing.sm),
+    },
+    groupBtn: {
+      flexDirection: 'row',
+      paddingHorizontal: ms(DESIGN.spacing.md),
+      height: ms(DESIGN.button.height.sm),
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+  }), [ms, colors, DESIGN]);
 
-  const colors = useMemo(() => {
+  const editorColors = useMemo(() => {
     if (readerTheme === 'sepia') {
       const active = Object.entries(COLOR_THEMES).map(([key, value]) => ({ key, ...value }))
         .find(t => t.key === colorTheme) ?? COLOR_THEMES.teal;
@@ -64,7 +92,6 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
 
   const applyHighlight = (color: string) => {
     selectionHaptic();
-
     execDocumentCmd('hiliteColor', color);
   };
 
@@ -88,18 +115,18 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
     if (!webViewRef.current && Platform.OS !== 'web') return;
     const js = `
       (function() {
-        document.body.style.backgroundColor = '${colors.background}';
+        document.body.style.backgroundColor = '${editorColors.background}';
         var editorEl = document.getElementById('editor');
         if (editorEl) {
-          editorEl.style.color = '${readerColors.onBackground || colors.onBackground}';
-          editorEl.style.backgroundColor = '${colors.background}';
+          editorEl.style.color = '${readerColors.onBackground || editorColors.onBackground}';
+          editorEl.style.backgroundColor = '${editorColors.background}';
           editorEl.style.fontFamily = "${readerFontFamily === 'Poppins_400Regular' ? "'Poppins_400Regular', sans-serif" : readerFontFamily}";
         }
       })();
       true;
     `;
     injectToEditor(js);
-  }, [readerColors, colors, readerFontFamily]);
+  }, [readerColors, editorColors, readerFontFamily]);
 
   const onMessage = (event: any) => {
     try {
@@ -128,18 +155,18 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
         html, body {
           margin: 0; padding: 0; 
           height: 100%;
-          background-color: ${colors.surface};
+          background-color: ${editorColors.surface};
           font-family: -apple-system, sans-serif;
         }
         #editor {
           min-height: 100%;
-          padding: 16px;
-          padding-bottom: 120px;
+          padding: ${ms(DESIGN.spacing.lg)}px;
+          padding-bottom: ${ms(DESIGN.layout.listPaddingBottom + DESIGN.spacing.xl)}px;
           outline: none;
-          font-size: ${ms(16)}px;
+          font-size: ${ms(DESIGN.fontSize.lg)}px;
           line-height: 1.6;
-          color: ${readerColors.onBackground || colors.onBackground};
-          background-color: ${colors.background};
+          color: ${readerColors.onBackground || editorColors.onBackground};
+          background-color: ${editorColors.background};
           overflow-wrap: break-word;
           word-wrap: break-word;
           word-break: break-word;
@@ -152,20 +179,20 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
         font[size="6"] { font-size: 48px; line-height: 1.6; }
         font[size="7"] { font-size: 64px; line-height: 1.6; }
         ::selection {
-          background-color: ${colors.primary};
+          background-color: ${editorColors.primary};
         }
         [contenteditable="true"]:empty:before {
           content: attr(placeholder);
-          color: ${colors.textMuted};
+          color: ${editorColors.textMuted};
           pointer-events: none;
           display: block;
         }
         .bible-verse {
           position: relative;
-          margin: 16px 0;
-          padding: 12px 16px;
-          background-color: ${colors.primary}15;
-          border-left: 4px solid ${colors.primary};
+          margin: ${ms(DESIGN.spacing.lg)}px 0;
+          padding: ${ms(DESIGN.spacing.md)}px 16px;
+          background-color: ${editorColors.primary}15;
+          border-left: ${ms(DESIGN.spacing.xs)}px solid ${editorColors.primary};
           border-radius: 8px;
           overflow-wrap: break-word;
           word-wrap: break-word;
@@ -177,12 +204,12 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
           position: absolute;
           top: 0;
           right: 0;
-          width: 44px;
-          height: 44px;
+          width: ${ms(DESIGN.button.height.md)}px;
+          height: ${ms(DESIGN.button.height.md)}px;
           display: flex;
           align-items: center;
           justify-content: center;
-          color: ${colors.primary};
+          color: ${editorColors.primary};
           font-size: 24px;
           font-weight: bold;
           cursor: pointer;
@@ -191,9 +218,9 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
           opacity: 0.5;
         }
         .bible-verse b, .bible-verse .verse-title {
-          color: ${colors.primary};
+          color: ${editorColors.primary};
           display: block;
-          margin-bottom: 8px;
+          margin-bottom: ${ms(DESIGN.spacing.sm)}px;
           font-size: 14px;
           font-weight: bold;
           text-transform: uppercase;
@@ -201,26 +228,26 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
         }
         .bible-verse p {
           margin: 0;
-          color: ${colors.onSurface};
+          color: ${editorColors.onSurface};
           font-style: italic;
         }
-        ul, ol { padding-left: 24px; margin-top: 8px; margin-bottom: 8px; }
-        li { margin-bottom: 4px; }
-        ul.task-list { list-style: none; padding-left: 28px; }
-        ul.task-list li { position: relative; margin-bottom: 8px; }
+        ul, ol { padding-left: ${ms(DESIGN.spacing.xl)}px; margin-top: ${ms(DESIGN.spacing.sm)}px; margin-bottom: ${ms(DESIGN.spacing.sm)}px; }
+        li { margin-bottom: ${ms(DESIGN.spacing.xs)}px; }
+        ul.task-list { list-style: none; padding-left: ${ms(DESIGN.spacing.xl + DESIGN.spacing.xs)}px; }
+        ul.task-list li { position: relative; margin-bottom: ${ms(DESIGN.spacing.sm)}px; }
         ul.task-list li::before {
-          content: ''; position: absolute; left: -26px; top: 4px; width: 18px; height: 18px;
-          border: 2px solid ${colors.primary}; border-radius: 4px; background-color: transparent; cursor: pointer; box-sizing: border-box;
+          content: ''; position: absolute; left: -26px; top: ${ms(DESIGN.spacing.xs)}px; width: ${ms(DESIGN.fontSize.xl)}px; height: ${ms(DESIGN.fontSize.xl)}px;
+          border: 2px solid ${editorColors.primary}; border-radius: 4px; background-color: transparent; cursor: pointer; box-sizing: border-box;
         }
         ul.task-list li[data-checked="true"]::before {
-          background-color: ${colors.primary};
+          background-color: ${editorColors.primary};
           background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>');
           background-size: 12px; background-repeat: no-repeat; background-position: center;
         }
         ul.task-list li[data-checked="true"] { text-decoration: line-through; opacity: 0.6; }
-        .verse-line { margin-bottom: 10px; display: flex; gap: 8px; align-items: flex-start; }
-        .verse-num { font-weight: 800; color: ${colors.primary}; font-size: 12px; margin-top: 2px; min-width: 24px; text-align: right; flex-shrink: 0; white-space: nowrap; }
-        .verse-text { font-style: italic; color: ${colors.onSurface}; flex: 1; }
+        .verse-line { margin-bottom: ${ms(DESIGN.fontSize.xs)}px; display: flex; gap: ${ms(DESIGN.spacing.sm)}px; align-items: flex-start; }
+        .verse-num { font-weight: 800; color: ${editorColors.primary}; font-size: 12px; margin-top: ${ms(DESIGN.spacing.tiny)}px; min-width: ${ms(DESIGN.spacing.xl)}px; text-align: right; flex-shrink: 0; white-space: nowrap; }
+        .verse-text { font-style: italic; color: ${editorColors.onSurface}; flex: 1; }
         ${readonly ? '.remove-verse-btn { display: none !important; }' : ''}
       </style>
     </head>
@@ -597,13 +624,13 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
       </script>
     </body>
     </html>
-  `, [initialHtml]);
+  `, [initialHtml, editorColors, readerColors, readerFontFamily, ms, DESIGN, readonly]);
 
   return (
     <View style={{ flex: 1 }}>
       {showToolbar && !readonly && (
         <View style={[styles.toolbar, { backgroundColor: colors.surface, borderBottomColor: colors.border }]}>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} keyboardShouldPersistTaps="always" style={{ flex: 1 }} contentContainerStyle={{ paddingLeft: 8, paddingRight: 48, alignItems: 'center' }}>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} keyboardShouldPersistTaps="always" style={{ flex: 1 }} contentContainerStyle={{ paddingLeft: ms(DESIGN.spacing.sm), paddingRight: ms(DESIGN.spacing.huge), alignItems: 'center' }}>
             <View style={[styles.rowGroup, { backgroundColor: colors.surfaceHighlight, borderColor: colors.border }]}>
               <TouchableOpacity
                 style={[styles.groupBtn, { backgroundColor: colors.primary }, Platform.select({ web: { outlineStyle: 'none' } as any, default: {} })]}
@@ -614,21 +641,21 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
               </TouchableOpacity>
             </View>
 
-            <BibleDivider vertical height={20} margin={8} />
+            <BibleDivider vertical height={20} margin={ms(DESIGN.spacing.sm)} />
 
             <View style={[styles.rowGroup, { backgroundColor: colors.surfaceHighlight, borderColor: colors.border }]}>
               <TouchableOpacity style={styles.groupBtn} onPress={() => changeFontSize(1)}>
-                <BibleText style={{ fontWeight: '800', fontSize: ms(16), color: colors.onSurface, marginRight: 2 }}>A</BibleText>
+                <BibleText style={{ fontWeight: '800', fontSize: ms(DESIGN.spacing.lg), color: colors.onSurface, marginRight: ms(DESIGN.spacing.tiny) }}>A</BibleText>
                 <BibleIcon name="plus" color={colors.onSurface} />
               </TouchableOpacity>
               <BibleDivider vertical height={"60%"} />
               <TouchableOpacity style={styles.groupBtn} onPress={() => changeFontSize(-1)}>
-                <BibleText style={{ fontWeight: '800', fontSize: ms(12), color: colors.onSurface, marginRight: 2 }}>A</BibleText>
+                <BibleText style={{ fontWeight: '800', fontSize: ms(DESIGN.spacing.md), color: colors.onSurface, marginRight: ms(DESIGN.spacing.tiny) }}>A</BibleText>
                 <BibleIcon name="minus" color={colors.onSurface} />
               </TouchableOpacity>
             </View>
 
-            <BibleDivider vertical height={20} margin={8} />
+            <BibleDivider vertical height={20} margin={ms(DESIGN.spacing.sm)} />
 
             <View style={[styles.rowGroup, { backgroundColor: colors.surfaceHighlight, borderColor: colors.border }]}>
               <TouchableOpacity style={[styles.groupBtn, formatState.bold && { backgroundColor: colors.primary }]} onPress={() => execDocumentCmd('bold')}>
@@ -644,7 +671,7 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
               </TouchableOpacity>
             </View>
 
-            <BibleDivider vertical height={20} margin={8} />
+            <BibleDivider vertical height={20} margin={ms(DESIGN.spacing.sm)} />
 
             <View style={[styles.rowGroup, { backgroundColor: colors.surfaceHighlight, borderColor: colors.border }]}>
               <TouchableOpacity style={[styles.groupBtn, formatState.insertUnorderedList && !formatState.isTaskList && { backgroundColor: colors.primary }]} onPress={() => execDocumentCmd('insertUnorderedList')}>
@@ -657,11 +684,11 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
               <BibleDivider vertical height={"60%"} />
               <TouchableOpacity style={[styles.groupBtn, formatState.insertOrderedList && { backgroundColor: colors.primary }]} onPress={() => execDocumentCmd('insertOrderedList')}>
                 <BibleIcon name="list" color={formatState.insertOrderedList ? colors.onPrimary : colors.onSurface} />
-                <BibleText style={{ fontSize: ms(10), color: formatState.insertOrderedList ? colors.primary : colors.onSurface, position: 'absolute', right: 6, bottom: 6, fontWeight: '800' }}>1.</BibleText>
+                <BibleText style={{ fontSize: ms(DESIGN.fontSize.xs), color: formatState.insertOrderedList ? colors.primary : colors.onSurface, position: 'absolute', right: ms(DESIGN.spacing.xs), bottom: ms(DESIGN.spacing.xs), fontWeight: '800' }}>1.</BibleText>
               </TouchableOpacity>
             </View>
 
-            <BibleDivider vertical height={20} margin={8} />
+            <BibleDivider vertical height={20} margin={ms(DESIGN.spacing.sm)} />
 
             <View style={[styles.rowGroup, { backgroundColor: colors.surfaceHighlight, borderColor: colors.border }]}>
               <TouchableOpacity style={styles.groupBtn} onPress={() => execDocumentCmd('outdent')}>
@@ -673,7 +700,7 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
               </TouchableOpacity>
             </View>
 
-            <BibleDivider vertical height={20} margin={8} />
+            <BibleDivider vertical height={20} margin={ms(DESIGN.spacing.sm)} />
 
             <View style={[styles.rowGroup, { backgroundColor: colors.surfaceHighlight, borderColor: colors.border }]}>
               <TouchableOpacity style={[styles.groupBtn, formatState.justifyLeft && { backgroundColor: colors.primary }]} onPress={() => execDocumentCmd('justifyLeft')}>
@@ -693,35 +720,35 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
               </TouchableOpacity>
             </View>
 
-            <BibleDivider vertical height={20} margin={8} />
+            <BibleDivider vertical height={20} margin={ms(DESIGN.spacing.sm)} />
 
             <View style={[styles.rowGroup, { backgroundColor: colors.surfaceHighlight, borderColor: colors.border }]}>
               {VERSE_HIGHLIGHTS.map((h, i) => (
                 <React.Fragment key={h.id}>
                   <TouchableOpacity
-                    style={[styles.groupBtn, { width: ms(38) }]}
+                    style={[styles.groupBtn, { width: ms(DESIGN.button.height.sm) }]}
                     onPress={() => applyHighlight(h.hex)}
                   >
-                    <View style={{ width: ms(20), height: ms(20), borderRadius: ms(10), backgroundColor: h.hex, borderWidth: 1, borderColor: colors.border }} />
+                    <View style={{ width: ms(DESIGN.fontSize.xxl), height: ms(DESIGN.fontSize.xxl), borderRadius: ms(DESIGN.borderRadius.sm), backgroundColor: h.hex, borderWidth: 1, borderColor: colors.border }} />
                   </TouchableOpacity>
                   <BibleDivider vertical height={"60%"} />
                 </React.Fragment>
               ))}
               <TouchableOpacity
-                style={[styles.groupBtn, { width: ms(38) }]}
+                style={[styles.groupBtn, { width: ms(DESIGN.button.height.sm) }]}
                 onPress={() => applyHighlight('transparent')}
               >
-                <View style={{ width: ms(20), height: ms(20), borderRadius: ms(10), borderWidth: 1.5, borderColor: colors.textMuted, alignItems: 'center', justifyContent: 'center' }}>
-                  <View style={{ width: ms(16), height: 1.5, backgroundColor: colors.textMuted, transform: [{ rotate: '45deg' }] }} />
+                <View style={{ width: ms(DESIGN.fontSize.xxl), height: ms(DESIGN.fontSize.xxl), borderRadius: ms(DESIGN.borderRadius.sm), borderWidth: 1.5, borderColor: colors.textMuted, alignItems: 'center', justifyContent: 'center' }}>
+                  <View style={{ width: ms(DESIGN.spacing.lg), height: 1.5, backgroundColor: colors.textMuted, transform: [{ rotate: '45deg' }] }} />
                 </View>
               </TouchableOpacity>
             </View>
 
           </ScrollView>
 
-          <View style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: 40, justifyContent: 'center', alignItems: 'center' }} pointerEvents="none">
+          <View style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: ms(DESIGN.icon.xl), justifyContent: 'center', alignItems: 'center' }} pointerEvents="none">
             <View style={{ position: 'absolute', right: 0, top: 0, bottom: 0, left: 0, backgroundColor: colors.surface, opacity: 0.8 }} />
-            <BibleIcon name="chevron-right" color={colors.primary} size={ms(14)} />
+            <BibleIcon name="chevron-right" color={colors.primary} size={ms(DESIGN.fontSize.md)} />
           </View>
         </View>
       )}
@@ -747,33 +774,4 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
       )}
     </View>
   );
-});
-
-const styles = StyleSheet.create({
-  toolbar: {
-    flexDirection: 'row',
-    height: 52,
-    borderBottomWidth: 1,
-    zIndex: 5,
-    // Soft shadow for premium feel
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 2,
-  },
-  rowGroup: {
-    flexDirection: 'row',
-    borderRadius: 10,
-    overflow: 'hidden',
-    borderWidth: 1,
-    marginVertical: 6,
-  },
-  groupBtn: {
-    flexDirection: 'row',
-    paddingHorizontal: 12,
-    height: 38,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
 });

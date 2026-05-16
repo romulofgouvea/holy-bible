@@ -4,14 +4,14 @@ import { ROUTE_LABELS } from '../../constants/routes';
 import { useReaderSettings } from '../../hooks/useReaderSettings';
 import { useResponsive } from '../../hooks/useResponsive';
 import { useTheme } from '../../hooks/useTheme';
-import { impactLight, selectionHaptic } from '../../utils/haptics';
+import { selectionHaptic } from '../../utils/haptics';
 import { BibleDivider } from '../BibleDivider';
 import { BibleIcon } from '../BibleIcon';
-import { BiblePageModal } from './BiblePageModal';
 import { BibleText } from '../BibleText';
+import { BiblePageModal } from './BiblePageModal';
 
 export function ReaderSettingsModal({ visible, onClose }: { visible: boolean; onClose: () => void }) {
-  const { ms } = useResponsive();
+  const { ms, DESIGN } = useResponsive();
   const { colors, toggleDarkMode, isDarkMode } = useTheme();
   const { fontSizeMultiplier, setFontSizeMultiplier, textAlign, setTextAlign, readerTheme, setReaderTheme, readerFont, setReaderFont } = useReaderSettings();
 
@@ -24,8 +24,7 @@ export function ReaderSettingsModal({ visible, onClose }: { visible: boolean; on
 
   const styles = useMemo(() => StyleSheet.create({
     content: {
-      paddingHorizontal: ms(16),
-      paddingBottom: ms(24),
+      padding: ms(DESIGN.spacing.lg),
     },
     header: {
       flexDirection: 'row',
@@ -36,13 +35,13 @@ export function ReaderSettingsModal({ visible, onClose }: { visible: boolean; on
       fontWeight: '700',
     },
     settingsWrapper: {
-      gap: ms(16),
+      gap: ms(DESIGN.spacing.lg),
     },
     section: {
-      gap: ms(10),
+      gap: ms(DESIGN.fontSize.xs),
     },
     sectionTitle: {
-      fontSize: 10,
+      fontSize: ms(DESIGN.fontSize.xs),
       fontWeight: '800',
       textTransform: 'uppercase',
       letterSpacing: 1,
@@ -50,19 +49,19 @@ export function ReaderSettingsModal({ visible, onClose }: { visible: boolean; on
     },
     unifiedRow: {
       flexDirection: 'row',
-      height: ms(44),
-      borderRadius: ms(12),
+      height: ms(DESIGN.button.height.md),
+      borderRadius: ms(DESIGN.borderRadius.md),
       alignItems: 'center',
       overflow: 'hidden',
     },
     controlBtn: {
-      width: ms(60),
+      width: ms(DESIGN.spacing.giant),
       height: '100%',
       alignItems: 'center',
       justifyContent: 'center',
     },
     controlText: {
-      fontSize: 16,
+      fontSize: ms(DESIGN.fontSize.lg),
       fontWeight: '700',
     },
     percentageDisplay: {
@@ -74,7 +73,7 @@ export function ReaderSettingsModal({ visible, onClose }: { visible: boolean; on
       borderRightWidth: 1,
     },
     percentageText: {
-      fontSize: 15,
+      fontSize: ms(DESIGN.fontSize.lg),
       fontWeight: '800',
     },
     segmentBtn: {
@@ -83,7 +82,7 @@ export function ReaderSettingsModal({ visible, onClose }: { visible: boolean; on
       alignItems: 'center',
       justifyContent: 'center',
     },
-  }), [ms, colors]);
+  }), [ms, colors, DESIGN]);
 
   if (!visible) return null;
 
@@ -98,12 +97,12 @@ export function ReaderSettingsModal({ visible, onClose }: { visible: boolean; on
           <View style={styles.header}>
             <BibleIcon
               name="type"
-              size={ms(16)}
+              size={ms(DESIGN.spacing.lg)}
               color={colors.primary}
               backgroundColor={colors.primary + '25'}
-              style={{ marginRight: ms(8) }}
+              style={{ marginRight: ms(DESIGN.spacing.sm) }}
             />
-            <BibleText style={[styles.title, { fontSize: ms(16), color: colors.primary }]}>{ROUTE_LABELS.APPEARANCE}</BibleText>
+            <BibleText style={[styles.title, { fontSize: ms(DESIGN.spacing.lg), color: colors.primary }]}>{ROUTE_LABELS.APPEARANCE}</BibleText>
             <BibleIcon
               name="x"
               color={colors.error}
@@ -130,7 +129,7 @@ export function ReaderSettingsModal({ visible, onClose }: { visible: boolean; on
                     ]}
                   >
                     <BibleText style={{
-                      fontSize: ms(13),
+                      fontSize: ms(DESIGN.fontSize.md),
                       fontWeight: '700',
                       color: readerTheme === t ? colors.onPrimary : colors.onBackground
                     }}>
@@ -184,7 +183,7 @@ export function ReaderSettingsModal({ visible, onClose }: { visible: boolean; on
                   >
                     <BibleIcon
                       name={a === 'left' ? 'align-left' : a === 'center' ? 'align-center' : 'align-justify'}
-                      size={ms(18)}
+                      size={ms(DESIGN.fontSize.xl)}
                       color={textAlign === a ? colors.onPrimary : colors.onBackground}
                     />
                   </TouchableOpacity>
@@ -210,7 +209,7 @@ export function ReaderSettingsModal({ visible, onClose }: { visible: boolean; on
                     ]}
                   >
                     <BibleText style={{
-                      fontSize: ms(13),
+                      fontSize: ms(DESIGN.fontSize.md),
                       fontWeight: '700',
                       color: readerFont === f ? colors.onPrimary : colors.onBackground,
                       fontFamily: f === 'monospace' ? 'monospace' : undefined

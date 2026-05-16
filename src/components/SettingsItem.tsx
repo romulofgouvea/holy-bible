@@ -1,5 +1,5 @@
 import { Feather } from '@expo/vector-icons';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useResponsive } from '../hooks/useResponsive';
 import { useTheme } from '../hooks/useTheme';
@@ -26,7 +26,30 @@ export function SettingsItem({
   isDanger = false,
 }: SettingsItemProps) {
   const { colors } = useTheme();
-  const { ms } = useResponsive();
+  const { ms, DESIGN } = useResponsive();
+  
+  const styles = useMemo(() => StyleSheet.create({
+    container: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      padding: ms(DESIGN.spacing.lg),
+      gap: ms(DESIGN.spacing.md),
+    },
+    textContainer: {
+      flex: 1,
+      gap: ms(DESIGN.spacing.xs),
+    },
+    label: {
+      fontWeight: '700',
+    },
+    description: {
+      lineHeight: ms(DESIGN.fontSize.xl),
+    },
+    right: {
+      marginLeft: 'auto',
+    },
+  }), [ms, colors, DESIGN]);
+
   const dangerColor = (colors as any).error || '#EF4444';
   const labelColor = isDanger ? dangerColor : colors.onBackground;
   const iconColor = isDanger ? dangerColor : undefined;
@@ -37,15 +60,15 @@ export function SettingsItem({
         name={icon}
         color={iconColor || colors.primary}
         backgroundColor={(iconColor || colors.primary) + '15'}
-        containerSize={40}
-        borderRadius={12}
+        containerSize={ms(DESIGN.icon.xl)}
+        borderRadius={ms(DESIGN.borderRadius.md)}
       />
       <View style={styles.textContainer}>
-        <BibleText style={[styles.label, { fontSize: ms(16), color: labelColor }]} numberOfLines={2}>
+        <BibleText style={[styles.label, { fontSize: ms(DESIGN.fontSize.lg), color: labelColor }]} numberOfLines={2}>
           {label}
         </BibleText>
         {description && (
-          <BibleText style={[styles.description, { fontSize: ms(13), color: colors.textMuted }]} numberOfLines={2}>
+          <BibleText style={[styles.description, { fontSize: ms(DESIGN.fontSize.md), color: colors.textMuted }]} numberOfLines={2}>
             {description}
           </BibleText>
         )}
@@ -64,25 +87,3 @@ export function SettingsItem({
 
   return Content;
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 16,
-    gap: 14,
-  },
-  textContainer: {
-    flex: 1,
-    gap: 4,
-  },
-  label: {
-    fontWeight: '700',
-  },
-  description: {
-    lineHeight: 18,
-  },
-  right: {
-    marginLeft: 'auto',
-  },
-});

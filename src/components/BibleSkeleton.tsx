@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef , useMemo } from 'react';
 import { Animated, StyleSheet, View } from 'react-native';
 import { useResponsive } from '../hooks/useResponsive';
 import { useTheme } from '../hooks/useTheme';
@@ -9,7 +9,52 @@ export type BibleSkeletonProps = {
 
 export function BibleSkeleton({ onlyContent = false }: BibleSkeletonProps) {
   const { colors } = useTheme();
-  const { ms } = useResponsive();
+  const { ms, DESIGN } = useResponsive();
+  const styles = useMemo(() => StyleSheet.create({
+  container: { flex: 1 },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
+  menuBtn: { marginRight: ms(8) },
+  titleSkeleton: { borderRadius: ms(DESIGN.borderRadius.xs) },
+  iconSkeleton: { borderRadius: ms(DESIGN.borderRadius.md) },
+  topBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    gap: ms(DESIGN.spacing.lg),
+  },
+  pillSkeleton: {
+    height: ms(32),
+    borderRadius: ms(DESIGN.borderRadius.lg),
+  },
+  content: {
+    flex: 1,
+    padding: ms(20),
+    gap: ms(DESIGN.spacing.xl),
+  },
+  verseRow: {
+    flexDirection: 'row',
+    gap: ms(DESIGN.spacing.lg),
+  },
+  verseNumber: {
+    width: ms(24),
+    height: ms(24),
+    borderRadius: ms(DESIGN.borderRadius.md),
+    marginTop: ms(2),
+  },
+  verseLine: {
+    height: ms(14),
+    borderRadius: ms(DESIGN.borderRadius.xs),
+  },
+}), [ms, colors, DESIGN]);
+
   const pulseAnim = useRef(new Animated.Value(0.3)).current;
 
   useEffect(() => {
@@ -37,12 +82,12 @@ export function BibleSkeleton({ onlyContent = false }: BibleSkeletonProps) {
         <>
           <View style={[styles.header, { backgroundColor: colors.primary, minHeight: ms(56) }]}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <View style={[styles.menuBtn, { backgroundColor: colors.surfaceHighlight, width: ms(40), height: ms(40), borderRadius: ms(10) }]} />
-              <Animated.View style={[styles.titleSkeleton, { backgroundColor: colors.surfaceHighlight, width: ms(100), height: ms(20), opacity: pulseAnim }]} />
+              <View style={[styles.menuBtn, { backgroundColor: colors.surfaceHighlight, width: ms(40), height: ms(40), borderRadius: ms(DESIGN.fontSize.xs) }]} />
+              <Animated.View style={[styles.titleSkeleton, { backgroundColor: colors.surfaceHighlight, width: ms(100), height: ms(DESIGN.fontSize.xxl), opacity: pulseAnim }]} />
             </View>
-            <View style={{ flexDirection: 'row', gap: ms(12) }}>
-              <View style={[styles.iconSkeleton, { backgroundColor: colors.surfaceHighlight, width: ms(24), height: ms(24) }]} />
-              <View style={[styles.iconSkeleton, { backgroundColor: colors.surfaceHighlight, width: ms(24), height: ms(24) }]} />
+            <View style={{ flexDirection: 'row', gap: ms(DESIGN.spacing.md) }}>
+              <View style={[styles.iconSkeleton, { backgroundColor: colors.surfaceHighlight, width: ms(DESIGN.spacing.xl), height: ms(DESIGN.spacing.xl) }]} />
+              <View style={[styles.iconSkeleton, { backgroundColor: colors.surfaceHighlight, width: ms(DESIGN.spacing.xl), height: ms(DESIGN.spacing.xl) }]} />
             </View>
           </View>
 
@@ -57,7 +102,7 @@ export function BibleSkeleton({ onlyContent = false }: BibleSkeletonProps) {
         {[...Array(8)].map((_, i) => (
           <View key={i} style={styles.verseRow}>
             <Animated.View style={[styles.verseNumber, { backgroundColor: skeletonColor, opacity: pulseAnim }]} />
-            <View style={{ flex: 1, gap: 8 }}>
+            <View style={{ flex: 1, gap: ms(DESIGN.spacing.sm) }}>
               <Animated.View style={[styles.verseLine, { backgroundColor: skeletonColor, width: '95%', opacity: pulseAnim }]} />
               <Animated.View style={[styles.verseLine, { backgroundColor: skeletonColor, width: i % 2 === 0 ? '80%' : '100%', opacity: pulseAnim }]} />
               {i % 3 === 0 && <Animated.View style={[styles.verseLine, { backgroundColor: skeletonColor, width: '60%', opacity: pulseAnim }]} />}
@@ -69,47 +114,4 @@ export function BibleSkeleton({ onlyContent = false }: BibleSkeletonProps) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1 },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-  },
-  menuBtn: { marginRight: 8 },
-  titleSkeleton: { borderRadius: 4 },
-  iconSkeleton: { borderRadius: 12 },
-  topBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    gap: 16,
-  },
-  pillSkeleton: {
-    height: 32,
-    borderRadius: 16,
-  },
-  content: {
-    flex: 1,
-    padding: 20,
-    gap: 24,
-  },
-  verseRow: {
-    flexDirection: 'row',
-    gap: 16,
-  },
-  verseNumber: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    marginTop: 2,
-  },
-  verseLine: {
-    height: 14,
-    borderRadius: 4,
-  },
-});
+

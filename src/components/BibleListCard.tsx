@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useResponsive } from '../hooks/useResponsive';
 import { useTheme } from '../hooks/useTheme';
@@ -13,8 +13,34 @@ type BibleListCardProps = {
 };
 
 export function BibleListCard({ title, pillText, isSelected, onPress, testID }: BibleListCardProps) {
-  const { ms } = useResponsive();
+  const { ms, DESIGN } = useResponsive();
   const { colors } = useTheme();
+  const styles = useMemo(() => StyleSheet.create({
+  card: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderWidth: 1,
+    borderRadius: ms(DESIGN.borderRadius.md),
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+  },
+  cardTitle: {
+    flex: 1,
+    fontWeight: '700',
+    marginRight: ms(12),
+  },
+  pill: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: ms(DESIGN.borderRadius.sm),
+    borderWidth: 1,
+  },
+  pillText: {
+    fontWeight: '800',
+  },
+}), [ms, colors, DESIGN]);
+
   return (
     <TouchableOpacity
       testID={testID}
@@ -28,7 +54,7 @@ export function BibleListCard({ title, pillText, isSelected, onPress, testID }: 
       ]}
       onPress={onPress}
     >
-      <BibleText style={[styles.cardTitle, { fontSize: ms(16), color: isSelected ? colors.primary : colors.onSurface }]}>{title}</BibleText>
+      <BibleText style={[styles.cardTitle, { fontSize: ms(DESIGN.spacing.lg), color: isSelected ? colors.primary : colors.onSurface }]}>{title}</BibleText>
       {pillText !== undefined && (
         <View style={[styles.pill, { backgroundColor: isSelected ? colors.primary : colors.surfaceHighlight, borderColor: isSelected ? colors.primary : colors.border, borderWidth: 1 }]}>
           <BibleText style={[styles.pillText, { fontSize: ms(13), color: isSelected ? colors.onPrimary : colors.primary }]}>{pillText}</BibleText>
@@ -38,28 +64,4 @@ export function BibleListCard({ title, pillText, isSelected, onPress, testID }: 
   );
 }
 
-const styles = StyleSheet.create({
-  card: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    borderWidth: 1,
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-  },
-  cardTitle: {
-    flex: 1,
-    fontWeight: '700',
-    marginRight: 12,
-  },
-  pill: {
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 8,
-    borderWidth: 1,
-  },
-  pillText: {
-    fontWeight: '800',
-  },
-});
+

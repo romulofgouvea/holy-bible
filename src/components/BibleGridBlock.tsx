@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { StyleSheet, TouchableOpacity } from 'react-native';
 import { useResponsive } from '../hooks/useResponsive';
 import { useTheme } from '../hooks/useTheme';
@@ -14,8 +14,21 @@ type BibleGridBlockProps = {
 };
 
 export function BibleGridBlock({ title, widthPercentage, exactWidth, isSelected, onPress, testID }: BibleGridBlockProps) {
-  const { ms } = useResponsive();
+  const { ms, DESIGN } = useResponsive();
   const { colors } = useTheme();
+  const styles = useMemo(() => StyleSheet.create({
+  gridItem: {
+    aspectRatio: 1,
+    borderWidth: 1,
+    borderRadius: ms(DESIGN.borderRadius.lg),
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  gridText: {
+    fontWeight: '800',
+  }
+}), [ms, colors, DESIGN]);
+
   return (
     <TouchableOpacity
       testID={testID}
@@ -34,15 +47,4 @@ export function BibleGridBlock({ title, widthPercentage, exactWidth, isSelected,
   );
 }
 
-const styles = StyleSheet.create({
-  gridItem: {
-    aspectRatio: 1,
-    borderWidth: 1,
-    borderRadius: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  gridText: {
-    fontWeight: '800',
-  }
-});
+

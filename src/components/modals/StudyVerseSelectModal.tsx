@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { useResponsive } from '../../hooks/useResponsive';
 import { useTheme } from '../../hooks/useTheme';
@@ -19,7 +19,7 @@ type StudyVerseSelectModalProps = {
 };
 
 export function StudyVerseSelectModal({ visible, onClose, onBack, bookName, chapter, verses, onConfirm }: StudyVerseSelectModalProps) {
-  const { ms, width } = useResponsive();
+  const { ms, width, DESIGN } = useResponsive();
   const { colors } = useTheme();
   const [selectedNums, setSelectedNums] = useState<Set<number>>(new Set());
 
@@ -40,10 +40,31 @@ export function StudyVerseSelectModal({ visible, onClose, onBack, bookName, chap
     onConfirm(sorted);
   };
 
-  const paddingHorizontal = ms(16) * 4;
+  const styles = useMemo(() => StyleSheet.create({
+    header: { flexDirection: 'row', alignItems: 'center' },
+    headerIconWrap: { marginRight: ms(DESIGN.spacing.sm) },
+    title: { flex: 1, fontWeight: '700' },
+    list: { 
+      paddingBottom: ms(DESIGN.spacing.md), 
+      paddingHorizontal: ms(DESIGN.spacing.lg), 
+      paddingTop: ms(DESIGN.spacing.lg) 
+    },
+    gridContainer: { 
+      flexDirection: 'row', 
+      flexWrap: 'wrap', 
+      gap: ms(DESIGN.spacing.sm), 
+      justifyContent: 'flex-start', 
+      width: '100%' 
+    },
+    footer: { flexDirection: 'row', alignItems: 'center', width: '100%' },
+  }), [ms, DESIGN]);
+
+  const paddingHorizontal = ms(DESIGN.spacing.lg) * 4;
   const availableWidth = width - paddingHorizontal;
-  const numCols = Math.max(1, Math.floor(availableWidth / ms(60)));
-  const itemWidth = ((availableWidth - (numCols - 1) * 8) / numCols) - 0.01;
+  const blockMinSize = ms(60); // Base size for the grid block
+  const numCols = Math.max(1, Math.floor(availableWidth / blockMinSize));
+  const gapSize = ms(DESIGN.spacing.sm);
+  const itemWidth = ((availableWidth - (numCols - 1) * gapSize) / numCols) - 0.01;
 
   return (
     <BiblePageModal
@@ -59,7 +80,7 @@ export function StudyVerseSelectModal({ visible, onClose, onBack, bookName, chap
             onPress={onBack}
             style={styles.headerIconWrap}
           />
-          <BibleText style={[styles.title, { fontSize: ms(18), color: colors.primary, fontWeight: '800' }]}>{bookName} {chapter}</BibleText>
+          <BibleText style={[styles.title, { fontSize: ms(DESIGN.fontSize.xl), color: colors.primary, fontWeight: '800' }]}>{bookName} {chapter}</BibleText>
           <BibleIcon
             name="x"
             color={colors.error}
@@ -82,7 +103,7 @@ export function StudyVerseSelectModal({ visible, onClose, onBack, bookName, chap
                 color={colors.onPrimary}
                 backgroundColor={colors.primary}
                 onPress={handleConfirm}
-                size={ms(20)}
+                size={ms(DESIGN.fontSize.xxl)}
               />
             </View>
           )}
@@ -108,13 +129,3 @@ export function StudyVerseSelectModal({ visible, onClose, onBack, bookName, chap
     </BiblePageModal>
   );
 }
-
-const styles = StyleSheet.create({
-  header: { flexDirection: 'row', alignItems: 'center' },
-  headerIconWrap: { marginRight: 8 },
-  title: { flex: 1, fontWeight: '700' },
-  list: { paddingBottom: 12, paddingHorizontal: 16, paddingTop: 16 },
-  gridContainer: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, justifyContent: 'flex-start', width: '100%' },
-  footer: { flexDirection: 'row', alignItems: 'center', width: '100%' },
-});
-

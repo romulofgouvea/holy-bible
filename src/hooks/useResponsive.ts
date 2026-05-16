@@ -1,4 +1,5 @@
-﻿import { useWindowDimensions } from 'react-native';
+import { useWindowDimensions } from 'react-native';
+import { DESIGN } from '../constants/design';
 
 export function useResponsive() {
   const { width, height } = useWindowDimensions();
@@ -18,5 +19,5 @@ export function useResponsive() {
   const wp = (percentage: number) => (percentage * width) / 100;
   const hp = (percentage: number) => (percentage * height) / 100;
 
-  return { s, ms, wp, hp, width, height, isTablet, isWeb };
+  return { s, ms, wp, hp, width, height, isTablet, isWeb, DESIGN };
 }

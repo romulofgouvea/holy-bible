@@ -6,7 +6,7 @@ import { BibleConfirmModal } from '@/components/modals/BibleConfirmModal';
 import { FlashList } from '@shopify/flash-list';
 import * as FileSystem from 'expo-file-system/legacy';
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useState , useMemo } from 'react';
 import {
   Platform,
   ScrollView,
@@ -29,9 +29,97 @@ import { useTheme } from '../hooks/useTheme';
 import { exportToPDF } from '../utils/export';
 
 export default function EstudosScreen() {
-  const { ms } = useResponsive();
+  const { ms, DESIGN } = useResponsive();
   const router = useRouter();
   const { colors } = useTheme();
+  
+  const styles = useMemo(() => StyleSheet.create({
+    container: { flex: 1 },
+    listContent: {
+      padding: ms(DESIGN.spacing.lg),
+      paddingBottom: ms(DESIGN.layout.listPaddingBottom),
+      flexGrow: 1
+    },
+    emptyContainer: { 
+      flex: 1, 
+      alignItems: 'center', 
+      justifyContent: 'center', 
+      paddingTop: ms(DESIGN.layout.emptyPaddingTop), 
+      gap: ms(DESIGN.spacing.md) 
+    },
+    emptyTitle: { fontWeight: '700' },
+    emptySubtitle: { textAlign: 'center', paddingHorizontal: ms(DESIGN.spacing.xxl) },
+    card: {
+      borderWidth: 1,
+      marginBottom: ms(DESIGN.spacing.sm),
+      borderRadius: ms(DESIGN.borderRadius.lg),
+      overflow: 'hidden',
+      elevation: 1,
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.1,
+      shadowRadius: ms(DESIGN.borderRadius.xs),
+    },
+    cardContent: { 
+      flexDirection: 'row', 
+      alignItems: 'center', 
+      paddingHorizontal: ms(DESIGN.button.padding.sm), 
+      paddingVertical: ms(DESIGN.button.padding.sm), 
+      gap: ms(DESIGN.spacing.md) 
+    },
+    cardIcon: { 
+      width: ms(DESIGN.icon.md), 
+      height: ms(DESIGN.icon.md), 
+      borderRadius: ms(DESIGN.borderRadius.sm), 
+      alignItems: 'center', 
+      justifyContent: 'center' 
+    },
+    cardText: { flex: 1, gap: ms(DESIGN.spacing.xs) },
+    cardTitle: { fontWeight: '700' },
+    cardDate: { marginTop: ms(DESIGN.spacing.tiny) },
+    deleteBtn: { 
+      width: ms(DESIGN.button.height.sm), 
+      height: ms(DESIGN.button.height.sm), 
+      alignItems: 'center', 
+      justifyContent: 'center', 
+      borderRadius: ms(DESIGN.borderRadius.md) 
+    },
+    modalHeader: { flexDirection: 'row', alignItems: 'center' },
+    modalTitle: { fontWeight: '800' },
+    input: { 
+      borderRadius: ms(DESIGN.borderRadius.md), 
+      paddingHorizontal: ms(DESIGN.spacing.lg), 
+      paddingVertical: ms(DESIGN.spacing.md), 
+      marginBottom: ms(DESIGN.spacing.sm), 
+      borderWidth: 1, 
+      borderColor: 'transparent' 
+    },
+    inputMultiline: { minHeight: ms(DESIGN.layout.emptyPaddingTop), textAlignVertical: 'top' },
+    modalActions: { flexDirection: 'row', gap: ms(DESIGN.spacing.md), marginTop: ms(DESIGN.spacing.xs) },
+    cancelBtn: { 
+      flex: 1, 
+      paddingVertical: ms(DESIGN.spacing.md), 
+      borderRadius: ms(DESIGN.borderRadius.md), 
+      alignItems: 'center' 
+    },
+    cancelText: { fontWeight: '700' },
+    createBtn: { 
+      flex: 1, 
+      paddingVertical: ms(DESIGN.spacing.md), 
+      borderRadius: ms(DESIGN.borderRadius.md), 
+      alignItems: 'center' 
+    },
+    createBtnDisabled: { opacity: 0.5 },
+    createText: { fontWeight: '700' },
+    sectionTitle: {
+      fontSize: ms(DESIGN.fontSize.xs),
+      fontWeight: '800',
+      textTransform: 'uppercase',
+      letterSpacing: 1,
+      opacity: 0.6,
+      paddingBottom: ms(DESIGN.spacing.sm),
+    },
+  }), [ms, colors, DESIGN]);
+
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [newTitle, setNewTitle] = useState('');
   const [newDescription, setNewDescription] = useState('');
@@ -138,7 +226,7 @@ export default function EstudosScreen() {
         style={[styles.card, {
           backgroundColor: isSelected ? colors.primary + '20' : colors.surface,
           borderColor: isSelected ? colors.primary + '20' : colors.border,
-          borderWidth: isSelected ? 1.5 : 1,
+          borderWidth: isSelected ? ms(2) : 1,
           elevation: isSelected ? 0 : 1
         }]}
         onPress={() => isSelectionMode ? toggleSelection(item.id) : router.push(ROUTES.STUDY_EDITOR(item.id) as any)}
@@ -152,13 +240,13 @@ export default function EstudosScreen() {
                 styles.cardIcon,
                 {
                   backgroundColor: isSelected ? colors.primary : 'transparent',
-                  borderWidth: isSelected ? 0 : 1.5,
+                  borderWidth: ms(2),
                   borderColor: isSelected ? 'transparent' : colors.border
                 }
               ]}
             >
               {isSelected ? (
-                <BibleIcon name="check" color={colors.onPrimary} size={ms(16)} />
+                <BibleIcon name="check" color={colors.onPrimary} size={ms(DESIGN.spacing.lg)} />
               ) : null}
             </TouchableOpacity>
           ) : (
@@ -166,14 +254,16 @@ export default function EstudosScreen() {
               name="book-open"
               color={colors.primary}
               backgroundColor={colors.primary + '20'}
+              containerSize={ms(DESIGN.icon.xl)}
+              borderRadius={ms(DESIGN.borderRadius.md)}
             />
           )}
           <View style={styles.cardText}>
-            <BibleText style={[styles.cardTitle, { fontSize: ms(16), color: colors.onSurface, fontWeight: '600' }]} numberOfLines={2}>{item.title}</BibleText>
-            <BibleText style={[styles.cardDate, { fontSize: ms(12), color: colors.textMuted }]}>{item.createdAt}</BibleText>
+            <BibleText style={[styles.cardTitle, { fontSize: ms(DESIGN.fontSize.lg), color: colors.onSurface, fontWeight: '600' }]} numberOfLines={2}>{item.title}</BibleText>
+            <BibleText style={[styles.cardDate, { fontSize: ms(DESIGN.fontSize.md), color: colors.textMuted }]}>{item.createdAt}</BibleText>
           </View>
           <View style={{ opacity: isSelectionMode ? 0.2 : 0.8 }}>
-            <BibleIcon name="chevron-right" color={colors.textMuted} size={ms(18)} />
+            <BibleIcon name="chevron-right" color={colors.textMuted} size={ms(DESIGN.fontSize.xl)} />
           </View>
         </View>
       </TouchableOpacity>
@@ -193,7 +283,7 @@ export default function EstudosScreen() {
             setSelectionPurpose(null);
           }}
           rightContent={
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: ms(DESIGN.spacing.lg) }}>
               {(!selectionPurpose || selectionPurpose === 'share') && (
                 <TouchableOpacity
                   onPress={() => setIsShareMenuVisible(true)}
@@ -217,7 +307,7 @@ export default function EstudosScreen() {
         />
       ) : (
         <BibleHeader title={ROUTE_LABELS[ROUTES.STUDIES]} onMenuPress={() => setIsDrawerVisible(true)} rightContent={
-          <TouchableOpacity onPress={() => setIsHeaderMenuVisible(true)} style={{ padding: 4 }}>
+          <TouchableOpacity onPress={() => setIsHeaderMenuVisible(true)} style={{ padding: ms(DESIGN.spacing.xs) }}>
             <BibleIcon name="more-vertical" color={colors.onPrimary} />
           </TouchableOpacity>
         } />
@@ -228,7 +318,7 @@ export default function EstudosScreen() {
           data={currentStudies}
           keyExtractor={(item) => item.id}
           // @ts-ignore
-          estimatedItemSize={80}
+          estimatedItemSize={ms(DESIGN.layout.settingsIconOffset * 1.15)}
           renderItem={renderItem}
           ListEmptyComponent={renderEmpty}
           contentContainerStyle={styles.listContent}
@@ -241,8 +331,8 @@ export default function EstudosScreen() {
         onClose={() => setIsModalVisible(false)}
         header={
           <View style={styles.modalHeader}>
-            <BibleIcon name="file-plus" color={colors.primary} backgroundColor={colors.primary + '15'} style={{ marginRight: 8 }} />
-            <BibleText style={[styles.modalTitle, { fontSize: ms(16), color: colors.onSurface, fontWeight: '700' }]}>Novo Estudo</BibleText>
+            <BibleIcon name="file-plus" color={colors.primary} backgroundColor={colors.primary + '15'} style={{ marginRight: ms(DESIGN.spacing.sm) }} />
+            <BibleText style={[styles.modalTitle, { fontSize: ms(DESIGN.fontSize.lg), color: colors.onSurface, fontWeight: '700' }]}>Novo Estudo</BibleText>
             <BibleIcon name="x" color={colors.error} backgroundColor={colors.error + '20'} onPress={() => setIsModalVisible(false)} style={{ marginLeft: 'auto' }} />
           </View>
         }
@@ -253,7 +343,7 @@ export default function EstudosScreen() {
               onPress={handleCreate}
               disabled={!newTitle.trim()}
             >
-              <BibleText style={[styles.createText, { fontSize: ms(15), color: colors.onPrimary }]}>Criar</BibleText>
+              <BibleText style={[styles.createText, { fontSize: ms(DESIGN.fontSize.md), color: colors.onPrimary }]}>Criar</BibleText>
             </TouchableOpacity>
           </View>
         }
@@ -272,7 +362,7 @@ export default function EstudosScreen() {
             onChangeText={setNewTitle}
             underlineColorAndroid="transparent"
           />
-          <BibleText style={[styles.sectionTitle, { color: colors.textMuted, marginTop: 8 }]}>Descrição (Opcional)</BibleText>
+          <BibleText style={[styles.sectionTitle, { color: colors.textMuted, marginTop: ms(DESIGN.spacing.sm) }]}>Descrição (Opcional)</BibleText>
           <TextInput
             style={[
               styles.input,
@@ -355,49 +445,3 @@ export default function EstudosScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1 },
-  listContent: {
-    padding: 16,
-    paddingBottom: 100,
-    flexGrow: 1
-  },
-  emptyContainer: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingTop: 80, gap: 12 },
-  emptyTitle: { fontWeight: '700' },
-  emptySubtitle: { textAlign: 'center', paddingHorizontal: 32 },
-  card: {
-    borderWidth: 1,
-    marginBottom: 8,
-    borderRadius: 16,
-    overflow: 'hidden',
-    elevation: 1,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-  },
-  cardContent: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12, paddingVertical: 12, gap: 14 },
-  cardIcon: { width: 24, height: 24, borderRadius: 6, alignItems: 'center', justifyContent: 'center' },
-  cardText: { flex: 1, gap: 4 },
-  cardTitle: { fontWeight: '700' },
-  cardDate: { marginTop: 2 },
-  deleteBtn: { width: 38, height: 38, alignItems: 'center', justifyContent: 'center', borderRadius: 10 },
-  modalHeader: { flexDirection: 'row', alignItems: 'center' },
-  modalTitle: { fontWeight: '800' },
-  input: { borderRadius: 12, paddingHorizontal: 16, paddingVertical: 14, marginBottom: 8, borderWidth: 1, borderColor: 'transparent' },
-  inputMultiline: { minHeight: 90, textAlignVertical: 'top' },
-  modalActions: { flexDirection: 'row', gap: 12, marginTop: 4 },
-  cancelBtn: { flex: 1, paddingVertical: 14, borderRadius: 14, alignItems: 'center' },
-  cancelText: { fontWeight: '700' },
-  createBtn: { flex: 1, paddingVertical: 14, borderRadius: 14, alignItems: 'center' },
-  createBtnDisabled: { opacity: 0.5 },
-  createText: { fontWeight: '700' },
-  sectionTitle: {
-    fontSize: 10,
-    fontWeight: '800',
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-    opacity: 0.6,
-    paddingBottom: 8,
-  },
-});

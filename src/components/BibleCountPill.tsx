@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { StyleSheet, View, ViewStyle } from 'react-native';
 import { useTheme } from '../hooks/useTheme';
+import { useResponsive } from '../hooks/useResponsive';
 import { BibleText } from './BibleText';
 
 type BibleCountPillProps = {
@@ -12,6 +13,26 @@ type BibleCountPillProps = {
 
 export function BibleCountPill({ count, label, labelPlural, style }: BibleCountPillProps) {
   const { colors } = useTheme();
+  const { ms, DESIGN } = useResponsive();
+  const styles = useMemo(() => StyleSheet.create({
+  countPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: ms(DESIGN.borderRadius.lg),
+  },
+  countNumber: {
+    fontWeight: '800',
+    fontSize: ms(13),
+  },
+  countText: {
+    fontWeight: '600',
+    fontSize: ms(13),
+  },
+}), [ms, colors, DESIGN]);
+
   
   const finalLabel = count === 1 ? label : (labelPlural || `${label}s`);
 
@@ -31,21 +52,4 @@ export function BibleCountPill({ count, label, labelPlural, style }: BibleCountP
   );
 }
 
-const styles = StyleSheet.create({
-  countPill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    alignSelf: 'flex-start',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 16,
-  },
-  countNumber: {
-    fontWeight: '800',
-    fontSize: 13,
-  },
-  countText: {
-    fontWeight: '600',
-    fontSize: 13,
-  },
-});
+

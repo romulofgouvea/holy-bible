@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef , useMemo } from 'react';
 import { Animated, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useTheme } from '../hooks/useTheme';
 import { useResponsive } from '../hooks/useResponsive';
@@ -11,13 +11,22 @@ interface BibleSwitchProps {
 
 export function BibleSwitch({ value, onValueChange }: BibleSwitchProps) {
   const { colors } = useTheme();
-  const { ms } = useResponsive();
+  const { ms, DESIGN } = useResponsive();
+  const styles = useMemo(() => StyleSheet.create({
+  track: {
+    justifyContent: 'center',
+  },
+  thumb: {
+    position: 'absolute',
+  },
+}), [ms, colors, DESIGN]);
+
   
-  const translateX = useRef(new Animated.Value(value ? ms(20) : ms(2))).current;
+  const translateX = useRef(new Animated.Value(value ? ms(DESIGN.fontSize.xxl) : ms(2))).current;
 
   useEffect(() => {
     Animated.spring(translateX, {
-      toValue: value ? ms(20) : ms(2),
+      toValue: value ? ms(DESIGN.fontSize.xxl) : ms(2),
       useNativeDriver: true,
       bounciness: 4,
     }).start();
@@ -61,11 +70,4 @@ export function BibleSwitch({ value, onValueChange }: BibleSwitchProps) {
   );
 }
 
-const styles = StyleSheet.create({
-  track: {
-    justifyContent: 'center',
-  },
-  thumb: {
-    position: 'absolute',
-  },
-});
+

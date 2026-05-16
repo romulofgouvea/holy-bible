@@ -1,5 +1,5 @@
 import { useLocalSearchParams, usePathname, useRouter } from 'expo-router';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState , useMemo } from 'react';
 import {
   Keyboard,
   KeyboardAvoidingView,
@@ -29,8 +29,13 @@ export default function StudyEditorScreen() {
   const { id, readonly } = useLocalSearchParams<{ id: string; readonly?: string }>();
   const isReadonly = readonly === 'true';
   const pathname = usePathname();
-  const { ms } = useResponsive();
+  const { ms, DESIGN } = useResponsive();
   const { colors } = useTheme();
+  
+  const styles = useMemo(() => StyleSheet.create({
+    titleInput: { flex: 1, fontWeight: '700' },
+  }), [ms, colors, DESIGN]);
+
   const { getStudy, updateStudy } = useStudies();
 
   const study = getStudy(id);
@@ -121,7 +126,7 @@ export default function StudyEditorScreen() {
           <TextInput
             style={[
               styles.titleInput,
-              { flex: 1, fontSize: ms(16), color: colors.onPrimary },
+              { flex: 1, fontSize: ms(DESIGN.fontSize.lg), color: colors.onPrimary },
               noOutline
             ]}
             value={title}
@@ -133,23 +138,35 @@ export default function StudyEditorScreen() {
           />
         }
         rightContent={
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: ms(4) }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: ms(DESIGN.spacing.xs) }}>
             {!isReadonly && (
               <TouchableOpacity
-                style={{ width: ms(38), height: ms(38), borderRadius: ms(10), alignItems: 'center', justifyContent: 'center' }}
+                style={{ 
+                  width: ms(DESIGN.button.height.sm), 
+                  height: ms(DESIGN.button.height.sm), 
+                  borderRadius: ms(DESIGN.borderRadius.md), 
+                  alignItems: 'center', 
+                  justifyContent: 'center' 
+                }}
                 onPress={() => {
                   if (showToolbar) Keyboard.dismiss();
                   setShowToolbar(!showToolbar);
                 }}
               >
-                <BibleIcon name={showToolbar ? "eye" : "edit-2"} size={ms(20)} color={colors.onPrimary} />
+                <BibleIcon name={showToolbar ? "eye" : "edit-2"} size={ms(DESIGN.fontSize.xxl)} color={colors.onPrimary} />
               </TouchableOpacity>
             )}
             <TouchableOpacity
-              style={{ width: ms(38), height: ms(38), borderRadius: ms(10), alignItems: 'center', justifyContent: 'center' }}
+              style={{ 
+                width: ms(DESIGN.button.height.sm), 
+                height: ms(DESIGN.button.height.sm), 
+                borderRadius: ms(DESIGN.borderRadius.md), 
+                alignItems: 'center', 
+                justifyContent: 'center' 
+              }}
               onPress={() => setMenuVisible(true)}
             >
-              <BibleIcon name="more-vertical" size={ms(20)} color={colors.onPrimary} />
+              <BibleIcon name="more-vertical" size={ms(DESIGN.fontSize.xxl)} color={colors.onPrimary} />
             </TouchableOpacity>
           </View>
         }
@@ -158,7 +175,7 @@ export default function StudyEditorScreen() {
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+        keyboardVerticalOffset={0}
       >
         <RichTextEditor
           ref={editorRef}
@@ -186,7 +203,3 @@ export default function StudyEditorScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  titleInput: { flex: 1, fontWeight: '700' },
-});

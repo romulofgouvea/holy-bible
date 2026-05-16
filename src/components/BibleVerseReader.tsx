@@ -35,7 +35,7 @@ type VerseReaderProps = {
 
 const VerseRow = React.memo(({
     item, isSelected, isHighlighted, isBlinking, highlightColorHex, primaryColor, readerColors,
-    fontSizeMultiplier, textAlign, ms, onVersePress
+    fontSizeMultiplier, textAlign, ms, DESIGN, styles, onVersePress
 }: any) => {
     const blinkAnim = useRef(new Animated.Value(0)).current;
 
@@ -68,13 +68,13 @@ const VerseRow = React.memo(({
                 <BibleText
                     variant="reading"
                     style={[styles.verseText, {
-                        fontSize: ms(20 * fontSizeMultiplier),
+                        fontSize: ms(DESIGN.fontSize.xxl * fontSizeMultiplier),
                         lineHeight: ms(28 * fontSizeMultiplier),
                         color: readerColors.onBackground,
                         textAlign: textAlign as any,
                     }]}
                 >
-                    <BibleText style={{ color: primaryColor, fontWeight: '700', fontSize: ms(16 * fontSizeMultiplier) }}>
+                    <BibleText style={{ color: primaryColor, fontWeight: '700', fontSize: ms(DESIGN.fontSize.lg * fontSizeMultiplier) }}>
                         {item.verse}
                     </BibleText>
                     {'\u00A0\u00A0'}{item.text}
@@ -91,7 +91,8 @@ const VerseRow = React.memo(({
         prevProps.fontSizeMultiplier === nextProps.fontSizeMultiplier &&
         prevProps.textAlign === nextProps.textAlign &&
         prevProps.readerColors.background === nextProps.readerColors.background &&
-        prevProps.primaryColor === nextProps.primaryColor
+        prevProps.primaryColor === nextProps.primaryColor &&
+        prevProps.styles === nextProps.styles
     );
 });
 
@@ -100,9 +101,60 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
         sections, blinkingVerse, highlights, selectedKeys, bookAbbrev, version,
         onVersePress, onViewableItemsChanged, viewabilityConfig, listRef
     } = props;
-    const { ms } = useResponsive();
+    const { ms, DESIGN } = useResponsive();
     const { colors } = useTheme();
     const { fontSizeMultiplier, textAlign, readerColors, readerTheme } = useReaderSettings();
+
+    const styles = useMemo(() => StyleSheet.create({
+        verseList: {
+            flex: 1,
+        },
+        chapterHeader: {
+            paddingVertical: ms(DESIGN.spacing.xl),
+            paddingHorizontal: ms(DESIGN.spacing.lg),
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginBottom: ms(DESIGN.spacing.sm),
+        },
+        chapterHeaderText: {
+            fontWeight: '800',
+            letterSpacing: 0.5,
+        },
+        verseRow: {
+            paddingVertical: ms(DESIGN.spacing.md),
+            paddingHorizontal: ms(DESIGN.spacing.lg),
+            borderRadius: 0,
+            marginHorizontal: 0,
+            borderLeftWidth: ms(DESIGN.spacing.xs),
+            borderLeftColor: 'transparent',
+        },
+        verseText: {
+            flexWrap: 'wrap',
+            textAlignVertical: 'top',
+        },
+        readerContent: {
+            paddingBottom: ms(DESIGN.layout.listPaddingBottom),
+        },
+        copyrightCard: {
+            marginHorizontal: ms(DESIGN.spacing.lg),
+            marginTop: ms(DESIGN.spacing.xl),
+            marginBottom: ms(DESIGN.spacing.lg),
+            padding: ms(DESIGN.spacing.lg),
+            borderRadius: ms(DESIGN.borderRadius.md),
+            borderLeftWidth: ms(DESIGN.spacing.xs),
+        },
+        copyrightTitle: {
+            fontSize: ms(DESIGN.fontSize.md),
+            fontWeight: '700',
+            marginBottom: ms(DESIGN.spacing.xs),
+            letterSpacing: 0.3,
+        },
+        copyrightText: {
+            fontSize: ms(DESIGN.fontSize.xs),
+            lineHeight: ms(DESIGN.fontSize.lg),
+            opacity: 0.75,
+        },
+    }), [ms, colors, DESIGN]);
 
     const getHighlightColorValue = (colorId: string) => {
         const h = VERSE_HIGHLIGHTS.find(v => v.id === colorId);
@@ -134,7 +186,7 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
                 data={flatData}
                 getItemType={(item) => item.type}
                 // @ts-ignore - necessary for FlashList performance despite missing in updated types
-                estimatedItemSize={70 * fontSizeMultiplier}
+                estimatedItemSize={ms(DESIGN.layout.settingsIconOffset * fontSizeMultiplier)}
                 keyExtractor={(item, idx) => {
                     if (item.type === 'header') return `header-${item.title}`;
                     if (item.type === 'footer') return `footer-${item.versionInfo?.sigla}-${idx}`;
@@ -144,7 +196,7 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
                     if (item.type === 'header') {
                         return (
                             <View style={[styles.chapterHeader, { backgroundColor: readerColors.background }]}>
-                                <BibleText style={[styles.chapterHeaderText, { fontSize: ms(28 * fontSizeMultiplier), color: readerColors.onBackground }]}>{item.title}</BibleText>
+                                <BibleText style={[styles.chapterHeaderText, { fontSize: ms(DESIGN.fontSize.display * 0.875 * fontSizeMultiplier), color: readerColors.onBackground }]}>{item.title}</BibleText>
                             </View>
                         );
                     }
@@ -179,6 +231,8 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
                             fontSizeMultiplier={fontSizeMultiplier}
                             textAlign={textAlign}
                             ms={ms}
+                            DESIGN={DESIGN}
+                            styles={styles}
                             onVersePress={onVersePress}
                         />
                     );
@@ -190,55 +244,4 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
             />
         </View>
     );
-});
-
-const styles = StyleSheet.create({
-    verseList: {
-        flex: 1,
-    },
-    chapterHeader: {
-        paddingVertical: 24,
-        paddingHorizontal: 16,
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginBottom: 8,
-    },
-    chapterHeaderText: {
-        fontWeight: '800',
-        letterSpacing: 0.5,
-    },
-    verseRow: {
-        paddingVertical: 10,
-        paddingHorizontal: 16,
-        borderRadius: 0,
-        marginHorizontal: 0,
-        borderLeftWidth: 3,
-        borderLeftColor: 'transparent',
-    },
-    verseText: {
-        flexWrap: 'wrap',
-        textAlignVertical: 'top',
-    },
-    readerContent: {
-        paddingBottom: 100,
-    },
-    copyrightCard: {
-        marginHorizontal: 16,
-        marginTop: 24,
-        marginBottom: 16,
-        padding: 16,
-        borderRadius: 12,
-        borderLeftWidth: 4,
-    },
-    copyrightTitle: {
-        fontSize: 13,
-        fontWeight: '700',
-        marginBottom: 6,
-        letterSpacing: 0.3,
-    },
-    copyrightText: {
-        fontSize: 11,
-        lineHeight: 17,
-        opacity: 0.75,
-    },
 });

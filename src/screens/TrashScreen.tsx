@@ -4,7 +4,7 @@ import { BibleSkeleton } from '@/components/BibleSkeleton';
 import { BibleConfirmModal } from '@/components/modals/BibleConfirmModal';
 import { FlashList } from '@shopify/flash-list';
 import { usePathname, useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useState , useMemo } from 'react';
 import {
   StyleSheet,
   TouchableOpacity,
@@ -20,10 +20,55 @@ import { useTheme } from '../hooks/useTheme';
 import { handleSmartBack } from '../utils/navigation';
 
 export default function TrashScreen() {
-  const { ms } = useResponsive();
+  const { ms, DESIGN } = useResponsive();
   const router = useRouter();
   const pathname = usePathname();
   const { colors } = useTheme();
+  
+  const styles = useMemo(() => StyleSheet.create({
+    container: { flex: 1 },
+    listContent: { 
+      padding: ms(DESIGN.spacing.lg), 
+      paddingBottom: ms(DESIGN.layout.listPaddingBottom), 
+      flexGrow: 1 
+    },
+    emptyContainer: { 
+      flex: 1, 
+      alignItems: 'center', 
+      justifyContent: 'center', 
+      paddingTop: ms(DESIGN.layout.emptyPaddingTop), 
+      gap: ms(DESIGN.spacing.md) 
+    },
+    emptyTitle: { fontWeight: '700' },
+    emptySubtitle: { textAlign: 'center', paddingHorizontal: ms(DESIGN.spacing.xxl) },
+    card: {
+      marginBottom: ms(DESIGN.spacing.sm),
+      borderRadius: ms(DESIGN.borderRadius.lg),
+      overflow: 'hidden',
+      elevation: 1,
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.1,
+      shadowRadius: ms(DESIGN.borderRadius.xs),
+    },
+    cardContent: { 
+      flexDirection: 'row', 
+      alignItems: 'center', 
+      paddingHorizontal: ms(DESIGN.button.padding.sm), 
+      paddingVertical: ms(DESIGN.button.padding.sm), 
+      gap: ms(DESIGN.spacing.md) 
+    },
+    cardIcon: { 
+      width: ms(DESIGN.icon.md), 
+      height: ms(DESIGN.icon.md), 
+      borderRadius: ms(DESIGN.borderRadius.sm), 
+      alignItems: 'center', 
+      justifyContent: 'center' 
+    },
+    cardText: { flex: 1, gap: ms(DESIGN.spacing.xs) },
+    cardTitle: { fontWeight: '700' },
+    cardDate: { marginTop: ms(DESIGN.spacing.tiny) },
+  }), [ms, colors, DESIGN]);
+
   const [isMultiDeleteVisible, setIsMultiDeleteVisible] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [selectionPurpose, setSelectionPurpose] = useState<'delete' | 'restore' | null>(null);
@@ -65,7 +110,7 @@ export default function TrashScreen() {
           {
             backgroundColor: isSelected ? colors.primary + '20' : colors.surface,
             borderColor: isSelected ? colors.primary + '20' : colors.border,
-            borderWidth: isSelected ? 1.5 : 1,
+            borderWidth: isSelected ? ms(2) : 1,
             elevation: isSelected ? 0 : 1
           }
         ]}
@@ -80,13 +125,13 @@ export default function TrashScreen() {
                 styles.cardIcon,
                 {
                   backgroundColor: isSelected ? colors.primary : 'transparent',
-                  borderWidth: isSelected ? 0 : 1.5,
+                  borderWidth: ms(2),
                   borderColor: isSelected ? 'transparent' : colors.border
                 }
               ]}
             >
               {isSelected ? (
-                <BibleIcon name="check" color={colors.onPrimary} size={ms(16)} />
+                <BibleIcon name="check" color={colors.onPrimary} size={ms(DESIGN.spacing.lg)} />
               ) : null}
             </TouchableOpacity>
           ) : (
@@ -94,16 +139,16 @@ export default function TrashScreen() {
               name="book-open" 
               color={colors.primary} 
               backgroundColor={colors.primary + '15'} 
-              containerSize={40} 
-              borderRadius={12} 
+              containerSize={ms(DESIGN.icon.xl)} 
+              borderRadius={ms(DESIGN.borderRadius.md)} 
             />
           )}
           <View style={styles.cardText}>
-            <BibleText style={[styles.cardTitle, { fontSize: ms(16), color: colors.onSurface, fontWeight: '600' }]} numberOfLines={2}>{item.title}</BibleText>
-            <BibleText style={[styles.cardDate, { fontSize: ms(12), color: colors.textMuted }]}>{item.createdAt}</BibleText>
+            <BibleText style={[styles.cardTitle, { fontSize: ms(DESIGN.fontSize.lg), color: colors.onSurface, fontWeight: '600' }]} numberOfLines={2}>{item.title}</BibleText>
+            <BibleText style={[styles.cardDate, { fontSize: ms(DESIGN.fontSize.md), color: colors.textMuted }]}>{item.createdAt}</BibleText>
           </View>
           <View style={{ opacity: isSelectionMode ? 0.2 : 0.8 }}>
-            <BibleIcon name="chevron-right" color={colors.textMuted} size={ms(18)} />
+            <BibleIcon name="chevron-right" color={colors.textMuted} size={ms(DESIGN.fontSize.xl)} />
           </View>
         </View>
       </TouchableOpacity>
@@ -136,7 +181,7 @@ export default function TrashScreen() {
             setSelectionPurpose(null);
           }}
           rightContent={
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: ms(DESIGN.spacing.lg) }}>
               {(!selectionPurpose || selectionPurpose === 'restore') && (
                 <TouchableOpacity
                   onPress={handleRestore}
@@ -167,9 +212,9 @@ export default function TrashScreen() {
           rightContent={
             <TouchableOpacity
               onPress={() => setMenuVisible(true)}
-              style={{ width: ms(44), height: ms(44), alignItems: 'center', justifyContent: 'center' }}
+              style={{ width: ms(DESIGN.button.height.md), height: ms(DESIGN.button.height.md), alignItems: 'center', justifyContent: 'center' }}
             >
-              <BibleIcon name="more-vertical" color={colors.onPrimary} size={ms(20)} />
+              <BibleIcon name="more-vertical" color={colors.onPrimary} size={ms(DESIGN.fontSize.xxl)} />
             </TouchableOpacity>
           }
         />
@@ -180,7 +225,7 @@ export default function TrashScreen() {
           data={currentStudies}
           keyExtractor={(item) => item.id}
           // @ts-ignore
-          estimatedItemSize={80}
+          estimatedItemSize={ms(DESIGN.layout.settingsIconOffset * 1.15)}
           renderItem={renderItem}
           ListEmptyComponent={renderEmpty}
           contentContainerStyle={styles.listContent}
@@ -210,25 +255,3 @@ export default function TrashScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1 },
-  listContent: { padding: 16, paddingBottom: 100, flexGrow: 1 },
-  emptyContainer: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingTop: 80, gap: 12 },
-  emptyTitle: { fontWeight: '700' },
-  emptySubtitle: { textAlign: 'center', paddingHorizontal: 32 },
-  card: {
-    marginBottom: 8,
-    borderRadius: 16,
-    overflow: 'hidden',
-    elevation: 1,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-  },
-  cardContent: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12, paddingVertical: 12, gap: 14 },
-  cardIcon: { width: 24, height: 24, borderRadius: 6, alignItems: 'center', justifyContent: 'center' },
-  cardText: { flex: 1, gap: 4 },
-  cardTitle: { fontWeight: '700' },
-  cardDate: { marginTop: 2 },
-});

@@ -1,4 +1,4 @@
-export const DESIGN_TOKENS = {
+export const DESIGN = {
   fontSize: {
     xs: 10,
     sm: 12,
@@ -18,22 +18,58 @@ export const DESIGN_TOKENS = {
     xl: 24,
     full: 9999,
   },
-  padding: {
-    none: 0,
-    xs: 4,
-    sm: 8,
-    md: 12,
-    lg: 16,
-    xl: 24,
-    xxl: 32,
-  },
   spacing: {
     none: 0,
+    tiny: 2,
     xs: 4,
     sm: 8,
     md: 12,
     lg: 16,
     xl: 24,
     xxl: 32,
+    xxxl: 40,
+    huge: 48,
+    giant: 64,
+    massive: 80,
+    extraMassive: 100,
+  },
+  button: {
+    height: {
+      sm: 36,
+      md: 44,
+      lg: 52,
+    },
+    padding: {
+      sm: 12,
+      md: 16,
+      lg: 24,
+    },
+  },
+  input: {
+    height: 48,
+  },
+  icon: {
+    xs: 16,
+    sm: 20,
+    md: 24,
+    lg: 32,
+    xl: 40,
+  },
+  layout: {
+    headerHeight: 56,
+    footerHeight: 64,
+    listPaddingBottom: 100,
+    emptyPaddingTop: 80,
+    settingsIconOffset: 70,
+  },
+  lineHeight: {
+    sm: 1.2,
+    md: 1.5,
+    lg: 1.8,
+  },
+  maxWidth: {
+    sm: 400,
+    md: 500,
+    lg: 600,
   }
 };

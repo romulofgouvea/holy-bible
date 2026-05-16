@@ -1,5 +1,5 @@
 import { FlashList } from '@shopify/flash-list';
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Platform, ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import { useResponsive } from '../../hooks/useResponsive';
 import { useStudies } from '../../hooks/useStudies';
@@ -19,8 +19,33 @@ type BibleAddToStudyModalProps = {
 
 export function BibleAddToStudyModal({ visible, onClose, selectedVerses, onShowToast }: BibleAddToStudyModalProps) {
   const { studies, updateStudy, createStudy } = useStudies();
-  const { ms } = useResponsive();
+  const { ms, DESIGN } = useResponsive();
   const { colors } = useTheme();
+
+  const styles = useMemo(() => StyleSheet.create({
+    container: { flex: 1 },
+    header: { flexDirection: 'row', alignItems: 'center' },
+    headerIconWrap: { marginRight: ms(DESIGN.spacing.sm) },
+    title: { flex: 1 },
+    createBtn: { paddingVertical: ms(DESIGN.spacing.lg), borderRadius: ms(DESIGN.borderRadius.md), alignItems: 'center' },
+    createText: { fontWeight: '700' },
+    studyItem: { flexDirection: 'row', alignItems: 'center', paddingVertical: ms(DESIGN.spacing.md), borderBottomWidth: 1 },
+    empty: { padding: ms(DESIGN.spacing.giant), alignItems: 'center' },
+    input: { borderRadius: ms(DESIGN.borderRadius.md), paddingHorizontal: ms(DESIGN.spacing.lg), paddingVertical: ms(DESIGN.spacing.lg), marginBottom: ms(DESIGN.spacing.sm) },
+    inputMultiline: { minHeight: ms(DESIGN.layout.settingsIconOffset), textAlignVertical: 'top' },
+    createActions: { flexDirection: 'row', gap: ms(DESIGN.spacing.md) },
+    cancelBtn: { flex: 1, paddingVertical: ms(DESIGN.spacing.lg), borderRadius: ms(DESIGN.borderRadius.md), alignItems: 'center' },
+    cancelText: { fontWeight: '700' },
+    sectionTitle: {
+      fontSize: ms(DESIGN.fontSize.xs),
+      fontWeight: '800',
+      textTransform: 'uppercase',
+      letterSpacing: 1,
+      opacity: 0.6,
+      paddingBottom: ms(DESIGN.spacing.sm),
+    },
+  }), [ms, colors, DESIGN]);
+
   const [isCreating, setIsCreating] = useState(false);
   const [newTitle, setNewTitle] = useState('');
 
@@ -82,13 +107,13 @@ export function BibleAddToStudyModal({ visible, onClose, selectedVerses, onShowT
       header={<View style={styles.header}>
         <BibleIcon
           name={isCreating ? "arrow-left" : "book-open"}
-          size={ms(16)}
+          size={ms(DESIGN.spacing.lg)}
           color={colors.primary}
           backgroundColor={colors.primary + '25'}
           style={styles.headerIconWrap}
           onPress={isCreating ? () => setIsCreating(false) : undefined}
         />
-        <BibleText style={[styles.title, { color: colors.primary, fontSize: ms(16), fontWeight: '800' }]}>
+        <BibleText style={[styles.title, { color: colors.primary, fontSize: ms(DESIGN.spacing.lg), fontWeight: '800' }]}>
           {isCreating ? 'Novo Estudo' : 'Adicionar ao Estudo'}
         </BibleText>
         <BibleIcon
@@ -105,7 +130,7 @@ export function BibleAddToStudyModal({ visible, onClose, selectedVerses, onShowT
             style={[styles.createBtn, { backgroundColor: colors.primary, flex: 1.5 }]}
             onPress={handleCreateAndAdd}
           >
-            <BibleText style={[styles.createText, { color: colors.onPrimary, fontSize: ms(16) }]}>Criar e Adicionar</BibleText>
+            <BibleText style={[styles.createText, { color: colors.onPrimary, fontSize: ms(DESIGN.spacing.lg) }]}>Criar e Adicionar</BibleText>
           </TouchableOpacity>
         </View>
       ) : (
@@ -113,7 +138,7 @@ export function BibleAddToStudyModal({ visible, onClose, selectedVerses, onShowT
           style={[styles.createBtn, { backgroundColor: colors.primary }]}
           onPress={() => setIsCreating(true)}
         >
-          <BibleText style={[styles.createText, { color: colors.onPrimary, fontSize: ms(16) }]}>Criar Novo Estudo</BibleText>
+          <BibleText style={[styles.createText, { color: colors.onPrimary, fontSize: ms(DESIGN.spacing.lg) }]}>Criar Novo Estudo</BibleText>
         </TouchableOpacity>
       )}
     >
@@ -141,9 +166,9 @@ export function BibleAddToStudyModal({ visible, onClose, selectedVerses, onShowT
               data={studies}
               keyExtractor={(item) => item.id}
               // @ts-ignore
-              estimatedItemSize={60}
+              estimatedItemSize={ms(DESIGN.layout.settingsIconOffset)}
               showsVerticalScrollIndicator={false}
-              contentContainerStyle={{ paddingBottom: 10 }}
+              contentContainerStyle={{ paddingBottom: ms(DESIGN.spacing.md) }}
               ListEmptyComponent={
                 <BiblePageEmpty
                   title="Nenhum estudo ainda"
@@ -158,10 +183,10 @@ export function BibleAddToStudyModal({ visible, onClose, selectedVerses, onShowT
                 >
                   <BibleIcon name="book" color={colors.onSurface} backgroundColor={colors.surfaceHighlight} />
                   <View style={{ flex: 1 }}>
-                    <BibleText style={{ color: colors.onSurface, fontWeight: '600', fontSize: ms(15) }} numberOfLines={1}>
+                    <BibleText style={{ color: colors.onSurface, fontWeight: '600', fontSize: ms(DESIGN.fontSize.lg) }} numberOfLines={1}>
                       {item.title}
                     </BibleText>
-                    <BibleText style={{ color: colors.textMuted, fontSize: ms(12) }}>
+                    <BibleText style={{ color: colors.textMuted, fontSize: ms(DESIGN.spacing.md) }}>
                       {item.createdAt}
                     </BibleText>
                   </View>
@@ -175,27 +200,3 @@ export function BibleAddToStudyModal({ visible, onClose, selectedVerses, onShowT
     </BiblePageModal>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1 },
-  header: { flexDirection: 'row', alignItems: 'center' },
-  headerIconWrap: { marginRight: 8 },
-  title: { flex: 1 },
-  createBtn: { paddingVertical: 14, borderRadius: 14, alignItems: 'center' },
-  createText: { fontWeight: '700' },
-  studyItem: { flexDirection: 'row', alignItems: 'center', paddingVertical: 12, borderBottomWidth: 1 },
-  empty: { padding: 40, alignItems: 'center' },
-  input: { borderRadius: 12, paddingHorizontal: 16, paddingVertical: 14, marginBottom: 8 },
-  inputMultiline: { minHeight: 90, textAlignVertical: 'top' },
-  createActions: { flexDirection: 'row', gap: 12 },
-  cancelBtn: { flex: 1, paddingVertical: 14, borderRadius: 14, alignItems: 'center' },
-  cancelText: { fontWeight: '700' },
-  sectionTitle: {
-    fontSize: 10,
-    fontWeight: '800',
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-    opacity: 0.6,
-    paddingBottom: 8,
-  },
-});

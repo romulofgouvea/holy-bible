@@ -1,5 +1,5 @@
 import { Feather } from '@expo/vector-icons';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useResponsive } from '../hooks/useResponsive';
 import { useTheme } from '../hooks/useTheme';
@@ -23,37 +23,13 @@ export function BiblePageEmpty({
   onAction,
 }: BiblePageEmptyProps) {
   const { colors } = useTheme();
-  const { ms } = useResponsive();
-
-  return (
-    <View style={styles.container}>
-      <BibleIcon name={icon} size={ms(72)} containerSize={72} color={colors.textMuted} />
-      <BibleText style={[styles.title, { fontSize: ms(22), color: colors.textMuted, marginTop: 24 }]}>
-        {title}
-      </BibleText>
-      {description && (
-        <BibleText style={[styles.description, { fontSize: ms(16), color: colors.textMuted, marginTop: 8 }]}>
-          {description}
-        </BibleText>
-      )}
-      {actionLabel && onAction && (
-        <BibleButton
-          label={actionLabel}
-          onPress={onAction}
-          style={{ marginTop: 24 }}
-          variant="outline"
-        />
-      )}
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
+  const { ms, DESIGN } = useResponsive();
+  const styles = useMemo(() => StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 32,
+    padding: ms(DESIGN.spacing.xxl),
     textAlign: 'center',
   },
   title: {
@@ -61,6 +37,32 @@ const styles = StyleSheet.create({
   },
   description: {
     textAlign: 'center',
-    lineHeight: 20,
+    lineHeight: ms(20),
   },
-});
+}), [ms, colors, DESIGN]);
+
+
+  return (
+    <View style={styles.container}>
+      <BibleIcon name={icon} size={ms(72)} containerSize={72} color={colors.textMuted} />
+      <BibleText style={[styles.title, { fontSize: ms(22), color: colors.textMuted, marginTop: ms(24) }]}>
+        {title}
+      </BibleText>
+      {description && (
+        <BibleText style={[styles.description, { fontSize: ms(DESIGN.spacing.lg), color: colors.textMuted, marginTop: ms(8) }]}>
+          {description}
+        </BibleText>
+      )}
+      {actionLabel && onAction && (
+        <BibleButton
+          label={actionLabel}
+          onPress={onAction}
+          style={{ marginTop: ms(24) }}
+          variant="outline"
+        />
+      )}
+    </View>
+  );
+}
+
+

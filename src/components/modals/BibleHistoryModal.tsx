@@ -8,8 +8,8 @@ import { useTheme } from '../../hooks/useTheme';
 import { BibleCountPill } from '../BibleCountPill';
 import { BibleIcon } from '../BibleIcon';
 import { BiblePageEmpty } from '../BiblePageEmpty';
-import { BiblePageModal } from './BiblePageModal';
 import { BibleText } from '../BibleText';
+import { BiblePageModal } from './BiblePageModal';
 
 type BibleHistoryModalProps = {
   visible: boolean;
@@ -19,7 +19,7 @@ type BibleHistoryModalProps = {
 
 export function BibleHistoryModal({ visible, onClose, onSelect }: BibleHistoryModalProps) {
   const { history, loadHistory } = useHistory();
-  const { ms } = useResponsive();
+  const { ms, DESIGN } = useResponsive();
   const { colors } = useTheme();
 
   const listRef = React.useRef<any>(null);
@@ -42,8 +42,7 @@ export function BibleHistoryModal({ visible, onClose, onSelect }: BibleHistoryMo
   const styles = useMemo(() => StyleSheet.create({
     container: {
       flex: 1,
-      paddingHorizontal: ms(16),
-      paddingBottom: ms(24),
+      paddingHorizontal: ms(DESIGN.spacing.lg),
     },
     header: {
       flexDirection: 'row',
@@ -58,9 +57,9 @@ export function BibleHistoryModal({ visible, onClose, onSelect }: BibleHistoryMo
       width: '100%',
     },
     card: {
-      borderRadius: ms(12),
+      borderRadius: ms(DESIGN.borderRadius.md),
       borderWidth: 1,
-      padding: ms(12),
+      padding: ms(DESIGN.spacing.md),
     },
     cardBody: {
       flexDirection: 'row',
@@ -73,16 +72,16 @@ export function BibleHistoryModal({ visible, onClose, onSelect }: BibleHistoryMo
       fontWeight: '500',
     },
     versionBadge: {
-      paddingHorizontal: ms(10),
-      paddingVertical: ms(4),
-      borderRadius: ms(8),
-      marginLeft: ms(12),
+      paddingHorizontal: ms(DESIGN.spacing.xs),
+      paddingVertical: ms(DESIGN.spacing.xs),
+      borderRadius: ms(DESIGN.borderRadius.sm),
+      marginLeft: ms(DESIGN.spacing.md),
     },
     versionBadgeText: {
       fontWeight: '800',
       textTransform: 'uppercase',
     },
-  }), [ms, colors]);
+  }), [ms, colors, DESIGN]);
 
   return (
     <BiblePageModal visible={visible} onClose={onClose} fullHeight={true}
@@ -91,8 +90,8 @@ export function BibleHistoryModal({ visible, onClose, onSelect }: BibleHistoryMo
           <BibleIcon name="clock"
             color={colors.primary}
             backgroundColor={`${colors.primary}20`}
-            style={{ marginRight: ms(8) }} />
-          <BibleText style={[styles.title, { fontSize: ms(18), color: colors.primary, fontWeight: '800' }]} testID="bible-history-title">{ROUTE_LABELS.HISTORY}</BibleText>
+            style={{ marginRight: ms(DESIGN.spacing.sm) }} />
+          <BibleText style={[styles.title, { fontSize: ms(DESIGN.fontSize.lg), color: colors.primary, fontWeight: '800' }]} testID="bible-history-title">{ROUTE_LABELS.HISTORY}</BibleText>
           <BibleIcon
             name="x"
             color={colors.error}
@@ -118,9 +117,12 @@ export function BibleHistoryModal({ visible, onClose, onSelect }: BibleHistoryMo
                 data={history}
                 keyExtractor={(item) => `${item.timestamp}`}
                 // @ts-ignore
-                estimatedItemSize={ms(70)}
+                estimatedItemSize={ms(DESIGN.layout.settingsIconOffset)}
                 showsVerticalScrollIndicator={false}
-                ItemSeparatorComponent={() => <View style={{ height: ms(10) }} />}
+                contentContainerStyle={{
+                  paddingVertical: ms(DESIGN.spacing.lg)
+                }}
+                ItemSeparatorComponent={() => <View style={{ height: ms(DESIGN.spacing.sm) }} />}
                 renderItem={({ item }) => (
                   <TouchableOpacity
                     activeOpacity={0.7}
@@ -132,15 +134,15 @@ export function BibleHistoryModal({ visible, onClose, onSelect }: BibleHistoryMo
                   >
                     <View style={styles.cardBody}>
                       <View style={{ flex: 1 }}>
-                        <BibleText style={[styles.refText, { color: colors.onSurface, fontSize: ms(16) }]}>
+                        <BibleText style={[styles.refText, { color: colors.onSurface, fontSize: ms(DESIGN.fontSize.lg) }]}>
                           {item.bookName} {item.chapter}:{item.verse}
                         </BibleText>
-                        <BibleText style={[styles.versionSubText, { color: colors.textMuted, fontSize: ms(12), marginTop: 2 }]}>
+                        <BibleText style={[styles.versionSubText, { color: colors.textMuted, fontSize: ms(DESIGN.fontSize.md), marginTop: ms(DESIGN.spacing.tiny) }]}>
                           {new Date(item.timestamp).toLocaleDateString()}
                         </BibleText>
                       </View>
                       <View style={[styles.versionBadge, { backgroundColor: colors.primary }]}>
-                        <BibleText style={[styles.versionBadgeText, { color: colors.onPrimary, fontSize: ms(11) }]}>
+                        <BibleText style={[styles.versionBadgeText, { color: colors.onPrimary, fontSize: ms(DESIGN.fontSize.xs) }]}>
                           {item.version}
                         </BibleText>
                       </View>

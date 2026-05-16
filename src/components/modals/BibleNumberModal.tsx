@@ -1,5 +1,5 @@
 import { Feather } from '@expo/vector-icons';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { useResponsive } from '../../hooks/useResponsive';
 import { useTheme } from '../../hooks/useTheme';
@@ -22,8 +22,28 @@ type BibleNumberModalProps = {
 };
 
 export function BibleNumberModal({ visible, onClose, onBack, items, title, iconName, onSelect, currentItem, footerText }: BibleNumberModalProps) {
-  const { ms, height, width } = useResponsive();
+  const { ms, height, width, DESIGN } = useResponsive();
   const { colors } = useTheme();
+  
+  const styles = useMemo(() => StyleSheet.create({
+    header: { flexDirection: 'row', alignItems: 'center' },
+    title: { flex: 1, fontWeight: '700' },
+    list: { 
+      paddingBottom: ms(DESIGN.spacing.md), 
+      gap: ms(DESIGN.spacing.sm), 
+      paddingHorizontal: ms(DESIGN.spacing.lg), 
+      paddingTop: ms(DESIGN.spacing.lg) 
+    },
+    footer: { paddingTop: ms(DESIGN.spacing.xs) },
+    gridContainer: { 
+      flexDirection: 'row', 
+      flexWrap: 'wrap', 
+      gap: ms(DESIGN.spacing.sm), 
+      justifyContent: 'flex-start', 
+      width: '100%' 
+    },
+  }), [ms, colors, DESIGN]);
+
   const scrollViewRef = React.useRef<any>(null);
   const hasScrolledRef = React.useRef(false);
 
@@ -46,15 +66,15 @@ export function BibleNumberModal({ visible, onClose, onBack, items, title, iconN
               color={colors.primary}
               onPress={onBack}
               backgroundColor={colors.primary + '20'}
-              style={{ marginRight: 8 }} />
+              style={{ marginRight: ms(DESIGN.spacing.sm) }} />
           ) : (
             <BibleIcon
               name={iconName}
               color={colors.primary}
               backgroundColor={colors.primary + '20'}
-              style={{ marginRight: 8 }} />
+              style={{ marginRight: ms(DESIGN.spacing.sm) }} />
           )}
-          <BibleText style={[styles.title, { fontSize: ms(18), color: colors.primary, fontWeight: '800' }]}>{title}</BibleText>
+          <BibleText style={[styles.title, { fontSize: ms(DESIGN.fontSize.xl), color: colors.primary, fontWeight: '800' }]}>{title}</BibleText>
 
           <BibleIcon
             name="x"
@@ -84,10 +104,10 @@ export function BibleNumberModal({ visible, onClose, onBack, items, title, iconN
       >
         <View style={styles.gridContainer}>
           {items.map((item) => {
-            const paddingHorizontal = ms(16) * 4;
+            const paddingHorizontal = ms(DESIGN.spacing.lg) * 4;
             const availableWidth = width - paddingHorizontal;
-            const numCols = Math.max(1, Math.floor(availableWidth / ms(60)));
-            const itemWidth = ((availableWidth - (numCols - 1) * 8) / numCols) - 0.01;
+            const numCols = Math.max(1, Math.floor(availableWidth / ms(DESIGN.spacing.giant)));
+            const itemWidth = ((availableWidth - (numCols - 1) * ms(DESIGN.spacing.sm)) / numCols) - 0.01;
             const isSelected = item === currentItem;
             return (
               <View
@@ -96,7 +116,7 @@ export function BibleNumberModal({ visible, onClose, onBack, items, title, iconN
                 onLayout={isSelected ? (e) => {
                   if (!hasScrolledRef.current && visible) {
                     hasScrolledRef.current = true;
-                    const y = Math.max(0, e.nativeEvent.layout.y - 16);
+                    const y = Math.max(0, e.nativeEvent.layout.y - ms(DESIGN.spacing.lg));
                     scrollViewRef.current?.scrollTo({ y, animated: false });
                   }
                 } : undefined}
@@ -115,12 +135,3 @@ export function BibleNumberModal({ visible, onClose, onBack, items, title, iconN
     </BiblePageModal>
   );
 }
-
-const styles = StyleSheet.create({
-  header: { flexDirection: 'row', alignItems: 'center' },
-  title: { flex: 1, fontWeight: '700' },
-  list: { paddingBottom: 12, gap: 8, paddingHorizontal: 16, paddingTop: 16 },
-  footer: { paddingTop: 4 },
-  gridContainer: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, justifyContent: 'flex-start', width: '100%' },
-});
-

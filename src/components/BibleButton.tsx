@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { StyleSheet, TouchableOpacity, TouchableOpacityProps, ViewStyle, TextStyle } from 'react-native';
 import { useTheme } from '../hooks/useTheme';
 import { useResponsive } from '../hooks/useResponsive';
@@ -26,21 +26,33 @@ export function BibleButton({
   ...rest
 }: BibleButtonProps) {
   const { colors } = useTheme();
-  const { ms } = useResponsive();
-
+  const { ms, DESIGN } = useResponsive();
+  
   const getStyles = () => {
     const base: ViewStyle = {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
-      borderRadius: ms(12),
-      paddingHorizontal: ms(size === 'sm' ? 12 : size === 'lg' ? 24 : 16),
-      height: ms(size === 'sm' ? 36 : size === 'lg' ? 52 : 44),
+      borderRadius: ms(DESIGN.borderRadius.md),
+      paddingHorizontal: ms(
+        size === 'sm' ? DESIGN.button.padding.sm : 
+        size === 'lg' ? DESIGN.button.padding.lg : 
+        DESIGN.button.padding.md
+      ),
+      height: ms(
+        size === 'sm' ? DESIGN.button.height.sm : 
+        size === 'lg' ? DESIGN.button.height.lg : 
+        DESIGN.button.height.md
+      ),
     };
 
     const text: TextStyle = {
       fontWeight: '700',
-      fontSize: ms(size === 'sm' ? 13 : size === 'lg' ? 16 : 14),
+      fontSize: ms(
+        size === 'sm' ? DESIGN.fontSize.sm : 
+        size === 'lg' ? DESIGN.fontSize.lg : 
+        DESIGN.fontSize.md
+      ),
     };
 
     switch (variant) {
@@ -79,8 +91,8 @@ export function BibleButton({
       {icon && iconPosition === 'left' && icon}
       <BibleText style={[
         s.text, 
-        icon && iconPosition === 'left' ? { marginLeft: ms(8) } : {}, 
-        icon && iconPosition === 'right' ? { marginRight: ms(8) } : {}, 
+        icon && iconPosition === 'left' ? { marginLeft: ms(DESIGN.spacing.sm) } : {}, 
+        icon && iconPosition === 'right' ? { marginRight: ms(DESIGN.spacing.sm) } : {}, 
         textStyle
       ]}>
         {label}
@@ -89,5 +101,3 @@ export function BibleButton({
     </TouchableOpacity>
   );
 }
-
-const styles = StyleSheet.create({});
