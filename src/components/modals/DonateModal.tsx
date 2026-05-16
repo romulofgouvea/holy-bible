@@ -3,8 +3,8 @@ import React, { useState } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useResponsive } from '../../hooks/use-responsive';
 import { useTheme } from '../../hooks/use-theme';
-import { BibleBottomSheet } from '../BibleBottomSheet';
 import { BibleIcon } from '../BibleIcon';
+import { BiblePageModal } from '../BiblePageModal';
 import { BibleText } from '../BibleText';
 
 const PIX_KEY = 'romulo-gouvea@hotmail.com';
@@ -28,7 +28,7 @@ export function DonateModal({ visible, onClose }: Props) {
   if (!visible) return null;
 
   return (
-    <BibleBottomSheet visible={visible} onClose={onClose}
+    <BiblePageModal visible={visible} onClose={onClose}
       header={
         <View style={styles.header}>
           <BibleIcon
@@ -48,14 +48,16 @@ export function DonateModal({ visible, onClose }: Props) {
         </View>
       }>
       <View style={styles.content}>
-        <View style={styles.bodyContent}>
-          <BibleText style={[styles.body, { color: colors.onSurface, fontSize: ms(14), opacity: 0.8 }]}>
-            Este aplicativo é gratuito e feito com muito cuidado para levar a Palavra de Deus às suas mãos.
-          </BibleText>
+        <View style={[styles.bodyContent, { gap: ms(16) }]}>
+          <View style={{ gap: ms(6) }}>
+            <BibleText style={[styles.body, { color: colors.onSurface, fontSize: ms(15), fontWeight: '600' }]}>
+              Este aplicativo é gratuito e feito com muito cuidado para levar a Palavra de Deus às suas mãos.
+            </BibleText>
 
-          <BibleText style={[styles.bodySmall, { color: colors.textMuted, fontSize: ms(13) }]}>
-            Cada contribuição ajuda a manter os servidores e a adicionar novas funcionalidades. 🙏
-          </BibleText>
+            <BibleText style={[styles.bodySmall, { color: colors.textMuted, fontSize: ms(13) }]}>
+              Cada contribuição ajuda a manter os servidores e a adicionar novas funcionalidades. 🙏
+            </BibleText>
+          </View>
 
           <View style={[styles.pixCard, { backgroundColor: colors.surfaceHighlight, borderColor: colors.border }]}>
             <View style={styles.pixHeader}>
@@ -79,7 +81,7 @@ export function DonateModal({ visible, onClose }: Props) {
               activeOpacity={0.8}
             >
               <BibleIcon name={copied ? 'check' : 'copy'} size={ms(16)} color={colors.onPrimary} />
-              <BibleText style={[styles.copyBtnText, { fontSize: ms(14), color: colors.onPrimary, fontWeight: '700' }]}>
+              <BibleText style={[styles.copyBtnText, { fontSize: ms(15), color: colors.onPrimary, fontWeight: '700' }]}>
                 {copied ? 'Chave Copiada!' : 'Copiar Chave Pix'}
               </BibleText>
             </TouchableOpacity>
@@ -90,7 +92,7 @@ export function DonateModal({ visible, onClose }: Props) {
           </BibleText>
         </View>
       </View>
-    </BibleBottomSheet>
+    </BiblePageModal>
   );
 }
 
@@ -114,30 +116,29 @@ const styles = StyleSheet.create({
   },
   bodyContent: {
     alignItems: 'center',
+    paddingTop: 8,
+    paddingBottom: 16,
   },
   body: {
     textAlign: 'center',
-    lineHeight: 20,
-    marginBottom: 16,
-    paddingHorizontal: 4,
+    lineHeight: 22,
+    paddingHorizontal: 8,
   },
   bodySmall: {
     textAlign: 'center',
     lineHeight: 18,
-    marginBottom: 24,
-    paddingHorizontal: 20,
+    paddingHorizontal: 12,
   },
   pixCard: {
     width: '100%',
-    borderRadius: 20,
-    padding: 12,
+    borderRadius: 24,
+    padding: 16,
     borderWidth: 1,
-    marginBottom: 12,
   },
   pixHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 12,
+    marginBottom: 16,
   },
   pixIconCircle: {
     width: 28,
@@ -151,18 +152,19 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
   pixKeyContainer: {
-    padding: 12,
-    borderRadius: 10,
-    marginBottom: 12,
+    padding: 16,
+    borderRadius: 14,
+    marginBottom: 16,
     alignItems: 'center',
+    borderWidth: 1,
   },
   pixKey: {
     textAlign: 'center',
   },
   copyBtn: {
     flexDirection: 'row',
-    height: 48,
-    borderRadius: 12,
+    height: 52,
+    borderRadius: 14,
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
@@ -170,5 +172,6 @@ const styles = StyleSheet.create({
   copyBtnText: {},
   thanks: {
     textAlign: 'center',
+    marginTop: 8,
   },
 });
