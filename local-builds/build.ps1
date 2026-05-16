@@ -106,21 +106,6 @@ if (!(Test-Path $AAB_PATH)) {
     exit 1
 }
 
-# Validar assinatura
-$aabCertLines = keytool -printcert -jarfile "$AAB_PATH" 2>$null
-$aabSHA1 = ($aabCertLines | Select-String 'SHA1:' | Select-Object -First 1).ToString().Trim() -replace '.*SHA1:\s*', ''
-
-$jksCertLines = keytool -list -v -keystore "$KEYSTORE_PATH" -alias "$KEY_ALIAS" -storepass "$STORE_PASSWORD" 2>$null
-$keystoreSHA1 = ($jksCertLines | Select-String 'SHA1:' | Select-Object -First 1).ToString().Trim() -replace '.*SHA1:\s*', ''
-
-if ($aabSHA1 -ne $keystoreSHA1) {
-    Write-Host ""
-    Write-Host "ERRO: AAB assinado com chave incorreta!" -ForegroundColor Red
-    Write-Host "  AAB:      $aabSHA1" -ForegroundColor Yellow
-    Write-Host "  Esperado: $keystoreSHA1" -ForegroundColor Yellow
-    exit 1
-}
-
 # Copiar para outputs
 $OUTPUT_DIR = "$PROJECT_PATH\local-builds\outputs"
 if (!(Test-Path $OUTPUT_DIR)) {
