@@ -22,4 +22,7 @@ export const STORAGE_KEYS = {
   SEARCH_SCOPE: '@bible:search_scope',
   SEARCH_QUERY: '@bible:search_query',
   SEARCH_HISTORY: '@bible:search_history',
+  SEARCH_VERSION: '@bible:search_version',
+  SEARCH_BOOK: '@bible:search_book',
+  SEARCH_CHAPTER: '@bible:search_chapter',
 };

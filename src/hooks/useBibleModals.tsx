@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback, useMemo } from 'react';
+import React, { createContext, useCallback, useContext, useMemo, useState } from 'react';
 import { Book } from '../data';
 
 type ModalType = 'version' | 'book' | 'chapter' | 'verse' | 'verses' | null;
@@ -16,7 +16,10 @@ interface BibleModalOptions {
   initialStep?: ModalType;
   onSelect?: (selection: SelectionData) => void;
   onConfirm?: (selection: SelectionData) => void;
+  skipChapterSelection?: boolean;
   skipVerseSelection?: boolean;
+  initialBook?: Book;
+  initialChapter?: number;
 }
 
 interface BibleModalContextType {
@@ -25,7 +28,7 @@ interface BibleModalContextType {
   openModal: (options: BibleModalOptions) => void;
   closeAll: () => void;
   setActiveModal: (modal: ModalType) => void;
-  
+
   // Navigation state (separate from global app state, used for the selection flow)
   navVersion: string;
   setNavVersion: (v: string) => void;
@@ -40,7 +43,7 @@ const BibleModalContext = createContext<BibleModalContextType | undefined>(undef
 export function BibleModalProvider({ children }: { children: React.ReactNode }) {
   const [activeModal, setActiveModal] = useState<ModalType>(null);
   const [options, setOptions] = useState<BibleModalOptions>({});
-  
+
   const [navVersion, setNavVersion] = useState<string>('');
   const [navBook, setNavBook] = useState<Book | null>(null);
   const [navChapter, setNavChapter] = useState<number | null>(null);

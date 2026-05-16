@@ -221,7 +221,6 @@ export default function SearchScreen() {
     historyItem: {
       flexDirection: 'row',
       alignItems: 'center',
-      paddingVertical: ms(DESIGN.spacing.md),
     },
     historyText: {
       fontWeight: '500',
@@ -327,25 +326,43 @@ export default function SearchScreen() {
   useEffect(() => {
     (async () => {
       try {
-        const [savedQuery, savedHistory] = await Promise.all([
+        const [savedQuery, savedHistory, savedVersion, savedBookAbbrev, savedChapter] = await Promise.all([
           AsyncStorage.getItem(STORAGE_KEYS.SEARCH_QUERY),
           AsyncStorage.getItem(STORAGE_KEYS.SEARCH_HISTORY),
+          AsyncStorage.getItem(STORAGE_KEYS.SEARCH_VERSION),
+          AsyncStorage.getItem(STORAGE_KEYS.SEARCH_BOOK),
+          AsyncStorage.getItem(STORAGE_KEYS.SEARCH_CHAPTER),
         ]);
 
-        if (params.query) {
-          setQuery(params.query);
-        } else if (params.from === 'bible' && savedQuery) {
-          setQuery(savedQuery);
-        }
+        // Always start with an empty query as requested
+        setQuery('');
 
         if (savedHistory) setHistory(JSON.parse(savedHistory));
+
+        if (savedVersion) setVersion(savedVersion);
+        if (savedBookAbbrev && versionBooks) {
+          const book = versionBooks.find(b => b.abbrev === savedBookAbbrev);
+          if (book) setSearchBook(book);
+        }
+        if (savedChapter) setSearchChapter(parseInt(savedChapter, 10));
+
       } catch (e) { }
       setIsLoaded(true);
     })();
-  }, []);
+  }, [versionBooks]);
 
   const saveQuery = async (q: string) => {
     try { await AsyncStorage.setItem(STORAGE_KEYS.SEARCH_QUERY, q); } catch (e) { }
+  };
+
+  const saveFilters = async () => {
+    try {
+      await Promise.all([
+        AsyncStorage.setItem(STORAGE_KEYS.SEARCH_VERSION, version),
+        searchBook ? AsyncStorage.setItem(STORAGE_KEYS.SEARCH_BOOK, searchBook.abbrev) : AsyncStorage.removeItem(STORAGE_KEYS.SEARCH_BOOK),
+        searchChapter ? AsyncStorage.setItem(STORAGE_KEYS.SEARCH_CHAPTER, searchChapter.toString()) : AsyncStorage.removeItem(STORAGE_KEYS.SEARCH_CHAPTER),
+      ]);
+    } catch (e) { }
   };
 
   const addToHistory = async (term: string) => {
@@ -432,11 +449,7 @@ export default function SearchScreen() {
     router.setParams({ query: q });
   };
 
-  useEffect(() => {
-    if (isLoaded && query.trim().length >= 2) {
-      runSearch(query, true);
-    }
-  }, [version, searchBook, searchChapter, isLoaded]);
+  // REMOVED: Only filter when clicking the Filter button or submitting search
 
   const handleSubmit = () => {
     if (query.trim().length >= 2) {
@@ -541,23 +554,25 @@ export default function SearchScreen() {
         }
       />
 
-      <View style={[styles.resultsInfoContainer, { backgroundColor: colors.onPrimary, borderBottomColor: colors.border }]}>
-        <View style={styles.appliedFilterLabel}>
-          <BibleText style={[styles.appliedFilterText, { color: colors.onSurface, fontSize: ms(DESIGN.fontSize.sm) }]}>
-            Filtro aplicado:
-          </BibleText>
-          <View style={[styles.filterBadge, { backgroundColor: colors.primary + '20' }]}>
-            <BibleText style={{ color: colors.primary, fontWeight: '800', fontSize: ms(DESIGN.fontSize.sm) }}>
-              {scopeLabel.charAt(0).toUpperCase() + scopeLabel.slice(1)}
+      {scope !== 'bible' && (
+        <View style={[styles.resultsInfoContainer, { backgroundColor: colors.onPrimary, borderBottomColor: colors.border }]}>
+          <View style={styles.appliedFilterLabel}>
+            <BibleText style={[styles.appliedFilterText, { color: colors.onSurface, fontSize: ms(DESIGN.fontSize.sm) }]}>
+              Filtro aplicado:
             </BibleText>
+            <View style={[styles.filterBadge, { backgroundColor: colors.primary + '20' }]}>
+              <BibleText style={{ color: colors.primary, fontWeight: '800', fontSize: ms(DESIGN.fontSize.sm) }}>
+                {scopeLabel.charAt(0).toUpperCase() + scopeLabel.slice(1)}
+              </BibleText>
+            </View>
           </View>
+          <BibleCountPill
+            count={results.length}
+            label="resultado"
+            labelPlural="resultados"
+          />
         </View>
-        <BibleCountPill
-          count={results.length}
-          label="resultado"
-          labelPlural="resultados"
-        />
-      </View>
+      )}
 
       {isSearching ? (
         <BibleSkeleton onlyContent />
@@ -673,6 +688,7 @@ export default function SearchScreen() {
               style={[styles.filterBtnFooter, { backgroundColor: colors.primary }]}
               onPress={() => {
                 setIsFilterModalVisible(false);
+                saveFilters();
                 runSearch(query, true);
               }}
             >
@@ -699,6 +715,8 @@ export default function SearchScreen() {
             style={styles.filterModalItem}
             onPress={() => openModal({
               initialStep: 'book',
+              skipChapterSelection: true,
+              initialBook: searchBook || undefined,
               onSelect: (s) => {
                 if (s.book) {
                   setSearchBook(s.book);
@@ -723,7 +741,10 @@ export default function SearchScreen() {
             disabled={!searchBook}
             onPress={() => openModal({
               initialStep: 'chapter',
+              skipChapterSelection: true,
               skipVerseSelection: true,
+              initialBook: searchBook || undefined,
+              initialChapter: searchChapter || undefined,
               onSelect: (s) => s.chapter && setSearchChapter(s.chapter)
             })}
           >

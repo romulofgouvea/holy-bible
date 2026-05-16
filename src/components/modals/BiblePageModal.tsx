@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react';
-import { Animated, KeyboardAvoidingView, Platform, Pressable, StyleSheet, View } from 'react-native';
+import { Animated, BackHandler, KeyboardAvoidingView, Platform, Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useResponsive } from '../../hooks/useResponsive';
 import { useTheme } from '../../hooks/useTheme';
@@ -57,6 +57,22 @@ export function BiblePageModal({ visible, onClose, children, header, footer, ful
       });
     }
   }, [visible, fadeAnim]);
+
+  useEffect(() => {
+    if (!visible) return;
+
+    const backAction = () => {
+      onClose();
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+
+    return () => backHandler.remove();
+  }, [visible, onClose]);
 
   if (!rendered) return null;
 
