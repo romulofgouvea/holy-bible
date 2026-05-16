@@ -1,5 +1,4 @@
 import { BibleCountPill } from '@/components/BibleCountPill';
-import { BibleDivider } from '@/components/BibleDivider';
 import { BibleIcon } from '@/components/BibleIcon';
 import { BiblePageModal } from '@/components/modals/BiblePageModal';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -8,6 +7,7 @@ import { useLocalSearchParams, usePathname, useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,
+  Keyboard,
   Platform,
   ScrollView,
   StyleSheet,
@@ -20,8 +20,6 @@ import { BibleHeader } from '../components/BibleHeader';
 import { BiblePageEmpty } from '../components/BiblePageEmpty';
 import { BibleSkeleton } from '../components/BibleSkeleton';
 import { BibleText } from '../components/BibleText';
-import { DonateModal } from '../components/modals/DonateModal';
-import { ROUTES } from '../constants/routes';
 import { STORAGE_KEYS } from '../constants/storage';
 import { Book } from '../data';
 import { useBible } from '../hooks/useBible';
@@ -30,8 +28,7 @@ import { useHistory } from '../hooks/useHistory';
 import { useReaderSettings } from '../hooks/useReaderSettings';
 import { useResponsive } from '../hooks/useResponsive';
 import { useTheme } from '../hooks/useTheme';
-import { impactLight, selectionHaptic } from '../utils/haptics';
-import { handleSmartBack } from '../utils/navigation';
+import { selectionHaptic } from '../utils/haptics';
 
 
 export type SearchScope = 'bible' | 'book' | 'chapter';
@@ -549,7 +546,10 @@ export default function SearchScreen() {
         rightContent={
           <TouchableOpacity
             style={[styles.filterBtn, !isFilterEnabled && { opacity: 0.3 }]}
-            onPress={() => setIsFilterModalVisible(true)}
+            onPress={() => {
+              Keyboard.dismiss();
+              setIsFilterModalVisible(true);
+            }}
             disabled={!isFilterEnabled}
             activeOpacity={0.7}
           >

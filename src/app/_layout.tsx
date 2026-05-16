@@ -6,6 +6,7 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { ReaderSettingsProvider } from '../hooks/useReaderSettings';
 import { ThemeProvider, useTheme } from '../hooks/useTheme';
 import { BibleModalProvider } from '../hooks/useBibleModals';
+import { BibleProvider } from '../hooks/useBible';
 import { GlobalBibleModals } from '../components/modals/GlobalBibleModals';
 
 function useRoutePersistence() {
@@ -48,9 +49,11 @@ export default function RootLayout() {
     <SafeAreaProvider>
       <ThemeProvider>
         <ReaderSettingsProvider>
-          <BibleModalProvider>
-            <AppLayout />
-          </BibleModalProvider>
+          <BibleProvider>
+            <BibleModalProvider>
+              <AppLayout />
+            </BibleModalProvider>
+          </BibleProvider>
         </ReaderSettingsProvider>
       </ThemeProvider>
     </SafeAreaProvider>

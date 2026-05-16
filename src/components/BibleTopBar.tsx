@@ -46,23 +46,23 @@ export const BibleTopBar = React.memo((props: BibleTopBarProps) => {
                 onMenuPress={onOpenMenu}
                 leftContent={
                     <View style={styles.leftButtons}>
-                        <TouchableOpacity style={[styles.topBarButton, { backgroundColor: btnBg, height: ms(38), paddingHorizontal: ms(DESIGN.spacing.md), marginHorizontal: ms(3), borderRadius: ms(DESIGN.fontSize.xs), flexShrink: 0 }]} onPress={onOpenVersion}>
-                            <BibleText style={[styles.topBarButtonText, { fontSize: ms(15), color: btnText }]}>{version}</BibleText>
+                        <TouchableOpacity style={[styles.topBarButton, { backgroundColor: btnBg, height: ms(DESIGN.button.height.sm), paddingHorizontal: ms(DESIGN.spacing.md), marginHorizontal: ms(DESIGN.spacing.tiny), borderRadius: ms(DESIGN.borderRadius.sm), flexShrink: 0 }]} onPress={onOpenVersion}>
+                            <BibleText style={[styles.topBarButtonText, { fontSize: ms(DESIGN.fontSize.md), color: btnText }]}>{version}</BibleText>
                         </TouchableOpacity>
-                        <TouchableOpacity style={[styles.topBarButton, { backgroundColor: btnBg, height: ms(38), paddingHorizontal: ms(DESIGN.spacing.md), marginHorizontal: ms(3), borderRadius: ms(DESIGN.fontSize.xs), flexShrink: 1, minWidth: 0 }]} onPress={onOpenBook}>
-                            <BibleText style={[styles.topBarButtonText, { fontSize: ms(15), color: btnText }]} numberOfLines={1}>{bookName}</BibleText>
+                        <TouchableOpacity style={[styles.topBarButton, { backgroundColor: btnBg, height: ms(DESIGN.button.height.sm), paddingHorizontal: ms(DESIGN.spacing.md), marginHorizontal: ms(DESIGN.spacing.tiny), borderRadius: ms(DESIGN.borderRadius.sm), flexShrink: 1, minWidth: 0 }]} onPress={onOpenBook}>
+                            <BibleText style={[styles.topBarButtonText, { fontSize: ms(DESIGN.fontSize.md), color: btnText }]} numberOfLines={1}>{bookName}</BibleText>
                         </TouchableOpacity>
-                        <TouchableOpacity style={[styles.topBarButton, { backgroundColor: btnBg, height: ms(38), paddingHorizontal: ms(DESIGN.spacing.md), marginHorizontal: ms(3), borderRadius: ms(DESIGN.fontSize.xs), flexShrink: 0 }]} onPress={onOpenChapter}>
-                            <BibleText style={[styles.topBarButtonText, { fontSize: ms(15), color: btnText }]}>{currentChapter}</BibleText>
+                        <TouchableOpacity style={[styles.topBarButton, { backgroundColor: btnBg, height: ms(DESIGN.button.height.sm), paddingHorizontal: ms(DESIGN.spacing.md), marginHorizontal: ms(DESIGN.spacing.tiny), borderRadius: ms(DESIGN.borderRadius.sm), flexShrink: 0 }]} onPress={onOpenChapter}>
+                            <BibleText style={[styles.topBarButtonText, { fontSize: ms(DESIGN.fontSize.md), color: btnText }]}>{currentChapter}</BibleText>
                         </TouchableOpacity>
                     </View>
                 }
                 rightContent={
                     <TouchableOpacity
-                        style={[styles.menuButton, { backgroundColor: 'transparent', width: ms(38), height: ms(38), borderRadius: ms(DESIGN.fontSize.xs), marginLeft: ms(4), alignItems: 'center', justifyContent: 'center' }]}
+                        style={[styles.menuButton, { backgroundColor: 'transparent', width: ms(DESIGN.button.height.sm), height: ms(DESIGN.button.height.sm), borderRadius: ms(DESIGN.borderRadius.sm), marginLeft: ms(DESIGN.spacing.xs), alignItems: 'center', justifyContent: 'center' }]}
                         onPress={() => setDotsMenuVisible(true)}
                     >
-                        <BibleIcon name="more-vertical" size={ms(DESIGN.fontSize.xxl)} color={headerContent} />
+                        <BibleIcon name="more-vertical" size={ms(DESIGN.fontSize.xl)} color={headerContent} />
                     </TouchableOpacity>
                 }
             />

@@ -19,19 +19,20 @@ import { useResponsive } from '../hooks/useResponsive';
 import { useTheme } from '../hooks/useTheme';
 import { useToast } from '../hooks/useToast';
 
+
 export default function BibleScreen() {
   const {
     isReady,
-    version, setVersion, versionBooks,
-    book, setBook, currentBook,
-    chapter, setChapter, chapterCount,
-    verse, setVerse,
+    version, versionBooks,
+    book, currentBook,
+    chapter, chapterCount,
+    verse,
     blinkingVerse, setBlinkingVerse,
     sectionData,
-    changeChapter: bibleChangeChapter,
-    onVersePress: originalOnVersePress,
+    highlights,
     bulkToggleHighlight,
-    highlights
+    navigateTo,
+    changeChapter
   } = useBible();
 
   const router = useRouter();
@@ -40,9 +41,7 @@ export default function BibleScreen() {
   const { colors } = useTheme();
   
   const styles = useMemo(() => StyleSheet.create({
-    content: {
-      flex: 1,
-    },
+    content: { flex: 1 },
     floatingNav: {
       position: 'absolute',
       bottom: ms(DESIGN.spacing.xl),
@@ -63,39 +62,28 @@ export default function BibleScreen() {
   const [isSettingsModalVisible, setIsSettingsModalVisible] = useState(false);
   const [isHistoryModalVisible, setIsHistoryModalVisible] = useState(false);
   const [isDonateVisible, setIsDonateVisible] = useState(false);
-  const [isChangingVersion, setIsChangingVersion] = useState<string | null>(null);
-  const [isNavigating, setIsNavigating] = useState(false);
 
   const navBg = readerTheme === 'sepia' ? readerColors.primary : colors.primary;
   const navIcon = readerTheme === 'sepia' ? readerColors.onPrimary : colors.onPrimary;
 
   const sectionListRef = useRef<any>(null);
   const isAutoScrolling = useRef(false);
-  const chapterRef = useRef(chapter);
-  const targetScrollIndex = useRef({ sectionIndex: 0, itemIndex: 0 });
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const hasInitialScrolled = useRef(false);
   const { addHistoryEntry } = useHistory();
 
-  useEffect(() => {
-    chapterRef.current = chapter;
-  }, [chapter]);
-
   const scrollToVerse = useCallback((targetVerse: number, targetChapter: number) => {
     if (sectionListRef.current) {
       isAutoScrolling.current = true;
-      const targetIndex = targetVerse;
       sectionListRef.current?.scrollToIndex({
-        index: targetIndex,
+        index: targetVerse,
         animated: false,
         viewPosition: 0.05,
         viewOffset: 0
       });
       setBlinkingVerse(`${targetChapter}-${targetVerse}`);
       setTimeout(() => setBlinkingVerse(null), 1000);
-      setTimeout(() => {
-        isAutoScrolling.current = false;
-      }, 500);
+      setTimeout(() => { isAutoScrolling.current = false; }, 500);
     }
   }, [setBlinkingVerse]);
 
@@ -106,30 +94,17 @@ export default function BibleScreen() {
         duration: 400,
         useNativeDriver: true,
       }).start();
+      
       if (!hasInitialScrolled.current) {
         hasInitialScrolled.current = true;
-        setTimeout(() => {
-          scrollToVerse(verse, chapter);
-        }, 500);
+        setTimeout(() => scrollToVerse(verse, chapter), 500);
       }
     }
-  }, [isReady, verse, chapter, scrollToVerse]);
+  }, [isReady, verse, chapter, scrollToVerse, fadeAnim]);
 
-  const changeChapter = useCallback((deltaOrValue: number, onComplete?: (newChapter: number) => void) => {
-    setIsNavigating(true);
-    bibleChangeChapter(deltaOrValue, (newChapter) => {
-      onComplete?.(newChapter);
-      setTimeout(() => {
-        setIsNavigating(false);
-      }, 1000);
-    });
-  }, [bibleChangeChapter]);
-
-  const navigateChapter = useCallback((delta: number) => {
-    changeChapter(delta, (newChapter) => {
-      setTimeout(() => {
-        scrollToVerse(1, newChapter);
-      }, 300);
+  const handleNavigateChapter = useCallback((delta: number) => {
+    changeChapter(delta, (newCh) => {
+      setTimeout(() => scrollToVerse(1, newCh), 300);
     });
   }, [changeChapter, scrollToVerse]);
 
@@ -149,23 +124,13 @@ export default function BibleScreen() {
       const next = exists
         ? prev.filter((v) => `${v.bookAbbrev}-${v.chapter}-${v.verse}` !== key)
         : [...prev, selected];
-      if (next.length === 0) {
-        setIsActionSheetVisible(false);
-      } else {
-        setIsActionSheetVisible(true);
-      }
+      setIsActionSheetVisible(next.length > 0);
       return next;
     });
   };
 
-  const historySyncRef = useRef(false);
-
   useEffect(() => {
     if (!isReady) return;
-    if (!historySyncRef.current) {
-      historySyncRef.current = true;
-      return;
-    }
     addHistoryEntry({
       version,
       bookName: currentBook.name,
@@ -173,7 +138,7 @@ export default function BibleScreen() {
       chapter,
       verse,
     });
-  }, [version, book, chapter, verse, isReady]);
+  }, [version, book, chapter, verse, isReady, currentBook, addHistoryEntry]);
 
   const onActionSheetClose = () => {
     setIsActionSheetVisible(false);
@@ -187,6 +152,7 @@ export default function BibleScreen() {
       <Animated.View style={[StyleSheet.absoluteFill, { zIndex: 1, opacity: fadeAnim.interpolate({ inputRange: [0, 1], outputRange: [1, 0] }), pointerEvents: isReady ? 'none' : 'auto' }]}>
         <BibleSkeleton />
       </Animated.View>
+      
       <BibleTopBar
         version={version}
         bookName={currentBook.name}
@@ -195,39 +161,35 @@ export default function BibleScreen() {
           initialStep: 'version',
           onSelect: (s) => {
             if (s.version) {
-              const savedVerse = verse;
-              const savedChapter = chapter;
-              setVersion(s.version);
-              setTimeout(() => scrollToVerse(savedVerse, savedChapter), 600);
+              navigateTo({ version: s.version });
+              setTimeout(() => scrollToVerse(verse, chapter), 600);
             }
           }
         })}
         onOpenBook={() => openModal({ 
           initialStep: 'book',
           onSelect: (s) => {
-            if (s.book) setBook(s.book.abbrev);
-            if (s.chapter) setChapter(s.chapter);
-            if (s.verse) {
-               setVerse(s.verse);
-               setTimeout(() => scrollToVerse(s.verse!, s.chapter!), 300);
-            } else if (s.chapter) {
-               setVerse(1);
-               setTimeout(() => scrollToVerse(1, s.chapter!), 300);
-            }
+            const nextV = s.version || version;
+            const nextB = s.book?.abbrev || book;
+            const nextC = s.chapter || 1;
+            const nextVe = s.verse || 1;
+            navigateTo({ version: nextV, book: nextB, chapter: nextC, verse: nextVe });
+            setTimeout(() => scrollToVerse(nextVe, nextC), 300);
           }
         })}
         onOpenChapter={() => openModal({ 
           initialStep: 'chapter',
           onSelect: (s) => {
-             if (s.chapter && s.chapter !== chapter) {
-               setChapter(s.chapter);
-               setVerse(1);
-               setTimeout(() => scrollToVerse(1, s.chapter!), 300);
-             }
+            const nextV = s.version || version;
+            const nextB = book;
+            const nextC = s.chapter || chapter;
+            const nextVe = 1;
+            navigateTo({ version: nextV, book: nextB, chapter: nextC, verse: nextVe });
+            setTimeout(() => scrollToVerse(nextVe, nextC), 300);
           }
         })}
-        onPrevChapter={() => navigateChapter(-1)}
-        onNextChapter={() => navigateChapter(1)}
+        onPrevChapter={() => handleNavigateChapter(-1)}
+        onNextChapter={() => handleNavigateChapter(1)}
         onOpenMenu={() => setIsDrawerVisible(true)}
         onOpenSettings={() => setIsSettingsModalVisible(true)}
         onOpenSearch={() => router.push('/search?from=bible')}
@@ -238,72 +200,50 @@ export default function BibleScreen() {
         visible={isHistoryModalVisible}
         onClose={() => setIsHistoryModalVisible(false)}
         onSelect={(item) => {
-          setVersion(item.version);
-          setBook(item.bookAbbrev);
-          setChapter(item.chapter);
-          setVerse(item.verse);
+          navigateTo({ version: item.version, book: item.bookAbbrev, chapter: item.chapter, verse: item.verse });
           setTimeout(() => scrollToVerse(item.verse, item.chapter), 300);
         }}
       />
 
       <Animated.View style={{ flex: 1, opacity: fadeAnim }}>
         <View style={styles.content}>
-          {isChangingVersion ? (
-            <BibleSkeleton onlyContent={true} />
-          ) : (
-            <>
-              <BibleVerseReader
-                listRef={sectionListRef}
-                sections={sectionData}
-                blinkingVerse={blinkingVerse}
-                highlights={highlights}
-                version={version}
-                selectedKeys={selectedVerses.reduce((acc, v) => { acc[`${v.bookAbbrev}-${v.chapter}-${v.verse}`] = true; return acc; }, {} as Record<string, boolean>)}
-                bookAbbrev={currentBook.abbrev}
-                onVersePress={onVersePress}
+          <BibleVerseReader
+            listRef={sectionListRef}
+            sections={sectionData}
+            blinkingVerse={blinkingVerse}
+            highlights={highlights}
+            version={version}
+            selectedKeys={selectedVerses.reduce((acc, v) => { acc[`${v.bookAbbrev}-${v.chapter}-${v.verse}`] = true; return acc; }, {} as Record<string, boolean>)}
+            bookAbbrev={currentBook.abbrev}
+            onVersePress={onVersePress}
+          />
+
+          {!isActionSheetVisible && (
+            <View style={styles.floatingNav}>
+              <BibleIcon
+                name="chevron-left"
+                size={ms(DESIGN.fontSize.xxxl)}
+                containerSize={ms(DESIGN.spacing.xxxl)}
+                color={navIcon}
+                backgroundColor={navBg}
+                borderRadius={ms(DESIGN.borderRadius.md)}
+                onPress={() => handleNavigateChapter(-1)}
+                activeOpacity={0.8}
+                style={{ elevation: 4, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 3 }}
               />
 
-              {/* Floating Navigation Buttons - Hidden when actions are open */}
-              {!isActionSheetVisible && (
-                <View style={styles.floatingNav}>
-                  <BibleIcon
-                    name="chevron-left"
-                    size={ms(DESIGN.fontSize.xxxl)}
-                    containerSize={ms(DESIGN.spacing.xxxl)}
-                    color={navIcon}
-                    backgroundColor={navBg}
-                    borderRadius={ms(DESIGN.borderRadius.md)}
-                    onPress={() => navigateChapter(-1)}
-                    activeOpacity={0.8}
-                    style={{ 
-                      elevation: 4, 
-                      shadowColor: '#000', 
-                      shadowOffset: { width: 0, height: ms(DESIGN.spacing.tiny) }, 
-                      shadowOpacity: 0.25, 
-                      shadowRadius: 3 
-                    }}
-                  />
-
-                  <BibleIcon
-                    name="chevron-right"
-                    size={ms(DESIGN.fontSize.xxxl)}
-                    containerSize={ms(DESIGN.spacing.xxxl)}
-                    color={navIcon}
-                    backgroundColor={navBg}
-                    borderRadius={ms(DESIGN.borderRadius.md)}
-                    onPress={() => navigateChapter(1)}
-                    activeOpacity={0.8}
-                    style={{ 
-                      elevation: 4, 
-                      shadowColor: '#000', 
-                      shadowOffset: { width: 0, height: ms(DESIGN.spacing.tiny) }, 
-                      shadowOpacity: 0.25, 
-                      shadowRadius: 3 
-                    }}
-                  />
-                </View>
-              )}
-            </>
+              <BibleIcon
+                name="chevron-right"
+                size={ms(DESIGN.fontSize.xxxl)}
+                containerSize={ms(DESIGN.spacing.xxxl)}
+                color={navIcon}
+                backgroundColor={navBg}
+                borderRadius={ms(DESIGN.borderRadius.md)}
+                onPress={() => handleNavigateChapter(1)}
+                activeOpacity={0.8}
+                style={{ elevation: 4, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 3 }}
+              />
+            </View>
           )}
         </View>
       </Animated.View>
@@ -328,22 +268,11 @@ export default function BibleScreen() {
           if (key === 'history') setIsHistoryModalVisible(true);
           if (key === 'settings') setIsSettingsModalVisible(true);
         }}
-        onOpenDonate={() => {
-          setIsDrawerVisible(false);
-          setIsDonateVisible(true);
-        }}
+        onOpenDonate={() => { setIsDrawerVisible(false); setIsDonateVisible(true); }}
       />
 
-      <ReaderSettingsModal
-        visible={isSettingsModalVisible}
-        onClose={() => setIsSettingsModalVisible(false)}
-      />
-
-      <DonateModal
-        visible={isDonateVisible}
-        onClose={() => setIsDonateVisible(false)}
-      />
-
+      <ReaderSettingsModal visible={isSettingsModalVisible} onClose={() => setIsSettingsModalVisible(false)} />
+      <DonateModal visible={isDonateVisible} onClose={() => setIsDonateVisible(false)} />
       <BibleToast opacity={opacity} toast={toast} />
     </View>
   );

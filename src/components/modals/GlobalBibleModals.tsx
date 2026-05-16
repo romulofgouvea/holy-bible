@@ -25,10 +25,15 @@ export function GlobalBibleModals() {
 
   const {
     version: globalVersion,
-    currentBook: globalBook,
+    setVersion: setGlobalVersion,
+    book: globalBookId,
+    setBook: setGlobalBook,
     chapter: globalChapter,
+    setChapter: setGlobalChapter,
     verse: globalVerse,
-    versionBooks: globalVersionBooks
+    setVerse: setGlobalVerse,
+    versionBooks: globalVersionBooks,
+    currentBook: globalBook
   } = useBible();
 
   const { ms } = useResponsive();
@@ -74,12 +79,19 @@ export function GlobalBibleModals() {
         onSelect={(v) => {
           selectionHaptic();
           setNavVersion(v.sigla);
+          setGlobalVersion(v.sigla);
           if (options.onSelect) {
             options.onSelect({ version: v.sigla });
           }
-          if (activeModal === 'version' && !options.initialStep) {
+          
+          // If we are in a flow (book/chapter selection) and change version, stay in the flow
+          if (options.initialStep && options.initialStep !== 'version') {
+            setActiveModal(options.initialStep);
+          } else if (!options.initialStep) {
+            // Direct version-to-book flow (e.g. initial setup)
             setActiveModal('book');
           } else {
+            // Standalone version selection (e.g. from top bar)
             closeAll();
           }
         }}
@@ -97,6 +109,9 @@ export function GlobalBibleModals() {
           const selectedBookObj = versionBooks.find(b => b.abbrev === bookNameOrAbbrev || b.name === bookNameOrAbbrev) || null;
           setNavBook(selectedBookObj);
           setNavChapter(null);
+          if (selectedBookObj) {
+            setGlobalBook(selectedBookObj.abbrev);
+          }
 
           if (options.skipChapterSelection) {
             if (options.onSelect) {
@@ -107,10 +122,8 @@ export function GlobalBibleModals() {
               });
             }
             closeAll();
-          } else if (activeModal === 'chapter') {
-            setActiveModal('chapter');
           } else {
-            closeAll();
+            setActiveModal('chapter');
           }
         }}
       />
@@ -126,6 +139,7 @@ export function GlobalBibleModals() {
         onSelect={(num) => {
           selectionHaptic();
           setNavChapter(num);
+          setGlobalChapter(num);
           if (options.skipVerseSelection) {
             if (options.onSelect) {
               options.onSelect({
@@ -136,7 +150,6 @@ export function GlobalBibleModals() {
             }
             closeAll();
           } else if (activeModal === 'chapter' && options.initialStep === 'book' && options.onConfirm) {
-            // If we came from book selection and have a confirm callback, we probably want multiple verses
             setActiveModal('verses');
           } else {
             setActiveModal('verse');
@@ -154,6 +167,7 @@ export function GlobalBibleModals() {
         currentItem={highlightedVerse}
         onSelect={(num) => {
           selectionHaptic();
+          setGlobalVerse(num);
           if (options.onSelect) {
             options.onSelect({
               version: navVersion || globalVersion,
