@@ -1,7 +1,7 @@
 import { BibleActionsDrawer } from '@/components/BibleActionsDrawer';
 import { BibleActionsSheet } from '@/components/BibleActionsSheet';
-import { BibleBottomSheet } from '@/components/BibleBottomSheet';
 import { BibleIcon } from '@/components/BibleIcon';
+import { BiblePageModal } from '@/components/BiblePageModal';
 import { BibleConfirmModal } from '@/components/modals/BibleConfirmModal';
 import { FlashList } from '@shopify/flash-list';
 import * as FileSystem from 'expo-file-system/legacy';
@@ -9,6 +9,7 @@ import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
   Platform,
+  ScrollView,
   StyleSheet,
   TextInput,
   TouchableOpacity,
@@ -233,10 +234,9 @@ export default function EstudosScreen() {
         />
       </View>
 
-      <BibleBottomSheet
+      <BiblePageModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
-        resizable={false}
         header={
           <View style={styles.modalHeader}>
             <BibleIcon name="file-plus" color={colors.primary} backgroundColor={colors.primary + '15'} style={{ marginRight: 8 }} />
@@ -244,28 +244,41 @@ export default function EstudosScreen() {
             <BibleIcon name="x" color={colors.error} backgroundColor={colors.error + '20'} onPress={() => setModalVisible(false)} style={{ marginLeft: 'auto' }} />
           </View>
         }
+        footer={
+          <View style={styles.modalActions}>
+            <TouchableOpacity
+              style={[styles.createBtn, { backgroundColor: colors.primary }, !newTitle.trim() && styles.createBtnDisabled]}
+              onPress={handleCreate}
+              disabled={!newTitle.trim()}
+            >
+              <BibleText style={[styles.createText, { fontSize: ms(15), color: colors.onPrimary }]}>Criar</BibleText>
+            </TouchableOpacity>
+          </View>
+        }
       >
-        <View style={{ gap: 8 }}>
+        <ScrollView keyboardShouldPersistTaps="handled">
+          <BibleText style={[styles.sectionTitle, { color: colors.textMuted }]}>Título do Estudo</BibleText>
           <TextInput
             style={[
               styles.input,
-              { fontSize: ms(16), backgroundColor: colors.surfaceHighlight, color: colors.onSurface },
+              { backgroundColor: colors.surfaceHighlight, color: colors.onSurface },
               Platform.select({ web: { outline: 'none' } as any, default: {} })
             ]}
-            placeholder="Título do estudo"
+            placeholder="Ex: Esperança em Meio à Provação"
             placeholderTextColor={colors.textMuted}
             value={newTitle}
             onChangeText={setNewTitle}
             underlineColorAndroid="transparent"
           />
+          <BibleText style={[styles.sectionTitle, { color: colors.textMuted, marginTop: 8 }]}>Descrição (Opcional)</BibleText>
           <TextInput
             style={[
               styles.input,
               styles.inputMultiline,
-              { fontSize: ms(15), backgroundColor: colors.surfaceHighlight, color: colors.onSurface },
+              { backgroundColor: colors.surfaceHighlight, color: colors.onSurface },
               Platform.select({ web: { outline: 'none' } as any, default: {} })
             ]}
-            placeholder="Descrição (opcional)"
+            placeholder="Uma breve introdução sobre este estudo"
             placeholderTextColor={colors.textMuted}
             value={newDescription}
             onChangeText={setNewDescription}
@@ -273,16 +286,8 @@ export default function EstudosScreen() {
             numberOfLines={3}
             underlineColorAndroid="transparent"
           />
-          <View style={styles.modalActions}>
-            <TouchableOpacity
-              style={[styles.createBtn, { backgroundColor: colors.primary }, !newTitle.trim() && styles.createBtnDisabled]}
-              onPress={handleCreate}
-            >
-              <BibleText style={[styles.createText, { fontSize: ms(15), color: colors.onPrimary }]}>Criar</BibleText>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </BibleBottomSheet>
+          </ScrollView>
+      </BiblePageModal>
 
       <BibleConfirmModal
         visible={!!studyToDelete}
@@ -377,7 +382,7 @@ const styles = StyleSheet.create({
   deleteBtn: { width: 38, height: 38, alignItems: 'center', justifyContent: 'center', borderRadius: 10 },
   modalHeader: { flexDirection: 'row', alignItems: 'center' },
   modalTitle: { fontWeight: '800' },
-  input: { borderRadius: 12, paddingHorizontal: 16, paddingVertical: 14, marginBottom: 8 },
+  input: { borderRadius: 12, paddingHorizontal: 16, paddingVertical: 14, marginBottom: 8, borderWidth: 1, borderColor: 'transparent' },
   inputMultiline: { minHeight: 90, textAlignVertical: 'top' },
   modalActions: { flexDirection: 'row', gap: 12, marginTop: 4 },
   cancelBtn: { flex: 1, paddingVertical: 14, borderRadius: 14, alignItems: 'center' },
@@ -385,4 +390,12 @@ const styles = StyleSheet.create({
   createBtn: { flex: 1, paddingVertical: 14, borderRadius: 14, alignItems: 'center' },
   createBtnDisabled: { opacity: 0.5 },
   createText: { fontWeight: '700' },
+  sectionTitle: {
+    fontSize: 10,
+    fontWeight: '800',
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+    opacity: 0.6,
+    paddingBottom: 8,
+  },
 });

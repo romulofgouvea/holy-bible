@@ -81,7 +81,7 @@ export function BibleAddToStudyModal({ visible, onClose, selectedVerses, onShowT
     <BiblePageModal visible={visible} onClose={onClose} fullHeight={!isCreating}
       header={<View style={styles.header}>
         <BibleIcon
-          name={isCreating ? "arrow-left" : "plus-circle"}
+          name={isCreating ? "arrow-left" : "book-open"}
           size={ms(16)}
           color={colors.primary}
           backgroundColor={colors.primary + '25'}

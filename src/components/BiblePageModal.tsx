@@ -44,21 +44,21 @@ export function BiblePageModal({ visible, onClose, children, header, footer, ful
 
   return (
     <Animated.View style={[StyleSheet.absoluteFill, { zIndex: 9999, elevation: 9999, opacity: fadeAnim }]}>
-      <TouchableWithoutFeedback onPress={onClose}>
-        <View style={[styles.backdrop, { padding: ms(16) }]}>
-          <TouchableWithoutFeedback>
-            <KeyboardAvoidingView
-              style={[
-                styles.modalContent,
-                { 
-                  backgroundColor: colors.background,
-                  borderRadius: ms(16),
-                  maxWidth: ms(500),
-                },
-                fullHeight && { height: '90%' }
-              ]}
-              behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-            >
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'padding'}>
+        <TouchableWithoutFeedback onPress={onClose}>
+          <View style={[styles.backdrop, { padding: ms(16) }]}>
+            <TouchableWithoutFeedback>
+              <View
+                style={[
+                  styles.modalContent,
+                  {
+                    backgroundColor: colors.background,
+                    borderRadius: ms(16),
+                    maxWidth: ms(500),
+                  },
+                  fullHeight && { height: '90%' }
+                ]}
+              >
               {header && (
                 <View >
                   <View style={[styles.contentHeader, { padding: ms(16) }]}>{header}</View>
@@ -76,10 +76,11 @@ export function BiblePageModal({ visible, onClose, children, header, footer, ful
                   <View style={[styles.contentFooter, { paddingHorizontal: ms(8), paddingVertical: ms(8) }]}>{footer}</View>
                 </View>
               )}
-            </KeyboardAvoidingView>
-          </TouchableWithoutFeedback>
-        </View>
-      </TouchableWithoutFeedback>
+              </View>
+            </TouchableWithoutFeedback>
+          </View>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
     </Animated.View>
   );
 }
