@@ -136,12 +136,12 @@ export default function EstudosScreen() {
     return (
       <TouchableOpacity
         style={[styles.card, {
-          backgroundColor: isSelected ? colors.primary + '15' : colors.surface,
-          borderColor: isSelected ? colors.primary : colors.border,
-          borderWidth: isSelected ? 2 : 1
+          backgroundColor: isSelected ? colors.primary + '20' : colors.surface,
+          borderColor: isSelected ? colors.primary + '20' : colors.border,
+          borderWidth: isSelected ? 1.5 : 1,
+          elevation: isSelected ? 0 : 1
         }]}
         onPress={() => isSelectionMode ? toggleSelection(item.id) : router.push(ROUTES.STUDY_EDITOR(item.id) as any)}
-        onLongPress={() => toggleSelection(item.id)}
         activeOpacity={0.7}
       >
         <View style={styles.cardContent}>
@@ -162,9 +162,11 @@ export default function EstudosScreen() {
               ) : null}
             </TouchableOpacity>
           ) : (
-            <View style={[styles.cardIcon, { backgroundColor: colors.surfaceHighlight, borderWidth: 0 }]}>
-              <BibleIcon name="book-open" color={colors.primary} size={ms(18)} />
-            </View>
+            <BibleIcon
+              name="book-open"
+              color={colors.primary}
+              backgroundColor={colors.primary + '20'}
+            />
           )}
           <View style={styles.cardText}>
             <BibleText style={[styles.cardTitle, { fontSize: ms(16), color: colors.onSurface, fontWeight: '600' }]} numberOfLines={2}>{item.title}</BibleText>
@@ -286,7 +288,7 @@ export default function EstudosScreen() {
             numberOfLines={3}
             underlineColorAndroid="transparent"
           />
-          </ScrollView>
+        </ScrollView>
       </BiblePageModal>
 
       <BibleConfirmModal
