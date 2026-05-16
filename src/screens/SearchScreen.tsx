@@ -329,30 +329,23 @@ export default function SearchScreen() {
   useEffect(() => {
     (async () => {
       try {
-        const [savedQuery, savedHistory, savedVersion, savedBookAbbrev, savedChapter] = await Promise.all([
-          AsyncStorage.getItem(STORAGE_KEYS.SEARCH_QUERY),
+        const [savedHistory, savedVersion] = await Promise.all([
           AsyncStorage.getItem(STORAGE_KEYS.SEARCH_HISTORY),
           AsyncStorage.getItem(STORAGE_KEYS.SEARCH_VERSION),
-          AsyncStorage.getItem(STORAGE_KEYS.SEARCH_BOOK),
-          AsyncStorage.getItem(STORAGE_KEYS.SEARCH_CHAPTER),
         ]);
 
-        // Always start with an empty query as requested
+        // Always start with empty query and clean filters as requested
         setQuery('');
+        setSearchBook(null);
+        setSearchChapter(null);
 
         if (savedHistory) setHistory(JSON.parse(savedHistory));
-        
         if (savedVersion) setVersion(savedVersion);
-        if (savedBookAbbrev && versionBooks) {
-          const book = versionBooks.find(b => b.abbrev === savedBookAbbrev);
-          if (book) setSearchBook(book);
-        }
-        if (savedChapter) setSearchChapter(parseInt(savedChapter, 10));
 
       } catch (e) { }
       setIsLoaded(true);
     })();
-  }, [versionBooks]);
+  }, []); // Only on mount
 
   const saveQuery = async (q: string) => {
     try { await AsyncStorage.setItem(STORAGE_KEYS.SEARCH_QUERY, q); } catch (e) { }
@@ -399,10 +392,11 @@ export default function SearchScreen() {
   }, [searchBook, searchChapter]);
 
   const filterLabelText = useMemo(() => {
-    if (searchBook && searchChapter) return `${searchBook.name} ${searchChapter}`;
-    if (searchBook) return searchBook.name;
-    return 'Bíblia Toda';
-  }, [searchBook, searchChapter]);
+    const v = version.toUpperCase();
+    if (searchBook && searchChapter) return `${v} • ${searchBook.name} ${searchChapter}`;
+    if (searchBook) return `${v} • ${searchBook.name}`;
+    return `${v} • Bíblia Toda`;
+  }, [searchBook, searchChapter, version]);
 
   const runSearch = useCallback((q: string, immediate = false) => {
     clearTimeout(searchTimeout.current);
@@ -513,6 +507,8 @@ export default function SearchScreen() {
     return <BibleSkeleton />;
   }
 
+  const isFilterEnabled = query.trim().length >= 2;
+
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]} testID="search-screen">
       <BibleHeader
@@ -552,8 +548,9 @@ export default function SearchScreen() {
         }
         rightContent={
           <TouchableOpacity
-            style={styles.filterBtn}
+            style={[styles.filterBtn, !isFilterEnabled && { opacity: 0.3 }]}
             onPress={() => setIsFilterModalVisible(true)}
+            disabled={!isFilterEnabled}
             activeOpacity={0.7}
           >
             <BibleIcon name="sliders" color={colors.onPrimary} size={ms(DESIGN.spacing.lg)} />
@@ -687,15 +684,9 @@ export default function SearchScreen() {
           </View>
         }
         footer={
-          <View style={{ flexDirection: 'row', gap: ms(DESIGN.spacing.sm) }}>
+          <View>
             <TouchableOpacity
-              style={[styles.filterBtnFooter, { flex: 1, backgroundColor: colors.background, borderWidth: 1, borderColor: colors.primary + '20' }]}
-              onPress={handleResetFilters}
-            >
-              <BibleText style={[styles.filterBtnText, { color: colors.onSurface, fontSize: ms(DESIGN.fontSize.lg) }]}>Limpar</BibleText>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.filterBtnFooter, { flex: 1, backgroundColor: colors.primary }]}
+              style={[styles.filterBtnFooter, { backgroundColor: colors.primary }]}
               onPress={() => {
                 setIsFilterModalVisible(false);
                 saveFilters();
@@ -742,7 +733,19 @@ export default function SearchScreen() {
                 {searchBook ? searchBook.name : 'Todos os Livros'}
               </BibleText>
             </View>
-            <BibleIcon name="chevron-right" color={colors.textMuted} />
+            {searchBook ? (
+              <BibleIcon
+                name="rotate-ccw"
+                color={colors.primary}
+                backgroundColor={colors.primary + '20'}
+                onPress={() => {
+                  setSearchBook(null);
+                  setSearchChapter(null);
+                }}
+              />
+            ) : (
+              <BibleIcon name="chevron-right" color={colors.textMuted} />
+            )}
           </TouchableOpacity>
           <BibleDivider />
 
@@ -765,7 +768,18 @@ export default function SearchScreen() {
                 {searchChapter ? `Capítulo ${searchChapter}` : 'Todos os Capítulos'}
               </BibleText>
             </View>
-            <BibleIcon name="chevron-right" color={colors.textMuted} />
+            {searchChapter ? (
+              <BibleIcon
+                name="rotate-ccw"
+                color={colors.primary}
+                backgroundColor={colors.primary + '20'}
+                onPress={() => {
+                  setSearchChapter(null);
+                }}
+              />
+            ) : (
+              <BibleIcon name="chevron-right" color={colors.textMuted} />
+            )}
           </TouchableOpacity>
         </ScrollView>
       </BiblePageModal>
