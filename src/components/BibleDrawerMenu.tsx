@@ -85,8 +85,8 @@ export function BibleDrawerMenu(props: DrawerMenuProps) {
   const BOTTOM_ITEMS: MenuItem[] = [
     {
       key: 'donate',
-      label: 'Fazer uma Doação',
-      icon: 'heart',
+      label: 'Apoie o Projeto',
+      icon: 'gift',
       tint: colors.primary,
       onPress: onOpenDonate,
     },

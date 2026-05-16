@@ -32,7 +32,7 @@ export function DonateModal({ visible, onClose }: Props) {
       header={
         <View style={styles.header}>
           <BibleIcon
-            name="heart"
+            name="gift"
             color={colors.primary}
             backgroundColor={colors.primary + '20'}
             style={styles.headerIconWrap}
