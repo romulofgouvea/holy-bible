@@ -13,7 +13,6 @@ import { BibleVerseReader } from '../components/BibleVerseReader';
 import { BibleHistoryModal } from '../components/modals/BibleHistoryModal';
 import { DonateModal } from '../components/modals/DonateModal';
 import { useBible } from '../hooks/useBible';
-import { useHistory } from '../hooks/useHistory';
 import { useReaderSettings } from '../hooks/useReaderSettings';
 import { useResponsive } from '../hooks/useResponsive';
 import { useTheme } from '../hooks/useTheme';
@@ -70,7 +69,6 @@ export default function BibleScreen() {
   const isAutoScrolling = useRef(false);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const hasInitialScrolled = useRef(false);
-  const { addHistoryEntry } = useHistory();
 
   const scrollToVerse = useCallback((targetVerse: number, targetChapter: number) => {
     if (sectionListRef.current) {
@@ -129,16 +127,6 @@ export default function BibleScreen() {
     });
   };
 
-  useEffect(() => {
-    if (!isReady) return;
-    addHistoryEntry({
-      version,
-      bookName: currentBook.name,
-      bookAbbrev: currentBook.abbrev,
-      chapter,
-      verse,
-    });
-  }, [version, book, chapter, verse, isReady, currentBook, addHistoryEntry]);
 
   const onActionSheetClose = () => {
     setIsActionSheetVisible(false);

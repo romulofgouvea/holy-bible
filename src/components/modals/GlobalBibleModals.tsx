@@ -83,7 +83,7 @@ export function GlobalBibleModals() {
           if (options.onSelect) {
             options.onSelect({ version: v.sigla });
           }
-          
+
           // If we are in a flow (book/chapter selection) and change version, stay in the flow
           if (options.initialStep && options.initialStep !== 'version') {
             setActiveModal(options.initialStep);
@@ -108,9 +108,11 @@ export function GlobalBibleModals() {
           selectionHaptic();
           const selectedBookObj = versionBooks.find(b => b.abbrev === bookNameOrAbbrev || b.name === bookNameOrAbbrev) || null;
           setNavBook(selectedBookObj);
-          setNavChapter(null);
+          setNavChapter(1);
           if (selectedBookObj) {
             setGlobalBook(selectedBookObj.abbrev);
+            setGlobalChapter(1);
+            setGlobalVerse(1);
           }
 
           if (options.skipChapterSelection) {

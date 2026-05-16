@@ -1,4 +1,4 @@
-﻿import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Redirect, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { STORAGE_KEYS } from '@/constants/storage';
@@ -42,7 +42,7 @@ export default function BibleChapterRoute() {
     const abbrev = bookObj?.abbrev || book || 'Gn';
 
     Promise.all([
-      AsyncStorage.setItem(STORAGE_KEYS.LAST_READ, JSON.stringify({ version: v, book: abbrev, chapter: ch })),
+      AsyncStorage.setItem(STORAGE_KEYS.CURRENT_READ, JSON.stringify({ version: v, book: abbrev, chapter: ch })),
       AsyncStorage.setItem(STORAGE_KEYS.BIBLE_VERSION_GLOBAL, v),
     ]).finally(() => setReady(true));
   }, []);

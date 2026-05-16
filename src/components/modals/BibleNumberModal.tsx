@@ -6,8 +6,8 @@ import { useTheme } from '../../hooks/useTheme';
 import { BibleCountPill } from '../BibleCountPill';
 import { BibleGridBlock } from '../BibleGridBlock';
 import { BibleIcon } from '../BibleIcon';
-import { BiblePageModal } from './BiblePageModal';
 import { BibleText } from '../BibleText';
+import { BiblePageModal } from './BiblePageModal';
 
 type BibleNumberModalProps = {
   visible: boolean;
@@ -24,23 +24,23 @@ type BibleNumberModalProps = {
 export function BibleNumberModal({ visible, onClose, onBack, items, title, iconName, onSelect, currentItem, footerText }: BibleNumberModalProps) {
   const { ms, height, width, DESIGN } = useResponsive();
   const { colors } = useTheme();
-  
+
   const styles = useMemo(() => StyleSheet.create({
     header: { flexDirection: 'row', alignItems: 'center' },
     title: { flex: 1, fontWeight: '700' },
-    list: { 
-      paddingBottom: ms(DESIGN.spacing.md), 
-      gap: ms(DESIGN.spacing.sm), 
-      paddingHorizontal: ms(DESIGN.spacing.lg), 
-      paddingTop: ms(DESIGN.spacing.lg) 
+    list: {
+      paddingBottom: ms(DESIGN.spacing.md),
+      gap: ms(DESIGN.spacing.sm),
+      paddingHorizontal: ms(DESIGN.spacing.lg),
+      paddingTop: ms(DESIGN.spacing.lg)
     },
     footer: { paddingTop: ms(DESIGN.spacing.xs) },
-    gridContainer: { 
-      flexDirection: 'row', 
-      flexWrap: 'wrap', 
-      gap: ms(DESIGN.spacing.sm), 
-      justifyContent: 'flex-start', 
-      width: '100%' 
+    gridContainer: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: ms(DESIGN.spacing.sm),
+      justifyContent: 'flex-start',
+      width: '100%'
     },
   }), [ms, colors, DESIGN]);
 
@@ -62,7 +62,7 @@ export function BibleNumberModal({ visible, onClose, onBack, items, title, iconN
         <View style={styles.header} testID="bible-number-header">
           {onBack ? (
             <BibleIcon
-              name="arrow-left"
+              name="chevron-left"
               color={colors.primary}
               onPress={onBack}
               backgroundColor={colors.primary + '20'}

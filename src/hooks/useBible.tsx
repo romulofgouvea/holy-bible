@@ -3,6 +3,7 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useR
 import { DeviceEventEmitter } from 'react-native';
 import { STORAGE_KEYS } from '../constants/storage';
 import { availableVersions, Book, getBibleData } from '../data';
+import { useHistory } from './useHistory';
 
 type BibleContextType = {
   version: string;
@@ -34,6 +35,7 @@ type BibleContextType = {
 const BibleContext = createContext<BibleContextType | undefined>(undefined);
 
 export function BibleProvider({ children }: { children: React.ReactNode }) {
+  const { addHistoryEntry } = useHistory();
   const [version, setVersionState] = useState(availableVersions[0] || 'NAA');
   const [book, setBookState] = useState('gn');
   const [chapter, setChapterState] = useState(1);
@@ -69,20 +71,34 @@ export function BibleProvider({ children }: { children: React.ReactNode }) {
     }];
   }, [currentBook, chapter]);
 
-  const updateLastRead = useCallback(async (v: string, b: string, c: number, ve: number) => {
+  const updateCurrentRead = useCallback(async (v: string, b: string, c: number, ve: number) => {
     try {
-      await AsyncStorage.setItem(STORAGE_KEYS.LAST_READ, JSON.stringify({
+      await AsyncStorage.setItem(STORAGE_KEYS.CURRENT_READ, JSON.stringify({
         version: v,
         book: b,
         chapter: c,
         verse: ve
       }));
-    } catch (e) {}
-  }, []);
+
+      // Find the book name from data
+      const books = getBibleData(v);
+      const targetBook = books.find(item => item.abbrev === b || item.name === b);
+      const bookName = targetBook?.name || b;
+
+      await addHistoryEntry({
+        version: v,
+        bookAbbrev: b,
+        bookName,
+        chapter: c,
+        verse: ve
+      });
+    } catch (e) { }
+  }, [addHistoryEntry]);
 
   const loadState = useCallback(async () => {
     try {
-      const savedPos = await AsyncStorage.getItem(STORAGE_KEYS.LAST_READ);
+      const savedPos = await AsyncStorage.getItem(STORAGE_KEYS.CURRENT_READ);
+
       if (savedPos) {
         const parsed = JSON.parse(savedPos);
         if (parsed.version) setVersionState(parsed.version);
@@ -99,13 +115,13 @@ export function BibleProvider({ children }: { children: React.ReactNode }) {
         const firstVersion = availableVersions[0] || 'NAA';
         const firstData = getBibleData(firstVersion);
         const firstBook = firstData[0]?.abbrev || 'gn';
-        
+
         setVersionState(firstVersion);
         setBookState(firstBook);
         setChapterState(1);
         setVerseState(1);
-        
-        await updateLastRead(firstVersion, firstBook, 1, 1);
+
+        await updateCurrentRead(firstVersion, firstBook, 1, 1);
       }
 
       const savedHighlights = await AsyncStorage.getItem(STORAGE_KEYS.HIGHLIGHTS);
@@ -117,7 +133,7 @@ export function BibleProvider({ children }: { children: React.ReactNode }) {
       setIsReady(true);
       isReadyRef.current = true;
     }
-  }, [updateLastRead]);
+  }, [updateCurrentRead]);
 
   useEffect(() => {
     loadState();
@@ -125,39 +141,39 @@ export function BibleProvider({ children }: { children: React.ReactNode }) {
 
   const setVersion = useCallback((v: string) => {
     setVersionState(v);
-    updateLastRead(v, book, chapter, verse);
+    updateCurrentRead(v, book, chapter, verse);
     DeviceEventEmitter.emit('BibleVersionChanged', v);
-  }, [book, chapter, verse, updateLastRead]);
+  }, [book, chapter, verse, updateCurrentRead]);
 
   const setBook = useCallback((b: string) => {
     setBookState(b);
-    updateLastRead(version, b, chapter, verse);
-  }, [version, chapter, verse, updateLastRead]);
+    updateCurrentRead(version, b, chapter, verse);
+  }, [version, chapter, verse, updateCurrentRead]);
 
   const setChapter = useCallback((c: number) => {
     setChapterState(c);
-    updateLastRead(version, book, c, verse);
-  }, [version, book, verse, updateLastRead]);
+    updateCurrentRead(version, book, c, verse);
+  }, [version, book, verse, updateCurrentRead]);
 
   const setVerse = useCallback((v: number) => {
     setVerseState(v);
-    updateLastRead(version, book, chapter, v);
-  }, [version, book, chapter, updateLastRead]);
+    updateCurrentRead(version, book, chapter, v);
+  }, [version, book, chapter, updateCurrentRead]);
 
   const navigateTo = useCallback((p: { version?: string; book?: string; chapter?: number; verse?: number }) => {
     const nextV = p.version || version;
     const nextB = p.book || book;
     const nextC = p.chapter || chapter;
     const nextVe = p.verse || verse;
-    
+
     setVersionState(nextV);
     setBookState(nextB);
     setChapterState(nextC);
     setVerseState(nextVe);
-    
-    updateLastRead(nextV, nextB, nextC, nextVe);
+
+    updateCurrentRead(nextV, nextB, nextC, nextVe);
     if (p.version) DeviceEventEmitter.emit('BibleVersionChanged', p.version);
-  }, [version, book, chapter, verse, updateLastRead]);
+  }, [version, book, chapter, verse, updateCurrentRead]);
 
   const changeChapter = useCallback((deltaOrValue: number, onComplete?: (newChapter: number) => void) => {
     let nextChapter = chapter;
@@ -171,9 +187,16 @@ export function BibleProvider({ children }: { children: React.ReactNode }) {
 
     setChapterState(nextChapter);
     setVerseState(1);
-    updateLastRead(version, book, nextChapter, 1);
+
+    AsyncStorage.setItem(STORAGE_KEYS.CURRENT_READ, JSON.stringify({
+      version,
+      book,
+      chapter: nextChapter,
+      verse: 1
+    })).catch(() => { });
+
     onComplete?.(nextChapter);
-  }, [chapter, chapterCount, version, book, updateLastRead]);
+  }, [chapter, chapterCount, version, book]);
 
   const toggleHighlight = useCallback((key: string, color: string) => {
     setHighlights(prev => {
@@ -183,7 +206,7 @@ export function BibleProvider({ children }: { children: React.ReactNode }) {
       } else {
         next[key] = color;
       }
-      AsyncStorage.setItem(STORAGE_KEYS.HIGHLIGHTS, JSON.stringify(next)).catch(() => {});
+      AsyncStorage.setItem(STORAGE_KEYS.HIGHLIGHTS, JSON.stringify(next)).catch(() => { });
       return next;
     });
   }, []);
@@ -199,7 +222,7 @@ export function BibleProvider({ children }: { children: React.ReactNode }) {
           next[key] = color;
         }
       });
-      AsyncStorage.setItem(STORAGE_KEYS.HIGHLIGHTS, JSON.stringify(next)).catch(() => {});
+      AsyncStorage.setItem(STORAGE_KEYS.HIGHLIGHTS, JSON.stringify(next)).catch(() => { });
       return next;
     });
   }, []);

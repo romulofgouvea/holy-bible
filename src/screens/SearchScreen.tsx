@@ -1,4 +1,5 @@
 import { BibleCountPill } from '@/components/BibleCountPill';
+import { BibleDivider } from '@/components/BibleDivider';
 import { BibleIcon } from '@/components/BibleIcon';
 import { BiblePageModal } from '@/components/modals/BiblePageModal';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -20,15 +21,17 @@ import { BibleHeader } from '../components/BibleHeader';
 import { BiblePageEmpty } from '../components/BiblePageEmpty';
 import { BibleSkeleton } from '../components/BibleSkeleton';
 import { BibleText } from '../components/BibleText';
+import { DonateModal } from '../components/modals/DonateModal';
+import { ROUTES } from '../constants/routes';
 import { STORAGE_KEYS } from '../constants/storage';
 import { Book } from '../data';
 import { useBible } from '../hooks/useBible';
 import { useBibleModals } from '../hooks/useBibleModals';
-import { useHistory } from '../hooks/useHistory';
 import { useReaderSettings } from '../hooks/useReaderSettings';
 import { useResponsive } from '../hooks/useResponsive';
 import { useTheme } from '../hooks/useTheme';
-import { selectionHaptic } from '../utils/haptics';
+import { impactLight, selectionHaptic } from '../utils/haptics';
+import { handleSmartBack } from '../utils/navigation';
 
 
 export type SearchScope = 'bible' | 'book' | 'chapter';
@@ -303,7 +306,6 @@ export default function SearchScreen() {
   const pathname = usePathname();
   const params = useLocalSearchParams<{ query?: string; from?: string }>();
   const { versionBooks, setVersion, version, navigateTo } = useBible();
-  const { addHistoryEntry } = useHistory();
   const { openModal } = useBibleModals();
 
   const [query, setQuery] = useState('');
@@ -470,13 +472,6 @@ export default function SearchScreen() {
   const handleNavigate = (r: SearchResult) => {
     impactLight();
     addToHistory(query.trim());
-    addHistoryEntry({
-      version,
-      bookName: r.bookName,
-      bookAbbrev: r.bookAbbrev,
-      chapter: r.chapter,
-      verse: r.verse,
-    });
     navigateTo({ book: r.bookAbbrev, chapter: r.chapter, verse: r.verse, version });
     router.replace({ pathname: ROUTES.BIBLE } as any);
   };

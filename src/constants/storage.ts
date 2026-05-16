@@ -1,5 +1,5 @@
 export const STORAGE_KEYS = {
-  LAST_READ: 'bible-last-read',
+  CURRENT_READ: 'bible-current-read',
   HIGHLIGHTS: 'bible-highlights',
   STUDIES: 'holy-bible-studies',
   AUTO_BACKUP: 'holy-bible-auto-backup',
