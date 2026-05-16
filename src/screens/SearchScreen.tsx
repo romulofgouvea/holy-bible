@@ -171,6 +171,9 @@ export default function SearchScreen() {
       height: ms(44),
       alignItems: 'center',
       justifyContent: 'center',
+      borderWidth: 1,
+      borderColor: colors.primary + '20',
+      borderRadius: ms(DESIGN.borderRadius.md),
     },
     resultsInfoContainer: {
       flexDirection: 'row',
@@ -338,7 +341,7 @@ export default function SearchScreen() {
         setQuery('');
 
         if (savedHistory) setHistory(JSON.parse(savedHistory));
-
+        
         if (savedVersion) setVersion(savedVersion);
         if (savedBookAbbrev && versionBooks) {
           const book = versionBooks.find(b => b.abbrev === savedBookAbbrev);
@@ -393,6 +396,12 @@ export default function SearchScreen() {
     if (searchChapter) return 'chapter';
     if (searchBook) return 'book';
     return 'bible';
+  }, [searchBook, searchChapter]);
+
+  const filterLabelText = useMemo(() => {
+    if (searchBook && searchChapter) return `${searchBook.name} ${searchChapter}`;
+    if (searchBook) return searchBook.name;
+    return 'Bíblia Toda';
   }, [searchBook, searchChapter]);
 
   const runSearch = useCallback((q: string, immediate = false) => {
@@ -504,8 +513,6 @@ export default function SearchScreen() {
     return <BibleSkeleton />;
   }
 
-  const scopeLabel = scope === 'chapter' ? 'capítulo' : scope === 'book' ? 'livro' : 'bíblia';
-
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]} testID="search-screen">
       <BibleHeader
@@ -554,15 +561,15 @@ export default function SearchScreen() {
         }
       />
 
-      {scope !== 'bible' && (
+      {results.length > 0 && (
         <View style={[styles.resultsInfoContainer, { backgroundColor: colors.onPrimary, borderBottomColor: colors.border }]}>
           <View style={styles.appliedFilterLabel}>
-            <BibleText style={[styles.appliedFilterText, { color: colors.onSurface, fontSize: ms(DESIGN.fontSize.sm) }]}>
-              Filtro aplicado:
+            <BibleText style={[styles.appliedFilterText, { color: colors.textMuted, fontSize: ms(DESIGN.fontSize.xs) }]}>
+              FILTRO APLICADO:
             </BibleText>
-            <View style={[styles.filterBadge, { backgroundColor: colors.primary + '20' }]}>
+            <View style={[styles.filterBadge, { backgroundColor: colors.primary + '15' }]}>
               <BibleText style={{ color: colors.primary, fontWeight: '800', fontSize: ms(DESIGN.fontSize.sm) }}>
-                {scopeLabel.charAt(0).toUpperCase() + scopeLabel.slice(1)}
+                {filterLabelText.toUpperCase()}
               </BibleText>
             </View>
           </View>
@@ -676,16 +683,19 @@ export default function SearchScreen() {
           <View style={styles.filterModalHeader}>
             <BibleIcon name="filter" color={colors.primary} backgroundColor={colors.primary + '15'} style={styles.filterModalIcon} />
             <BibleText style={[styles.filterModalTitle, { color: colors.onSurface }]}>Filtros de Busca</BibleText>
-            <TouchableOpacity onPress={handleResetFilters} style={styles.resetFiltersBtn}>
-              <BibleText style={[styles.resetFiltersText, { color: colors.primary }]}>Limpar</BibleText>
-            </TouchableOpacity>
             <BibleIcon name="x" color={colors.error} backgroundColor={colors.error + '20'} onPress={() => setIsFilterModalVisible(false)} />
           </View>
         }
         footer={
-          <View>
+          <View style={{ flexDirection: 'row', gap: ms(DESIGN.spacing.sm) }}>
             <TouchableOpacity
-              style={[styles.filterBtnFooter, { backgroundColor: colors.primary }]}
+              style={[styles.filterBtnFooter, { flex: 1, backgroundColor: colors.background, borderWidth: 1, borderColor: colors.primary + '20' }]}
+              onPress={handleResetFilters}
+            >
+              <BibleText style={[styles.filterBtnText, { color: colors.onSurface, fontSize: ms(DESIGN.fontSize.lg) }]}>Limpar</BibleText>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.filterBtnFooter, { flex: 1, backgroundColor: colors.primary }]}
               onPress={() => {
                 setIsFilterModalVisible(false);
                 saveFilters();
