@@ -33,7 +33,13 @@ export function SettingsItem({
 
   const Content = (
     <View style={[styles.container, showDivider && { borderBottomWidth: 1, borderBottomColor: colors.border }]}>
-      <BibleIcon name={icon} color={iconColor} />
+      <BibleIcon
+        name={icon}
+        color={iconColor || colors.primary}
+        backgroundColor={(iconColor || colors.primary) + '15'}
+        containerSize={40}
+        borderRadius={12}
+      />
       <View style={styles.textContainer}>
         <BibleText style={[styles.label, { fontSize: ms(16), color: labelColor }]} numberOfLines={2}>
           {label}
@@ -64,7 +70,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 16,
-    gap: 16,
+    gap: 14,
   },
   textContainer: {
     flex: 1,

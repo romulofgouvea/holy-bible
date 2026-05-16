@@ -10,6 +10,7 @@ import React, { useEffect, useState } from 'react';
 import { Platform, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { BibleDrawerMenu } from '../../components/BibleDrawerMenu';
 import { BibleHeader } from '../../components/BibleHeader';
+import { BiblePageModal } from '../../components/BiblePageModal';
 import { BibleSwitch } from '../../components/BibleSwitch';
 import { BibleText } from '../../components/BibleText';
 import { DonateModal } from '../../components/modals/DonateModal';
@@ -38,6 +39,7 @@ export default function ConfigurationScreen() {
   const router = useRouter();
   const [autoBackup, setAutoBackup] = useState(false);
   const [donateVisible, setDonateVisible] = useState(false);
+  const [themeModalVisible, setThemeModalVisible] = useState(false);
   const [alertInfo, setAlertInfo] = useState<{ title: string; message: string; isDanger?: boolean } | null>(null);
   const [clearCacheConfirmVisible, setClearCacheConfirmVisible] = useState(false);
 
@@ -200,7 +202,7 @@ export default function ConfigurationScreen() {
           <SettingsItem
             label="Vibração"
             description="Feedback tátil ao tocar nos itens"
-            icon="smartphone"
+            icon="target"
             onPress={() => toggleHaptics()}
             rightElement={
               <BibleSwitch
@@ -212,57 +214,27 @@ export default function ConfigurationScreen() {
 
           <View style={{ height: 1, backgroundColor: colors.border, marginLeft: 70 }} />
 
-          <View style={[styles.cardHeader, { flexDirection: 'column', alignItems: 'flex-start', gap: 12 }]}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-              <BibleIcon name="droplet" />
-              <View style={styles.cardTextContainer}>
-                <BibleText style={[styles.cardTitle, { fontSize: ms(16), color: colors.onBackground }]}>
-                  Cor do Aplicativo
-                </BibleText>
-                <BibleText style={[styles.cardDesc, { fontSize: ms(13), color: colors.textMuted }]}>
-                  Escolha a paleta de cores do app
-                </BibleText>
+          <SettingsItem
+            label="Cor do Aplicativo"
+            description="Escolha a paleta de cores do app"
+            icon="layers"
+            onPress={() => setThemeModalVisible(true)}
+            rightElement={
+              <View style={{ 
+                backgroundColor: colors.primary, 
+                paddingHorizontal: 16, 
+                paddingVertical: 8, 
+                borderRadius: 20,
+                elevation: 2,
+                shadowColor: colors.primary,
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.3,
+                shadowRadius: 4
+              }}>
+                <BibleText style={{ fontSize: ms(12), color: colors.onPrimary, fontWeight: '800', textTransform: 'uppercase' }}>Escolher</BibleText>
               </View>
-            </View>
-
-            <View style={styles.swatchGrid}>
-              {COLOR_THEME_OPTIONS.map((theme) => {
-                const isActive = colorTheme === theme.key;
-                const swatchColor = theme.swatch;
-                return (
-                  <TouchableOpacity
-                    key={theme.key}
-                    activeOpacity={0.8}
-                    onPress={() => {
-                      selectionHaptic();
-                      setColorTheme(theme.key as ColorThemeKey);
-                    }}
-                    style={[
-                      styles.swatchItem,
-                      {
-                        borderColor: isActive ? swatchColor : colors.border,
-                        backgroundColor: isActive ? swatchColor + '15' : colors.surfaceHighlight
-                      },
-                      isActive && { borderWidth: 2, borderColor: swatchColor },
-                    ]}
-                  >
-                    <View style={[styles.swatchDot, { backgroundColor: swatchColor }]}>
-                      {isActive && (
-                        <BibleIcon name="check" color={colors.onPrimary} />
-                      )}
-                    </View>
-                    <BibleText style={[
-                      styles.swatchLabel,
-                      { fontSize: ms(11), color: isActive ? swatchColor : colors.textMuted },
-                      isActive && { fontWeight: '800' },
-                    ]}>
-                      {theme.label}
-                    </BibleText>
-                  </TouchableOpacity>
-                );
-              })}
-            </View>
-          </View>
+            }
+          />
         </View>
 
         <BibleText style={{ marginTop: 24, marginLeft: 8, marginBottom: 8, fontSize: ms(14), fontWeight: '700', color: colors.textMuted }}>GERENCIAMENTO</BibleText>
@@ -276,8 +248,8 @@ export default function ConfigurationScreen() {
           <View style={{ height: 1, backgroundColor: colors.border, marginLeft: 70 }} />
           <SettingsItem
             label="Limpar Histórico"
-            description="Remove posição salva"
-            icon="trash"
+            description="Remove todo o historico de pesquisa de versiculos"
+            icon="clock"
             onPress={() => setClearCacheConfirmVisible(true)}
           />
         </View>
@@ -287,7 +259,7 @@ export default function ConfigurationScreen() {
           <SettingsItem
             label="Backup Automático"
             description="Salvar estudos na pasta do App"
-            icon="save"
+            icon="refresh-cw"
             onPress={() => handleToggleAutoBackup(!autoBackup)}
             rightElement={
               <BibleSwitch
@@ -344,7 +316,85 @@ export default function ConfigurationScreen() {
         onConfirm={() => setAlertInfo(null)}
       />
 
+
+      <BibleDrawerMenu
+        visible={drawerVisible}
+        activeItem="configuration"
+        onClose={() => setDrawerVisible(false)}
+        onSelectItem={() => { }}
+        onOpenDonate={() => { setDrawerVisible(false); setTimeout(() => setDonateVisible(true), 250); }}
+      />
+
+      <BibleConfirmModal
+        visible={clearCacheConfirmVisible}
+        title="Limpar Histórico"
+        message="Tem certeza? Isso removerá sua posição de leitura salva."
+        confirmText="Limpar"
+        isDanger
+        onConfirm={handleClearCache}
+        onCancel={() => setClearCacheConfirmVisible(false)}
+      />
+
+      <BibleConfirmModal
+        visible={!!alertInfo}
+        title={alertInfo?.title || ''}
+        message={alertInfo?.message || ''}
+        confirmText="OK"
+        isDanger={alertInfo?.isDanger}
+        onConfirm={() => setAlertInfo(null)}
+      />
+
       <DonateModal visible={donateVisible} onClose={() => setDonateVisible(false)} />
+
+      <BiblePageModal
+        visible={themeModalVisible}
+        onClose={() => setThemeModalVisible(false)}
+        header={
+          <View style={styles.modalHeader}>
+            <BibleIcon name="layers" color={colors.primary} backgroundColor={colors.primary + '15'} style={{ marginRight: 8 }} />
+            <BibleText style={[styles.modalTitle, { fontSize: ms(16), color: colors.onSurface, fontWeight: '700' }]}>Cor do Aplicativo</BibleText>
+            <BibleIcon name="x" color={colors.error} backgroundColor={colors.error + '20'} onPress={() => setThemeModalVisible(false)} style={{ marginLeft: 'auto' }} />
+          </View>
+        }
+      >
+        <View style={styles.swatchGrid}>
+          {COLOR_THEME_OPTIONS.map((theme) => {
+            const isActive = colorTheme === theme.key;
+            const swatchColor = theme.swatch;
+            return (
+              <TouchableOpacity
+                key={theme.key}
+                activeOpacity={0.8}
+                onPress={() => {
+                  selectionHaptic();
+                  setColorTheme(theme.key as ColorThemeKey);
+                }}
+                style={[
+                  styles.swatchItem,
+                  {
+                    borderColor: isActive ? swatchColor : colors.border,
+                    backgroundColor: isActive ? swatchColor + '15' : colors.surfaceHighlight
+                  },
+                  isActive && { borderWidth: 2, borderColor: swatchColor },
+                ]}
+              >
+                <View style={[styles.swatchDot, { backgroundColor: swatchColor }]}>
+                  {isActive && (
+                    <BibleIcon name="check" color={colors.onPrimary} size={ms(12)} />
+                  )}
+                </View>
+                <BibleText style={[
+                  styles.swatchLabel,
+                  { fontSize: ms(12), color: isActive ? swatchColor : colors.onSurface },
+                  isActive && { fontWeight: '800' },
+                ]}>
+                  {theme.label}
+                </BibleText>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+      </BiblePageModal>
 
     </View>
   );
@@ -413,4 +463,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     textAlign: 'center',
   },
+  modalHeader: { flexDirection: 'row', alignItems: 'center' },
+  modalTitle: { fontWeight: '800' },
 });
