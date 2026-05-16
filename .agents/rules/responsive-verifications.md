@@ -2,48 +2,26 @@
 trigger: always_on
 ---
 
-# Additional Design System Rules
+# Responsive Design System Rules
 
 ---
 
-## Responsive Rules
+## Mandatory useResponsive Usage
 
-### useResponsive Hook
-- Always use the `useResponsive` hook for responsive layouts and sizing.
-- Do not use hardcoded screen dimensions directly inside components.
-- Avoid repeated responsive calculations in multiple components.
-- Centralize responsive behavior using the project's responsive utilities.
+### Required Pattern
+- All spacing, sizing, and layout values must use the `useResponsive` hook.
+- Do not use static design constants directly inside styles.
+- Responsive values must always be generated through `useResponsive`.
 
-## Design Constants Rules
+---
 
-### Mandatory Design Constants Usage
-- Always use centralized design constants for:
-  - colors
-  - spacing
-  - font sizes
-  - border radius
-  - shadows
-  - z-index
-  - icon sizes
-  - layout dimensions
+## Forbidden Patterns
 
-- Never hardcode design values directly inside components.
-
-### Forbidden Patterns
-- Do not use hardcoded values like:
-  - `padding: 12`
-  - `fontSize: 16`
-  - `borderRadius: 8`
-  - `color: '#FFFFFF'`
-
-### Preferred Pattern
-- Always import values from the design system constants.
-
-### Example
+### Do Not Use
 ```typescript
-import { COLORS, SPACING, FONT_SIZES, BORDER_RADIUS } from '@/constants/design';
-
-padding: SPACING.md;
-fontSize: FONT_SIZES.body;
-borderRadius: BORDER_RADIUS.md;
-color: COLORS.primary;
+padding: SPACING.md
+marginTop: SPACING.lg
+fontSize: FONT_SIZES.body
+borderRadius: BORDER_RADIUS.md
+width: 300
+height: 200

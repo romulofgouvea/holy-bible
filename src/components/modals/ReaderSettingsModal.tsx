@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { ROUTE_LABELS } from '../../constants/routes';
 import { useReaderSettings } from '../../hooks/useReaderSettings';
@@ -22,6 +22,69 @@ export function ReaderSettingsModal({ visible, onClose }: { visible: boolean; on
     toggleDarkMode(theme === 'dark');
   };
 
+  const styles = useMemo(() => StyleSheet.create({
+    content: {
+      paddingHorizontal: ms(16),
+      paddingBottom: ms(24),
+    },
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    title: {
+      flex: 1,
+      fontWeight: '700',
+    },
+    settingsWrapper: {
+      gap: ms(16),
+    },
+    section: {
+      gap: ms(10),
+    },
+    sectionTitle: {
+      fontSize: 10,
+      fontWeight: '800',
+      textTransform: 'uppercase',
+      letterSpacing: 1,
+      opacity: 0.6,
+    },
+    unifiedRow: {
+      flexDirection: 'row',
+      height: ms(44),
+      borderRadius: ms(12),
+      alignItems: 'center',
+      overflow: 'hidden',
+    },
+    controlBtn: {
+      width: ms(60),
+      height: '100%',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    controlText: {
+      fontSize: 16,
+      fontWeight: '700',
+    },
+    percentageDisplay: {
+      flex: 1,
+      height: '100%',
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderLeftWidth: 1,
+      borderRightWidth: 1,
+    },
+    percentageText: {
+      fontSize: 15,
+      fontWeight: '800',
+    },
+    segmentBtn: {
+      flex: 1,
+      height: '100%',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+  }), [ms, colors]);
+
   if (!visible) return null;
 
   const dividerColor = 'rgba(0,0,0,0.05)';
@@ -38,7 +101,7 @@ export function ReaderSettingsModal({ visible, onClose }: { visible: boolean; on
               size={ms(16)}
               color={colors.primary}
               backgroundColor={colors.primary + '25'}
-              style={{ marginRight: 8 }}
+              style={{ marginRight: ms(8) }}
             />
             <BibleText style={[styles.title, { fontSize: ms(16), color: colors.primary }]}>{ROUTE_LABELS.APPEARANCE}</BibleText>
             <BibleIcon
@@ -46,189 +109,124 @@ export function ReaderSettingsModal({ visible, onClose }: { visible: boolean; on
               color={colors.error}
               backgroundColor={colors.error + '20'}
               onPress={onClose}
-              style={styles.closeBtn}
             />
           </View>
         </>
       }
     >
-      <View style={styles.settingsWrapper}>
-        {/* Section: Font Size */}
-        <View style={styles.section}>
-          <BibleText style={[styles.sectionTitle, { color: colors.textMuted }]}>Tamanho da Fonte</BibleText>
-          <View style={[styles.unifiedRow, { backgroundColor: colors.surfaceHighlight }]}>
-            <TouchableOpacity
-              style={styles.controlBtn}
-              onPress={() => { impactLight(); setFontSizeMultiplier(Math.max(0.7, fontSizeMultiplier - 0.1)); }}
-            >
-              <BibleText style={[styles.controlText, { color: colors.onBackground }]}>A-</BibleText>
-            </TouchableOpacity>
-
-            <View style={[styles.percentageDisplay, { borderColor: dividerColor }]}>
-              <BibleText style={[styles.percentageText, { color: colors.primary }]}>
-                {Math.round(fontSizeMultiplier * 100)}%
-              </BibleText>
+      <View style={styles.content}>
+        <View style={styles.settingsWrapper}>
+          {/* Theme Section */}
+          <View style={styles.section}>
+            <BibleText style={[styles.sectionTitle, { color: colors.textMuted }]}>Tema de Leitura</BibleText>
+            <View style={[styles.unifiedRow, { backgroundColor: colors.surfaceHighlight }]}>
+              {(['light', 'sepia', 'dark'] as const).map((t, index) => (
+                <React.Fragment key={t}>
+                  <TouchableOpacity
+                    onPress={() => handleSetTheme(t)}
+                    style={[
+                      styles.segmentBtn,
+                      readerTheme === t && { backgroundColor: colors.primary }
+                    ]}
+                  >
+                    <BibleText style={{
+                      fontSize: ms(13),
+                      fontWeight: '700',
+                      color: readerTheme === t ? colors.onPrimary : colors.onBackground
+                    }}>
+                      {t === 'light' ? 'Claro' : t === 'dark' ? 'Escuro' : 'Sépia'}
+                    </BibleText>
+                  </TouchableOpacity>
+                  {index < 2 && readerTheme !== t && (['light', 'sepia', 'dark'] as const)[index + 1] !== readerTheme && (
+                    <BibleDivider vertical height="60%" color={dividerColor} />
+                  )}
+                </React.Fragment>
+              ))}
             </View>
-
-            <TouchableOpacity
-              style={styles.controlBtn}
-              onPress={() => { impactLight(); setFontSizeMultiplier(Math.min(2.0, fontSizeMultiplier + 0.1)); }}
-            >
-              <BibleText style={[styles.controlText, { color: colors.onBackground }]}>A+</BibleText>
-            </TouchableOpacity>
           </View>
-        </View>
 
-        <View style={styles.section}>
-          <BibleText style={[styles.sectionTitle, { color: colors.textMuted }]}>Alinhamento</BibleText>
-          <View style={[styles.unifiedRow, { backgroundColor: colors.surfaceHighlight }]}>
-            {(['left', 'center', 'right', 'justify'] as const).map((align, index) => (
-              <React.Fragment key={align}>
-                <TouchableOpacity
-                  style={[
-                    styles.segmentBtn,
-                    textAlign === align && { backgroundColor: colors.primary }
-                  ]}
-                  onPress={() => { impactLight(); setTextAlign(align); }}
-                >
-                  <BibleIcon
-                    name={`align-${align}` as any}
-                    size={ms(18)}
-                    color={textAlign === align ? colors.onPrimary : colors.onBackground}
-                    containerSize={44}
-                  />
-                </TouchableOpacity>
-                {index < 3 && textAlign !== align && (['left', 'center', 'right', 'justify'] as const)[index + 1] !== textAlign && (
-                  <BibleDivider vertical height="60%" color={dividerColor} />
-                )}
-              </React.Fragment>
-            ))}
+          {/* Font Size Section */}
+          <View style={styles.section}>
+            <BibleText style={[styles.sectionTitle, { color: colors.textMuted }]}>Tamanho da Fonte</BibleText>
+            <View style={[styles.unifiedRow, { backgroundColor: colors.surfaceHighlight }]}>
+              <TouchableOpacity
+                onPress={() => { selectionHaptic(); setFontSizeMultiplier(Math.max(0.7, fontSizeMultiplier - 0.1)); }}
+                style={styles.controlBtn}
+              >
+                <BibleText style={[styles.controlText, { color: colors.primary }]}>A-</BibleText>
+              </TouchableOpacity>
+              <View style={[styles.percentageDisplay, { borderColor: dividerColor }]}>
+                <BibleText style={[styles.percentageText, { color: colors.onBackground }]}>
+                  {Math.round(fontSizeMultiplier * 100)}%
+                </BibleText>
+              </View>
+              <TouchableOpacity
+                onPress={() => { selectionHaptic(); setFontSizeMultiplier(Math.min(2.0, fontSizeMultiplier + 0.1)); }}
+                style={styles.controlBtn}
+              >
+                <BibleText style={[styles.controlText, { color: colors.primary }]}>A+</BibleText>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
 
-        <View style={styles.section}>
-          <BibleText style={[styles.sectionTitle, { color: colors.textMuted }]}>Tema de Leitura</BibleText>
-          <View style={[styles.unifiedRow, { backgroundColor: colors.surfaceHighlight }]}>
-            {(['light', 'dark', 'sepia'] as const).map((t, index) => (
-              <React.Fragment key={t}>
-                <TouchableOpacity
-                  style={[
-                    styles.segmentBtn,
-                    readerTheme === t && { backgroundColor: colors.primary }
-                  ]}
-                  onPress={() => handleSetTheme(t)}
-                >
-                  <BibleIcon
-                    name={t === 'light' ? 'sun' : t === 'dark' ? 'moon' : 'coffee'}
-                    size={ms(18)}
-                    color={readerTheme === t ? colors.onPrimary : colors.onBackground}
-                    containerSize={44}
-                  />
-                </TouchableOpacity>
-                {index < 2 && readerTheme !== t && (['light', 'dark', 'sepia'] as const)[index + 1] !== readerTheme && (
-                  <BibleDivider vertical height="60%" color={dividerColor} />
-                )}
-              </React.Fragment>
-            ))}
+          {/* Text Alignment Section */}
+          <View style={styles.section}>
+            <BibleText style={[styles.sectionTitle, { color: colors.textMuted }]}>Alinhamento</BibleText>
+            <View style={[styles.unifiedRow, { backgroundColor: colors.surfaceHighlight }]}>
+              {(['left', 'center', 'justify'] as const).map((a, index) => (
+                <React.Fragment key={a}>
+                  <TouchableOpacity
+                    onPress={() => { selectionHaptic(); setTextAlign(a); }}
+                    style={[
+                      styles.segmentBtn,
+                      textAlign === a && { backgroundColor: colors.primary }
+                    ]}
+                  >
+                    <BibleIcon
+                      name={a === 'left' ? 'align-left' : a === 'center' ? 'align-center' : 'align-justify'}
+                      size={ms(18)}
+                      color={textAlign === a ? colors.onPrimary : colors.onBackground}
+                    />
+                  </TouchableOpacity>
+                  {index < 2 && textAlign !== a && (['left', 'center', 'justify'] as const)[index + 1] !== textAlign && (
+                    <BibleDivider vertical height="60%" color={dividerColor} />
+                  )}
+                </React.Fragment>
+              ))}
+            </View>
           </View>
-        </View>
 
-        <View style={styles.section}>
-          <BibleText style={[styles.sectionTitle, { color: colors.textMuted }]}>Fonte</BibleText>
-          <View style={[styles.unifiedRow, { backgroundColor: colors.surfaceHighlight }]}>
-            {(['poppins', 'monospace'] as const).map((f, index) => (
-              <React.Fragment key={f}>
-                <TouchableOpacity
-                  style={[
-                    styles.segmentBtn,
-                    readerFont === f && {
-                      backgroundColor: colors.primary
-                    }
-                  ]}
-                  onPress={() => { selectionHaptic(); setReaderFont(f); }}
-                >
-                  <BibleText style={{
-                    fontSize: ms(13),
-                    fontWeight: '700',
-                    color: readerFont === f ? colors.onPrimary : colors.onBackground,
-                    fontFamily: f === 'monospace' ? 'monospace' : undefined
-                  }}>
-                    {f.charAt(0).toUpperCase() + f.slice(1)}
-                  </BibleText>
-                </TouchableOpacity>
-                {index < 1 && readerFont !== f && (['poppins', 'monospace'] as const)[index + 1] !== readerFont && (
-                  <BibleDivider vertical height="60%" color={dividerColor} />
-                )}
-              </React.Fragment>
-            ))}
+          {/* Font Family Section */}
+          <View style={styles.section}>
+            <BibleText style={[styles.sectionTitle, { color: colors.textMuted }]}>Tipo de Fonte</BibleText>
+            <View style={[styles.unifiedRow, { backgroundColor: colors.surfaceHighlight }]}>
+              {(['poppins', 'monospace'] as const).map((f, index) => (
+                <React.Fragment key={f}>
+                  <TouchableOpacity
+                    onPress={() => { selectionHaptic(); setReaderFont(f); }}
+                    style={[
+                      styles.segmentBtn,
+                      readerFont === f && { backgroundColor: colors.primary }
+                    ]}
+                  >
+                    <BibleText style={{
+                      fontSize: ms(13),
+                      fontWeight: '700',
+                      color: readerFont === f ? colors.onPrimary : colors.onBackground,
+                      fontFamily: f === 'monospace' ? 'monospace' : undefined
+                    }}>
+                      {f.charAt(0).toUpperCase() + f.slice(1)}
+                    </BibleText>
+                  </TouchableOpacity>
+                  {index < 1 && readerFont !== f && (['poppins', 'monospace'] as const)[index + 1] !== readerFont && (
+                    <BibleDivider vertical height="60%" color={dividerColor} />
+                  )}
+                </React.Fragment>
+              ))}
+            </View>
           </View>
         </View>
       </View>
     </BiblePageModal>
   );
 }
-
-const styles = StyleSheet.create({
-  content: {
-    paddingHorizontal: 8
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  title: {
-    flex: 1,
-    fontWeight: '700',
-  },
-  closeBtn: {
-    marginLeft: 8,
-  },
-  settingsWrapper: {
-    gap: 16,
-  },
-  section: {
-    gap: 10,
-  },
-  sectionTitle: {
-    fontSize: 10,
-    fontWeight: '800',
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-    opacity: 0.6,
-  },
-  unifiedRow: {
-    flexDirection: 'row',
-    height: 44,
-    borderRadius: 12,
-    alignItems: 'center',
-    overflow: 'hidden',
-  },
-  controlBtn: {
-    width: 60,
-    height: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  controlText: {
-    fontSize: 16,
-    fontWeight: '700',
-  },
-  percentageDisplay: {
-    flex: 1,
-    height: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderLeftWidth: 1,
-    borderRightWidth: 1,
-  },
-  percentageText: {
-    fontSize: 15,
-    fontWeight: '800',
-  },
-  segmentBtn: {
-    flex: 1,
-    height: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

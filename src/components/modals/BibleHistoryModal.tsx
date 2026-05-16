@@ -1,5 +1,5 @@
 import { FlashList } from '@shopify/flash-list';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { ROUTE_LABELS } from '../../constants/routes';
 import { HistoryItem, useHistory } from '../../hooks/useHistory';
@@ -30,7 +30,6 @@ export function BibleHistoryModal({ visible, onClose, onSelect }: BibleHistoryMo
     }
   }, [visible, loadHistory]);
 
-  // Separate effect to handle scrolling to top once data is available
   React.useEffect(() => {
     if (visible && history.length > 0) {
       const timer = setTimeout(() => {
@@ -40,6 +39,51 @@ export function BibleHistoryModal({ visible, onClose, onSelect }: BibleHistoryMo
     }
   }, [visible, history.length]);
 
+  const styles = useMemo(() => StyleSheet.create({
+    container: {
+      flex: 1,
+      paddingHorizontal: ms(16),
+      paddingBottom: ms(24),
+    },
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    title: {
+      flex: 1,
+      fontWeight: '700',
+    },
+    list: {
+      flex: 1,
+      width: '100%',
+    },
+    card: {
+      borderRadius: ms(12),
+      borderWidth: 1,
+      padding: ms(12),
+    },
+    cardBody: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    refText: {
+      fontWeight: '700',
+    },
+    versionSubText: {
+      fontWeight: '500',
+    },
+    versionBadge: {
+      paddingHorizontal: ms(10),
+      paddingVertical: ms(4),
+      borderRadius: ms(8),
+      marginLeft: ms(12),
+    },
+    versionBadgeText: {
+      fontWeight: '800',
+      textTransform: 'uppercase',
+    },
+  }), [ms, colors]);
+
   return (
     <BiblePageModal visible={visible} onClose={onClose} fullHeight={true}
       header={
@@ -47,7 +91,7 @@ export function BibleHistoryModal({ visible, onClose, onSelect }: BibleHistoryMo
           <BibleIcon name="clock"
             color={colors.primary}
             backgroundColor={`${colors.primary}20`}
-            style={{ marginRight: 8 }} />
+            style={{ marginRight: ms(8) }} />
           <BibleText style={[styles.title, { fontSize: ms(18), color: colors.primary, fontWeight: '800' }]} testID="bible-history-title">{ROUTE_LABELS.HISTORY}</BibleText>
           <BibleIcon
             name="x"
@@ -74,10 +118,9 @@ export function BibleHistoryModal({ visible, onClose, onSelect }: BibleHistoryMo
                 data={history}
                 keyExtractor={(item) => `${item.timestamp}`}
                 // @ts-ignore
-                estimatedItemSize={70}
+                estimatedItemSize={ms(70)}
                 showsVerticalScrollIndicator={false}
-
-                ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
+                ItemSeparatorComponent={() => <View style={{ height: ms(10) }} />}
                 renderItem={({ item }) => (
                   <TouchableOpacity
                     activeOpacity={0.7}
@@ -118,62 +161,3 @@ export function BibleHistoryModal({ visible, onClose, onSelect }: BibleHistoryMo
     </BiblePageModal>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  title: {
-    flex: 1,
-    fontWeight: '700',
-  },
-  closeBtn: {
-    marginLeft: 8,
-  },
-  list: {
-    flex: 1,
-    width: '100%',
-  },
-  card: {
-    borderRadius: 12,
-    borderWidth: 1,
-    padding: 12,
-  },
-  cardBody: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  refText: {
-    fontWeight: '700',
-  },
-  versionSubText: {
-    fontWeight: '500',
-  },
-  versionBadge: {
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 8,
-    marginLeft: 12,
-  },
-  versionBadgeText: {
-    fontWeight: '800',
-    textTransform: 'uppercase',
-  },
-  empty: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 32,
-  },
-  emptyTitle: {
-    textAlign: 'center',
-    fontWeight: '600',
-  },
-  emptySubtitle: {
-    textAlign: 'center',
-  },
-});
