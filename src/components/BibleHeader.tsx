@@ -36,45 +36,45 @@ export function BibleHeader({
   const { colors } = useTheme();
   const { ms, DESIGN } = useResponsive();
   const styles = useMemo(() => StyleSheet.create({
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    elevation: 6,
-    shadowOffset: { width: 0, height: ms(3) },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    zIndex: 10,
-  },
-  leftButtonContainer: {
-    flexShrink: 0,
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginRight: ms(4),
-  },
-  centerContainer: {
-    flex: 1,
-    flexShrink: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    overflow: 'hidden',
-  },
-  rightContainer: {
-    flexShrink: 0,
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginLeft: ms(4),
-  },
-  title: {
-    fontFamily: 'Poppins_600SemiBold',
-    fontWeight: '700',
-    includeFontPadding: false,
-    flexShrink: 1,
-  },
-  menuBtn: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-}), [ms, colors, DESIGN]);
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      elevation: 6,
+      shadowOffset: { width: 0, height: ms(3) },
+      shadowOpacity: 0.25,
+      shadowRadius: 4,
+      zIndex: 10,
+    },
+    leftButtonContainer: {
+      flexShrink: 0,
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginRight: ms(4),
+    },
+    centerContainer: {
+      flex: 1,
+      flexShrink: 1,
+      flexDirection: 'row',
+      alignItems: 'center',
+      overflow: 'hidden',
+    },
+    rightContainer: {
+      flexShrink: 0,
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginLeft: ms(4),
+    },
+    title: {
+      fontFamily: 'Poppins_600SemiBold',
+      fontWeight: '700',
+      includeFontPadding: false,
+      flexShrink: 1,
+    },
+    menuBtn: {
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+  }), [ms, colors, DESIGN]);
 
 
   const hasLeftButton = showMenu || showBack;

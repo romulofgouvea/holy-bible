@@ -1,15 +1,19 @@
 import { BibleCountPill } from '@/components/BibleCountPill';
+import { BibleDivider } from '@/components/BibleDivider';
 import { BibleIcon } from '@/components/BibleIcon';
+import { BiblePageModal } from '@/components/modals/BiblePageModal';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FlashList } from '@shopify/flash-list';
 import { useLocalSearchParams, usePathname, useRouter } from 'expo-router';
-import React, { useCallback, useEffect, useRef, useState, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
+  ActivityIndicator,
   Platform,
+  ScrollView,
   StyleSheet,
   TextInput,
   TouchableOpacity,
-  View
+  View,
 } from 'react-native';
 import { BibleDrawerMenu } from '../components/BibleDrawerMenu';
 import { BibleHeader } from '../components/BibleHeader';
@@ -19,12 +23,13 @@ import { BibleText } from '../components/BibleText';
 import { DonateModal } from '../components/modals/DonateModal';
 import { ROUTES } from '../constants/routes';
 import { STORAGE_KEYS } from '../constants/storage';
+import { Book } from '../data';
 import { useBible } from '../hooks/useBible';
+import { useBibleModals } from '../hooks/useBibleModals';
 import { useHistory } from '../hooks/useHistory';
 import { useReaderSettings } from '../hooks/useReaderSettings';
 import { useResponsive } from '../hooks/useResponsive';
 import { useTheme } from '../hooks/useTheme';
-import { useBibleModals } from '../hooks/useBibleModals';
 import { impactLight, selectionHaptic } from '../utils/haptics';
 import { handleSmartBack } from '../utils/navigation';
 
@@ -67,10 +72,10 @@ const HighlightText = React.memo(({ text, query, colors, fontSizeMultiplier, ms,
   }
 
   return (
-    <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center' }}>
+    <View style={styles.highlightTextContainer}>
       {tokens.map((token, i) =>
         token.highlighted ? (
-          <View key={i} style={{ backgroundColor: colors.primary + '20', borderRadius: ms(DESIGN.borderRadius.xs), paddingHorizontal: ms(DESIGN.spacing.xs), paddingVertical: ms(DESIGN.spacing.tiny), marginVertical: ms(DESIGN.spacing.tiny) }}>
+          <View key={i} style={[styles.highlightedToken, { backgroundColor: colors.primary + '20' }]}>
             <BibleText variant="reading" style={[styles.verseText, { color: colors.primary, fontWeight: '800', fontSize: currentSize, lineHeight: currentLineHeight }]}>
               {token.text}
             </BibleText>
@@ -98,12 +103,12 @@ const SearchResultItem = React.memo(({ item, query, colors, fontSizeMultiplier, 
     style={[styles.resultCard, { backgroundColor: colors.surface, borderColor: colors.border }]}
     onPress={() => onPress(item)}
   >
-    <View style={[styles.refBadge, { backgroundColor: colors.primary, paddingVertical: ms(DESIGN.spacing.xs), paddingHorizontal: ms(DESIGN.spacing.sm), borderRadius: ms(DESIGN.borderRadius.sm) }]}>
-      <BibleText variant="reading" style={[styles.refText, { color: colors.onPrimary, fontSize: ms(DESIGN.fontSize.sm * fontSizeMultiplier), fontWeight: '800' }]}>
+    <View style={[styles.refBadge, { backgroundColor: colors.primary + '15' }]}>
+      <BibleText variant="reading" style={[styles.refText, { color: colors.primary, fontSize: ms(DESIGN.fontSize.sm * fontSizeMultiplier), fontWeight: '800' }]}>
         {item.bookName} {item.chapter}:{item.verse}
       </BibleText>
     </View>
-    <View style={{ flex: 1, marginTop: ms(DESIGN.spacing.md) }}>
+    <View style={styles.resultTextContent}>
       <HighlightText text={item.text} query={query} colors={colors} fontSizeMultiplier={fontSizeMultiplier} ms={ms} DESIGN={DESIGN} styles={styles} />
     </View>
   </TouchableOpacity>
@@ -115,38 +120,114 @@ export default function SearchScreen() {
 
   const styles = useMemo(() => StyleSheet.create({
     container: { flex: 1 },
+    highlightTextContainer: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      alignItems: 'center',
+    },
+    highlightedToken: {
+      borderRadius: ms(DESIGN.borderRadius.xs),
+      paddingHorizontal: ms(DESIGN.spacing.xs),
+      paddingVertical: ms(DESIGN.spacing.tiny),
+      marginVertical: ms(DESIGN.spacing.tiny),
+    },
+    resultTextContent: {
+      flex: 1,
+      marginTop: ms(DESIGN.spacing.md),
+    },
     searchContainer: {
-      padding: ms(DESIGN.spacing.lg),
+      paddingHorizontal: ms(DESIGN.spacing.lg),
+      paddingVertical: ms(DESIGN.spacing.md),
+    },
+    searchRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
       gap: ms(DESIGN.spacing.sm),
+      flex: 1,
     },
     searchBox: {
+      flex: 1,
       flexDirection: 'row',
       alignItems: 'center',
       height: ms(DESIGN.button.height.md),
       borderRadius: ms(DESIGN.borderRadius.md),
       paddingHorizontal: ms(DESIGN.spacing.sm),
-    },
-    input: { flex: 1, height: '100%' },
-    segmentedControl: {
-      flexDirection: 'row',
-      borderRadius: ms(DESIGN.borderRadius.md),
       borderWidth: 1,
-      overflow: 'hidden',
-      height: ms(DESIGN.button.height.sm),
     },
-    segmentItem: {
+    input: {
       flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
+      height: '100%',
+      padding: 0,
+      includeFontPadding: false,
     },
-    scopeLabel: { fontWeight: '700' },
+    searchIcon: {
+      marginRight: ms(DESIGN.spacing.sm),
+    },
+    activityIndicator: {
+      marginRight: ms(DESIGN.spacing.xs),
+    },
+    filterBtn: {
+      width: ms(44),
+      height: ms(44),
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    resultsInfoContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingHorizontal: ms(DESIGN.spacing.lg),
+      paddingVertical: ms(DESIGN.spacing.sm),
+      borderBottomWidth: 1,
+    },
+    appliedFilterLabel: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: ms(DESIGN.spacing.xs),
+    },
+    appliedFilterText: {
+      fontWeight: '600',
+    },
     centerBox: {
       flex: 1,
       alignItems: 'center',
       justifyContent: 'center'
     },
-    hint: { textAlign: 'center' },
-    historyText: { fontWeight: '500' },
+    historyList: {
+      flex: 1,
+    },
+    historyHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: ms(DESIGN.spacing.sm),
+    },
+    historyHeaderText: {
+      fontSize: ms(DESIGN.fontSize.xs),
+      fontWeight: '800',
+      textTransform: 'uppercase',
+      letterSpacing: 1,
+      opacity: 0.6,
+    },
+    clearHistoryBtn: {
+      paddingHorizontal: ms(DESIGN.spacing.md),
+      paddingVertical: ms(DESIGN.spacing.xs),
+      borderRadius: ms(DESIGN.borderRadius.md),
+    },
+    clearHistoryText: {
+      fontSize: ms(DESIGN.fontSize.xs),
+      fontWeight: '800',
+    },
+    historyItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: ms(DESIGN.spacing.md),
+    },
+    historyText: {
+      fontWeight: '500',
+      marginLeft: ms(DESIGN.spacing.sm),
+      flex: 1,
+    },
     resultCard: {
       borderRadius: ms(DESIGN.borderRadius.lg),
       borderWidth: 1,
@@ -160,22 +241,82 @@ export default function SearchScreen() {
     },
     refText: { fontWeight: '700' },
     verseText: { fontSize: ms(DESIGN.fontSize.md), lineHeight: ms(DESIGN.fontSize.xxl) },
+    filterModalHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    filterModalIcon: {
+      marginRight: ms(DESIGN.spacing.sm),
+    },
+    filterModalTitle: {
+      fontSize: ms(DESIGN.fontSize.lg),
+      fontWeight: '800',
+      flex: 1,
+    },
+    resetFiltersBtn: {
+      marginRight: ms(DESIGN.spacing.md),
+    },
+    resetFiltersText: {
+      fontWeight: '700',
+      fontSize: ms(DESIGN.fontSize.sm),
+    },
+    filterModalContent: {
+      paddingHorizontal: ms(DESIGN.spacing.lg),
+      paddingBottom: ms(DESIGN.spacing.xl),
+    },
+    filterModalItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: ms(DESIGN.spacing.md),
+    },
+    filterModalItemIcon: {
+      marginRight: ms(DESIGN.spacing.md),
+    },
+    filterModalLabelContainer: {
+      flex: 1,
+    },
+    filterModalLabel: {
+      fontWeight: '600',
+      fontSize: ms(DESIGN.fontSize.xs),
+    },
+    filterModalValue: {
+      fontWeight: '800',
+      fontSize: ms(DESIGN.fontSize.md),
+    },
+    filterBtnFooter: {
+      borderRadius: ms(DESIGN.borderRadius.md),
+      paddingVertical: ms(DESIGN.spacing.md),
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    filterBtnText: {
+      fontWeight: '800',
+    },
+    filterBadge: {
+      paddingHorizontal: ms(DESIGN.spacing.sm),
+      paddingVertical: ms(DESIGN.spacing.tiny),
+      borderRadius: ms(DESIGN.borderRadius.sm),
+    }
   }), [ms, colors, DESIGN]);
 
   const { fontSizeMultiplier } = useReaderSettings();
   const router = useRouter();
   const pathname = usePathname();
   const params = useLocalSearchParams<{ query?: string; from?: string }>();
-  const { versionBooks, currentBook, chapter, setVersion, setBook, setChapter, version, navigateTo } = useBible();
+  const { versionBooks, setVersion, version, navigateTo } = useBible();
   const { addHistoryEntry } = useHistory();
   const { openModal } = useBibleModals();
 
   const [query, setQuery] = useState('');
-  const [scope, setScope] = useState<SearchScope>('bible');
   const [isSearching, setIsSearching] = useState(false);
   const [results, setResults] = useState<SearchResult[]>([]);
   const [history, setHistory] = useState<string[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
+
+  // Local Filter State
+  const [searchBook, setSearchBook] = useState<Book | null>(null);
+  const [searchChapter, setSearchChapter] = useState<number | null>(null);
+  const [isFilterModalVisible, setIsFilterModalVisible] = useState(false);
 
   const [isDrawerVisible, setIsDrawerVisible] = useState(false);
   const [isDonateVisible, setIsDonateVisible] = useState(false);
@@ -186,12 +327,10 @@ export default function SearchScreen() {
   useEffect(() => {
     (async () => {
       try {
-        const [savedScope, savedQuery, savedHistory] = await Promise.all([
-          AsyncStorage.getItem(STORAGE_KEYS.SEARCH_SCOPE),
+        const [savedQuery, savedHistory] = await Promise.all([
           AsyncStorage.getItem(STORAGE_KEYS.SEARCH_QUERY),
           AsyncStorage.getItem(STORAGE_KEYS.SEARCH_HISTORY),
         ]);
-        if (savedScope) setScope(savedScope as SearchScope);
 
         if (params.query) {
           setQuery(params.query);
@@ -204,10 +343,6 @@ export default function SearchScreen() {
       setIsLoaded(true);
     })();
   }, []);
-
-  const saveScope = async (s: SearchScope) => {
-    try { await AsyncStorage.setItem(STORAGE_KEYS.SEARCH_SCOPE, s); } catch (e) { }
-  };
 
   const saveQuery = async (q: string) => {
     try { await AsyncStorage.setItem(STORAGE_KEYS.SEARCH_QUERY, q); } catch (e) { }
@@ -237,9 +372,13 @@ export default function SearchScreen() {
     try { await AsyncStorage.removeItem(STORAGE_KEYS.SEARCH_HISTORY); } catch (e) { }
   };
 
-  const activeBook = currentBook || versionBooks?.[0];
+  const scope = useMemo(() => {
+    if (searchChapter) return 'chapter';
+    if (searchBook) return 'book';
+    return 'bible';
+  }, [searchBook, searchChapter]);
 
-  const runSearch = useCallback((q: string, sc: SearchScope, immediate = false) => {
+  const runSearch = useCallback((q: string, immediate = false) => {
     clearTimeout(searchTimeout.current);
     if (!q.trim() || q.trim().length < 2) {
       setResults([]);
@@ -252,9 +391,9 @@ export default function SearchScreen() {
       const term = q.trim().toLowerCase();
       const found: SearchResult[] = [];
 
-      const booksToSearch = sc === 'bible'
+      const booksToSearch = scope === 'bible'
         ? versionBooks
-        : activeBook ? [activeBook] : versionBooks;
+        : searchBook ? [searchBook] : versionBooks;
 
       if (!booksToSearch) {
         setIsSearching(false);
@@ -262,8 +401,8 @@ export default function SearchScreen() {
       }
 
       for (const book of booksToSearch) {
-        const chaptersToSearch = sc === 'chapter'
-          ? [{ idx: chapter - 1, verses: book.chapters[chapter - 1] || [] }]
+        const chaptersToSearch = scope === 'chapter' && searchChapter
+          ? [{ idx: searchChapter - 1, verses: book.chapters[searchChapter - 1] || [] }]
           : book.chapters.map((verses, idx) => ({ idx, verses }));
 
         for (const { idx, verses } of chaptersToSearch) {
@@ -276,42 +415,33 @@ export default function SearchScreen() {
                 verse: vi + 1,
                 text: verses[vi],
               });
-              if (found.length >= 300) break;
             }
           }
-          if (found.length >= 300) break;
         }
-        if (found.length >= 300) break;
       }
 
       setResults(found);
       setIsSearching(false);
     }, delay);
-  }, [versionBooks, activeBook, chapter]);
+  }, [versionBooks, searchBook, searchChapter, scope]);
 
   const handleChangeQuery = (q: string) => {
     setQuery(q);
     saveQuery(q);
-    runSearch(q, scope);
+    runSearch(q);
     router.setParams({ query: q });
   };
 
   useEffect(() => {
     if (isLoaded && query.trim().length >= 2) {
-      runSearch(query, scope, true);
+      runSearch(query, true);
     }
-  }, [version, activeBook, chapter, scope]);
-
-  const handleChangeScope = (sc: SearchScope) => {
-    setScope(sc);
-    saveScope(sc);
-    runSearch(query, sc);
-  };
+  }, [version, searchBook, searchChapter, isLoaded]);
 
   const handleSubmit = () => {
     if (query.trim().length >= 2) {
       addToHistory(query.trim());
-      runSearch(query, scope, true);
+      runSearch(query, true);
     }
   };
 
@@ -320,7 +450,7 @@ export default function SearchScreen() {
     setQuery(term);
     saveQuery(term);
     addToHistory(term);
-    runSearch(term, scope, true);
+    runSearch(term, true);
     router.setParams({ query: term });
   };
 
@@ -346,6 +476,11 @@ export default function SearchScreen() {
     router.setParams({ query: '' });
   };
 
+  const handleResetFilters = () => {
+    setSearchBook(null);
+    setSearchChapter(null);
+  };
+
   const showHistory = query.trim().length === 0 && history.length > 0;
   const showEmpty = query.trim().length === 0 && history.length === 0;
   const showTooShort = query.trim().length > 0 && query.trim().length < 2;
@@ -356,8 +491,7 @@ export default function SearchScreen() {
     return <BibleSkeleton />;
   }
 
-  const btnBg = colors.onPrimary + '4D';
-  const btnText = colors.onPrimary;
+  const scopeLabel = scope === 'chapter' ? 'capítulo' : scope === 'book' ? 'livro' : 'bíblia';
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]} testID="search-screen">
@@ -366,66 +500,63 @@ export default function SearchScreen() {
         showBack={params.from === 'bible'}
         onBack={() => handleSmartBack(pathname)}
         onMenuPress={() => setIsDrawerVisible(true)}
+
         leftContent={
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <TouchableOpacity style={{ backgroundColor: btnBg, height: ms(DESIGN.button.height.sm), paddingHorizontal: ms(DESIGN.spacing.md), marginHorizontal: ms(DESIGN.spacing.tiny), borderRadius: ms(DESIGN.borderRadius.sm), justifyContent: 'center' }} onPress={() => openModal({ initialStep: 'version', onSelect: (s) => s.version && setVersion(s.version) })}>
-              <BibleText style={{ color: btnText, fontSize: ms(DESIGN.fontSize.md), fontWeight: '700' }}>{version}</BibleText>
-            </TouchableOpacity>
-            <TouchableOpacity style={{ backgroundColor: btnBg, height: ms(DESIGN.button.height.sm), paddingHorizontal: ms(DESIGN.spacing.md), marginHorizontal: ms(DESIGN.spacing.tiny), borderRadius: ms(DESIGN.borderRadius.sm), justifyContent: 'center' }} onPress={() => openModal({ initialStep: 'book', onSelect: (s) => s.book && setBook(s.book.abbrev) })}>
-              <BibleText style={{ color: btnText, fontSize: ms(DESIGN.fontSize.md), fontWeight: '700' }}>{currentBook.name}</BibleText>
-            </TouchableOpacity>
-            <TouchableOpacity style={{ backgroundColor: btnBg, height: ms(DESIGN.button.height.sm), paddingHorizontal: ms(DESIGN.spacing.md), marginHorizontal: ms(DESIGN.spacing.tiny), borderRadius: ms(DESIGN.borderRadius.sm), justifyContent: 'center' }} onPress={() => openModal({ initialStep: 'chapter', skipVerseSelection: true, onSelect: (s) => s.chapter && setChapter(s.chapter) })}>
-              <BibleText style={{ color: btnText, fontSize: ms(DESIGN.fontSize.md), fontWeight: '700' }}>{chapter}</BibleText>
-            </TouchableOpacity>
+          <View style={[styles.searchBox, { backgroundColor: colors.onPrimary, borderColor: colors.border }]}>
+            <BibleIcon name="search" size={ms(DESIGN.spacing.lg)} color={colors.primary} style={styles.searchIcon} />
+            <TextInput
+              ref={inputRef}
+              style={[styles.input, Platform.select({ web: { outline: 'none', outlineWidth: 0 } as any, default: {} }), { fontSize: ms(DESIGN.fontSize.md), color: colors.onSurface }]}
+              placeholder="Pesquisar na Bíblia..."
+              placeholderTextColor={colors.textMuted}
+              value={query}
+              onChangeText={handleChangeQuery}
+              onSubmitEditing={handleSubmit}
+              autoFocus
+              returnKeyType="search"
+              underlineColorAndroid="transparent"
+              {...({ outlineStyle: 'none' } as any)}
+            />
+            {isSearching ? (
+              <ActivityIndicator size="small" color={colors.primary} style={styles.activityIndicator} />
+            ) : query.length > 0 ? (
+              <BibleIcon
+                name="x"
+                color={colors.error}
+                backgroundColor={colors.error + '20'}
+                onPress={handleClearQuery}
+                size={ms(DESIGN.spacing.md)}
+              />
+            ) : null}
           </View>
+        }
+        rightContent={
+          <TouchableOpacity
+            style={styles.filterBtn}
+            onPress={() => setIsFilterModalVisible(true)}
+            activeOpacity={0.7}
+          >
+            <BibleIcon name="sliders" color={colors.onPrimary} size={ms(DESIGN.spacing.lg)} />
+          </TouchableOpacity>
         }
       />
 
-      <View style={[styles.searchContainer, { backgroundColor: colors.background, borderBottomColor: colors.border }]} testID="search-container">
-        <View style={[styles.searchBox, { backgroundColor: colors.surfaceHighlight, borderColor: colors.border }]}>
-          <BibleIcon name="search" size={ms(DESIGN.spacing.lg)} color={colors.primary} style={{ marginRight: ms(DESIGN.spacing.sm) }} />
-          <TextInput
-            ref={inputRef}
-            style={[styles.input, Platform.select({ web: { outline: 'none', outlineWidth: 0 } as any, default: {} }), { fontSize: ms(DESIGN.fontSize.md), color: colors.onSurface }]}
-            placeholder="Pesquisar na Bíblia..."
-            placeholderTextColor={colors.textMuted}
-            value={query}
-            onChangeText={handleChangeQuery}
-            onSubmitEditing={handleSubmit}
-            autoFocus
-            returnKeyType="search"
-            underlineColorAndroid="transparent"
-            {...({ outlineStyle: 'none' } as any)}
-          />
-          {query.length > 0 && (
-            <BibleIcon
-              name="x"
-              color={colors.error}
-              backgroundColor={colors.error + '20'}
-              onPress={handleClearQuery}
-            />
-          )}
+      <View style={[styles.resultsInfoContainer, { backgroundColor: colors.onPrimary, borderBottomColor: colors.border }]}>
+        <View style={styles.appliedFilterLabel}>
+          <BibleText style={[styles.appliedFilterText, { color: colors.onSurface, fontSize: ms(DESIGN.fontSize.sm) }]}>
+            Filtro aplicado:
+          </BibleText>
+          <View style={[styles.filterBadge, { backgroundColor: colors.primary + '20' }]}>
+            <BibleText style={{ color: colors.primary, fontWeight: '800', fontSize: ms(DESIGN.fontSize.sm) }}>
+              {scopeLabel.charAt(0).toUpperCase() + scopeLabel.slice(1)}
+            </BibleText>
+          </View>
         </View>
-
-        <View style={[styles.segmentedControl, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-          {[
-            { key: 'bible' as SearchScope, label: `Bíblia: ${version}` },
-            { key: 'book' as SearchScope, label: `Livro: ${currentBook.name}` },
-            { key: 'chapter' as SearchScope, label: `Capítulo: ${chapter}` },
-          ].map((s, idx) => (
-            <React.Fragment key={s.key}>
-              {idx > 0 && <View style={{ width: 1, backgroundColor: colors.border, marginVertical: ms(DESIGN.spacing.sm) }} />}
-              <TouchableOpacity
-                style={[styles.segmentItem, scope === s.key && { backgroundColor: colors.primary }]}
-                onPress={() => handleChangeScope(s.key)}
-              >
-                <BibleText style={[styles.scopeLabel, { color: scope === s.key ? colors.onPrimary : colors.primary, fontSize: ms(DESIGN.fontSize.xs) }]} numberOfLines={1}>
-                  {s.label}
-                </BibleText>
-              </TouchableOpacity>
-            </React.Fragment>
-          ))}
-        </View>
+        <BibleCountPill
+          count={results.length}
+          label="resultado"
+          labelPlural="resultados"
+        />
       </View>
 
       {isSearching ? (
@@ -437,7 +568,7 @@ export default function SearchScreen() {
           icon="search"
         />
       ) : showHistory ? (
-        <View style={{ flex: 1 }}>
+        <View style={styles.historyList}>
           <FlashList
             data={history}
             keyExtractor={(item) => item}
@@ -448,12 +579,12 @@ export default function SearchScreen() {
             contentContainerStyle={{ padding: ms(DESIGN.spacing.lg) }}
             ItemSeparatorComponent={() => <View style={{ height: ms(DESIGN.spacing.sm) }} />}
             ListHeaderComponent={
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: ms(DESIGN.spacing.sm) }}>
-                <BibleText style={{ fontSize: ms(DESIGN.fontSize.xs), fontWeight: '800', textTransform: 'uppercase', letterSpacing: 1, color: colors.textMuted, opacity: 0.6 }}>
+              <View style={styles.historyHeader}>
+                <BibleText style={[styles.historyHeaderText, { color: colors.textMuted }]}>
                   BUSCAS RECENTES
                 </BibleText>
-                <TouchableOpacity onPress={clearHistory} style={{ paddingHorizontal: ms(DESIGN.spacing.md), paddingVertical: ms(DESIGN.spacing.xs), backgroundColor: colors.primary + '20', borderRadius: ms(DESIGN.borderRadius.md) }}>
-                  <BibleText style={{ color: colors.primary, fontSize: ms(DESIGN.fontSize.xs), fontWeight: '800' }}>
+                <TouchableOpacity onPress={clearHistory} style={[styles.clearHistoryBtn, { backgroundColor: colors.primary + '20' }]}>
+                  <BibleText style={[styles.clearHistoryText, { color: colors.primary }]}>
                     Limpar
                   </BibleText>
                 </TouchableOpacity>
@@ -461,20 +592,22 @@ export default function SearchScreen() {
             }
             renderItem={({ item }) => (
               <TouchableOpacity
-                style={[styles.resultCard, { borderColor: colors.border, backgroundColor: colors.background, flexDirection: 'row', alignItems: 'center', paddingVertical: ms(DESIGN.spacing.md) }]}
+                style={[styles.resultCard, { borderColor: colors.border, backgroundColor: colors.background }]}
                 onPress={() => handleHistorySelect(item)}
                 activeOpacity={0.7}
               >
-                <BibleIcon name="clock" backgroundColor={colors.primary + '20'} color={colors.primary} />
-                <BibleText style={[styles.historyText, { marginLeft: ms(DESIGN.spacing.sm), color: colors.onSurface, fontSize: ms(DESIGN.fontSize.md), flex: 1 }]}>
-                  {item}
-                </BibleText>
-                <BibleIcon
-                  name="x"
-                  color={colors.error}
-                  backgroundColor={colors.error + '20'}
-                  onPress={() => removeFromHistory(item)}
-                />
+                <View style={styles.historyItem}>
+                  <BibleIcon name="clock" backgroundColor={colors.primary + '20'} color={colors.primary} />
+                  <BibleText style={[styles.historyText, { color: colors.onSurface, fontSize: ms(DESIGN.fontSize.md) }]}>
+                    {item}
+                  </BibleText>
+                  <BibleIcon
+                    name="x"
+                    color={colors.error}
+                    backgroundColor={colors.error + '20'}
+                    onPress={() => removeFromHistory(item)}
+                  />
+                </View>
               </TouchableOpacity>
             )}
           />
@@ -494,14 +627,7 @@ export default function SearchScreen() {
           onAction={handleClearQuery}
         />
       ) : showResults ? (
-        <View style={{ flex: 1 }}>
-          <View style={{ marginHorizontal: ms(DESIGN.spacing.md), marginBottom: ms(DESIGN.spacing.sm) }}>
-            <BibleCountPill
-              count={results.length}
-              label="resultado"
-              labelPlural="resultados"
-            />
-          </View>
+        <View style={styles.container}>
           <FlashList
             data={results}
             keyExtractor={(_, i) => String(i)}
@@ -526,6 +652,92 @@ export default function SearchScreen() {
           />
         </View>
       ) : null}
+
+      {/* Filter Modal */}
+      <BiblePageModal
+        visible={isFilterModalVisible}
+        onClose={() => setIsFilterModalVisible(false)}
+        header={
+          <View style={styles.filterModalHeader}>
+            <BibleIcon name="filter" color={colors.primary} backgroundColor={colors.primary + '15'} style={styles.filterModalIcon} />
+            <BibleText style={[styles.filterModalTitle, { color: colors.onSurface }]}>Filtros de Busca</BibleText>
+            <TouchableOpacity onPress={handleResetFilters} style={styles.resetFiltersBtn}>
+              <BibleText style={[styles.resetFiltersText, { color: colors.primary }]}>Limpar</BibleText>
+            </TouchableOpacity>
+            <BibleIcon name="x" color={colors.error} backgroundColor={colors.error + '20'} onPress={() => setIsFilterModalVisible(false)} />
+          </View>
+        }
+        footer={
+          <View>
+            <TouchableOpacity
+              style={[styles.filterBtnFooter, { backgroundColor: colors.primary }]}
+              onPress={() => {
+                setIsFilterModalVisible(false);
+                runSearch(query, true);
+              }}
+            >
+              <BibleText style={[styles.filterBtnText, { color: colors.onPrimary, fontSize: ms(DESIGN.fontSize.lg) }]}>Filtrar</BibleText>
+            </TouchableOpacity>
+          </View>
+        }
+      >
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.filterModalContent}>
+          <TouchableOpacity
+            style={styles.filterModalItem}
+            onPress={() => openModal({ initialStep: 'version', onSelect: (s) => s.version && setVersion(s.version) })}
+          >
+            <BibleIcon name="book" color={colors.primary} backgroundColor={colors.primary + '15'} style={styles.filterModalItemIcon} />
+            <View style={styles.filterModalLabelContainer}>
+              <BibleText style={[styles.filterModalLabel, { color: colors.textMuted }]}>BIBLIA</BibleText>
+              <BibleText style={[styles.filterModalValue, { color: colors.onSurface }]}>{version}</BibleText>
+            </View>
+            <BibleIcon name="chevron-right" color={colors.textMuted} />
+          </TouchableOpacity>
+          <BibleDivider />
+
+          <TouchableOpacity
+            style={styles.filterModalItem}
+            onPress={() => openModal({
+              initialStep: 'book',
+              onSelect: (s) => {
+                if (s.book) {
+                  setSearchBook(s.book);
+                  setSearchChapter(null);
+                }
+              }
+            })}
+          >
+            <BibleIcon name="list" color={colors.primary} backgroundColor={colors.primary + '15'} style={styles.filterModalItemIcon} />
+            <View style={styles.filterModalLabelContainer}>
+              <BibleText style={[styles.filterModalLabel, { color: colors.textMuted }]}>LIVRO</BibleText>
+              <BibleText style={[styles.filterModalValue, { color: colors.onSurface }]}>
+                {searchBook ? searchBook.name : 'Todos os Livros'}
+              </BibleText>
+            </View>
+            <BibleIcon name="chevron-right" color={colors.textMuted} />
+          </TouchableOpacity>
+          <BibleDivider />
+
+          <TouchableOpacity
+            style={[styles.filterModalItem, !searchBook && { opacity: 0.5 }]}
+            disabled={!searchBook}
+            onPress={() => openModal({
+              initialStep: 'chapter',
+              skipVerseSelection: true,
+              onSelect: (s) => s.chapter && setSearchChapter(s.chapter)
+            })}
+          >
+            <BibleIcon name="hash" color={colors.primary} backgroundColor={colors.primary + '15'} style={styles.filterModalItemIcon} />
+            <View style={styles.filterModalLabelContainer}>
+              <BibleText style={[styles.filterModalLabel, { color: colors.textMuted }]}>CAPÍTULO</BibleText>
+              <BibleText style={[styles.filterModalValue, { color: colors.onSurface }]}>
+                {searchChapter ? `Capítulo ${searchChapter}` : 'Todos os Capítulos'}
+              </BibleText>
+            </View>
+            <BibleIcon name="chevron-right" color={colors.textMuted} />
+          </TouchableOpacity>
+        </ScrollView>
+      </BiblePageModal>
 
       <BibleDrawerMenu
         visible={isDrawerVisible}
