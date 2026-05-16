@@ -1,12 +1,12 @@
 import { FlashList } from '@shopify/flash-list';
 import React, { useState } from 'react';
 import { Platform, ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
-import { useResponsive } from '../../hooks/use-responsive';
-import { useStudies } from '../../hooks/use-studies';
-import { useTheme } from '../../hooks/use-theme';
+import { useResponsive } from '../../hooks/useResponsive';
+import { useStudies } from '../../hooks/useStudies';
+import { useTheme } from '../../hooks/useTheme';
 import { BibleIcon } from '../BibleIcon';
 import { BiblePageEmpty } from '../BiblePageEmpty';
-import { BiblePageModal } from '../BiblePageModal';
+import { BiblePageModal } from './BiblePageModal';
 import { BibleText } from '../BibleText';
 import { SelectedVerse } from './BibleVerseActionSheet';
 

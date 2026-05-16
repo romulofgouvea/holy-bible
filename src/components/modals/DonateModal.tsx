@@ -1,10 +1,10 @@
 import * as Clipboard from 'expo-clipboard';
 import React, { useState } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
-import { useResponsive } from '../../hooks/use-responsive';
-import { useTheme } from '../../hooks/use-theme';
+import { useResponsive } from '../../hooks/useResponsive';
+import { useTheme } from '../../hooks/useTheme';
 import { BibleIcon } from '../BibleIcon';
-import { BiblePageModal } from '../BiblePageModal';
+import { BiblePageModal } from './BiblePageModal';
 import { BibleText } from '../BibleText';
 
 const PIX_KEY = 'romulo-gouvea@hotmail.com';

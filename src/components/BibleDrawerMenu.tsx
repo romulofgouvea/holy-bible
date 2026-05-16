@@ -4,8 +4,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Animated, Modal, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { DRAWER_ITEMS } from '../constants/routes';
-import { useResponsive } from '../hooks/use-responsive';
-import { useTheme } from '../hooks/use-theme';
+import { useResponsive } from '../hooks/useResponsive';
+import { useTheme } from '../hooks/useTheme';
 import { BibleDivider } from './BibleDivider';
 import { BibleIcon } from './BibleIcon';
 import { BibleText } from './BibleText';
@@ -32,7 +32,7 @@ export function BibleDrawerMenu(props: DrawerMenuProps) {
   const { ms, width } = useResponsive();
   const drawerWidth = Math.min(ms(280), width * 0.72);
   const { colors } = useTheme();
-  const [modalVisible, setModalVisible] = useState(visible);
+  const [isModalVisible, setIsModalVisible] = useState(visible);
   const router = useRouter();
   const insets = useSafeAreaInsets();
 
@@ -47,7 +47,7 @@ export function BibleDrawerMenu(props: DrawerMenuProps) {
 
   useEffect(() => {
     if (visible) {
-      setModalVisible(true);
+      setIsModalVisible(true);
       Animated.parallel([
         Animated.spring(translateX, {
           toValue: 0,
@@ -75,7 +75,7 @@ export function BibleDrawerMenu(props: DrawerMenuProps) {
           useNativeDriver: true,
         }),
       ]).start(() => {
-        setModalVisible(false);
+        setIsModalVisible(false);
       });
     }
   }, [visible]);
@@ -137,7 +137,7 @@ export function BibleDrawerMenu(props: DrawerMenuProps) {
   };
 
   return (
-    <Modal visible={modalVisible} transparent animationType="none" onRequestClose={onClose}>
+    <Modal visible={isModalVisible} transparent animationType="none" onRequestClose={onClose}>
       <View style={StyleSheet.absoluteFill}>
         <TouchableWithoutFeedback onPress={onClose}>
           <Animated.View style={[styles.backdrop, { opacity: backdropOpacity, backgroundColor: colors.overlay }]} />

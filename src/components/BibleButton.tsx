@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, TouchableOpacity, TouchableOpacityProps, ViewStyle, TextStyle } from 'react-native';
-import { useTheme } from '../hooks/use-theme';
-import { useResponsive } from '../hooks/use-responsive';
+import { useTheme } from '../hooks/useTheme';
+import { useResponsive } from '../hooks/useResponsive';
 import { BibleText } from './BibleText';
 
 interface BibleButtonProps extends TouchableOpacityProps {

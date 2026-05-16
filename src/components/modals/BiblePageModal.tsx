@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Animated, KeyboardAvoidingView, Platform, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
+import { Animated, KeyboardAvoidingView, Platform, Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useResponsive } from '../hooks/use-responsive';
-import { useTheme } from '../hooks/use-theme';
-import { BibleDivider } from './BibleDivider';
+import { useResponsive } from '../../hooks/useResponsive';
+import { useTheme } from '../../hooks/useTheme';
+import { BibleDivider } from '../BibleDivider';
 
 type BiblePageModalProps = {
   visible: boolean;
@@ -45,41 +45,41 @@ export function BiblePageModal({ visible, onClose, children, header, footer, ful
   return (
     <Animated.View style={[StyleSheet.absoluteFill, { zIndex: 9999, elevation: 9999, opacity: fadeAnim }]}>
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'padding'}>
-        <TouchableWithoutFeedback onPress={onClose}>
-          <View style={[styles.backdrop, { padding: ms(16) }]}>
-            <TouchableWithoutFeedback>
-              <View
-                style={[
-                  styles.modalContent,
-                  {
-                    backgroundColor: colors.background,
-                    borderRadius: ms(16),
-                    maxWidth: ms(500),
-                  },
-                  fullHeight && { height: '90%' }
-                ]}
-              >
-              {header && (
-                <View >
-                  <View style={[styles.contentHeader, { padding: ms(16) }]}>{header}</View>
-                  <BibleDivider />
-                </View>
-              )}
-
-              <View style={[styles.contentHeader, { padding: ms(16), flexShrink: 1, flexGrow: fullHeight ? 1 : 0 }]}>
-                {children}
+        <View style={[styles.backdrop, { padding: ms(16) }]}>
+          <Pressable 
+            style={StyleSheet.absoluteFill} 
+            onPress={onClose} 
+          />
+          <View
+            style={[
+              styles.modalContent,
+              {
+                backgroundColor: colors.background,
+                borderRadius: ms(16),
+                maxWidth: ms(500),
+              },
+              fullHeight && { height: '90%' }
+            ]}
+          >
+            {header && (
+              <View >
+                <View style={[styles.contentHeader, { padding: ms(16) }]}>{header}</View>
+                <BibleDivider />
               </View>
+            )}
 
-              {footer && (
-                <View >
-                  <BibleDivider />
-                  <View style={[styles.contentFooter, { paddingHorizontal: ms(8), paddingVertical: ms(8) }]}>{footer}</View>
-                </View>
-              )}
+            <View style={[styles.contentArea, { flexShrink: 1, flexGrow: fullHeight ? 1 : 0 }]}>
+              {children}
+            </View>
+
+            {footer && (
+              <View >
+                <BibleDivider />
+                <View style={[styles.contentFooter, { paddingHorizontal: ms(8), paddingVertical: ms(8) }]}>{footer}</View>
               </View>
-            </TouchableWithoutFeedback>
+            )}
           </View>
-        </TouchableWithoutFeedback>
+        </View>
       </KeyboardAvoidingView>
     </Animated.View>
   );
@@ -103,6 +103,8 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
   },
   contentHeader: {
+  },
+  contentArea: {
   },
   contentFooter: {
   },

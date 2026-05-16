@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { ROUTES, ROUTE_LABELS } from '../constants/routes';
-import { useReaderSettings } from '../hooks/use-reader-settings';
-import { useResponsive } from '../hooks/use-responsive';
-import { useTheme } from '../hooks/use-theme';
-import { BibleActionsDrawer } from './BibleActionsDrawer';
+import { useReaderSettings } from '../hooks/useReaderSettings';
+import { useResponsive } from '../hooks/useResponsive';
+import { useTheme } from '../hooks/useTheme';
+import { BibleActionsDrawer } from './modals/BibleActionsDrawer';
 import { BibleHeader } from './BibleHeader';
 import { BibleIcon } from './BibleIcon';
 import { BibleText } from './BibleText';

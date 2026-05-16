@@ -1,0 +1,468 @@
+import { BibleIcon } from '@/components/BibleIcon';
+import { BibleConfirmModal } from '@/components/modals/BibleConfirmModal';
+import { COLOR_THEMES, ColorThemeKey } from '@/constants/colors';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as DocumentPicker from 'expo-document-picker';
+import * as FileSystem from 'expo-file-system/legacy';
+import { useRouter } from 'expo-router';
+import * as Sharing from 'expo-sharing';
+import React, { useEffect, useState } from 'react';
+import { Platform, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { BibleDrawerMenu } from '../components/BibleDrawerMenu';
+import { BibleHeader } from '../components/BibleHeader';
+import { BiblePageModal } from '../components/modals/BiblePageModal';
+import { BibleSwitch } from '../components/BibleSwitch';
+import { BibleText } from '../components/BibleText';
+import { DonateModal } from '../components/modals/DonateModal';
+import { SettingsItem } from '../components/SettingsItem';
+import { ROUTES, ROUTE_LABELS } from '../constants/routes';
+import { STORAGE_KEYS } from '../constants/storage';
+import { useHistory } from '../hooks/useHistory';
+import { useReaderSettings } from '../hooks/useReaderSettings';
+import { useResponsive } from '../hooks/useResponsive';
+import { useStudies } from '../hooks/useStudies';
+import { useTheme } from '../hooks/useTheme';
+import { impactLight, selectionHaptic } from '../utils/haptics';
+
+const COLOR_THEME_OPTIONS = Object.entries(COLOR_THEMES).map(([key, value]) => ({
+  key,
+  ...value
+}));
+
+export default function ConfigurationScreen() {
+  const { ms } = useResponsive();
+  const { isDarkMode, toggleDarkMode, colors, colorTheme, setColorTheme, hapticsEnabled, toggleHaptics } = useTheme();
+  const { setReaderTheme, readerTheme } = useReaderSettings();
+  const { clearHistory } = useHistory();
+  const [isDrawerVisible, setIsDrawerVisible] = useState(false);
+  const { studies, importBulk } = useStudies();
+  const router = useRouter();
+  const [isAutoBackupEnabled, setIsAutoBackupEnabled] = useState(false);
+  const [isDonateVisible, setIsDonateVisible] = useState(false);
+  const [isThemeModalVisible, setIsThemeModalVisible] = useState(false);
+  const [alertInfo, setAlertInfo] = useState<{ title: string; message: string; isDanger?: boolean } | null>(null);
+  const [isClearCacheConfirmVisible, setIsClearCacheConfirmVisible] = useState(false);
+
+  const handleClearCache = async () => {
+    try {
+      await clearHistory();
+      setIsClearCacheConfirmVisible(false);
+      setAlertInfo({ title: 'Limpar Histórico', message: 'Histórico limpo com sucesso.' });
+    } catch (e) {
+      console.error('Failed to clear cache', e);
+      setAlertInfo({ title: 'Erro', message: 'Não foi possível limpar o histórico.', isDanger: true });
+    }
+  };
+
+  useEffect(() => {
+    AsyncStorage.getItem(STORAGE_KEYS.AUTO_BACKUP).then(val => {
+      setIsAutoBackupEnabled(val === 'true');
+    });
+  }, []);
+
+  const handleToggleAutoBackup = async (val: boolean) => {
+    if (!val) {
+      setIsAutoBackupEnabled(false);
+      await AsyncStorage.setItem(STORAGE_KEYS.AUTO_BACKUP, 'false');
+      return;
+    }
+
+    if (Platform.OS === 'android') {
+      try {
+        const permissions = await (FileSystem as any).StorageAccessFramework.requestDirectoryPermissionsAsync();
+        if (permissions.granted) {
+          const fileName = `backup_estudos_automatico`;
+          const fileUri = await (FileSystem as any).StorageAccessFramework.createFileAsync(permissions.directoryUri, fileName, 'application/json');
+
+          await AsyncStorage.setItem(STORAGE_KEYS.AUTO_BACKUP_FILE_URI, fileUri);
+          await AsyncStorage.setItem(STORAGE_KEYS.AUTO_BACKUP, 'true');
+          setIsAutoBackupEnabled(true);
+
+          if (studies.length > 0) {
+            try {
+              await (FileSystem as any).writeAsStringAsync(fileUri, JSON.stringify(studies, null, 2));
+            } catch (e) { }
+          }
+          setAlertInfo({ title: 'Sucesso', message: 'Backup automático configurado para a pasta escolhida!' });
+        } else {
+          setIsAutoBackupEnabled(false);
+          await AsyncStorage.setItem(STORAGE_KEYS.AUTO_BACKUP, 'false');
+        }
+      } catch (e) {
+        setIsAutoBackupEnabled(false);
+        await AsyncStorage.setItem(STORAGE_KEYS.AUTO_BACKUP, 'false');
+        setAlertInfo({ title: 'Erro', message: 'Não foi possível configurar a pasta de backup.', isDanger: true });
+      }
+    } else {
+      setIsAutoBackupEnabled(true);
+      await AsyncStorage.setItem(STORAGE_KEYS.AUTO_BACKUP, 'true');
+      if (Platform.OS !== 'web' && studies.length > 0) {
+        try {
+          const path = `${(FileSystem as any).documentDirectory}backup_estudos_automatico.json`;
+          await (FileSystem as any).writeAsStringAsync(path, JSON.stringify(studies, null, 2));
+        } catch (e) { }
+      }
+    }
+  };
+
+  const handleManualBackup = async () => {
+    try {
+      if (studies.length === 0) {
+        setAlertInfo({ title: 'Aviso', message: 'Não há estudos para exportar.' });
+        return;
+      }
+      const json = JSON.stringify(studies, null, 2);
+      if (Platform.OS === 'web') {
+        const blob = new Blob([json], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a'); a.href = url; a.download = `backup_estudos_biblia_${new Date().getTime()}.json`; a.click();
+      } else if (Platform.OS === 'android') {
+        const permissions = await (FileSystem as any).StorageAccessFramework.requestDirectoryPermissionsAsync();
+        if (permissions.granted) {
+          const fileName = `backup_estudos_${new Date().getTime()}`;
+          const fileUri = await (FileSystem as any).StorageAccessFramework.createFileAsync(permissions.directoryUri, fileName, 'application/json');
+          await (FileSystem as any).writeAsStringAsync(fileUri, json);
+          setAlertInfo({ title: 'Sucesso', message: 'Backup exportado e salvo na pasta escolhida com sucesso!' });
+        }
+      } else {
+        const path = `${(FileSystem as any).documentDirectory}backup_estudos_${new Date().getTime()}.json`;
+        await (FileSystem as any).writeAsStringAsync(path, json);
+        await Sharing.shareAsync(path, { mimeType: 'application/json' });
+      }
+    } catch (err) {
+      setAlertInfo({ title: 'Erro', message: 'Não foi possível criar o arquivo de backup.', isDanger: true });
+    }
+  };
+
+  const handleImport = async () => {
+    try {
+      const result = await DocumentPicker.getDocumentAsync({ type: 'application/json' });
+      if (result.canceled) return;
+
+      let raw = '';
+      if (Platform.OS === 'web' && (result.assets[0] as any).file) {
+        raw = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = e => resolve(e.target?.result as string);
+          reader.onerror = reject;
+          reader.readAsText((result.assets[0] as any).file);
+        });
+      } else if (Platform.OS === 'web') {
+        raw = await fetch(result.assets[0].uri).then(r => r.text());
+      } else {
+        raw = await (FileSystem as any).readAsStringAsync(result.assets[0].uri);
+      }
+
+      const parsed = JSON.parse(raw);
+      if (!Array.isArray(parsed)) {
+        setAlertInfo({ title: 'Erro', message: 'Formato de arquivo inválido. É esperado um backup de múltiplos estudos (Array). Se você está tentando importar um único estudo antigo, crie um novo e cole os dados.', isDanger: true });
+        return;
+      }
+
+      const importedCount = importBulk(parsed);
+      setAlertInfo({
+        title: 'Restauração Concluída',
+        message: `${importedCount} estudo(s) restaurado(s) com sucesso.\n\n(${parsed.length - importedCount} ignorados pois já existem no app.)`
+      });
+    } catch (err) {
+      console.log('Import err', err);
+      setAlertInfo({ title: 'Erro', message: 'Não foi possível tratar o arquivo de restauração.', isDanger: true });
+    }
+  };
+
+  const handleToggle = () => {
+    impactLight();
+    const nextDark = !isDarkMode;
+    toggleDarkMode(nextDark);
+    setReaderTheme(nextDark ? 'dark' : 'light');
+  };
+
+  return (
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <BibleHeader title={ROUTE_LABELS[ROUTES.CONFIGURATION]} onMenuPress={() => setIsDrawerVisible(true)} />
+
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+        <BibleText style={{ marginLeft: 8, marginBottom: 8, fontSize: ms(14), fontWeight: '700', color: colors.textMuted }}>APARÊNCIA</BibleText>
+        <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border, shadowColor: colors.shadow }]}>
+          <SettingsItem
+            label="Modo Escuro"
+            description="Ative o tema noturno no app"
+            icon={isDarkMode ? 'moon' : 'sun'}
+            onPress={handleToggle}
+            rightElement={
+              <BibleSwitch
+                value={isDarkMode}
+                onValueChange={handleToggle}
+              />
+            }
+          />
+
+          <View style={{ height: 1, backgroundColor: colors.border, marginLeft: 70 }} />
+
+          <SettingsItem
+            label="Vibração"
+            description="Feedback tátil ao tocar nos itens"
+            icon="target"
+            onPress={() => toggleHaptics()}
+            rightElement={
+              <BibleSwitch
+                value={hapticsEnabled}
+                onValueChange={toggleHaptics}
+              />
+            }
+          />
+
+          <View style={{ height: 1, backgroundColor: colors.border, marginLeft: 70 }} />
+
+          <SettingsItem
+            label="Cor do Aplicativo"
+            description="Escolha a paleta de cores do app"
+            icon="layers"
+            onPress={() => setIsThemeModalVisible(true)}
+            rightElement={
+              <View style={{
+                backgroundColor: colors.primary,
+                paddingHorizontal: 16,
+                paddingVertical: 8,
+                borderRadius: 20,
+                elevation: 2,
+                shadowColor: colors.primary,
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.3,
+                shadowRadius: 4
+              }}>
+                <BibleText style={{ fontSize: ms(12), color: colors.onPrimary, fontWeight: '800', textTransform: 'uppercase' }}>Escolher</BibleText>
+              </View>
+            }
+          />
+        </View>
+
+        <BibleText style={{ marginTop: 24, marginLeft: 8, marginBottom: 8, fontSize: ms(14), fontWeight: '700', color: colors.textMuted }}>GERENCIAMENTO</BibleText>
+        <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border, shadowColor: colors.shadow }]}>
+          <SettingsItem
+            label="Lixeira de Estudos"
+            description="Gerencie estudos excluídos ou restaure-os"
+            icon="trash-2"
+            onPress={() => router.push(ROUTES.TRASH as any)}
+          />
+          <View style={{ height: 1, backgroundColor: colors.border, marginLeft: 70 }} />
+          <SettingsItem
+            label="Limpar Histórico"
+            description="Remove todo o historico de pesquisa de versiculos"
+            icon="clock"
+            onPress={() => setIsClearCacheConfirmVisible(true)}
+          />
+        </View>
+
+        <BibleText style={{ marginTop: 24, marginLeft: 8, marginBottom: 8, fontSize: ms(14), fontWeight: '700', color: colors.textMuted }}>BACKUP E RESTAURAÇÃO</BibleText>
+        <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border, shadowColor: colors.shadow }]}>
+          <SettingsItem
+            label="Backup Automático"
+            description="Salvar estudos na pasta do App"
+            icon="refresh-cw"
+            onPress={() => handleToggleAutoBackup(!isAutoBackupEnabled)}
+            rightElement={
+              <BibleSwitch
+                value={isAutoBackupEnabled}
+                onValueChange={handleToggleAutoBackup}
+              />
+            }
+          />
+
+          <View style={{ height: 1, backgroundColor: colors.border, marginLeft: 70 }} />
+
+          <SettingsItem
+            label="Exportar Backup"
+            description="Salvar ou compartilhar o arquivo de backup"
+            icon="download"
+            onPress={handleManualBackup}
+          />
+
+          <View style={{ height: 1, backgroundColor: colors.border, marginLeft: 70 }} />
+
+          <SettingsItem
+            label="Restaurar do Backup"
+            description="Importar arquivo de backup com todos os seus estudos"
+            icon="upload"
+            onPress={handleImport}
+          />
+        </View>
+      </ScrollView>
+
+      <BibleDrawerMenu
+        visible={isDrawerVisible}
+        activeItem="configuration"
+        onClose={() => setIsDrawerVisible(false)}
+        onSelectItem={() => { }}
+        onOpenDonate={() => { setIsDrawerVisible(false); setTimeout(() => setIsDonateVisible(true), 250); }}
+      />
+
+      <BibleConfirmModal
+        visible={isClearCacheConfirmVisible}
+        title="Limpar Histórico"
+        message="Tem certeza? Isso removerá sua posição de leitura salva."
+        confirmText="Limpar"
+        isDanger
+        onConfirm={handleClearCache}
+        onCancel={() => setIsClearCacheConfirmVisible(false)}
+      />
+
+      <BibleConfirmModal
+        visible={!!alertInfo}
+        title={alertInfo?.title || ''}
+        message={alertInfo?.message || ''}
+        confirmText="OK"
+        isDanger={alertInfo?.isDanger}
+        onConfirm={() => setAlertInfo(null)}
+      />
+
+
+      <BibleDrawerMenu
+        visible={isDrawerVisible}
+        activeItem="configuration"
+        onClose={() => setIsDrawerVisible(false)}
+        onSelectItem={() => { }}
+        onOpenDonate={() => { setIsDrawerVisible(false); setTimeout(() => setIsDonateVisible(true), 250); }}
+      />
+
+      <BibleConfirmModal
+        visible={isClearCacheConfirmVisible}
+        title="Limpar Histórico"
+        message="Tem certeza? Isso removerá sua posição de leitura salva."
+        confirmText="Limpar"
+        isDanger
+        onConfirm={handleClearCache}
+        onCancel={() => setIsClearCacheConfirmVisible(false)}
+      />
+
+      <BibleConfirmModal
+        visible={!!alertInfo}
+        title={alertInfo?.title || ''}
+        message={alertInfo?.message || ''}
+        confirmText="OK"
+        isDanger={alertInfo?.isDanger}
+        onConfirm={() => setAlertInfo(null)}
+      />
+
+      <DonateModal visible={isDonateVisible} onClose={() => setIsDonateVisible(false)} />
+
+      <BiblePageModal
+        visible={isThemeModalVisible}
+        onClose={() => setIsThemeModalVisible(false)}
+        header={
+          <View style={styles.modalHeader}>
+            <BibleIcon name="layers" color={colors.primary} backgroundColor={colors.primary + '15'} style={{ marginRight: 8 }} />
+            <BibleText style={[styles.modalTitle, { fontSize: ms(16), color: colors.onSurface, fontWeight: '700' }]}>Cor do Aplicativo</BibleText>
+            <BibleIcon name="x" color={colors.error} backgroundColor={colors.error + '20'} onPress={() => setIsThemeModalVisible(false)} style={{ marginLeft: 'auto' }} />
+          </View>
+        }
+      >
+        <View style={styles.swatchGrid}>
+          {COLOR_THEME_OPTIONS.map((theme) => {
+            const isActive = colorTheme === theme.key;
+            const swatchColor = theme.swatch;
+            return (
+              <TouchableOpacity
+                key={theme.key}
+                activeOpacity={0.8}
+                onPress={() => {
+                  selectionHaptic();
+                  setColorTheme(theme.key as ColorThemeKey);
+                }}
+                style={[
+                  styles.swatchItem,
+                  {
+                    borderColor: isActive ? swatchColor : colors.border,
+                    backgroundColor: isActive ? swatchColor + '15' : colors.surfaceHighlight
+                  },
+                  isActive && { borderWidth: 2, borderColor: swatchColor },
+                ]}
+              >
+                <View style={[styles.swatchDot, { backgroundColor: swatchColor }]}>
+                  {isActive && (
+                    <BibleIcon name="check" color={colors.onPrimary} size={ms(12)} />
+                  )}
+                </View>
+                <BibleText style={[
+                  styles.swatchLabel,
+                  { fontSize: ms(12), color: isActive ? swatchColor : colors.onSurface },
+                  isActive && { fontWeight: '800' },
+                ]}>
+                  {theme.label}
+                </BibleText>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+      </BiblePageModal>
+
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  content: {
+    padding: 16,
+    paddingBottom: 32,
+  },
+  card: {
+    borderRadius: 16,
+    borderWidth: 1,
+    overflow: 'hidden',
+    elevation: 1,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+    gap: 16,
+  },
+  cardTextContainer: {
+    flex: 1,
+    gap: 4,
+  },
+  cardTitle: {
+    fontWeight: '700',
+  },
+  cardDesc: {
+    lineHeight: 18,
+  },
+
+  swatchGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    marginTop: 12,
+    rowGap: 10,
+    width: '100%',
+  },
+  swatchItem: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 4,
+    paddingVertical: 10,
+    borderRadius: 14,
+    borderWidth: 1.5,
+    width: '31.5%',
+    minHeight: 80,
+  },
+  swatchDot: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  swatchLabel: {
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+  modalHeader: { flexDirection: 'row', alignItems: 'center' },
+  modalTitle: { fontWeight: '800' },
+});

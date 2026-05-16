@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { Animated, StyleSheet, View } from 'react-native';
-import { useResponsive } from '../hooks/use-responsive';
-import { useTheme } from '../hooks/use-theme';
+import { useResponsive } from '../hooks/useResponsive';
+import { useTheme } from '../hooks/useTheme';
 
 export type BibleSkeletonProps = {
   onlyContent?: boolean;

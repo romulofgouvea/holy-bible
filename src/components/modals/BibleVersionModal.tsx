@@ -3,13 +3,13 @@ import React, { useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import { STORAGE_KEYS } from '../../constants/storage';
 import { ALIASES, BibleVersionInfo } from '../../data';
-import { useResponsive } from '../../hooks/use-responsive';
-import { useTheme } from '../../hooks/use-theme';
+import { useResponsive } from '../../hooks/useResponsive';
+import { useTheme } from '../../hooks/useTheme';
 import { BibleCountPill } from '../BibleCountPill';
-import { BibleDivider } from '../BibleDivider';
 import { BibleGridBlock } from '../BibleGridBlock';
 import { BibleIcon } from '../BibleIcon';
 import { BibleListCard } from '../BibleListCard';
+import { BiblePageModal } from './BiblePageModal';
 import { BibleText } from '../BibleText';
 
 type BibleVersionModalProps = {
@@ -56,55 +56,70 @@ export function BibleVersionModal({ visible, onClose, onSelect, currentVersionSi
     onSelect(item);
     setSearchQuery('');
   };
-
-  if (!visible) return null;
+  const paddingHorizontal = ms(16) * 4;
+  const availableWidth = width - paddingHorizontal;
+  const numCols = Math.max(1, Math.floor(availableWidth / ms(60)));
+  const itemWidth = ((availableWidth - (numCols - 1) * 8) / numCols) - 0.01;
 
   return (
-    <View style={styles.container} testID="bible-version-modal">
-      <View style={styles.header} testID="bible-version-header">
-        <BibleIcon
-          name="book-open"
-          color={colors.primary}
-          backgroundColor={colors.primary + '20'}
-          style={{ marginRight: 8 }}
-        />
-        <BibleText style={[styles.title, { fontSize: ms(18), color: colors.primary, fontWeight: '800' }]}>Versões</BibleText>
-        <TouchableOpacity onPress={() => setIsSearchVisible(!isSearchVisible)} style={[styles.iconBtn, styles.headerActionSpacing, { backgroundColor: colors.surfaceHighlight }]}>
-          <BibleIcon name="search" size={ms(16)} color={isSearchVisible ? colors.primary : colors.onSurface} />
-        </TouchableOpacity>
-        <View style={[styles.viewToggles, { backgroundColor: colors.surfaceHighlight }]}>
-          <TouchableOpacity onPress={() => handleSetViewMode('grid')} style={[styles.toggleBtn, viewMode === 'grid' && { backgroundColor: colors.surface }]}>
-            <BibleIcon name="grid" size={ms(16)} color={viewMode === 'grid' ? colors.primary : colors.onSurface} />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => handleSetViewMode('list')} style={[styles.toggleBtn, viewMode === 'list' && { backgroundColor: colors.surface }]}>
-            <BibleIcon name="list" size={ms(16)} color={viewMode === 'list' ? colors.primary : colors.onSurface} />
-          </TouchableOpacity>
+    <BiblePageModal
+      visible={visible}
+      onClose={onClose}
+      fullHeight
+      header={
+        <View>
+          <View style={styles.header}>
+            <BibleIcon
+              name="book-open"
+              color={colors.primary}
+              backgroundColor={colors.primary + '20'}
+              style={{ marginRight: 8 }}
+            />
+            <BibleText style={[styles.title, { fontSize: ms(18), color: colors.primary, fontWeight: '800' }]}>Versões</BibleText>
+            <TouchableOpacity onPress={() => setIsSearchVisible(!isSearchVisible)} style={[styles.iconBtn, styles.headerActionSpacing, { backgroundColor: colors.surfaceHighlight }]}>
+              <BibleIcon name="search" size={ms(16)} color={isSearchVisible ? colors.primary : colors.onSurface} />
+            </TouchableOpacity>
+            <View style={[styles.viewToggles, { backgroundColor: colors.surfaceHighlight }]}>
+              <TouchableOpacity onPress={() => handleSetViewMode('grid')} style={[styles.toggleBtn, viewMode === 'grid' && { backgroundColor: colors.surface }]}>
+                <BibleIcon name="grid" size={ms(16)} color={viewMode === 'grid' ? colors.primary : colors.onSurface} />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => handleSetViewMode('list')} style={[styles.toggleBtn, viewMode === 'list' && { backgroundColor: colors.surface }]}>
+                <BibleIcon name="list" size={ms(16)} color={viewMode === 'list' ? colors.primary : colors.onSurface} />
+              </TouchableOpacity>
+            </View>
+            <BibleIcon
+              name="x"
+              color={colors.error}
+              backgroundColor={colors.error + '20'}
+              onPress={onClose}
+              style={styles.headerActionSpacing}
+            />
+          </View>
+
+          {isSearchVisible && (
+            <View style={[styles.searchContainer, { backgroundColor: colors.surfaceHighlight, borderColor: colors.border }]} testID="bible-version-search-container">
+              <BibleIcon name="search" size={ms(16)} color={colors.primary} style={styles.searchIcon} />
+              <TextInput
+                style={[styles.searchInput, { fontSize: ms(14), color: colors.onSurface }]}
+                placeholder="Pesquisar versão..."
+                placeholderTextColor={colors.textMuted}
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+                underlineColorAndroid="transparent"
+                autoFocus
+              />
+            </View>
+          )}
         </View>
-        <BibleIcon
-          name="x"
-          color={colors.error}
-          backgroundColor={colors.error + '20'}
-          onPress={onClose}
-          style={styles.headerActionSpacing}
+      }
+      footer={
+        <BibleCountPill
+          count={filteredVersions.length}
+          label="versão"
+          labelPlural="versões"
         />
-      </View>
-
-      {isSearchVisible && (
-        <View style={[styles.searchContainer, { backgroundColor: colors.surfaceHighlight, borderColor: colors.border }]} testID="bible-version-search-container">
-          <BibleIcon name="search" size={ms(16)} color={colors.primary} style={styles.searchIcon} />
-          <TextInput
-            style={[styles.searchInput, { fontSize: ms(14), color: colors.onSurface }]}
-            placeholder="Pesquisar versão..."
-            placeholderTextColor={colors.textMuted}
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-            underlineColorAndroid="transparent"
-          />
-        </View>
-      )}
-
-      <BibleDivider margin={8} />
-
+      }
+    >
       <ScrollView testID="bible-version-list" ref={scrollViewRef} style={{ flex: 1 }} contentContainerStyle={styles.list} showsVerticalScrollIndicator={false} bounces={true} overScrollMode="always" keyboardShouldPersistTaps="handled" keyboardDismissMode="interactive">
         {viewMode === 'list' ? (
           filteredVersions.map((item) => {
@@ -132,13 +147,11 @@ export function BibleVersionModal({ visible, onClose, onSelect, currentVersionSi
         ) : (
           <View style={styles.gridContainer}>
             {filteredVersions.map((item) => {
-              const availableWidth = width - 32;
-              const numCols = Math.max(4, Math.floor(availableWidth / ms(72)));
-              const itemWidth = ((availableWidth - (numCols - 1) * 8) / numCols) - 0.01;
               const isSelected = item.sigla === currentVersionSigla;
               return (
                 <View
                   key={item.sigla}
+                  style={{ width: itemWidth }}
                   onLayout={isSelected ? (e) => {
                     if (!hasScrolledRef.current && visible && !searchQuery) {
                       hasScrolledRef.current = true;
@@ -159,23 +172,11 @@ export function BibleVersionModal({ visible, onClose, onSelect, currentVersionSi
           </View>
         )}
       </ScrollView>
-
-      <BibleDivider margin={8} />
-
-      <BibleCountPill
-        count={filteredVersions.length}
-        label="versão"
-        labelPlural="versões"
-      />
-    </View>
+    </BiblePageModal>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 8,
-  },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -200,7 +201,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 12,
     paddingHorizontal: 12,
-    marginTop: 8,
+    marginTop: 16,
     height: 44,
   },
   searchIcon: {
@@ -211,8 +212,9 @@ const styles = StyleSheet.create({
     height: '100%',
     ...({ outlineStyle: 'none' } as any),
   },
-  list: { flexGrow: 1, gap: 8 },
+  list: { flexGrow: 1, gap: 8, padding: 16 },
   viewToggles: { flexDirection: 'row', alignItems: 'center', borderRadius: 6, padding: 3, gap: 2, marginLeft: 8, height: 32 },
   toggleBtn: { width: 26, height: 26, justifyContent: 'center', alignItems: 'center', borderRadius: 4 },
-  gridContainer: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, justifyContent: 'flex-start' },
+  gridContainer: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, justifyContent: 'flex-start', width: '100%' },
 });
+

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text as RNText, TextProps, StyleSheet } from 'react-native';
 
-import { useReaderSettings } from '../hooks/use-reader-settings';
+import { useReaderSettings } from '../hooks/useReaderSettings';
 
 interface BibleTextProps extends TextProps {
   variant?: 'ui' | 'reading';

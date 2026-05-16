@@ -2,10 +2,10 @@ import { Feather } from '@expo/vector-icons';
 import React, { useEffect, useRef, useState } from 'react';
 import { Animated, Modal, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useResponsive } from '../hooks/use-responsive';
-import { useTheme } from '../hooks/use-theme';
-import { BibleIcon } from './BibleIcon';
-import { BibleText } from './BibleText';
+import { useResponsive } from '../../hooks/useResponsive';
+import { useTheme } from '../../hooks/useTheme';
+import { BibleIcon } from '../BibleIcon';
+import { BibleText } from '../BibleText';
 
 type ActionItem = {
   icon: React.ComponentProps<typeof Feather>['name'];
@@ -25,7 +25,7 @@ export function BibleActionsDrawer({ visible, onClose, title = "Ações", items 
   const { ms, width } = useResponsive();
   const drawerWidth = Math.min(ms(280), width * 0.75);
   const { colors } = useTheme();
-  const [modalVisible, setModalVisible] = useState(visible);
+  const [isModalVisible, setIsModalVisible] = useState(visible);
   const insets = useSafeAreaInsets();
 
   const translateX = useRef(new Animated.Value(drawerWidth)).current;
@@ -33,7 +33,7 @@ export function BibleActionsDrawer({ visible, onClose, title = "Ações", items 
 
   useEffect(() => {
     if (visible) {
-      setModalVisible(true);
+      setIsModalVisible(true);
       Animated.parallel([
         Animated.spring(translateX, {
           toValue: 0,
@@ -61,7 +61,7 @@ export function BibleActionsDrawer({ visible, onClose, title = "Ações", items 
           useNativeDriver: true,
         }),
       ]).start(() => {
-        setModalVisible(false);
+        setIsModalVisible(false);
       });
     }
   }, [visible, drawerWidth, translateX, backdropOpacity]);
@@ -98,7 +98,7 @@ export function BibleActionsDrawer({ visible, onClose, title = "Ações", items 
   );
 
   return (
-    <Modal visible={modalVisible} transparent animationType="none" onRequestClose={onClose}>
+    <Modal visible={isModalVisible} transparent animationType="none" onRequestClose={onClose}>
       <View style={StyleSheet.absoluteFill}>
         <TouchableWithoutFeedback onPress={onClose}>
           <Animated.View style={[styles.backdrop, { opacity: backdropOpacity, backgroundColor: colors.overlay }]} />

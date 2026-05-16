@@ -1,9 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, useContext, useEffect, useState, useMemo, useCallback } from 'react';
 import { Platform } from 'react-native';
-import { COLOR_THEMES, ThemeColors, sepiaColors } from '../constants/colors';
+import { COLOR_THEMES, ThemeColors, sepiaColors, ColorThemeKey } from '../constants/colors';
 import { STORAGE_KEYS } from '../constants/storage';
-import { useTheme } from './use-theme';
+import { useTheme } from './useTheme';
 
 export type ReaderTheme = 'light' | 'dark' | 'sepia';
 export type ReaderFont = 'poppins' | 'monospace';
@@ -26,7 +26,7 @@ const ReaderSettingsContext = createContext<ReaderSettingsContextType>({} as Rea
 
 export const ReaderSettingsProvider = ({ children }: { children: React.ReactNode }) => {
   const { colorTheme } = useTheme();
-  const [loaded, setLoaded] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
   const [fontSizeMultiplier, setFontSizeMultiplierState] = useState(1);
   const [textAlign, setTextAlignState] = useState<TextAlign>('left');
   const [readerTheme, setReaderThemeState] = useState<ReaderTheme>('light');
@@ -47,7 +47,7 @@ export const ReaderSettingsProvider = ({ children }: { children: React.ReactNode
         if (savedTheme !== null) setReaderThemeState(savedTheme as ReaderTheme);
         if (savedFont !== null) setReaderFontState(savedFont as ReaderFont);
       } catch (e) { }
-      setLoaded(true);
+      setIsLoaded(true);
     })();
   }, []);
 
@@ -72,7 +72,7 @@ export const ReaderSettingsProvider = ({ children }: { children: React.ReactNode
   }, []);
 
   const value = useMemo(() => {
-    const activePalette = COLOR_THEMES[colorTheme] || COLOR_THEMES.teal;
+    const activePalette = COLOR_THEMES[colorTheme as ColorThemeKey] || COLOR_THEMES.teal;
     const readerColors = readerTheme === 'sepia' 
       ? sepiaColors 
       : (readerTheme === 'dark' ? activePalette.dark : activePalette.light);
@@ -105,7 +105,7 @@ export const ReaderSettingsProvider = ({ children }: { children: React.ReactNode
     setReaderFont
   ]);
 
-  if (!loaded) return null;
+  if (!isLoaded) return null;
 
   return (
     <ReaderSettingsContext.Provider value={value}>

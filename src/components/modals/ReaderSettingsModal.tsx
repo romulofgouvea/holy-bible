@@ -1,13 +1,13 @@
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { ROUTE_LABELS } from '../../constants/routes';
-import { useReaderSettings } from '../../hooks/use-reader-settings';
-import { useResponsive } from '../../hooks/use-responsive';
-import { useTheme } from '../../hooks/use-theme';
+import { useReaderSettings } from '../../hooks/useReaderSettings';
+import { useResponsive } from '../../hooks/useResponsive';
+import { useTheme } from '../../hooks/useTheme';
 import { impactLight, selectionHaptic } from '../../utils/haptics';
 import { BibleDivider } from '../BibleDivider';
 import { BibleIcon } from '../BibleIcon';
-import { BiblePageModal } from '../BiblePageModal';
+import { BiblePageModal } from './BiblePageModal';
 import { BibleText } from '../BibleText';
 
 export function ReaderSettingsModal({ visible, onClose }: { visible: boolean; onClose: () => void }) {

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Animated, StyleSheet } from 'react-native';
-import { useTheme } from '../hooks/use-theme';
-import { ToastState } from '../hooks/use-toast';
+import { useTheme } from '../hooks/useTheme';
+import { ToastState } from '../hooks/useToast';
 import { BibleText } from './BibleText';
 
 type BibleToastProps = {

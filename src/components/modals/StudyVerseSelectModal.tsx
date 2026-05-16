@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
-import { useResponsive } from '../../hooks/use-responsive';
-import { useTheme } from '../../hooks/use-theme';
-import { BibleDivider } from '../BibleDivider';
+import { ScrollView, StyleSheet, View } from 'react-native';
+import { useResponsive } from '../../hooks/useResponsive';
+import { useTheme } from '../../hooks/useTheme';
+import { BibleCountPill } from '../BibleCountPill';
+import { BibleGridBlock } from '../BibleGridBlock';
 import { BibleIcon } from '../BibleIcon';
+import { BiblePageModal } from './BiblePageModal';
 import { BibleText } from '../BibleText';
 
 type StudyVerseSelectModalProps = {
@@ -17,7 +19,7 @@ type StudyVerseSelectModalProps = {
 };
 
 export function StudyVerseSelectModal({ visible, onClose, onBack, bookName, chapter, verses, onConfirm }: StudyVerseSelectModalProps) {
-  const { ms, height } = useResponsive();
+  const { ms, width } = useResponsive();
   const { colors } = useTheme();
   const [selectedNums, setSelectedNums] = useState<Set<number>>(new Set());
 
@@ -38,65 +40,81 @@ export function StudyVerseSelectModal({ visible, onClose, onBack, bookName, chap
     onConfirm(sorted);
   };
 
-  if (!visible) return null;
+  const paddingHorizontal = ms(16) * 4;
+  const availableWidth = width - paddingHorizontal;
+  const numCols = Math.max(1, Math.floor(availableWidth / ms(60)));
+  const itemWidth = ((availableWidth - (numCols - 1) * 8) / numCols) - 0.01;
 
   return (
-    <View style={styles.container} testID="study-verse-modal">
-      <View style={styles.header} testID="study-verse-header">
-        {onBack ? (
-          <TouchableOpacity onPress={onBack} style={[styles.iconBtn, styles.headerIconWrap, { backgroundColor: colors.primary + '25' }]}>
-            <BibleIcon name="arrow-left" size={ms(16)} color={colors.primary} />
-          </TouchableOpacity>
-        ) : (
-          <View style={[styles.iconBtn, styles.headerIconWrap, { backgroundColor: colors.primary + '25' }]}>
-            <BibleIcon name="list" size={ms(16)} color={colors.primary} />
-          </View>
-        )}
-        <BibleText style={[styles.title, { fontSize: ms(18), color: colors.primary, fontWeight: '800' }]}>{bookName} {chapter}</BibleText>
-        <BibleIcon
-          name="x"
-          color={colors.error}
-          backgroundColor={colors.error + '20'}
-          onPress={onClose}
-        />
-      </View>
-      <BibleDivider margin={8} />
-      <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }} bounces={true} overScrollMode="always" testID="study-verse-list">
-        {verses.map(({ verse, text }) => {
-          const selected = selectedNums.has(verse);
-          const primaryLow = colors.primary + '25';
-          return (
-            <TouchableOpacity key={verse} style={[styles.verseRow, { borderBottomColor: colors.border }, selected && { backgroundColor: primaryLow, borderLeftWidth: 3, borderLeftColor: colors.primary, paddingLeft: ms(6) }]} onPress={() => toggleVerse(verse)} activeOpacity={0.7}>
-              <BibleText style={[styles.verseNumLabel, { fontSize: ms(12), color: colors.primary }]}>{verse}</BibleText>
-              <BibleText style={[styles.verseRowText, { fontSize: ms(14), color: colors.onSurface }]}>{text}</BibleText>
-            </TouchableOpacity>
-          );
-        })}
+    <BiblePageModal
+      visible={visible}
+      onClose={onClose}
+      fullHeight
+      header={
+        <View style={styles.header}>
+          <BibleIcon
+            name="list"
+            color={colors.primary}
+            backgroundColor={colors.primary + '20'}
+            onPress={onBack}
+            style={styles.headerIconWrap}
+          />
+          <BibleText style={[styles.title, { fontSize: ms(18), color: colors.primary, fontWeight: '800' }]}>{bookName} {chapter}</BibleText>
+          <BibleIcon
+            name="x"
+            color={colors.error}
+            backgroundColor={colors.error + '20'}
+            onPress={onClose}
+          />
+        </View>
+      }
+      footer={
+        <View style={styles.footer}>
+          <BibleCountPill
+            count={selectedNums.size}
+            label="versículo"
+            labelPlural="versículos"
+          />
+          {selectedNums.size > 0 && (
+            <View style={{ marginLeft: 'auto' }}>
+              <BibleIcon
+                name="check"
+                color={colors.onPrimary}
+                backgroundColor={colors.primary}
+                onPress={handleConfirm}
+                size={ms(20)}
+              />
+            </View>
+          )}
+        </View>
+      }
+    >
+      <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }} contentContainerStyle={styles.list} bounces={true} overScrollMode="always">
+        <View style={styles.gridContainer}>
+          {verses.map(({ verse }) => {
+            const isSelected = selectedNums.has(verse);
+            return (
+              <BibleGridBlock
+                key={verse}
+                title={verse}
+                exactWidth={itemWidth}
+                isSelected={isSelected}
+                onPress={() => toggleVerse(verse)}
+              />
+            );
+          })}
+        </View>
       </ScrollView>
-      {selectedNums.size > 0 && (
-        <>
-          <BibleDivider margin={8} />
-          <TouchableOpacity style={[styles.confirmBtn, { backgroundColor: colors.primary }]} onPress={handleConfirm}>
-            <BibleIcon name="check" size={ms(16)} color={colors.onPrimary} />
-            <BibleText style={[styles.confirmText, { fontSize: ms(14), color: colors.onPrimary }]}>
-              {`Inserir ${selectedNums.size} ${selectedNums.size === 1 ? 'versículo' : 'versículos'}`}
-            </BibleText>
-          </TouchableOpacity>
-        </>
-      )}
-    </View>
+    </BiblePageModal>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 8 },
-  header: { flexDirection: 'row', alignItems: 'center', marginBottom: 0 },
-  iconBtn: { width: 32, height: 32, borderRadius: 6, justifyContent: 'center', alignItems: 'center' },
+  header: { flexDirection: 'row', alignItems: 'center' },
   headerIconWrap: { marginRight: 8 },
   title: { flex: 1, fontWeight: '700' },
-  verseRow: { flexDirection: 'row', alignItems: 'flex-start', paddingVertical: 12, paddingHorizontal: 8, borderBottomWidth: 1, gap: 10 },
-  verseNumLabel: { fontWeight: '700', minWidth: 24, paddingTop: 2 },
-  verseRowText: { flex: 1, lineHeight: 20 },
-  confirmBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, borderRadius: 14, paddingVertical: 13, marginTop: 4 },
-  confirmText: { fontWeight: '700' },
+  list: { paddingBottom: 12, paddingHorizontal: 16, paddingTop: 16 },
+  gridContainer: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, justifyContent: 'flex-start', width: '100%' },
+  footer: { flexDirection: 'row', alignItems: 'center', width: '100%' },
 });
+

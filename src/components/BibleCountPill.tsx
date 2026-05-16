@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, View, ViewStyle } from 'react-native';
-import { useTheme } from '../hooks/use-theme';
+import { useTheme } from '../hooks/useTheme';
 import { BibleText } from './BibleText';
 
 type BibleCountPillProps = {

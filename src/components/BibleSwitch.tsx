@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { Animated, StyleSheet, TouchableOpacity, View } from 'react-native';
-import { useTheme } from '../hooks/use-theme';
-import { useResponsive } from '../hooks/use-responsive';
+import { useTheme } from '../hooks/useTheme';
+import { useResponsive } from '../hooks/useResponsive';
 import { impactLight } from '../utils/haptics';
 
 interface BibleSwitchProps {

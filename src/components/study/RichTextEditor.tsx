@@ -2,9 +2,9 @@ import { COLOR_THEMES, COMMON_COLORS, getSupportColors, VERSE_HIGHLIGHTS } from 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Platform, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { WebView } from 'react-native-webview';
-import { useReaderSettings } from '../../hooks/use-reader-settings';
-import { useResponsive } from '../../hooks/use-responsive';
-import { useTheme } from '../../hooks/use-theme';
+import { useReaderSettings } from '../../hooks/useReaderSettings';
+import { useResponsive } from '../../hooks/useResponsive';
+import { useTheme } from '../../hooks/useTheme';
 import { impactLight, selectionHaptic } from '../../utils/haptics';
 import { BibleDivider } from '../BibleDivider';
 import { BibleIcon } from '../BibleIcon';

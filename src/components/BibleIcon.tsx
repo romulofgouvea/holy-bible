@@ -1,8 +1,8 @@
 import { Feather } from '@expo/vector-icons';
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native';
-import { useResponsive } from '../hooks/use-responsive';
-import { useTheme } from '../hooks/use-theme';
+import { useResponsive } from '../hooks/useResponsive';
+import { useTheme } from '../hooks/useTheme';
 
 export type BibleIconProps = {
   name: keyof typeof Feather.glyphMap;

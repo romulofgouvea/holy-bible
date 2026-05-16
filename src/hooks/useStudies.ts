@@ -39,7 +39,7 @@ function migrateBlocksToHtml(blocks: any[]) {
 
 export function useStudies() {
   const [studies, setStudies] = useState<Study[]>([]);
-  const [loaded, setLoaded] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
     AsyncStorage.getItem(STORAGE_KEYS.STUDIES).then((raw) => {
@@ -61,8 +61,8 @@ export function useStudies() {
         });
         setStudies(migrated);
       }
-      setLoaded(true);
-    }).catch(() => setLoaded(true));
+      setIsLoaded(true);
+    }).catch(() => setIsLoaded(true));
   }, []);
 
   const persist = useCallback((updated: Study[]) => {
@@ -173,7 +173,7 @@ export function useStudies() {
     studies: activeStudies,
     trashedStudies,
     allStudies: studies,
-    loaded,
+    isLoaded,
     createStudy,
     importBulk,
     updateStudy,

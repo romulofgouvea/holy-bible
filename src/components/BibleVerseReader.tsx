@@ -3,9 +3,9 @@ import { FlashList } from '@shopify/flash-list';
 import React, { useEffect, useMemo, useRef } from 'react';
 import { Animated, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { ALIASES } from '../data';
-import { useReaderSettings } from '../hooks/use-reader-settings';
-import { useResponsive } from '../hooks/use-responsive';
-import { useTheme } from '../hooks/use-theme';
+import { useReaderSettings } from '../hooks/useReaderSettings';
+import { useResponsive } from '../hooks/useResponsive';
+import { useTheme } from '../hooks/useTheme';
 import { impactLight } from '../utils/haptics';
 import { BibleText } from './BibleText';
 

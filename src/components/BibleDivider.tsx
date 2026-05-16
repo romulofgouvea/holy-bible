@@ -1,6 +1,6 @@
 import React from 'react';
 import { DimensionValue, View, ViewStyle } from 'react-native';
-import { useTheme } from '../hooks/use-theme';
+import { useTheme } from '../hooks/useTheme';
 
 interface BibleDividerProps {
   vertical?: boolean;

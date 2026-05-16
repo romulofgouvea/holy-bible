@@ -117,4 +117,7 @@ $FILENAME = "$TIMESTAMP-holy-bible.aab"
 $DESTINATION = "$OUTPUT_DIR\$FILENAME"
 Copy-Item $AAB_PATH $DESTINATION -Force
 
-Show-Step 3 3 "Build pronto. Iniciando envio..."
+# Limpeza: manter apenas os 3 builds mais recentes (incluindo o atual)
+Get-ChildItem "$OUTPUT_DIR\*-holy-bible.aab" | Sort-Object LastWriteTime -Descending | Select-Object -Skip 3 | Remove-Item -Force
+
+Show-Step 3 3 "Build pronto ($FILENAME). Iniciando envio..."

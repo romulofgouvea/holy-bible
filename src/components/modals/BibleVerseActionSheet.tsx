@@ -3,8 +3,8 @@ import React from 'react';
 import { Animated, Platform, Share, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { VERSE_HIGHLIGHTS as HIGHLIGHT_COLORS } from '../../constants/colors';
-import { useResponsive } from '../../hooks/use-responsive';
-import { useTheme } from '../../hooks/use-theme';
+import { useResponsive } from '../../hooks/useResponsive';
+import { useTheme } from '../../hooks/useTheme';
 import { BibleIcon } from '../BibleIcon';
 import { BibleAddToStudyModal } from './BibleAddToStudyModal';
 

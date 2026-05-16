@@ -53,3 +53,7 @@ local-builds/*.json
 local-builds/*.jks
 local-builds/credentials.md
 local-builds/.env
+
+
+local-scripts/*
+scratch/*

@@ -4,13 +4,13 @@ import { ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from 'react
 import { STORAGE_KEYS } from '../../constants/storage';
 import { Book } from '../../data';
 import bibleBooks from '../../data/bible-books.json';
-import { useResponsive } from '../../hooks/use-responsive';
-import { useTheme } from '../../hooks/use-theme';
+import { useResponsive } from '../../hooks/useResponsive';
+import { useTheme } from '../../hooks/useTheme';
 import { BibleCountPill } from '../BibleCountPill';
-import { BibleDivider } from '../BibleDivider';
 import { BibleGridBlock } from '../BibleGridBlock';
 import { BibleIcon } from '../BibleIcon';
 import { BibleListCard } from '../BibleListCard';
+import { BiblePageModal } from './BiblePageModal';
 import { BibleText } from '../BibleText';
 
 type BibleBookModalProps = {
@@ -21,6 +21,7 @@ type BibleBookModalProps = {
   onVersionPress?: () => void;
   onSelect: (bookName: string) => void;
   currentBookAbbrev?: string;
+  showVersionPill?: boolean;
 };
 
 type BookEntry = { abbrev: string; name: string };
@@ -37,7 +38,7 @@ const ABBREV_TO_NAME: Record<string, string> = {};
   });
 });
 
-export function BibleBookModal({ visible, onClose, books, versionSigla, onVersionPress, onSelect, currentBookAbbrev }: BibleBookModalProps) {
+export function BibleBookModal({ visible, onClose, books, versionSigla, onVersionPress, onSelect, currentBookAbbrev, showVersionPill }: BibleBookModalProps) {
   const { ms, height, width } = useResponsive();
   const { colors } = useTheme();
   const [searchQuery, setSearchQuery] = useState('');
@@ -97,11 +98,10 @@ export function BibleBookModal({ visible, onClose, books, versionSigla, onVersio
     ];
   }, [searchQuery, enrichedBooks]);
 
-  const availableWidth = width - 48;
-  const numCols = Math.max(4, Math.floor(availableWidth / ms(72)));
+  const paddingHorizontal = ms(16) * 4;
+  const availableWidth = width - paddingHorizontal;
+  const numCols = Math.max(1, Math.floor(availableWidth / ms(60)));
   const itemWidth = ((availableWidth - (numCols - 1) * 8) / numCols) - 0.01;
-
-  if (!visible) return null;
 
   const testamentHeaderOT = (
     <View style={styles.testamentSectionHeader}>
@@ -114,7 +114,7 @@ export function BibleBookModal({ visible, onClose, books, versionSigla, onVersio
   );
 
   const testamentHeaderNT = (
-    <View style={[styles.testamentSectionHeader, { marginTop: ms(12) }]}>
+    <View style={[styles.testamentSectionHeader, { marginTop: ms(56) }]}>
       <View style={[styles.testamentPill, { backgroundColor: colors.primary + '25' }]}>
         <BibleText style={[styles.testamentTitle, { color: colors.primary, fontSize: ms(11), fontWeight: '800' }]}>
           NOVO TESTAMENTO
@@ -126,65 +126,78 @@ export function BibleBookModal({ visible, onClose, books, versionSigla, onVersio
   let lastTestament: string | null = null;
 
   return (
-    <View style={styles.container} testID="bible-book-modal">
-      <View style={styles.header} testID="bible-book-header">
-        <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
-          {versionSigla && onVersionPress ? (
-            <TouchableOpacity activeOpacity={0.7} style={[styles.versionPill, { backgroundColor: colors.primary + '25' }]} onPress={onVersionPress}>
-              <BibleText style={[styles.versionPillText, { fontSize: ms(13), color: colors.primary, fontWeight: '700' }]}>{versionSigla}</BibleText>
-              <BibleIcon name="chevron-down" size={ms(16)} color={colors.primary} style={{ marginLeft: 2 }} />
-            </TouchableOpacity>
-          ) : (
-            <>
-              <View style={[styles.iconBtn, styles.headerIconWrap, { backgroundColor: colors.primary + '25' }]}>
-                <BibleIcon name="book" size={ms(16)} color={colors.primary} />
+    <BiblePageModal
+      visible={visible}
+      onClose={onClose}
+      fullHeight
+      header={
+        <View>
+          <View style={styles.header}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
+              {showVersionPill && versionSigla && onVersionPress ? (
+                <TouchableOpacity activeOpacity={0.7} style={[styles.versionPill, { backgroundColor: colors.primary + '25' }]} onPress={onVersionPress}>
+                  <BibleText style={[styles.versionPillText, { fontSize: ms(13), color: colors.primary, fontWeight: '700' }]}>{versionSigla}</BibleText>
+                  <BibleIcon name="chevron-down" size={ms(16)} color={colors.primary} style={{ marginLeft: 2 }} />
+                </TouchableOpacity>
+              ) : (
+                <>
+                  <View style={[styles.iconBtn, styles.headerIconWrap, { backgroundColor: colors.primary + '25' }]}>
+                    <BibleIcon name="book" size={ms(16)} color={colors.primary} />
+                  </View>
+                  <BibleText style={[styles.title, { flex: 0, flexShrink: 1, fontSize: ms(18), color: colors.primary, fontWeight: '800' }]}>Livros</BibleText>
+                </>
+              )}
+            </View>
+
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <TouchableOpacity onPress={() => setIsSearchVisible(!isSearchVisible)} style={[styles.iconBtn, styles.headerActionSpacing, { backgroundColor: colors.surfaceHighlight }]}>
+                <BibleIcon name="search" size={ms(16)} color={isSearchVisible ? colors.primary : colors.onSurface} />
+              </TouchableOpacity>
+
+              <View style={[styles.viewToggles, { backgroundColor: colors.surfaceHighlight }]}>
+                <TouchableOpacity onPress={() => handleSetViewMode('grid')} style={[styles.toggleBtn, viewMode === 'grid' && { backgroundColor: colors.surface }]}>
+                  <BibleIcon name="grid" size={ms(16)} color={viewMode === 'grid' ? colors.primary : colors.onSurface} />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => handleSetViewMode('list')} style={[styles.toggleBtn, viewMode === 'list' && { backgroundColor: colors.surface }]}>
+                  <BibleIcon name="list" size={ms(16)} color={viewMode === 'list' ? colors.primary : colors.onSurface} />
+                </TouchableOpacity>
               </View>
-              <BibleText style={[styles.title, { flex: 0, flexShrink: 1, fontSize: ms(18), color: colors.primary, fontWeight: '800' }]}>Livros</BibleText>
-            </>
-          )}
-        </View>
 
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <TouchableOpacity onPress={() => setIsSearchVisible(!isSearchVisible)} style={[styles.iconBtn, styles.headerActionSpacing, { backgroundColor: colors.surfaceHighlight }]}>
-            <BibleIcon name="search" size={ms(16)} color={isSearchVisible ? colors.primary : colors.onSurface} />
-          </TouchableOpacity>
-
-          <View style={[styles.viewToggles, { backgroundColor: colors.surfaceHighlight }]}>
-            <TouchableOpacity onPress={() => handleSetViewMode('grid')} style={[styles.toggleBtn, viewMode === 'grid' && { backgroundColor: colors.surface }]}>
-              <BibleIcon name="grid" size={ms(16)} color={viewMode === 'grid' ? colors.primary : colors.onSurface} />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => handleSetViewMode('list')} style={[styles.toggleBtn, viewMode === 'list' && { backgroundColor: colors.surface }]}>
-              <BibleIcon name="list" size={ms(16)} color={viewMode === 'list' ? colors.primary : colors.onSurface} />
-            </TouchableOpacity>
+              <BibleIcon
+                name="x"
+                color={colors.error}
+                backgroundColor={colors.error + '20'}
+                onPress={onClose}
+                style={styles.headerActionSpacing}
+              />
+            </View>
           </View>
 
-          <BibleIcon
-            name="x"
-            color={colors.error}
-            backgroundColor={colors.error + '20'}
-            onPress={onClose}
-            style={styles.headerActionSpacing}
-          />
-
+          {isSearchVisible && (
+            <View style={[styles.searchContainer, { backgroundColor: colors.surfaceHighlight, borderColor: colors.border }]} testID="bible-book-search-container">
+              <BibleIcon name="search" size={ms(16)} color={colors.primary} style={styles.searchIcon} />
+              <TextInput
+                style={[styles.searchInput, { fontSize: ms(14), color: colors.onSurface }]}
+                placeholder="Pesquisar livro..."
+                placeholderTextColor={colors.textMuted}
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+                underlineColorAndroid="transparent"
+                autoFocus
+              />
+            </View>
+          )}
         </View>
-      </View>
-
-      {isSearchVisible && (
-        <View style={[styles.searchContainer, { backgroundColor: colors.surfaceHighlight, borderColor: colors.border }]} testID="bible-book-search-container">
-          <BibleIcon name="search" size={ms(16)} color={colors.primary} style={styles.searchIcon} />
-          <TextInput
-            style={[styles.searchInput, { fontSize: ms(14), color: colors.onSurface }]}
-            placeholder="Pesquisar livro..."
-            placeholderTextColor={colors.textMuted}
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-            underlineColorAndroid="transparent"
+      }
+      footer={
+        <View style={styles.footer}>
+          <BibleCountPill
+            count={filteredBooks.length}
+            label="livro"
           />
         </View>
-      )}
-
-      <BibleDivider margin={4} />
-
+      }
+    >
       <ScrollView
         testID="bible-book-list"
         ref={scrollViewRef}
@@ -263,41 +276,30 @@ export function BibleBookModal({ visible, onClose, books, versionSigla, onVersio
           );
         })}
       </ScrollView>
-
-      <BibleDivider margin={4} />
-
-      <View style={styles.footer} testID="bible-book-footer">
-        <BibleCountPill
-          count={filteredBooks.length}
-          label="livro"
-        />
-      </View>
-    </View>
+    </BiblePageModal>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 8 },
-  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 },
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   iconBtn: { width: 32, height: 32, borderRadius: 6, justifyContent: 'center', alignItems: 'center' },
   headerActionSpacing: { marginLeft: 8 },
   headerIconWrap: { marginRight: 8 },
   title: { flex: 1, fontWeight: '700' },
   versionPill: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 8, height: 32, borderRadius: 6, marginRight: 8 },
   versionPillText: { fontWeight: '800' },
-  searchContainer: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderRadius: 12, paddingHorizontal: 12, marginTop: 8, marginBottom: 4, height: 44 },
+  searchContainer: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderRadius: 12, paddingHorizontal: 12, marginTop: 16, height: 44 },
   searchIcon: { marginRight: 8 },
   searchInput: { flex: 1, height: '100%', ...({ outlineStyle: 'none' } as any) },
-  scrollContent: { paddingVertical: 4 },
+  scrollContent: { paddingBottom: 16, paddingTop: 16, paddingHorizontal: 16 },
   footer: { paddingTop: 4 },
   viewToggles: { flexDirection: 'row', alignItems: 'center', borderRadius: 6, padding: 3, gap: 2, marginLeft: 8, height: 32 },
   toggleBtn: { width: 26, height: 26, justifyContent: 'center', alignItems: 'center', borderRadius: 4 },
-  gridContainer: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, justifyContent: 'flex-start', marginBottom: 8 },
+  gridContainer: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, justifyContent: 'flex-start', marginBottom: 8, width: '100%' },
   listGroup: { gap: 8, marginBottom: 8 },
   testamentSectionHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: 12,
   },
   testamentPill: {
     paddingHorizontal: 12,
@@ -325,3 +327,4 @@ const styles = StyleSheet.create({
     height: 1,
   },
 });
+

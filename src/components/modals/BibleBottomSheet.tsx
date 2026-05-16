@@ -1,9 +1,9 @@
 import React, { useEffect, useRef } from 'react';
 import { Animated, Dimensions, KeyboardAvoidingView, Modal, PanResponder, Platform, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { DESIGN_TOKENS } from '../constants/design';
-import { useTheme } from '../hooks/use-theme';
-import { BibleDivider } from './BibleDivider';
+import { DESIGN_TOKENS } from '../../constants/design';
+import { useTheme } from '../../hooks/useTheme';
+import { BibleDivider } from '../BibleDivider';
 
 type BibleBottomSheetProps = {
   visible: boolean;

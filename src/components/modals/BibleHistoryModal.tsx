@@ -2,13 +2,13 @@ import { FlashList } from '@shopify/flash-list';
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { ROUTE_LABELS } from '../../constants/routes';
-import { HistoryItem, useHistory } from '../../hooks/use-history';
-import { useResponsive } from '../../hooks/use-responsive';
-import { useTheme } from '../../hooks/use-theme';
+import { HistoryItem, useHistory } from '../../hooks/useHistory';
+import { useResponsive } from '../../hooks/useResponsive';
+import { useTheme } from '../../hooks/useTheme';
 import { BibleCountPill } from '../BibleCountPill';
 import { BibleIcon } from '../BibleIcon';
 import { BiblePageEmpty } from '../BiblePageEmpty';
-import { BiblePageModal } from '../BiblePageModal';
+import { BiblePageModal } from './BiblePageModal';
 import { BibleText } from '../BibleText';
 
 type BibleHistoryModalProps = {

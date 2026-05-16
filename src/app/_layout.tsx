@@ -3,8 +3,10 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { Platform, View } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import { ReaderSettingsProvider } from '../hooks/use-reader-settings';
-import { ThemeProvider, useTheme } from '../hooks/use-theme';
+import { ReaderSettingsProvider } from '../hooks/useReaderSettings';
+import { ThemeProvider, useTheme } from '../hooks/useTheme';
+import { BibleModalProvider } from '../hooks/useBibleModals';
+import { GlobalBibleModals } from '../components/modals/GlobalBibleModals';
 
 function useRoutePersistence() {
   const pathname = usePathname();
@@ -36,6 +38,7 @@ function AppLayout() {
       <View style={{ flex: 1, backgroundColor: colors.background }}>
         <Slot />
       </View>
+      <GlobalBibleModals />
     </SafeAreaView>
   );
 }
@@ -45,7 +48,9 @@ export default function RootLayout() {
     <SafeAreaProvider>
       <ThemeProvider>
         <ReaderSettingsProvider>
-          <AppLayout />
+          <BibleModalProvider>
+            <AppLayout />
+          </BibleModalProvider>
         </ReaderSettingsProvider>
       </ThemeProvider>
     </SafeAreaProvider>
