@@ -19,7 +19,9 @@ import { BibleText } from '../../components/BibleText';
 import { BibleModals } from '../../components/modals/BibleModals';
 import { DonateModal } from '../../components/modals/DonateModal';
 import { ROUTES } from '../../constants/routes';
+import { STORAGE_KEYS } from '../../constants/storage';
 import { useBible } from '../../hooks/use-bible';
+import { useHistory } from '../../hooks/use-history';
 import { useReaderSettings } from '../../hooks/use-reader-settings';
 import { useResponsive } from '../../hooks/use-responsive';
 import { useTheme } from '../../hooks/use-theme';
@@ -37,27 +39,51 @@ export type SearchResult = {
   text: string;
 };
 
-const STORAGE_SEARCH_SCOPE = '@bible:search_scope';
-const STORAGE_SEARCH_QUERY = '@bible:search_query';
-const STORAGE_SEARCH_HISTORY = '@bible:search_history';
 const MAX_HISTORY = 20;
+
 
 const HighlightText = React.memo(({ text, query, colors, fontSizeMultiplier, ms }: { text: string; query: string; colors: any; fontSizeMultiplier: number; ms: (v: number) => number }) => {
   const baseSize = 20;
   const currentSize = ms(baseSize * fontSizeMultiplier);
   const currentLineHeight = ms(28 * fontSizeMultiplier);
+  const textStyle = { color: colors.onBackground, fontSize: currentSize, lineHeight: currentLineHeight };
 
-  if (!query.trim()) return <BibleText variant="reading" style={[styles.verseText, { color: colors.onBackground, fontSize: currentSize, lineHeight: currentLineHeight }]}>{text}</BibleText>;
-  const idx = text.toLowerCase().indexOf(query.toLowerCase());
-  if (idx === -1) return <BibleText variant="reading" style={[styles.verseText, { color: colors.onBackground, fontSize: currentSize, lineHeight: currentLineHeight }]}>{text}</BibleText>;
+  const cleanQuery = query.trim().toLowerCase();
+  if (!cleanQuery) {
+    return <BibleText variant="reading" style={[styles.verseText, textStyle]}>{text}</BibleText>;
+  }
+
+  // Tokenize by splitting on spaces, keeping each token (word or space run)
+  const escapeRegExp = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  // Split text keeping the query as a whole token, then split non-match parts by space
+  const rawParts = text.split(new RegExp(`(${escapeRegExp(cleanQuery)})`, 'gi'));
+  const tokens: { text: string; highlighted: boolean }[] = [];
+  for (const part of rawParts) {
+    if (part.toLowerCase() === cleanQuery) {
+      tokens.push({ text: part, highlighted: true });
+    } else {
+      // Split non-highlighted part into individual words+spaces
+      const words = part.split(/(\s+)/);
+      for (const w of words) {
+        if (w) tokens.push({ text: w, highlighted: false });
+      }
+    }
+  }
+
   return (
-    <BibleText variant="reading" style={[styles.verseText, { color: colors.onBackground, fontSize: currentSize, lineHeight: currentLineHeight }]}>
-      {text.slice(0, idx)}
-      <BibleText variant="reading" style={[styles.verseText, { backgroundColor: colors.primary, color: colors.onPrimary, fontWeight: '700', borderRadius: 4, paddingHorizontal: 2, fontSize: currentSize, lineHeight: currentLineHeight }]}>
-        {text.slice(idx, idx + query.length)}
-      </BibleText>
-      {text.slice(idx + query.length)}
-    </BibleText>
+    <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center' }}>
+      {tokens.map((token, i) =>
+        token.highlighted ? (
+          <View key={i} style={{ backgroundColor: colors.primary + '20', borderRadius: 6, paddingHorizontal: 4, paddingVertical: 1, marginVertical: 1 }}>
+            <BibleText variant="reading" style={[styles.verseText, { color: colors.primary, fontWeight: '800', fontSize: currentSize, lineHeight: currentLineHeight }]}>
+              {token.text}
+            </BibleText>
+          </View>
+        ) : (
+          <BibleText key={i} variant="reading" style={[styles.verseText, textStyle]}>{token.text}</BibleText>
+        )
+      )}
+    </View>
   );
 });
 const SearchResultItem = React.memo(({ item, query, colors, fontSizeMultiplier, ms, onPress }: {
@@ -73,12 +99,12 @@ const SearchResultItem = React.memo(({ item, query, colors, fontSizeMultiplier, 
     style={[styles.resultCard, { backgroundColor: colors.surface, borderColor: colors.border }]}
     onPress={() => onPress(item)}
   >
-    <View style={[styles.refBadge, { backgroundColor: colors.primary, paddingVertical: ms(2) }]}>
-      <BibleText variant="reading" style={[styles.refText, { color: colors.onPrimary, fontSize: ms(11 * fontSizeMultiplier) }]}>
+    <View style={[styles.refBadge, { backgroundColor: colors.primary, paddingVertical: ms(4), paddingHorizontal: ms(10), borderRadius: ms(8) }]}>
+      <BibleText variant="reading" style={[styles.refText, { color: colors.onPrimary, fontSize: ms(12 * fontSizeMultiplier), fontWeight: '800' }]}>
         {item.bookName} {item.chapter}:{item.verse}
       </BibleText>
     </View>
-    <View style={{ flex: 1, marginTop: 6 }}>
+    <View style={{ flex: 1, marginTop: 12 }}>
       <HighlightText text={item.text} query={query} colors={colors} fontSizeMultiplier={fontSizeMultiplier} ms={ms} />
     </View>
   </TouchableOpacity>
@@ -91,7 +117,8 @@ export default function SearchScreen() {
   const router = useRouter();
   const pathname = usePathname();
   const params = useLocalSearchParams<{ query?: string; from?: string }>();
-  const { versionBooks, currentBook, chapter, setVersion, setBook, setChapter, chapterCount, version } = useBible();
+  const { versionBooks, currentBook, chapter, setVersion, setBook, setChapter, chapterCount, version, navigateTo } = useBible();
+  const { addHistoryEntry } = useHistory();
 
   const [query, setQuery] = useState('');
   const [scope, setScope] = useState<SearchScope>('bible');
@@ -115,9 +142,9 @@ export default function SearchScreen() {
     (async () => {
       try {
         const [savedScope, savedQuery, savedHistory] = await Promise.all([
-          AsyncStorage.getItem(STORAGE_SEARCH_SCOPE),
-          AsyncStorage.getItem(STORAGE_SEARCH_QUERY),
-          AsyncStorage.getItem(STORAGE_SEARCH_HISTORY),
+          AsyncStorage.getItem(STORAGE_KEYS.SEARCH_SCOPE),
+          AsyncStorage.getItem(STORAGE_KEYS.SEARCH_QUERY),
+          AsyncStorage.getItem(STORAGE_KEYS.SEARCH_HISTORY),
         ]);
         if (savedScope) setScope(savedScope as SearchScope);
 
@@ -134,11 +161,11 @@ export default function SearchScreen() {
   }, []);
 
   const saveScope = async (s: SearchScope) => {
-    try { await AsyncStorage.setItem(STORAGE_SEARCH_SCOPE, s); } catch (e) { }
+    try { await AsyncStorage.setItem(STORAGE_KEYS.SEARCH_SCOPE, s); } catch (e) { }
   };
 
   const saveQuery = async (q: string) => {
-    try { await AsyncStorage.setItem(STORAGE_SEARCH_QUERY, q); } catch (e) { }
+    try { await AsyncStorage.setItem(STORAGE_KEYS.SEARCH_QUERY, q); } catch (e) { }
   };
 
   const addToHistory = async (term: string) => {
@@ -146,7 +173,7 @@ export default function SearchScreen() {
     setHistory(prev => {
       const filtered = prev.filter(h => h.toLowerCase() !== term.toLowerCase());
       const next = [term.trim(), ...filtered].slice(0, MAX_HISTORY);
-      AsyncStorage.setItem(STORAGE_SEARCH_HISTORY, JSON.stringify(next)).catch(() => { });
+      AsyncStorage.setItem(STORAGE_KEYS.SEARCH_HISTORY, JSON.stringify(next)).catch(() => { });
       return next;
     });
   };
@@ -154,7 +181,7 @@ export default function SearchScreen() {
   const removeFromHistory = async (term: string) => {
     setHistory(prev => {
       const next = prev.filter(h => h !== term);
-      AsyncStorage.setItem(STORAGE_SEARCH_HISTORY, JSON.stringify(next)).catch(() => { });
+      AsyncStorage.setItem(STORAGE_KEYS.SEARCH_HISTORY, JSON.stringify(next)).catch(() => { });
       return next;
     });
   };
@@ -162,7 +189,7 @@ export default function SearchScreen() {
   const clearHistory = async () => {
     impactLight();
     setHistory([]);
-    try { await AsyncStorage.removeItem(STORAGE_SEARCH_HISTORY); } catch (e) { }
+    try { await AsyncStorage.removeItem(STORAGE_KEYS.SEARCH_HISTORY); } catch (e) { }
   };
 
   const activeBook = currentBook || versionBooks?.[0];
@@ -255,7 +282,15 @@ export default function SearchScreen() {
   const handleNavigate = (r: SearchResult) => {
     impactLight();
     addToHistory(query.trim());
-    router.push({ pathname: ROUTES.BIBLE, params: { book: r.bookAbbrev, ch: r.chapter, v: r.verse, ver: version } } as any);
+    addHistoryEntry({
+      version,
+      bookName: r.bookName,
+      bookAbbrev: r.bookAbbrev,
+      chapter: r.chapter,
+      verse: r.verse,
+    });
+    navigateTo({ book: r.bookAbbrev, chapter: r.chapter, verse: r.verse, version });
+    router.replace({ pathname: ROUTES.BIBLE } as any);
   };
 
   const handleClearQuery = () => {
@@ -372,7 +407,7 @@ export default function SearchScreen() {
                 <BibleText style={{ fontSize: ms(10), fontWeight: '800', textTransform: 'uppercase', letterSpacing: 1, color: colors.textMuted, opacity: 0.6 }}>
                   BUSCAS RECENTES
                 </BibleText>
-                <TouchableOpacity onPress={clearHistory} style={{ paddingHorizontal: 12, paddingVertical: 6, backgroundColor: colors.primary + '25', borderRadius: 12 }}>
+                <TouchableOpacity onPress={clearHistory} style={{ paddingHorizontal: 12, paddingVertical: 6, backgroundColor: colors.primary + '20', borderRadius: 12 }}>
                   <BibleText style={{ color: colors.primary, fontSize: ms(11), fontWeight: '800' }}>
                     Limpar
                   </BibleText>
@@ -408,13 +443,20 @@ export default function SearchScreen() {
       ) : showNoResults ? (
         <BiblePageEmpty
           title="Sem resultados"
-          description={`Nenhum versículo encontrado para "${query.trim()}"`}
+          description={`Nenhum versículo encontrado com o texto: "${query.trim()}"`}
           icon="slash"
           actionLabel="Limpar Busca"
           onAction={handleClearQuery}
         />
       ) : showResults ? (
         <View style={{ flex: 1 }}>
+          <View style={{ marginHorizontal: 12, marginBottom: 8 }}>
+            <BibleCountPill
+              count={results.length}
+              label="resultado"
+              labelPlural="resultados"
+            />
+          </View>
           <FlashList
             data={results}
             keyExtractor={(_, i) => String(i)}
@@ -424,13 +466,6 @@ export default function SearchScreen() {
             contentContainerStyle={{ padding: 12 }}
             ItemSeparatorComponent={() => <View style={{ height: 8 }} />}
             keyboardShouldPersistTaps="handled"
-            ListHeaderComponent={
-              <BibleCountPill
-                count={results.length}
-                label="resultado"
-                labelPlural="resultados"
-              />
-            }
             renderItem={({ item }) => (
               <SearchResultItem
                 item={item}
@@ -487,24 +522,19 @@ export default function SearchScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   searchContainer: {
-    paddingHorizontal: 12,
-    paddingTop: 12,
-    borderBottomWidth: 1,
-    gap: 12,
+    padding: 16,
+    gap: 8,
   },
   searchBox: {
     flexDirection: 'row',
     alignItems: 'center',
     height: 46,
     borderRadius: 12,
-    borderWidth: 1,
-    paddingHorizontal: 12,
+    paddingHorizontal: 8,
   },
   input: { flex: 1, height: '100%' },
   segmentedControl: {
     flexDirection: 'row',
-    marginTop: 4,
-    marginBottom: 8,
     borderRadius: 12,
     borderWidth: 1,
     overflow: 'hidden',
@@ -514,21 +544,19 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 4,
   },
   scopeLabel: { fontWeight: '700' },
   centerBox: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
-    padding: 32,
+    justifyContent: 'center'
   },
   hint: { textAlign: 'center' },
   historyText: { fontWeight: '500' },
   resultCard: {
-    borderRadius: 12,
+    borderRadius: 16,
     borderWidth: 1,
-    padding: 12,
+    padding: 16,
   },
   refBadge: {
     alignSelf: 'flex-start',

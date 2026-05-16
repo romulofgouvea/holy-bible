@@ -27,12 +27,18 @@ export function BibleHistoryModal({ visible, onClose, onSelect }: BibleHistoryMo
   React.useEffect(() => {
     if (visible) {
       loadHistory();
-
-      setTimeout(() => {
-        listRef.current?.scrollToOffset({ offset: 0, animated: false });
-      }, 50);
     }
   }, [visible, loadHistory]);
+
+  // Separate effect to handle scrolling to top once data is available
+  React.useEffect(() => {
+    if (visible && history.length > 0) {
+      const timer = setTimeout(() => {
+        listRef.current?.scrollToOffset({ offset: 0, animated: false });
+      }, 150);
+      return () => clearTimeout(timer);
+    }
+  }, [visible, history.length]);
 
   return (
     <BiblePageModal visible={visible} onClose={onClose} fullHeight={true}

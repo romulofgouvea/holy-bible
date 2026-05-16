@@ -19,4 +19,7 @@ export const STORAGE_KEYS = {
   LAST_ROUTE_PARAMS: 'last_route_params',
   APP_CLEARED: 'app_cleared',
   BIBLE_HISTORY: '@bible_history',
+  SEARCH_SCOPE: '@bible:search_scope',
+  SEARCH_QUERY: '@bible:search_query',
+  SEARCH_HISTORY: '@bible:search_history',
 };

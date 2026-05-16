@@ -27,12 +27,12 @@ export function BiblePageEmpty({
 
   return (
     <View style={styles.container}>
-      <BibleIcon name={icon} size={ms(48)} containerSize={80} color={colors.textMuted} />
-      <BibleText style={[styles.title, { fontSize: ms(18), color: colors.textMuted, marginTop: 16 }]}>
+      <BibleIcon name={icon} size={ms(72)} containerSize={72} color={colors.textMuted} />
+      <BibleText style={[styles.title, { fontSize: ms(22), color: colors.textMuted, marginTop: 24 }]}>
         {title}
       </BibleText>
       {description && (
-        <BibleText style={[styles.description, { fontSize: ms(14), color: colors.textMuted, marginTop: 8 }]}>
+        <BibleText style={[styles.description, { fontSize: ms(16), color: colors.textMuted, marginTop: 8 }]}>
           {description}
         </BibleText>
       )}

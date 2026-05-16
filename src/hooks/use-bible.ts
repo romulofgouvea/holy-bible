@@ -197,6 +197,13 @@ export function useBible() {
     setVisibleVerse(item.verse);
   }, []);
 
+  const navigateTo = useCallback((opts: { book?: string; chapter?: number; verse?: number; version?: string }) => {
+    if (opts.version) handleSetVersion(opts.version);
+    if (opts.book) setBook(opts.book);
+    if (opts.chapter) { setChapter(opts.chapter); setVisibleChapter(opts.chapter); }
+    if (opts.verse) { setVerse(opts.verse); setVisibleVerse(opts.verse); }
+  }, [handleSetVersion]);
+
   return {
     isReady,
     version, setVersion: handleSetVersion, versionBooks,
@@ -211,6 +218,7 @@ export function useBible() {
     changeChapter,
     onVersePress,
     toggleHighlight,
-    bulkToggleHighlight
+    bulkToggleHighlight,
+    navigateTo,
   };
 }
