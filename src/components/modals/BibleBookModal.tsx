@@ -7,11 +7,11 @@ import bibleBooks from '../../data/bible-books.json';
 import { useResponsive } from '../../hooks/use-responsive';
 import { useTheme } from '../../hooks/use-theme';
 import { BibleCountPill } from '../BibleCountPill';
+import { BibleDivider } from '../BibleDivider';
 import { BibleGridBlock } from '../BibleGridBlock';
 import { BibleIcon } from '../BibleIcon';
 import { BibleListCard } from '../BibleListCard';
 import { BibleText } from '../BibleText';
-import { BibleDivider } from '../BibleDivider';
 
 type BibleBookModalProps = {
   visible: boolean;

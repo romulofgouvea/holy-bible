@@ -13,9 +13,9 @@ import {
 } from 'react-native';
 import { BibleDrawerMenu } from '../../components/BibleDrawerMenu';
 import { BibleHeader } from '../../components/BibleHeader';
+import { BiblePageEmpty } from '../../components/BiblePageEmpty';
 import { BibleSkeleton } from '../../components/BibleSkeleton';
 import { BibleText } from '../../components/BibleText';
-import { BiblePageEmpty } from '../../components/BiblePageEmpty';
 import { BibleModals } from '../../components/modals/BibleModals';
 import { DonateModal } from '../../components/modals/DonateModal';
 import { ROUTES } from '../../constants/routes';

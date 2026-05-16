@@ -36,7 +36,7 @@ export const getSupportColors = (colors: ThemeColors, isDarkMode: boolean) => ({
   border: isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)',
   shadow: '#000000',
   overlay: 'rgba(0,0,0,0.7)',
-  textMuted: isDarkMode ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.6)',
+  textMuted: isDarkMode ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.3)',
   surfaceHighlight: isDarkMode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)',
 });
 

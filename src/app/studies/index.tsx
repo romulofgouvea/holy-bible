@@ -1,6 +1,5 @@
 import { BibleActionsDrawer } from '@/components/BibleActionsDrawer';
 import { BibleActionsSheet } from '@/components/BibleActionsSheet';
-import { exportToPDF } from '../../utils/export';
 import { BibleBottomSheet } from '@/components/BibleBottomSheet';
 import { BibleIcon } from '@/components/BibleIcon';
 import { BibleConfirmModal } from '@/components/modals/BibleConfirmModal';
@@ -9,8 +8,6 @@ import * as FileSystem from 'expo-file-system/legacy';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
-  Alert,
-  KeyboardAvoidingView,
   Platform,
   StyleSheet,
   TextInput,
@@ -28,6 +25,7 @@ import { ROUTES, ROUTE_LABELS } from '../../constants/routes';
 import { useResponsive } from '../../hooks/use-responsive';
 import { Study, useStudies } from '../../hooks/use-studies';
 import { useTheme } from '../../hooks/use-theme';
+import { exportToPDF } from '../../utils/export';
 
 export default function EstudosScreen() {
   const { ms } = useResponsive();
@@ -147,11 +145,11 @@ export default function EstudosScreen() {
       >
         <View style={styles.cardContent}>
           {isSelectionMode ? (
-            <TouchableOpacity 
+            <TouchableOpacity
               onPress={() => toggleSelection(item.id)}
               style={[
-                styles.cardIcon, 
-                { 
+                styles.cardIcon,
+                {
                   backgroundColor: isSelected ? colors.primary : 'transparent',
                   borderWidth: isSelected ? 0 : 1.5,
                   borderColor: isSelected ? 'transparent' : colors.border
@@ -194,7 +192,7 @@ export default function EstudosScreen() {
           rightContent={
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
               {(!selectionPurpose || selectionPurpose === 'share') && (
-                <TouchableOpacity 
+                <TouchableOpacity
                   onPress={() => setShareMenuVisible(true)}
                   disabled={selectedIds.size === 0}
                   style={{ opacity: selectedIds.size === 0 ? 0.3 : 1 }}
@@ -203,7 +201,7 @@ export default function EstudosScreen() {
                 </TouchableOpacity>
               )}
               {(!selectionPurpose || selectionPurpose === 'delete') && (
-                <TouchableOpacity 
+                <TouchableOpacity
                   onPress={() => setMultiDeleteVisible(true)}
                   disabled={selectedIds.size === 0}
                   style={{ opacity: selectedIds.size === 0 ? 0.3 : 1 }}
@@ -250,7 +248,7 @@ export default function EstudosScreen() {
         <View style={{ gap: 8 }}>
           <TextInput
             style={[
-              styles.input, 
+              styles.input,
               { fontSize: ms(16), backgroundColor: colors.surfaceHighlight, color: colors.onSurface },
               Platform.select({ web: { outline: 'none' } as any, default: {} })
             ]}
@@ -262,8 +260,8 @@ export default function EstudosScreen() {
           />
           <TextInput
             style={[
-              styles.input, 
-              styles.inputMultiline, 
+              styles.input,
+              styles.inputMultiline,
               { fontSize: ms(15), backgroundColor: colors.surfaceHighlight, color: colors.onSurface },
               Platform.select({ web: { outline: 'none' } as any, default: {} })
             ]}

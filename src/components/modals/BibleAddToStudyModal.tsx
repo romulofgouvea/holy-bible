@@ -4,8 +4,9 @@ import { Platform, ScrollView, StyleSheet, TextInput, TouchableOpacity, View } f
 import { useResponsive } from '../../hooks/use-responsive';
 import { useStudies } from '../../hooks/use-studies';
 import { useTheme } from '../../hooks/use-theme';
-import { BibleBottomSheet } from '../BibleBottomSheet';
 import { BibleIcon } from '../BibleIcon';
+import { BiblePageEmpty } from '../BiblePageEmpty';
+import { BiblePageModal } from '../BiblePageModal';
 import { BibleText } from '../BibleText';
 import { SelectedVerse } from './BibleVerseActionSheet';
 
@@ -77,8 +78,7 @@ export function BibleAddToStudyModal({ visible, onClose, selectedVerses, onShowT
   };
 
   return (
-    <BibleBottomSheet visible={visible} onClose={onClose}
-      resizable={!isCreating}
+    <BiblePageModal visible={visible} onClose={onClose} fullHeight={!isCreating}
       header={<View style={styles.header}>
         <BibleIcon
           name={isCreating ? "arrow-left" : "plus-circle"}
@@ -117,16 +117,17 @@ export function BibleAddToStudyModal({ visible, onClose, selectedVerses, onShowT
         </TouchableOpacity>
       )}
     >
-      <View style={[styles.container]}>
+      <View style={isCreating ? undefined : styles.container}>
         {isCreating ? (
-          <ScrollView style={{ flex: 1 }} keyboardShouldPersistTaps="handled">
+          <ScrollView keyboardShouldPersistTaps="handled">
+            <BibleText style={[styles.sectionTitle, { color: colors.textMuted }]}>Título do Estudo</BibleText>
             <TextInput
               style={[
                 styles.input,
                 { color: colors.onSurface, backgroundColor: colors.surfaceHighlight },
                 Platform.select({ web: { outline: 'none' } as any, default: {} })
               ]}
-              placeholder="Título do estudo"
+              placeholder="Ex: Esperança em Meio à Provação"
               placeholderTextColor={colors.textMuted}
               value={newTitle}
               onChangeText={setNewTitle}
@@ -144,9 +145,11 @@ export function BibleAddToStudyModal({ visible, onClose, selectedVerses, onShowT
               showsVerticalScrollIndicator={false}
               contentContainerStyle={{ paddingBottom: 10 }}
               ListEmptyComponent={
-                <View style={styles.empty}>
-                  <BibleText style={{ color: colors.textMuted, textAlign: 'center' }}>Você ainda não tem estudos ativos.</BibleText>
-                </View>
+                <BiblePageEmpty
+                  title="Nenhum estudo ainda"
+                  description="Você ainda não tem estudos para adicionar os versículos selecionados."
+                  icon="book"
+                />
               }
               renderItem={({ item }) => (
                 <TouchableOpacity
@@ -169,7 +172,7 @@ export function BibleAddToStudyModal({ visible, onClose, selectedVerses, onShowT
           </View>
         )}
       </View>
-    </BibleBottomSheet>
+    </BiblePageModal>
   );
 }
 
@@ -187,4 +190,12 @@ const styles = StyleSheet.create({
   createActions: { flexDirection: 'row', gap: 12 },
   cancelBtn: { flex: 1, paddingVertical: 14, borderRadius: 14, alignItems: 'center' },
   cancelText: { fontWeight: '700' },
+  sectionTitle: {
+    fontSize: 10,
+    fontWeight: '800',
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+    opacity: 0.6,
+    paddingBottom: 8,
+  },
 });
