@@ -369,7 +369,7 @@ export default function SearchScreen() {
             ItemSeparatorComponent={() => <View style={{ height: 8 }} />}
             ListHeaderComponent={
               <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                <BibleText style={{ fontWeight: '800', color: colors.textMuted, fontSize: ms(12), letterSpacing: 0.5 }}>
+                <BibleText style={{ fontSize: ms(10), fontWeight: '800', textTransform: 'uppercase', letterSpacing: 1, color: colors.textMuted, opacity: 0.6 }}>
                   BUSCAS RECENTES
                 </BibleText>
                 <TouchableOpacity onPress={clearHistory} style={{ paddingHorizontal: 12, paddingVertical: 6, backgroundColor: colors.primary + '25', borderRadius: 12 }}>
