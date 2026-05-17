@@ -4,6 +4,7 @@ import {
   Keyboard,
   KeyboardAvoidingView,
   Platform,
+  ScrollView,
   StyleSheet,
   TextInput,
   TouchableOpacity,
@@ -12,10 +13,12 @@ import {
 import { exportToPDF } from '../utils/export';
 import { handleSmartBack } from '../utils/navigation';
 
-import { BibleActionsSheet } from '@/components/modals/BibleActionsSheet';
+import { BibleConfirmModal } from '@/components/modals/BibleConfirmModal';
+import { BibleActionsDrawer } from '@/components/modals/BibleActionsDrawer';
 import { BibleIcon } from '@/components/BibleIcon';
 import { BibleHeader } from '../components/BibleHeader';
 import { BibleSkeleton } from '../components/BibleSkeleton';
+import { BibleText } from '../components/BibleText';
 import { ReaderSettingsModal } from '../components/modals/ReaderSettingsModal';
 import { RichTextEditor, RichTextEditorRef } from '../components/study/RichTextEditor';
 import { useResponsive } from '../hooks/useResponsive';
@@ -187,7 +190,7 @@ export default function StudyEditorScreen() {
         />
       </KeyboardAvoidingView>
 
-      <BibleActionsSheet
+      <BibleActionsDrawer
         visible={menuVisible}
         onClose={() => setMenuVisible(false)}
         title="Ações"

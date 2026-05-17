@@ -430,83 +430,15 @@ export default function EstudosScreen() {
         ]}
       />
 
-      <BiblePageModal
+      <BibleActionsDrawer
         visible={isShareMenuVisible}
         onClose={() => setIsShareMenuVisible(false)}
-        header={
-          <View style={styles.modalHeader}>
-            <BibleIcon name="share-2" color={colors.primary} backgroundColor={colors.primary + '15'} style={{ marginRight: ms(DESIGN.spacing.sm) }} />
-            <BibleText style={[styles.modalTitle, { fontSize: ms(DESIGN.fontSize.lg), color: colors.primary, fontWeight: '800' }]}>Compartilhar</BibleText>
-            <BibleIcon name="x" color={colors.error} backgroundColor={colors.error + '20'} onPress={() => setIsShareMenuVisible(false)} style={{ marginLeft: 'auto' }} />
-          </View>
-        }
-      >
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: ms(DESIGN.spacing.md) }}>
-          <TouchableOpacity
-            style={[
-              styles.card,
-              {
-                borderColor: colors.border,
-                backgroundColor: colors.surface,
-              }
-            ]}
-            onPress={() => {
-              setIsShareMenuVisible(false);
-              exportPDFs(selectedIds);
-            }}
-            activeOpacity={0.7}
-          >
-            <View style={styles.cardContent}>
-              <BibleIcon
-                name="file-text"
-                color={colors.primary}
-                backgroundColor={colors.primary + '20'}
-              />
-              <View style={styles.cardText}>
-                <BibleText style={[styles.cardTitle, { fontSize: ms(DESIGN.fontSize.lg), color: colors.onSurface, fontWeight: '600' }]}>
-                  Compartilhar em PDF
-                </BibleText>
-                <BibleText style={{ fontSize: ms(DESIGN.fontSize.md), color: colors.textMuted }}>
-                  Formato PDF
-                </BibleText>
-              </View>
-              <BibleIcon name="chevron-right" color={colors.textMuted} size={ms(DESIGN.fontSize.xl)} />
-            </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[
-              styles.card,
-              {
-                borderColor: colors.border,
-                backgroundColor: colors.surface,
-              }
-            ]}
-            onPress={() => {
-              setIsShareMenuVisible(false);
-              exportBackup(selectedIds);
-            }}
-            activeOpacity={0.7}
-          >
-            <View style={styles.cardContent}>
-              <BibleIcon
-                name="file"
-                color={colors.primary}
-                backgroundColor={colors.primary + '20'}
-              />
-              <View style={styles.cardText}>
-                <BibleText style={[styles.cardTitle, { fontSize: ms(DESIGN.fontSize.lg), color: colors.onSurface, fontWeight: '600' }]}>
-                  Compartilhar em arquivo
-                </BibleText>
-                <BibleText style={{ fontSize: ms(DESIGN.fontSize.md), color: colors.textMuted }}>
-                  Formato JSON
-                </BibleText>
-              </View>
-              <BibleIcon name="chevron-right" color={colors.textMuted} size={ms(DESIGN.fontSize.xl)} />
-            </View>
-          </TouchableOpacity>
-        </ScrollView>
-      </BiblePageModal>
+        title="Compartilhar"
+        items={[
+          { icon: 'file-text', label: 'Compartilhar em PDF', onPress: () => exportPDFs(selectedIds) },
+          { icon: 'file', label: 'Compartilhar em arquivo', onPress: () => exportBackup(selectedIds) }
+        ]}
+      />
 
       <DonateModal visible={isDonateVisible} onClose={() => setIsDonateVisible(false)} />
     </View>
