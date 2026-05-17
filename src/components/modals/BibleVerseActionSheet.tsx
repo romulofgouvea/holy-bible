@@ -7,15 +7,7 @@ import { useResponsive } from '../../hooks/useResponsive';
 import { useTheme } from '../../hooks/useTheme';
 import { BibleIcon } from '../BibleIcon';
 import { BibleAddToStudyModal } from './BibleAddToStudyModal';
-
-export type SelectedVerse = {
-  chapter: number;
-  verse: number;
-  text: string;
-  bookName: string;
-  bookAbbrev: string;
-  version: string;
-};
+import { SelectedVerse } from '../../models';
 
 type VerseActionSheetProps = {
   visible: boolean;

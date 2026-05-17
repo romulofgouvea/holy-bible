@@ -2,15 +2,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { DeviceEventEmitter } from 'react-native';
 import { STORAGE_KEYS } from '../constants/storage';
-import { availableVersions, Book, getBibleData } from '../data';
+import { availableVersions, getBibleData } from '../data';
+import { Book, HighlightItem } from '../models';
 import { useHistory } from './useHistory';
-
-export interface HighlightItem {
-  color: string;
-  book: string;
-  chapter: number;
-  verse: number;
-}
 
 type BibleContextType = {
   version: string;
@@ -125,32 +119,51 @@ export function BibleProvider({ children }: { children: React.ReactNode }) {
         const normalized: Record<string, HighlightItem> = {};
         
         if (Array.isArray(parsed)) {
-          const books = getBibleData(version);
-          parsed.forEach((item: HighlightItem) => {
-            const foundBook = books.find(b => b.name.toLowerCase() === item.book.toLowerCase() || b.abbrev.toLowerCase() === item.book.toLowerCase()) || books[0];
-            const bookAbbrev = foundBook ? foundBook.abbrev : item.book;
-            const key = `${bookAbbrev}-${item.chapter}-${item.verse}`;
-            normalized[key] = item;
+          parsed.forEach((item: any) => {
+            let abbrev = item.abbrev;
+            if (!abbrev && item.book) {
+              const books = getBibleData(version);
+              const foundBook = books.find(b => b.name.toLowerCase() === item.book.toLowerCase() || b.abbrev.toLowerCase() === item.book.toLowerCase());
+              abbrev = foundBook ? foundBook.abbrev : item.book;
+            }
+            if (!abbrev) abbrev = 'gn';
+            
+            const key = `${abbrev}-${item.chapter}-${item.verse}`;
+            normalized[key] = {
+              color: item.color,
+              abbrev,
+              chapter: item.chapter,
+              verse: item.verse
+            };
           });
         } else if (parsed && typeof parsed === 'object') {
           Object.keys(parsed).forEach(key => {
             const val = parsed[key];
             if (typeof val === 'string') {
               const parts = key.split('-');
-              const bookAbbrev = parts[0] || 'gn';
+              const abbrev = parts[0] || 'gn';
               const chapter = parseInt(parts[1], 10) || 1;
               const verse = parseInt(parts[2], 10) || 1;
-              const books = getBibleData(version);
-              const foundBook = books.find(b => b.abbrev.toLowerCase() === bookAbbrev.toLowerCase() || b.name.toLowerCase() === bookAbbrev.toLowerCase());
-              const bookName = foundBook ? foundBook.name : bookAbbrev;
               normalized[key] = {
                 color: val,
-                book: bookName,
+                abbrev,
                 chapter,
                 verse
               };
             } else if (val && typeof val === 'object') {
-              normalized[key] = val;
+              let abbrev = val.abbrev;
+              if (!abbrev && val.book) {
+                const books = getBibleData(version);
+                const foundBook = books.find(b => b.name.toLowerCase() === val.book.toLowerCase() || b.abbrev.toLowerCase() === val.book.toLowerCase());
+                abbrev = foundBook ? foundBook.abbrev : val.book;
+              }
+              if (!abbrev) abbrev = 'gn';
+              normalized[key] = {
+                color: val.color,
+                abbrev,
+                chapter: val.chapter,
+                verse: val.verse
+              };
             }
           });
         }
@@ -249,12 +262,9 @@ export function BibleProvider({ children }: { children: React.ReactNode }) {
       if (next[key] && next[key].color === color) {
         delete next[key];
       } else {
-        const books = getBibleData(version);
-        const foundBook = books.find(b => b.abbrev.toLowerCase() === bookAbbrev.toLowerCase() || b.name.toLowerCase() === bookAbbrev.toLowerCase());
-        const bookName = foundBook ? foundBook.name : bookAbbrev;
         next[key] = {
           color,
-          book: bookName,
+          abbrev: bookAbbrev,
           chapter,
           verse
         };
@@ -263,22 +273,19 @@ export function BibleProvider({ children }: { children: React.ReactNode }) {
       AsyncStorage.setItem(STORAGE_KEYS.HIGHLIGHTS, JSON.stringify(arrayToSave)).catch(() => { });
       return next;
     });
-  }, [version]);
+  }, []);
 
   const bulkToggleHighlight = useCallback((verses: { bookAbbrev: string; chapter: number; verse: number }[], color: string | null) => {
     setHighlights(prev => {
       const next = { ...prev };
-      const books = getBibleData(version);
       verses.forEach(v => {
         const key = `${v.bookAbbrev}-${v.chapter}-${v.verse}`;
         if (!color || (next[key] && next[key].color === color)) {
           delete next[key];
         } else {
-          const foundBook = books.find(b => b.abbrev.toLowerCase() === v.bookAbbrev.toLowerCase() || b.name.toLowerCase() === v.bookAbbrev.toLowerCase());
-          const bookName = foundBook ? foundBook.name : v.bookAbbrev;
           next[key] = {
             color,
-            book: bookName,
+            abbrev: v.bookAbbrev,
             chapter: v.chapter,
             verse: v.verse
           };
@@ -288,7 +295,7 @@ export function BibleProvider({ children }: { children: React.ReactNode }) {
       AsyncStorage.setItem(STORAGE_KEYS.HIGHLIGHTS, JSON.stringify(arrayToSave)).catch(() => { });
       return next;
     });
-  }, [version]);
+  }, []);
 
   useEffect(() => {
     const sub = DeviceEventEmitter.addListener('BibleVersionChanged', (newV) => {

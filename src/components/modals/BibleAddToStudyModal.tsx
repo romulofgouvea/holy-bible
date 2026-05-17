@@ -8,7 +8,7 @@ import { BibleIcon } from '../BibleIcon';
 import { BiblePageEmpty } from '../BiblePageEmpty';
 import { BibleText } from '../BibleText';
 import { BiblePageModal } from './BiblePageModal';
-import { SelectedVerse } from './BibleVerseActionSheet';
+import { SelectedVerse } from '../../models';
 import { LIMITS } from '../../constants/limits';
 
 type BibleAddToStudyModalProps = {

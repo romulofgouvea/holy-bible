@@ -5,9 +5,7 @@ import { COLOR_THEMES, ThemeColors, sepiaColors, ColorThemeKey } from '../consta
 import { STORAGE_KEYS } from '../constants/storage';
 import { useTheme } from './useTheme';
 
-export type ReaderTheme = 'light' | 'dark' | 'sepia';
-export type ReaderFont = 'poppins' | 'monospace';
-export type TextAlign = 'auto' | 'left' | 'right' | 'center' | 'justify';
+import { ReaderTheme, ReaderFont, TextAlign } from '../models';
 
 export type ReaderSettingsContextType = {
   fontSizeMultiplier: number;

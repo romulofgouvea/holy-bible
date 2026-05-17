@@ -1,15 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useCallback, useEffect, useState } from 'react';
 import { STORAGE_KEYS } from '../constants/storage';
-
-export type HistoryItem = {
-  version: string;
-  bookName: string;
-  bookAbbrev: string;
-  chapter: number;
-  verse: number;
-  timestamp: number;
-};
+import { HistoryItem } from '../models';
+export type { HistoryItem };
 
 export function useHistory() {
   const [history, setHistory] = useState<HistoryItem[]>([]);

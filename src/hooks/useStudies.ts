@@ -1,16 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useCallback, useEffect, useState } from 'react';
 import { STORAGE_KEYS } from '../constants/storage';
-
-export type Study = {
-  id: string;
-  title: string;
-  createdAt: string;
-  timestamp?: number;
-  content: string;
-  isActive?: boolean;
-  deletedAt?: number;
-};
+import { Study } from '../models';
+export type { Study };
 
 function makeId() {
   return Math.random().toString(36).slice(2) + Date.now().toString(36);

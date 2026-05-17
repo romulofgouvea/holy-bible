@@ -1,4 +1,5 @@
-import { BibleVerseActionSheet, SelectedVerse } from '@/components/modals/BibleVerseActionSheet';
+import { BibleVerseActionSheet } from '@/components/modals/BibleVerseActionSheet';
+import { SelectedVerse } from '@/models';
 import { ReaderSettingsModal } from '@/components/modals/ReaderSettingsModal';
 import { useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
