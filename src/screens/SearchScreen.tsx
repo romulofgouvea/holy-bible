@@ -316,7 +316,7 @@ export default function SearchScreen() {
   const { openModal } = useBibleModals();
 
   const [query, setQuery] = useState('');
-  const [searchVersion, setSearchVersion] = useState(version || 'ARA');
+  const [searchVersion, setSearchVersion] = useState(version || 'NAA');
   const [isSearching, setIsSearching] = useState(false);
   const [results, setResults] = useState<SearchResult[]>([]);
   const [history, setHistory] = useState<string[]>([]);
@@ -340,7 +340,7 @@ export default function SearchScreen() {
   const saveSearchState = async (updates: Partial<SearchFilter>) => {
     try {
       const stored = await AsyncStorage.getItem(STORAGE_KEYS.CURRENT_SEARCH);
-      const current = stored ? JSON.parse(stored) : { query: '', version: version || 'ARA', book: 'Gn', chapter: 1, verse: 1 };
+      const current = stored ? JSON.parse(stored) : { query: '', version: version || 'NAA', book: 'Gn', chapter: 1, verse: 1 };
       const next = { ...current, ...updates };
       await AsyncStorage.setItem(STORAGE_KEYS.CURRENT_SEARCH, JSON.stringify(next));
     } catch (e) { }
@@ -363,7 +363,7 @@ export default function SearchScreen() {
             const readState = JSON.parse(savedRead);
             finalSearchState = {
               query: '',
-              version: readState.version || 'ARA',
+              version: readState.version || 'NAA',
               book: readState.book || 'Gn',
               chapter: readState.chapter || 1,
               verse: readState.verse || 1
@@ -374,7 +374,9 @@ export default function SearchScreen() {
         }
 
         if (finalSearchState) {
-          setQuery(finalSearchState.query || '');
+          setQuery('');
+          // Clear query in persisted search state too so it matches local state
+          saveSearchState({ query: '' });
           if (finalSearchState.version) setSearchVersion(finalSearchState.version);
           if (finalSearchState.book) {
             const books = getBibleData(finalSearchState.version || searchVersion);
@@ -738,11 +740,11 @@ export default function SearchScreen() {
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.filterModalContent}>
           <TouchableOpacity
             style={styles.filterModalItem}
-            onPress={() => openModal({ 
-              initialStep: 'version', 
+            onPress={() => openModal({
+              initialStep: 'version',
               target: 'search',
               initialVersion: searchVersion,
-              onSelect: (s) => s.version && setSearchVersion(s.version) 
+              onSelect: (s) => s.version && setSearchVersion(s.version)
             })}
           >
             <BibleIcon name="book" color={colors.primary} backgroundColor={colors.primary + '15'} style={styles.filterModalItemIcon} />

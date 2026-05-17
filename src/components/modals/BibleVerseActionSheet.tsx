@@ -30,7 +30,7 @@ export function BibleVerseActionSheet(props: VerseActionSheetProps) {
   const { visible, selectedVerses, highlights, onClose, onBulkHighlight } = props;
   const { ms, DESIGN } = useResponsive();
   const { colors } = useTheme();
-  
+
   const styles = useMemo(() => StyleSheet.create({
     bar: {
       position: 'absolute',
@@ -171,7 +171,7 @@ export function BibleVerseActionSheet(props: VerseActionSheetProps) {
       <Animated.View style={[styles.bar, {
         transform: [{ translateY }],
         backgroundColor: colors.background,
-        paddingBottom: Math.max(ms(DESIGN.spacing.lg), insets.bottom),
+        paddingBottom: ms(DESIGN.spacing.lg),
         borderColor: colors.border
       }]} id="bible-verse-action-sheet">
 

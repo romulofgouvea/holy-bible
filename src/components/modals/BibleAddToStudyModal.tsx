@@ -1,13 +1,13 @@
 import { FlashList } from '@shopify/flash-list';
-import React, { useState, useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Platform, ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import { useResponsive } from '../../hooks/useResponsive';
 import { useStudies } from '../../hooks/useStudies';
 import { useTheme } from '../../hooks/useTheme';
 import { BibleIcon } from '../BibleIcon';
 import { BiblePageEmpty } from '../BiblePageEmpty';
-import { BiblePageModal } from './BiblePageModal';
 import { BibleText } from '../BibleText';
+import { BiblePageModal } from './BiblePageModal';
 import { SelectedVerse } from './BibleVerseActionSheet';
 
 type BibleAddToStudyModalProps = {
@@ -29,7 +29,23 @@ export function BibleAddToStudyModal({ visible, onClose, selectedVerses, onShowT
     title: { flex: 1 },
     createBtn: { paddingVertical: ms(DESIGN.spacing.lg), borderRadius: ms(DESIGN.borderRadius.md), alignItems: 'center' },
     createText: { fontWeight: '700' },
-    studyItem: { flexDirection: 'row', alignItems: 'center', paddingVertical: ms(DESIGN.spacing.md), borderBottomWidth: 1 },
+    studyItem: {
+      borderWidth: 1,
+      marginBottom: ms(DESIGN.spacing.sm),
+      borderRadius: ms(DESIGN.borderRadius.lg),
+      overflow: 'hidden',
+      elevation: 1,
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.1,
+      shadowRadius: ms(DESIGN.borderRadius.xs),
+    },
+    studyItemContent: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingHorizontal: ms(DESIGN.button.padding.sm),
+      paddingVertical: ms(DESIGN.button.padding.sm),
+      gap: ms(DESIGN.spacing.md),
+    },
     empty: { padding: ms(DESIGN.spacing.giant), alignItems: 'center' },
     input: { borderRadius: ms(DESIGN.borderRadius.md), paddingHorizontal: ms(DESIGN.spacing.lg), paddingVertical: ms(DESIGN.spacing.lg), marginBottom: ms(DESIGN.spacing.sm) },
     inputMultiline: { minHeight: ms(DESIGN.layout.settingsIconOffset), textAlignVertical: 'top' },
@@ -142,7 +158,7 @@ export function BibleAddToStudyModal({ visible, onClose, selectedVerses, onShowT
         </TouchableOpacity>
       )}
     >
-      <View style={isCreating ? undefined : styles.container}>
+      <View style={[isCreating ? undefined : styles.container, { padding: ms(DESIGN.spacing.lg) }]}>
         {isCreating ? (
           <ScrollView keyboardShouldPersistTaps="handled">
             <BibleText style={[styles.sectionTitle, { color: colors.textMuted }]}>Título do Estudo</BibleText>
@@ -176,23 +192,38 @@ export function BibleAddToStudyModal({ visible, onClose, selectedVerses, onShowT
                   icon="book"
                 />
               }
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  style={[styles.studyItem, { borderBottomColor: colors.border }]}
-                  onPress={() => handleAddToStudy(item.id, item.content)}
-                >
-                  <BibleIcon name="book" color={colors.onSurface} backgroundColor={colors.surfaceHighlight} />
-                  <View style={{ flex: 1 }}>
-                    <BibleText style={{ color: colors.onSurface, fontWeight: '600', fontSize: ms(DESIGN.fontSize.lg) }} numberOfLines={1}>
-                      {item.title}
-                    </BibleText>
-                    <BibleText style={{ color: colors.textMuted, fontSize: ms(DESIGN.spacing.md) }}>
-                      {item.createdAt}
-                    </BibleText>
-                  </View>
-                  <BibleIcon name="chevron-right" color={colors.textMuted} />
-                </TouchableOpacity>
-              )}
+               renderItem={({ item }) => (
+                 <TouchableOpacity
+                   style={[
+                     styles.studyItem,
+                     {
+                       borderColor: colors.border,
+                       backgroundColor: colors.surface,
+                     }
+                   ]}
+                   onPress={() => handleAddToStudy(item.id, item.content)}
+                   activeOpacity={0.7}
+                 >
+                   <View style={styles.studyItemContent}>
+                     <BibleIcon
+                       name="book-open"
+                       color={colors.primary}
+                       backgroundColor={colors.primary + '20'}
+                       containerSize={ms(DESIGN.icon.xl)}
+                       borderRadius={ms(DESIGN.borderRadius.md)}
+                     />
+                     <View style={{ flex: 1, gap: ms(DESIGN.spacing.xs) }}>
+                       <BibleText style={{ color: colors.onSurface, fontWeight: '600', fontSize: ms(DESIGN.fontSize.lg) }} numberOfLines={1}>
+                         {item.title}
+                       </BibleText>
+                       <BibleText style={{ color: colors.textMuted, fontSize: ms(DESIGN.fontSize.md) }}>
+                         {item.createdAt}
+                       </BibleText>
+                     </View>
+                     <BibleIcon name="chevron-right" color={colors.textMuted} size={ms(DESIGN.fontSize.xl)} />
+                   </View>
+                 </TouchableOpacity>
+               )}
             />
           </View>
         )}
