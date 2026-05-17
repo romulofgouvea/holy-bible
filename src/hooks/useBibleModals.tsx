@@ -21,7 +21,7 @@ interface BibleModalOptions {
   initialVersion?: string;
   initialBook?: Book;
   initialChapter?: number;
-  target?: 'read' | 'search';
+  target?: 'read' | 'search' | 'study';
 }
 
 interface BibleModalContextType {

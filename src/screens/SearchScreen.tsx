@@ -512,7 +512,7 @@ export default function SearchScreen() {
   const showEmpty = query.trim().length === 0 && history.length === 0;
   const showTooShort = !isSearching && query.trim().length > 0 && query.trim().length < 2;
   const showNoResults = !isSearching && query.trim().length >= 2 && results.length === 0;
-  const showResults = !isSearching && results.length > 0;
+  const showResults = !isSearching && query.trim().length >= 2 && results.length > 0;
 
   if (!isLoaded || !searchVersionBooks) {
     return <BibleSkeleton />;
@@ -529,7 +529,7 @@ export default function SearchScreen() {
         onMenuPress={() => setIsDrawerVisible(true)}
 
         leftContent={
-          <View style={[styles.searchBox, { backgroundColor: colors.onPrimary, borderColor: colors.border }]}>
+          <View style={[styles.searchBox, { backgroundColor: colors.surface, borderColor: colors.border }]}>
             <BibleIcon name="search" size={ms(DESIGN.spacing.lg)} color={colors.primary} style={styles.searchIcon} />
             <TextInput
               ref={inputRef}
@@ -567,13 +567,13 @@ export default function SearchScreen() {
             disabled={!isFilterEnabled}
             activeOpacity={0.7}
           >
-            <BibleIcon name="sliders" color={colors.onPrimary} size={ms(DESIGN.spacing.lg)} />
+            <BibleIcon name="filter" color={colors.onPrimary} />
           </TouchableOpacity>
         }
       />
 
-      {results.length > 0 && (
-        <View style={[styles.resultsInfoContainer, { backgroundColor: colors.onPrimary, borderBottomColor: colors.border }]}>
+      {showResults && (
+        <View style={[styles.resultsInfoContainer, { backgroundColor: colors.surface, borderBottomColor: colors.border }]}>
           <View style={styles.appliedFilterLabel}>
             <BibleText style={[styles.appliedFilterText, { color: colors.textMuted, fontSize: ms(DESIGN.fontSize.xs) }]}>
               FILTRO APLICADO:

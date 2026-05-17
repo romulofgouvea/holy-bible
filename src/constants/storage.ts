@@ -1,5 +1,6 @@
 export const STORAGE_KEYS = {
   CURRENT_READ: 'bible-current-read',
+  CURRENT_STUDY: 'bible-current-study',
   CURRENT_SEARCH: 'bible-current-search',
   SEARCH_HISTORY: 'bible_search_history',
   HIGHLIGHTS: 'bible-highlights',

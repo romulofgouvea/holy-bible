@@ -26,6 +26,9 @@ import { useStudies } from '../hooks/useStudies';
 import { useTheme } from '../hooks/useTheme';
 import { useBibleModals } from '../hooks/useBibleModals';
 import { LIMITS } from '../constants/limits';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { STORAGE_KEYS } from '../constants/storage';
+import { getBibleData } from '../data';
 
 const noOutline = Platform.select({ web: { outline: 'none', outlineWidth: 0 } as any, default: {} });
 
@@ -70,12 +73,57 @@ export default function StudyEditorScreen() {
     return () => { if (saveTimeout.current) clearTimeout(saveTimeout.current); };
   }, [htmlContent, title, id, updateStudy]);
 
+  const [studyPosition, setStudyPosition] = useState<{ version: string; book: string; chapter: number }>({
+    version: 'NAA',
+    book: 'Gn',
+    chapter: 1
+  });
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const stored = await AsyncStorage.getItem(STORAGE_KEYS.CURRENT_STUDY);
+        if (stored) {
+          setStudyPosition(JSON.parse(stored));
+        }
+      } catch (e) {}
+    })();
+  }, []);
+
   const { openModal } = useBibleModals();
 
-  const openVersePicker = () => {
+  const openVersePicker = async () => {
+    let currentPos = studyPosition;
+    try {
+      const stored = await AsyncStorage.getItem(STORAGE_KEYS.CURRENT_STUDY);
+      if (stored) {
+        currentPos = JSON.parse(stored);
+        setStudyPosition(currentPos);
+      }
+    } catch (e) {}
+
+    const books = getBibleData(currentPos.version);
+    const foundBook = books.find(b => b.abbrev.toLowerCase() === currentPos.book.toLowerCase() || b.name.toLowerCase() === currentPos.book.toLowerCase()) || books[0];
+
     openModal({
       initialStep: 'book',
-      onConfirm: (selection) => onInsertVerseHtml(selection)
+      target: 'study',
+      initialVersion: currentPos.version,
+      initialBook: foundBook,
+      initialChapter: currentPos.chapter,
+      onConfirm: async (selection) => {
+        const nextPos = {
+          version: selection.version || currentPos.version,
+          book: selection.book?.abbrev || currentPos.book,
+          chapter: selection.chapter || currentPos.chapter
+        };
+        setStudyPosition(nextPos);
+        try {
+          await AsyncStorage.setItem(STORAGE_KEYS.CURRENT_STUDY, JSON.stringify(nextPos));
+        } catch (e) {}
+
+        onInsertVerseHtml(selection);
+      }
     });
   };
 

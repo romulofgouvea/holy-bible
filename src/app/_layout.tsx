@@ -3,11 +3,14 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { Platform, View } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import * as SplashScreen from 'expo-splash-screen';
 import { ReaderSettingsProvider } from '../hooks/useReaderSettings';
 import { ThemeProvider, useTheme } from '../hooks/useTheme';
 import { BibleModalProvider } from '../hooks/useBibleModals';
-import { BibleProvider } from '../hooks/useBible';
+import { BibleProvider, useBible } from '../hooks/useBible';
 import { GlobalBibleModals } from '../components/modals/GlobalBibleModals';
+
+SplashScreen.preventAutoHideAsync().catch(() => {});
 
 function useRoutePersistence() {
   const pathname = usePathname();
@@ -25,13 +28,20 @@ function useRoutePersistence() {
 
 function AppLayout() {
   const { colors } = useTheme();
-  useRoutePersistence();
+  const { isReady } = useBible();
+  const isRestored = useRoutePersistence();
 
   useEffect(() => {
     if (Platform.OS === 'web') {
       document.title = 'Bíblia Online';
     }
   }, []);
+
+  useEffect(() => {
+    if (isReady && isRestored) {
+      SplashScreen.hideAsync().catch(() => {});
+    }
+  }, [isReady, isRestored]);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#000000' }}>

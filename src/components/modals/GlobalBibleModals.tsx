@@ -83,7 +83,7 @@ export function GlobalBibleModals() {
         onSelect={(v) => {
           selectionHaptic();
           setNavVersion(v.sigla);
-          if (options.target !== 'search') {
+          if (!options.target || options.target === 'read') {
             setGlobalVersion(v.sigla);
           }
           if (options.onSelect) {
@@ -115,7 +115,7 @@ export function GlobalBibleModals() {
           const selectedBookObj = versionBooks.find(b => b.abbrev === bookNameOrAbbrev || b.name === bookNameOrAbbrev) || null;
           setNavBook(selectedBookObj);
           setNavChapter(1);
-          if (selectedBookObj && options.target !== 'search') {
+          if (selectedBookObj && (!options.target || options.target === 'read')) {
             setGlobalBook(selectedBookObj.abbrev);
             setGlobalChapter(1);
             setGlobalVerse(1);
@@ -147,7 +147,7 @@ export function GlobalBibleModals() {
         onSelect={(num) => {
           selectionHaptic();
           setNavChapter(num);
-          if (options.target !== 'search') {
+          if (!options.target || options.target === 'read') {
             setGlobalChapter(num);
           }
           if (options.skipVerseSelection) {
@@ -177,7 +177,7 @@ export function GlobalBibleModals() {
         currentItem={highlightedVerse}
         onSelect={(num) => {
           selectionHaptic();
-          if (options.target !== 'search') {
+          if (!options.target || options.target === 'read') {
             setGlobalVerse(num);
           }
           if (options.onSelect) {
