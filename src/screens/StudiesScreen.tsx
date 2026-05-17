@@ -123,6 +123,13 @@ export default function EstudosScreen() {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [newTitle, setNewTitle] = useState('');
   const [newDescription, setNewDescription] = useState('');
+
+  React.useEffect(() => {
+    if (isModalVisible) {
+      setNewTitle('');
+      setNewDescription('');
+    }
+  }, [isModalVisible]);
   const [isDrawerVisible, setIsDrawerVisible] = useState(false);
   const [studyToDelete, setStudyToDelete] = useState<string | null>(null);
   const [isMultiDeleteVisible, setIsMultiDeleteVisible] = useState(false);

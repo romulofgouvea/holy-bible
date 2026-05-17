@@ -66,6 +66,13 @@ export function BibleAddToStudyModal({ visible, onClose, selectedVerses, onShowT
   const [isCreating, setIsCreating] = useState(false);
   const [newTitle, setNewTitle] = useState('');
 
+  React.useEffect(() => {
+    if (visible) {
+      setIsCreating(false);
+      setNewTitle('');
+    }
+  }, [visible]);
+
   const buildVersesHtml = () => {
     if (selectedVerses.length === 0) return '';
     const sorted = [...selectedVerses].sort((a, b) => a.chapter !== b.chapter ? a.chapter - b.chapter : a.verse - b.verse);
