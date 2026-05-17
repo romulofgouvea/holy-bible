@@ -23,7 +23,7 @@ type SectionType = {
 type VerseReaderProps = {
     sections: SectionType[];
     blinkingVerse: string | null;
-    highlights: Record<string, string>;
+    highlights: Record<string, any>;
     selectedKeys: Record<string, boolean>;
     bookAbbrev: string;
     version: string;
@@ -215,7 +215,8 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
                     }
 
                     const isBlinking = blinkingVerse === `${item.chapter}-${item.verse}`;
-                    const highlightColorId = highlights[`${bookAbbrev}-${item.chapter}-${item.verse}`];
+                    const highlight = highlights[`${bookAbbrev}-${item.chapter}-${item.verse}`];
+                    const highlightColorId = highlight ? (typeof highlight === 'string' ? highlight : highlight.color) : undefined;
                     const isSelected = selectedKeys[`${bookAbbrev}-${item.chapter}-${item.verse}`];
                     const highlightColorHex = getHighlightColorValue(highlightColorId);
 

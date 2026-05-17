@@ -20,7 +20,7 @@ export type SelectedVerse = {
 type VerseActionSheetProps = {
   visible: boolean;
   selectedVerses: SelectedVerse[];
-  highlights: Record<string, string>;
+  highlights: Record<string, any>;
   onClose: () => void;
   onBulkHighlight: (verses: SelectedVerse[], color: string | null) => void;
   onShowToast?: (msg: string, type?: 'success' | 'info' | 'warning') => void;
@@ -155,10 +155,14 @@ export function BibleVerseActionSheet(props: VerseActionSheetProps) {
 
   let activeColorId: string | null = null;
   if (count > 0) {
-    let firstColor = highlights[`${selectedVerses[0].bookAbbrev}-${selectedVerses[0].chapter}-${selectedVerses[0].verse}`];
+    const getVal = (key: string) => {
+      const h = highlights[key];
+      return h ? (typeof h === 'string' ? h : h.color) : undefined;
+    };
+    let firstColor = getVal(`${selectedVerses[0].bookAbbrev}-${selectedVerses[0].chapter}-${selectedVerses[0].verse}`);
     let allSame = true;
     for (let i = 1; i < count; i++) {
-      if (highlights[`${selectedVerses[i].bookAbbrev}-${selectedVerses[i].chapter}-${selectedVerses[i].verse}`] !== firstColor) {
+      if (getVal(`${selectedVerses[i].bookAbbrev}-${selectedVerses[i].chapter}-${selectedVerses[i].verse}`) !== firstColor) {
         allSame = false;
         break;
       }
