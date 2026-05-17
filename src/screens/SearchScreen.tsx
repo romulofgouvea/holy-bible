@@ -45,9 +45,8 @@ export type SearchResult = {
 export type SearchFilter = {
   query: string;
   version: string;
-  book: string;
-  chapter: number;
-  verse: number;
+  book?: string;
+  chapter?: number;
 };
 
 const MAX_HISTORY = 20;
@@ -356,34 +355,10 @@ export default function SearchScreen() {
 
         let finalSearchState: SearchFilter | null = savedSearch ? JSON.parse(savedSearch) : null;
 
-        // If no search state exists, copy from current read state
-        if (!finalSearchState) {
-          const savedRead = await AsyncStorage.getItem(STORAGE_KEYS.CURRENT_READ);
-          if (savedRead) {
-            const readState = JSON.parse(savedRead);
-            finalSearchState = {
-              query: '',
-              version: readState.version || 'NAA',
-              book: readState.book || 'Gn',
-              chapter: readState.chapter || 1,
-              verse: readState.verse || 1
-            };
-            // Persist the copied state
-            await AsyncStorage.setItem(STORAGE_KEYS.CURRENT_SEARCH, JSON.stringify(finalSearchState));
-          }
-        }
-
         if (finalSearchState) {
           setQuery('');
-          // Clear query in persisted search state too so it matches local state
-          saveSearchState({ query: '' });
+          saveSearchState({ query: '', book: '', chapter: undefined });
           if (finalSearchState.version) setSearchVersion(finalSearchState.version);
-          if (finalSearchState.book) {
-            const books = getBibleData(finalSearchState.version || searchVersion);
-            const found = books.find((b: Book) => b.abbrev === finalSearchState!.book || b.name === finalSearchState!.book);
-            if (found) setSearchBook(found);
-          }
-          if (finalSearchState.chapter) setSearchChapter(finalSearchState.chapter);
         }
 
         if (savedHistory) setHistory(JSON.parse(savedHistory));

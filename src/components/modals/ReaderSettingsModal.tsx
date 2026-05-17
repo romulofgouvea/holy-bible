@@ -172,7 +172,7 @@ export function ReaderSettingsModal({ visible, onClose }: { visible: boolean; on
           <View style={styles.section}>
             <BibleText style={[styles.sectionTitle, { color: colors.textMuted }]}>Alinhamento</BibleText>
             <View style={[styles.unifiedRow, { backgroundColor: colors.surfaceHighlight }]}>
-              {(['left', 'center', 'justify'] as const).map((a, index) => (
+              {(['left', 'center', 'right', 'justify'] as const).map((a, index) => (
                 <React.Fragment key={a}>
                   <TouchableOpacity
                     onPress={() => { selectionHaptic(); setTextAlign(a); }}
@@ -182,12 +182,16 @@ export function ReaderSettingsModal({ visible, onClose }: { visible: boolean; on
                     ]}
                   >
                     <BibleIcon
-                      name={a === 'left' ? 'align-left' : a === 'center' ? 'align-center' : 'align-justify'}
+                      name={
+                        a === 'left' ? 'align-left' :
+                          a === 'center' ? 'align-center' :
+                            a === 'right' ? 'align-right' : 'align-justify'
+                      }
                       size={ms(DESIGN.fontSize.xl)}
                       color={textAlign === a ? colors.onPrimary : colors.onBackground}
                     />
                   </TouchableOpacity>
-                  {index < 2 && textAlign !== a && (['left', 'center', 'justify'] as const)[index + 1] !== textAlign && (
+                  {index < 3 && textAlign !== a && (['left', 'center', 'right', 'justify'] as const)[index + 1] !== textAlign && (
                     <BibleDivider vertical height="60%" color={dividerColor} />
                   )}
                 </React.Fragment>
