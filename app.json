@@ -2,7 +2,7 @@
   "expo": {
     "name": "Bíblia Online",
     "slug": "holy-bible",
-    "version": "1.2.3",
+    "version": "1.3.0",
     "orientation": "default",
     "icon": "./assets/images/icon.png",
     "scheme": "holybible",
@@ -16,7 +16,7 @@
     },
     "android": {
       "package": "br.com.stevanini.holybible",
-      "versionCode": 21,
+      "versionCode": 22,
       "adaptiveIcon": {
         "backgroundColor": "#008080",
         "foregroundImage": "./assets/images/adaptive-icon.png"

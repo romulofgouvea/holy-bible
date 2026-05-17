@@ -6,13 +6,13 @@ import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system/legacy';
 import { useRouter } from 'expo-router';
 import * as Sharing from 'expo-sharing';
-import React, { useEffect, useState , useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Platform, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { BibleDrawerMenu } from '../components/BibleDrawerMenu';
 import { BibleHeader } from '../components/BibleHeader';
-import { BiblePageModal } from '../components/modals/BiblePageModal';
 import { BibleSwitch } from '../components/BibleSwitch';
 import { BibleText } from '../components/BibleText';
+import { BiblePageModal } from '../components/modals/BiblePageModal';
 import { DonateModal } from '../components/modals/DonateModal';
 import { SettingsItem } from '../components/SettingsItem';
 import { ROUTES, ROUTE_LABELS } from '../constants/routes';
@@ -32,7 +32,7 @@ const COLOR_THEME_OPTIONS = Object.entries(COLOR_THEMES).map(([key, value]) => (
 export default function ConfigurationScreen() {
   const { ms, DESIGN } = useResponsive();
   const { isDarkMode, toggleDarkMode, colors, colorTheme, setColorTheme, hapticsEnabled, toggleHaptics } = useTheme();
-  
+
   const styles = useMemo(() => StyleSheet.create({
     container: {
       flex: 1,
@@ -70,7 +70,6 @@ export default function ConfigurationScreen() {
       flexDirection: 'row',
       flexWrap: 'wrap',
       justifyContent: 'space-between',
-      marginTop: ms(DESIGN.spacing.md),
       rowGap: ms(DESIGN.fontSize.xs),
       width: '100%',
     },
@@ -390,13 +389,13 @@ export default function ConfigurationScreen() {
         onClose={() => setIsThemeModalVisible(false)}
         header={
           <View style={styles.modalHeader}>
-            <BibleIcon name="layers" color={colors.primary} backgroundColor={colors.primary + '15'} style={{ marginRight: ms(DESIGN.spacing.sm) }} />
+            <BibleIcon name="layers" color={colors.primary} backgroundColor={colors.primary + '20'} style={{ marginRight: ms(DESIGN.spacing.sm) }} />
             <BibleText style={[styles.modalTitle, { fontSize: ms(DESIGN.fontSize.lg), color: colors.onSurface, fontWeight: '700' }]}>Cor do Aplicativo</BibleText>
             <BibleIcon name="x" color={colors.error} backgroundColor={colors.error + '20'} onPress={() => setIsThemeModalVisible(false)} style={{ marginLeft: 'auto' }} />
           </View>
         }
       >
-        <View style={styles.swatchGrid}>
+        <View style={[styles.swatchGrid, { padding: ms(DESIGN.spacing.md) }]}>
           {COLOR_THEME_OPTIONS.map((theme) => {
             const isActive = colorTheme === theme.key;
             const swatchColor = theme.swatch;
