@@ -161,8 +161,8 @@ export default function BibleScreen() {
           onSelect: (s) => {
             const nextV = s.version || version;
             const nextB = s.book?.abbrev || book;
-            const nextC = s.chapter || 1;
-            const nextVe = s.verse || 1;
+            const nextC = s.chapter || chapter;
+            const nextVe = s.verse || verse;
             navigateTo({ version: nextV, book: nextB, chapter: nextC, verse: nextVe });
             setTimeout(() => scrollToVerse(nextVe, nextC), 300);
           }
