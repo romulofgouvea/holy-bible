@@ -1,12 +1,11 @@
-import { BibleActionsDrawer } from '@/components/modals/BibleActionsDrawer';
-import { BibleActionsSheet } from '@/components/modals/BibleActionsSheet';
 import { BibleIcon } from '@/components/BibleIcon';
-import { BiblePageModal } from '@/components/modals/BiblePageModal';
+import { BibleActionsDrawer } from '@/components/modals/BibleActionsDrawer';
 import { BibleConfirmModal } from '@/components/modals/BibleConfirmModal';
+import { BiblePageModal } from '@/components/modals/BiblePageModal';
 import { FlashList } from '@shopify/flash-list';
 import * as FileSystem from 'expo-file-system/legacy';
 import { useRouter } from 'expo-router';
-import React, { useState , useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   Platform,
   ScrollView,
@@ -32,7 +31,7 @@ export default function EstudosScreen() {
   const { ms, DESIGN } = useResponsive();
   const router = useRouter();
   const { colors } = useTheme();
-  
+
   const styles = useMemo(() => StyleSheet.create({
     container: { flex: 1 },
     listContent: {
@@ -40,12 +39,12 @@ export default function EstudosScreen() {
       paddingBottom: ms(DESIGN.layout.listPaddingBottom),
       flexGrow: 1
     },
-    emptyContainer: { 
-      flex: 1, 
-      alignItems: 'center', 
-      justifyContent: 'center', 
-      paddingTop: ms(DESIGN.layout.emptyPaddingTop), 
-      gap: ms(DESIGN.spacing.md) 
+    emptyContainer: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingTop: ms(DESIGN.layout.emptyPaddingTop),
+      gap: ms(DESIGN.spacing.md)
     },
     emptyTitle: { fontWeight: '700' },
     emptySubtitle: { textAlign: 'center', paddingHorizontal: ms(DESIGN.spacing.xxl) },
@@ -59,54 +58,54 @@ export default function EstudosScreen() {
       shadowOpacity: 0.1,
       shadowRadius: ms(DESIGN.borderRadius.xs),
     },
-    cardContent: { 
-      flexDirection: 'row', 
-      alignItems: 'center', 
-      paddingHorizontal: ms(DESIGN.button.padding.sm), 
-      paddingVertical: ms(DESIGN.button.padding.sm), 
-      gap: ms(DESIGN.spacing.md) 
+    cardContent: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingHorizontal: ms(DESIGN.button.padding.sm),
+      paddingVertical: ms(DESIGN.button.padding.sm),
+      gap: ms(DESIGN.spacing.md)
     },
-    cardIcon: { 
-      width: ms(DESIGN.icon.md), 
-      height: ms(DESIGN.icon.md), 
-      borderRadius: ms(DESIGN.borderRadius.sm), 
-      alignItems: 'center', 
-      justifyContent: 'center' 
+    cardIcon: {
+      width: ms(DESIGN.icon.md),
+      height: ms(DESIGN.icon.md),
+      borderRadius: ms(DESIGN.borderRadius.sm),
+      alignItems: 'center',
+      justifyContent: 'center'
     },
     cardText: { flex: 1, gap: ms(DESIGN.spacing.xs) },
     cardTitle: { fontWeight: '700' },
     cardDate: { marginTop: ms(DESIGN.spacing.tiny) },
-    deleteBtn: { 
-      width: ms(DESIGN.button.height.sm), 
-      height: ms(DESIGN.button.height.sm), 
-      alignItems: 'center', 
-      justifyContent: 'center', 
-      borderRadius: ms(DESIGN.borderRadius.md) 
+    deleteBtn: {
+      width: ms(DESIGN.button.height.sm),
+      height: ms(DESIGN.button.height.sm),
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: ms(DESIGN.borderRadius.md)
     },
     modalHeader: { flexDirection: 'row', alignItems: 'center' },
     modalTitle: { fontWeight: '800' },
-    input: { 
-      borderRadius: ms(DESIGN.borderRadius.md), 
-      paddingHorizontal: ms(DESIGN.spacing.lg), 
-      paddingVertical: ms(DESIGN.spacing.md), 
-      marginBottom: ms(DESIGN.spacing.sm), 
-      borderWidth: 1, 
-      borderColor: 'transparent' 
+    input: {
+      borderRadius: ms(DESIGN.borderRadius.md),
+      paddingHorizontal: ms(DESIGN.spacing.lg),
+      paddingVertical: ms(DESIGN.spacing.md),
+      marginBottom: ms(DESIGN.spacing.sm),
+      borderWidth: 1,
+      borderColor: 'transparent'
     },
     inputMultiline: { minHeight: ms(DESIGN.layout.emptyPaddingTop), textAlignVertical: 'top' },
     modalActions: { flexDirection: 'row', gap: ms(DESIGN.spacing.md), marginTop: ms(DESIGN.spacing.xs) },
-    cancelBtn: { 
-      flex: 1, 
-      paddingVertical: ms(DESIGN.spacing.md), 
-      borderRadius: ms(DESIGN.borderRadius.md), 
-      alignItems: 'center' 
+    cancelBtn: {
+      flex: 1,
+      paddingVertical: ms(DESIGN.spacing.md),
+      borderRadius: ms(DESIGN.borderRadius.md),
+      alignItems: 'center'
     },
     cancelText: { fontWeight: '700' },
-    createBtn: { 
-      flex: 1, 
-      paddingVertical: ms(DESIGN.spacing.md), 
-      borderRadius: ms(DESIGN.borderRadius.md), 
-      alignItems: 'center' 
+    createBtn: {
+      flex: 1,
+      paddingVertical: ms(DESIGN.spacing.md),
+      borderRadius: ms(DESIGN.borderRadius.md),
+      alignItems: 'center'
     },
     createBtnDisabled: { opacity: 0.5 },
     createText: { fontWeight: '700' },
@@ -431,15 +430,83 @@ export default function EstudosScreen() {
         ]}
       />
 
-      <BibleActionsSheet
+      <BiblePageModal
         visible={isShareMenuVisible}
         onClose={() => setIsShareMenuVisible(false)}
-        title="Compartilhar"
-        items={[
-          { icon: 'file-text', label: 'Compartilhar em PDF', onPress: () => exportPDFs(selectedIds) },
-          { icon: 'file', label: 'Compartilhar em arquivo', onPress: () => exportBackup(selectedIds) }
-        ]}
-      />
+        header={
+          <View style={styles.modalHeader}>
+            <BibleIcon name="share-2" color={colors.primary} backgroundColor={colors.primary + '15'} style={{ marginRight: ms(DESIGN.spacing.sm) }} />
+            <BibleText style={[styles.modalTitle, { fontSize: ms(DESIGN.fontSize.lg), color: colors.primary, fontWeight: '800' }]}>Compartilhar</BibleText>
+            <BibleIcon name="x" color={colors.error} backgroundColor={colors.error + '20'} onPress={() => setIsShareMenuVisible(false)} style={{ marginLeft: 'auto' }} />
+          </View>
+        }
+      >
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: ms(DESIGN.spacing.md) }}>
+          <TouchableOpacity
+            style={[
+              styles.card,
+              {
+                borderColor: colors.border,
+                backgroundColor: colors.surface,
+              }
+            ]}
+            onPress={() => {
+              setIsShareMenuVisible(false);
+              exportPDFs(selectedIds);
+            }}
+            activeOpacity={0.7}
+          >
+            <View style={styles.cardContent}>
+              <BibleIcon
+                name="file-text"
+                color={colors.primary}
+                backgroundColor={colors.primary + '20'}
+              />
+              <View style={styles.cardText}>
+                <BibleText style={[styles.cardTitle, { fontSize: ms(DESIGN.fontSize.lg), color: colors.onSurface, fontWeight: '600' }]}>
+                  Compartilhar em PDF
+                </BibleText>
+                <BibleText style={{ fontSize: ms(DESIGN.fontSize.md), color: colors.textMuted }}>
+                  Formato PDF
+                </BibleText>
+              </View>
+              <BibleIcon name="chevron-right" color={colors.textMuted} size={ms(DESIGN.fontSize.xl)} />
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[
+              styles.card,
+              {
+                borderColor: colors.border,
+                backgroundColor: colors.surface,
+              }
+            ]}
+            onPress={() => {
+              setIsShareMenuVisible(false);
+              exportBackup(selectedIds);
+            }}
+            activeOpacity={0.7}
+          >
+            <View style={styles.cardContent}>
+              <BibleIcon
+                name="file"
+                color={colors.primary}
+                backgroundColor={colors.primary + '20'}
+              />
+              <View style={styles.cardText}>
+                <BibleText style={[styles.cardTitle, { fontSize: ms(DESIGN.fontSize.lg), color: colors.onSurface, fontWeight: '600' }]}>
+                  Compartilhar em arquivo
+                </BibleText>
+                <BibleText style={{ fontSize: ms(DESIGN.fontSize.md), color: colors.textMuted }}>
+                  Formato JSON
+                </BibleText>
+              </View>
+              <BibleIcon name="chevron-right" color={colors.textMuted} size={ms(DESIGN.fontSize.xl)} />
+            </View>
+          </TouchableOpacity>
+        </ScrollView>
+      </BiblePageModal>
 
       <DonateModal visible={isDonateVisible} onClose={() => setIsDonateVisible(false)} />
     </View>
