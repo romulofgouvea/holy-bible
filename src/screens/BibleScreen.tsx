@@ -1,8 +1,7 @@
 import { BibleVerseActionSheet, SelectedVerse } from '@/components/modals/BibleVerseActionSheet';
-import { useBibleModals } from '../hooks/useBibleModals';
 import { ReaderSettingsModal } from '@/components/modals/ReaderSettingsModal';
 import { useRouter } from 'expo-router';
-import React, { useCallback, useEffect, useRef, useState , useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Animated, StyleSheet, View } from 'react-native';
 import { BibleDrawerMenu } from '../components/BibleDrawerMenu';
 import { BibleIcon } from '../components/BibleIcon';
@@ -13,6 +12,7 @@ import { BibleVerseReader } from '../components/BibleVerseReader';
 import { BibleHistoryModal } from '../components/modals/BibleHistoryModal';
 import { DonateModal } from '../components/modals/DonateModal';
 import { useBible } from '../hooks/useBible';
+import { useBibleModals } from '../hooks/useBibleModals';
 import { useReaderSettings } from '../hooks/useReaderSettings';
 import { useResponsive } from '../hooks/useResponsive';
 import { useTheme } from '../hooks/useTheme';
@@ -31,15 +31,14 @@ export default function BibleScreen() {
     highlights,
     bulkToggleHighlight,
     navigateTo,
-    changeChapter,
-    addHistoryEntry
+    changeChapter
   } = useBible();
 
   const router = useRouter();
   const { ms, DESIGN } = useResponsive();
   const { toast, opacity, show } = useToast();
   const { colors } = useTheme();
-  
+
   const styles = useMemo(() => StyleSheet.create({
     content: { flex: 1 },
     floatingNav: {
@@ -86,17 +85,7 @@ export default function BibleScreen() {
     }
   }, [setBlinkingVerse]);
 
-  useEffect(() => {
-    if (isReady && version && book && chapter) {
-      addHistoryEntry({
-        version,
-        bookAbbrev: book,
-        bookName: currentBook?.name || book,
-        chapter,
-        verse: verse || 1
-      });
-    }
-  }, [isReady, version, book, chapter, currentBook, addHistoryEntry]);
+
 
   useEffect(() => {
     if (isReady) {
@@ -105,7 +94,7 @@ export default function BibleScreen() {
         duration: 400,
         useNativeDriver: true,
       }).start();
-      
+
       if (!hasInitialScrolled.current) {
         hasInitialScrolled.current = true;
         setTimeout(() => scrollToVerse(verse, chapter), 500);
@@ -153,12 +142,12 @@ export default function BibleScreen() {
       <Animated.View style={[StyleSheet.absoluteFill, { zIndex: 1, opacity: fadeAnim.interpolate({ inputRange: [0, 1], outputRange: [1, 0] }), pointerEvents: isReady ? 'none' : 'auto' }]}>
         <BibleSkeleton />
       </Animated.View>
-      
+
       <BibleTopBar
         version={version}
         bookName={currentBook.name}
         currentChapter={chapter}
-        onOpenVersion={() => openModal({ 
+        onOpenVersion={() => openModal({
           initialStep: 'version',
           onSelect: (s) => {
             if (s.version) {
@@ -167,7 +156,7 @@ export default function BibleScreen() {
             }
           }
         })}
-        onOpenBook={() => openModal({ 
+        onOpenBook={() => openModal({
           initialStep: 'book',
           onSelect: (s) => {
             const nextV = s.version || version;
@@ -178,7 +167,7 @@ export default function BibleScreen() {
             setTimeout(() => scrollToVerse(nextVe, nextC), 300);
           }
         })}
-        onOpenChapter={() => openModal({ 
+        onOpenChapter={() => openModal({
           initialStep: 'chapter',
           onSelect: (s) => {
             const nextV = s.version || version;

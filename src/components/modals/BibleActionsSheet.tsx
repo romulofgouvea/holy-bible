@@ -1,9 +1,9 @@
 import { Feather } from '@expo/vector-icons';
-import React, { useMemo } from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { Animated, Modal, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useResponsive } from '../../hooks/useResponsive';
 import { useTheme } from '../../hooks/useTheme';
-import { BibleBottomSheet } from './BibleBottomSheet';
 import { BibleIcon } from '../BibleIcon';
 import { BibleText } from '../BibleText';
 
@@ -25,10 +25,31 @@ type Props = {
 export function BibleActionsSheet({ visible, onClose, items, title }: Props) {
   const { colors } = useTheme();
   const { ms, DESIGN } = useResponsive();
+  const insets = useSafeAreaInsets();
+
   const styles = useMemo(() => StyleSheet.create({
+    backdrop: {
+      ...StyleSheet.absoluteFillObject,
+    },
+    sheetContainer: {
+      flex: 1,
+      justifyContent: 'flex-end',
+    },
+    sheet: {
+      width: '100%',
+      borderTopLeftRadius: ms(DESIGN.borderRadius.xl),
+      borderTopRightRadius: ms(DESIGN.borderRadius.xl),
+      paddingTop: ms(DESIGN.spacing.lg),
+      paddingHorizontal: ms(DESIGN.spacing.lg),
+      elevation: 24,
+      shadowOffset: { width: 0, height: ms(-DESIGN.spacing.xs) },
+      shadowOpacity: 0.15,
+      shadowRadius: ms(DESIGN.borderRadius.lg),
+    },
     header: {
       flexDirection: 'row',
       alignItems: 'center',
+      marginBottom: ms(DESIGN.spacing.md),
     },
     title: {
       flex: 1,
@@ -36,7 +57,7 @@ export function BibleActionsSheet({ visible, onClose, items, title }: Props) {
     item: {
       flexDirection: 'row',
       alignItems: 'center',
-      paddingVertical: ms(DESIGN.spacing.sm),
+      paddingVertical: ms(DESIGN.spacing.md),
     },
     label: {
       fontSize: ms(DESIGN.fontSize.lg),
@@ -44,49 +65,115 @@ export function BibleActionsSheet({ visible, onClose, items, title }: Props) {
     },
   }), [ms, colors, DESIGN]);
 
-  return (
-    <BibleBottomSheet
-      visible={visible}
-      onClose={onClose}
-      resizable={false}
-      header={
-        <View style={styles.header}>
-          <BibleIcon 
-            name="menu" 
-            color={colors.primary} 
-            backgroundColor={colors.primary + '25'} 
-            size={ms(DESIGN.spacing.lg)}
-            style={{ marginRight: ms(DESIGN.spacing.sm) }}
-          />
+  const [isModalVisible, setIsModalVisible] = useState(visible);
+  const translateY = useRef(new Animated.Value(300)).current;
+  const backdropOpacity = useRef(new Animated.Value(0)).current;
 
-          <BibleText style={[styles.title, { fontSize: ms(DESIGN.fontSize.lg), color: colors.primary, fontWeight: '800' }]}>{title || 'Ações'}</BibleText>
-          <BibleIcon
-            name="x"
-            color={colors.error}
-            backgroundColor={colors.error + '20'}
-            onPress={onClose}
-          />
-        </View>
-      }
-    >
-      <View>
-        {items.map((item, index) => (
-          <TouchableOpacity
-            key={index}
-            style={[styles.item, { borderBottomWidth: index < items.length - 1 ? 1 : 0, borderBottomColor: colors.border }]}
-            onPress={() => {
-              onClose();
-              item.onPress();
-            }}
-          >
-            <BibleIcon name={item.icon}
-              color={item.iconColor || colors.primary}
-              backgroundColor={(item.iconColor || colors.primary) + '15'}
-              style={{ marginRight: ms(DESIGN.spacing.sm) }} />
-            <BibleText style={[styles.label, { color: item.color || colors.onSurface }]}>{item.label}</BibleText>
-          </TouchableOpacity>
-        ))}
+  useEffect(() => {
+    if (visible) {
+      setIsModalVisible(true);
+      Animated.parallel([
+        Animated.spring(translateY, {
+          toValue: 0,
+          useNativeDriver: true,
+          bounciness: 2,
+          speed: 15,
+        }),
+        Animated.timing(backdropOpacity, {
+          toValue: 1,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    } else {
+      Animated.parallel([
+        Animated.spring(translateY, {
+          toValue: 300,
+          useNativeDriver: true,
+          bounciness: 0,
+          speed: 20,
+        }),
+        Animated.timing(backdropOpacity, {
+          toValue: 0,
+          duration: 150,
+          useNativeDriver: true,
+        }),
+      ]).start(() => {
+        setIsModalVisible(false);
+      });
+    }
+  }, [visible, translateY, backdropOpacity]);
+
+  if (!isModalVisible) return null;
+
+  return (
+    <Modal visible={isModalVisible} transparent animationType="none" onRequestClose={onClose}>
+      <View style={styles.sheetContainer}>
+        <TouchableWithoutFeedback onPress={onClose}>
+          <Animated.View style={[styles.backdrop, { opacity: backdropOpacity, backgroundColor: colors.overlay }]} />
+        </TouchableWithoutFeedback>
+
+        <Animated.View style={[
+          styles.sheet,
+          {
+            transform: [{ translateY }],
+            backgroundColor: colors.background,
+            shadowColor: colors.shadow,
+            paddingBottom: Math.max(ms(DESIGN.spacing.lg), insets.bottom + ms(DESIGN.spacing.sm))
+          }
+        ]}>
+          <View style={styles.header}>
+            <BibleIcon
+              name="menu"
+              color={colors.primary}
+              backgroundColor={colors.primary + '20'}
+              containerSize={DESIGN.icon.xl}
+              size={ms(DESIGN.spacing.lg)}
+              borderRadius={DESIGN.borderRadius.md}
+            />
+
+            <BibleText style={[styles.title, { fontSize: ms(DESIGN.fontSize.lg), color: colors.primary, fontWeight: '800', marginLeft: ms(DESIGN.spacing.md) }]}>
+              {title || 'Ações'}
+            </BibleText>
+
+            <BibleIcon
+              name="x"
+              color={colors.error}
+              backgroundColor={colors.error + '20'}
+              onPress={onClose}
+              containerSize={DESIGN.icon.xl}
+              size={ms(DESIGN.spacing.lg)}
+              borderRadius={DESIGN.borderRadius.md}
+            />
+          </View>
+
+          <View>
+            {items.map((item, index) => (
+              <TouchableOpacity
+                key={index}
+                style={[styles.item, { borderBottomWidth: index < items.length - 1 ? 1 : 0, borderBottomColor: colors.border }]}
+                onPress={() => {
+                  onClose();
+                  item.onPress();
+                }}
+              >
+                <BibleIcon
+                  name={item.icon}
+                  color={item.iconColor || colors.primary}
+                  backgroundColor={(item.iconColor || colors.primary) + '20'}
+                  style={{ marginRight: ms(DESIGN.spacing.md) }}
+                  containerSize={DESIGN.icon.xl}
+                  size={ms(DESIGN.spacing.lg)}
+                  borderRadius={DESIGN.borderRadius.md}
+                />
+                <BibleText style={[styles.label, { color: item.color || colors.onSurface }]}>
+                  {item.label}
+                </BibleText>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </Animated.View>
       </View>
-    </BibleBottomSheet>
+    </Modal>
   );
 }

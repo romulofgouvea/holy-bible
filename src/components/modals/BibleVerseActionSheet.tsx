@@ -209,6 +209,9 @@ export function BibleVerseActionSheet(props: VerseActionSheetProps) {
             color={colors.error}
             backgroundColor={colors.error + '20'}
             onPress={onClose}
+            containerSize={DESIGN.icon.xl}
+            size={ms(DESIGN.spacing.lg)}
+            borderRadius={DESIGN.borderRadius.md}
           />
         </View>
 

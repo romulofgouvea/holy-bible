@@ -161,7 +161,19 @@ export function BibleProvider({ children }: { children: React.ReactNode }) {
 
     updateCurrentRead(nextV, nextB, nextC, nextVe);
     if (p.version) DeviceEventEmitter.emit('BibleVersionChanged', p.version);
-  }, [version, book, chapter, verse, updateCurrentRead]);
+
+    if (p.book || p.chapter || p.verse || p.version) {
+      const books = getBibleData(nextV);
+      const foundBook = books.find((b) => b.abbrev === nextB || b.name === nextB);
+      addHistoryEntry({
+        version: nextV,
+        bookAbbrev: nextB,
+        bookName: foundBook?.name || nextB,
+        chapter: nextC,
+        verse: nextVe
+      });
+    }
+  }, [version, book, chapter, verse, updateCurrentRead, addHistoryEntry]);
 
   const changeChapter = useCallback((deltaOrValue: number, onComplete?: (newChapter: number) => void) => {
     let nextChapter = chapter;

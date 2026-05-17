@@ -25,10 +25,11 @@ function findBookBySlug(books: { abbrev: string; name: string }[], slug: string)
 }
 
 export default function BibleChapterRoute() {
-  const { version, book, chapter } = useLocalSearchParams<{
+  const { version, book, chapter, verse } = useLocalSearchParams<{
     version: string;
     book: string;
     chapter: string;
+    verse?: string;
   }>();
 
   const [ready, setReady] = useState(false);
@@ -36,13 +37,14 @@ export default function BibleChapterRoute() {
   useEffect(() => {
     const v = (version || availableVersions[0] || 'NAA').toUpperCase();
     const ch = Number(chapter) || 1;
+    const ve = Number(verse) || 1;
 
     const books = getBibleData(v);
     const bookObj = findBookBySlug(books, book || 'gn');
     const abbrev = bookObj?.abbrev || book || 'Gn';
 
     Promise.all([
-      AsyncStorage.setItem(STORAGE_KEYS.CURRENT_READ, JSON.stringify({ version: v, book: abbrev, chapter: ch })),
+      AsyncStorage.setItem(STORAGE_KEYS.CURRENT_READ, JSON.stringify({ version: v, book: abbrev, chapter: ch, verse: ve })),
       AsyncStorage.setItem(STORAGE_KEYS.BIBLE_VERSION_GLOBAL, v),
     ]).finally(() => setReady(true));
   }, []);
