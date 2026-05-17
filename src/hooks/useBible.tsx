@@ -30,6 +30,7 @@ type BibleContextType = {
   isReady: boolean;
   navigateTo: (p: { version?: string; book?: string; chapter?: number; verse?: number }) => void;
   changeChapter: (deltaOrValue: number, onComplete?: (newChapter: number) => void) => void;
+  addHistoryEntry: (entry: { version: string; bookAbbrev: string; bookName: string; chapter: number; verse: number }) => Promise<void>;
 };
 
 const BibleContext = createContext<BibleContextType | undefined>(undefined);
@@ -79,21 +80,8 @@ export function BibleProvider({ children }: { children: React.ReactNode }) {
         chapter: c,
         verse: ve
       }));
-
-      // Find the book name from data
-      const books = getBibleData(v);
-      const targetBook = books.find(item => item.abbrev === b || item.name === b);
-      const bookName = targetBook?.name || b;
-
-      await addHistoryEntry({
-        version: v,
-        bookAbbrev: b,
-        bookName,
-        chapter: c,
-        verse: ve
-      });
     } catch (e) { }
-  }, [addHistoryEntry]);
+  }, []);
 
   const loadState = useCallback(async () => {
     try {
@@ -245,7 +233,7 @@ export function BibleProvider({ children }: { children: React.ReactNode }) {
       visibleVerse, setVisibleVerse,
       blinkingVerse, setBlinkingVerse,
       highlights, toggleHighlight, bulkToggleHighlight,
-      isReady, navigateTo, changeChapter
+      isReady, navigateTo, changeChapter, addHistoryEntry
     }}>
       {children}
     </BibleContext.Provider>

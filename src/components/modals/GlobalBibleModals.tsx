@@ -38,12 +38,16 @@ export function GlobalBibleModals() {
 
   const { ms } = useResponsive();
 
-  // Initialize navVersion if it's empty
+  // Initialize navVersion from options or global state
   React.useEffect(() => {
-    if (!navVersion && globalVersion) {
-      setNavVersion(globalVersion);
+    if (!navVersion) {
+      if (options.initialVersion) {
+        setNavVersion(options.initialVersion);
+      } else if (globalVersion) {
+        setNavVersion(globalVersion);
+      }
     }
-  }, [globalVersion, navVersion]);
+  }, [globalVersion, navVersion, options.initialVersion]);
 
   const versionBooks = useMemo(() => {
     if (navVersion && navVersion !== globalVersion) {
@@ -79,7 +83,9 @@ export function GlobalBibleModals() {
         onSelect={(v) => {
           selectionHaptic();
           setNavVersion(v.sigla);
-          setGlobalVersion(v.sigla);
+          if (options.target !== 'search') {
+            setGlobalVersion(v.sigla);
+          }
           if (options.onSelect) {
             options.onSelect({ version: v.sigla });
           }
@@ -109,7 +115,7 @@ export function GlobalBibleModals() {
           const selectedBookObj = versionBooks.find(b => b.abbrev === bookNameOrAbbrev || b.name === bookNameOrAbbrev) || null;
           setNavBook(selectedBookObj);
           setNavChapter(1);
-          if (selectedBookObj) {
+          if (selectedBookObj && options.target !== 'search') {
             setGlobalBook(selectedBookObj.abbrev);
             setGlobalChapter(1);
             setGlobalVerse(1);
@@ -141,7 +147,9 @@ export function GlobalBibleModals() {
         onSelect={(num) => {
           selectionHaptic();
           setNavChapter(num);
-          setGlobalChapter(num);
+          if (options.target !== 'search') {
+            setGlobalChapter(num);
+          }
           if (options.skipVerseSelection) {
             if (options.onSelect) {
               options.onSelect({
@@ -169,7 +177,9 @@ export function GlobalBibleModals() {
         currentItem={highlightedVerse}
         onSelect={(num) => {
           selectionHaptic();
-          setGlobalVerse(num);
+          if (options.target !== 'search') {
+            setGlobalVerse(num);
+          }
           if (options.onSelect) {
             options.onSelect({
               version: navVersion || globalVersion,

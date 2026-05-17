@@ -24,7 +24,7 @@ import { BibleText } from '../components/BibleText';
 import { DonateModal } from '../components/modals/DonateModal';
 import { ROUTES } from '../constants/routes';
 import { STORAGE_KEYS } from '../constants/storage';
-import { Book } from '../data';
+import { Book, getBibleData } from '../data';
 import { useBible } from '../hooks/useBible';
 import { useBibleModals } from '../hooks/useBibleModals';
 import { useReaderSettings } from '../hooks/useReaderSettings';
@@ -34,8 +34,6 @@ import { impactLight, selectionHaptic } from '../utils/haptics';
 import { handleSmartBack } from '../utils/navigation';
 
 
-export type SearchScope = 'bible' | 'book' | 'chapter';
-
 export type SearchResult = {
   bookName: string;
   bookAbbrev: string;
@@ -44,7 +42,16 @@ export type SearchResult = {
   text: string;
 };
 
+export type SearchFilter = {
+  query: string;
+  version: string;
+  book: string;
+  chapter: number;
+  verse: number;
+};
+
 const MAX_HISTORY = 20;
+
 
 
 const HighlightText = React.memo(({ text, query, colors, fontSizeMultiplier, ms, DESIGN, styles }: { text: string; query: string; colors: any; fontSizeMultiplier: number; ms: (v: number) => number; DESIGN: any; styles: any }) => {
@@ -305,14 +312,18 @@ export default function SearchScreen() {
   const router = useRouter();
   const pathname = usePathname();
   const params = useLocalSearchParams<{ query?: string; from?: string }>();
-  const { versionBooks, setVersion, version, navigateTo } = useBible();
+  const { version, navigateTo } = useBible();
   const { openModal } = useBibleModals();
 
   const [query, setQuery] = useState('');
+  const [searchVersion, setSearchVersion] = useState(version || 'ARA');
   const [isSearching, setIsSearching] = useState(false);
   const [results, setResults] = useState<SearchResult[]>([]);
   const [history, setHistory] = useState<string[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
+
+  // Derive version books locally to avoid affecting global state
+  const searchVersionBooks = useMemo(() => getBibleData(searchVersion), [searchVersion]);
 
   // Local Filter State
   const [searchBook, setSearchBook] = useState<Book | null>(null);
@@ -325,39 +336,70 @@ export default function SearchScreen() {
   const searchTimeout = useRef<any>(null);
   const inputRef = useRef<TextInput>(null);
 
+  // Unified Search State persist function
+  const saveSearchState = async (updates: Partial<SearchFilter>) => {
+    try {
+      const stored = await AsyncStorage.getItem(STORAGE_KEYS.CURRENT_SEARCH);
+      const current = stored ? JSON.parse(stored) : { query: '', version: version || 'ARA', book: 'Gn', chapter: 1, verse: 1 };
+      const next = { ...current, ...updates };
+      await AsyncStorage.setItem(STORAGE_KEYS.CURRENT_SEARCH, JSON.stringify(next));
+    } catch (e) { }
+  };
+
   useEffect(() => {
     (async () => {
       try {
-        const [savedHistory, savedVersion] = await Promise.all([
+        const [savedSearch, savedHistory] = await Promise.all([
+          AsyncStorage.getItem(STORAGE_KEYS.CURRENT_SEARCH),
           AsyncStorage.getItem(STORAGE_KEYS.SEARCH_HISTORY),
-          AsyncStorage.getItem(STORAGE_KEYS.SEARCH_VERSION),
         ]);
 
-        // Always start with empty query and clean filters as requested
-        setQuery('');
-        setSearchBook(null);
-        setSearchChapter(null);
+        let finalSearchState: SearchFilter | null = savedSearch ? JSON.parse(savedSearch) : null;
+
+        // If no search state exists, copy from current read state
+        if (!finalSearchState) {
+          const savedRead = await AsyncStorage.getItem(STORAGE_KEYS.CURRENT_READ);
+          if (savedRead) {
+            const readState = JSON.parse(savedRead);
+            finalSearchState = {
+              query: '',
+              version: readState.version || 'ARA',
+              book: readState.book || 'Gn',
+              chapter: readState.chapter || 1,
+              verse: readState.verse || 1
+            };
+            // Persist the copied state
+            await AsyncStorage.setItem(STORAGE_KEYS.CURRENT_SEARCH, JSON.stringify(finalSearchState));
+          }
+        }
+
+        if (finalSearchState) {
+          setQuery(finalSearchState.query || '');
+          if (finalSearchState.version) setSearchVersion(finalSearchState.version);
+          if (finalSearchState.book) {
+            const books = getBibleData(finalSearchState.version || searchVersion);
+            const found = books.find((b: Book) => b.abbrev === finalSearchState!.book || b.name === finalSearchState!.book);
+            if (found) setSearchBook(found);
+          }
+          if (finalSearchState.chapter) setSearchChapter(finalSearchState.chapter);
+        }
 
         if (savedHistory) setHistory(JSON.parse(savedHistory));
-        if (savedVersion) setVersion(savedVersion);
-
       } catch (e) { }
       setIsLoaded(true);
     })();
   }, []); // Only on mount
 
-  const saveQuery = async (q: string) => {
-    try { await AsyncStorage.setItem(STORAGE_KEYS.SEARCH_QUERY, q); } catch (e) { }
+  const saveQuery = (q: string) => {
+    saveSearchState({ query: q });
   };
 
-  const saveFilters = async () => {
-    try {
-      await Promise.all([
-        AsyncStorage.setItem(STORAGE_KEYS.SEARCH_VERSION, version),
-        searchBook ? AsyncStorage.setItem(STORAGE_KEYS.SEARCH_BOOK, searchBook.abbrev) : AsyncStorage.removeItem(STORAGE_KEYS.SEARCH_BOOK),
-        searchChapter ? AsyncStorage.setItem(STORAGE_KEYS.SEARCH_CHAPTER, searchChapter.toString()) : AsyncStorage.removeItem(STORAGE_KEYS.SEARCH_CHAPTER),
-      ]);
-    } catch (e) { }
+  const saveFilters = (v: string, b: string | null, c: number | null) => {
+    saveSearchState({
+      version: v,
+      book: b || '',
+      chapter: c || 1
+    });
   };
 
   const addToHistory = async (term: string) => {
@@ -391,11 +433,11 @@ export default function SearchScreen() {
   }, [searchBook, searchChapter]);
 
   const filterLabelText = useMemo(() => {
-    const v = version.toUpperCase();
+    const v = searchVersion.toUpperCase();
     if (searchBook && searchChapter) return `${v} • ${searchBook.name} ${searchChapter}`;
     if (searchBook) return `${v} • ${searchBook.name}`;
     return `${v} • Bíblia Toda`;
-  }, [searchBook, searchChapter, version]);
+  }, [searchBook, searchChapter, searchVersion]);
 
   const runSearch = useCallback((q: string, immediate = false) => {
     clearTimeout(searchTimeout.current);
@@ -411,8 +453,8 @@ export default function SearchScreen() {
       const found: SearchResult[] = [];
 
       const booksToSearch = scope === 'bible'
-        ? versionBooks
-        : searchBook ? [searchBook] : versionBooks;
+        ? searchVersionBooks
+        : searchBook ? [searchBook] : searchVersionBooks;
 
       if (!booksToSearch) {
         setIsSearching(false);
@@ -442,7 +484,7 @@ export default function SearchScreen() {
       setResults(found);
       setIsSearching(false);
     }, delay);
-  }, [versionBooks, searchBook, searchChapter, scope]);
+  }, [searchVersionBooks, searchBook, searchChapter, scope]);
 
   const handleChangeQuery = (q: string) => {
     setQuery(q);
@@ -472,7 +514,7 @@ export default function SearchScreen() {
   const handleNavigate = (r: SearchResult) => {
     impactLight();
     addToHistory(query.trim());
-    navigateTo({ book: r.bookAbbrev, chapter: r.chapter, verse: r.verse, version });
+    navigateTo({ book: r.bookAbbrev, chapter: r.chapter, verse: r.verse, version: searchVersion });
     router.replace({ pathname: ROUTES.BIBLE } as any);
   };
 
@@ -491,11 +533,11 @@ export default function SearchScreen() {
 
   const showHistory = query.trim().length === 0 && history.length > 0;
   const showEmpty = query.trim().length === 0 && history.length === 0;
-  const showTooShort = query.trim().length > 0 && query.trim().length < 2;
+  const showTooShort = !isSearching && query.trim().length > 0 && query.trim().length < 2;
   const showNoResults = !isSearching && query.trim().length >= 2 && results.length === 0;
   const showResults = !isSearching && results.length > 0;
 
-  if (!isLoaded || !versionBooks) {
+  if (!isLoaded || !searchVersionBooks) {
     return <BibleSkeleton />;
   }
 
@@ -684,7 +726,7 @@ export default function SearchScreen() {
               style={[styles.filterBtnFooter, { backgroundColor: colors.primary }]}
               onPress={() => {
                 setIsFilterModalVisible(false);
-                saveFilters();
+                saveFilters(searchVersion, searchBook?.abbrev || null, searchChapter);
                 runSearch(query, true);
               }}
             >
@@ -696,12 +738,17 @@ export default function SearchScreen() {
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.filterModalContent}>
           <TouchableOpacity
             style={styles.filterModalItem}
-            onPress={() => openModal({ initialStep: 'version', onSelect: (s) => s.version && setVersion(s.version) })}
+            onPress={() => openModal({ 
+              initialStep: 'version', 
+              target: 'search',
+              initialVersion: searchVersion,
+              onSelect: (s) => s.version && setSearchVersion(s.version) 
+            })}
           >
             <BibleIcon name="book" color={colors.primary} backgroundColor={colors.primary + '15'} style={styles.filterModalItemIcon} />
             <View style={styles.filterModalLabelContainer}>
               <BibleText style={[styles.filterModalLabel, { color: colors.textMuted }]}>BIBLIA</BibleText>
-              <BibleText style={[styles.filterModalValue, { color: colors.onSurface }]}>{version}</BibleText>
+              <BibleText style={[styles.filterModalValue, { color: colors.onSurface }]}>{searchVersion}</BibleText>
             </View>
             <BibleIcon name="chevron-right" color={colors.textMuted} />
           </TouchableOpacity>
@@ -711,6 +758,8 @@ export default function SearchScreen() {
             style={styles.filterModalItem}
             onPress={() => openModal({
               initialStep: 'book',
+              target: 'search',
+              initialVersion: searchVersion,
               skipChapterSelection: true,
               initialBook: searchBook || undefined,
               onSelect: (s) => {
@@ -749,6 +798,8 @@ export default function SearchScreen() {
             disabled={!searchBook}
             onPress={() => openModal({
               initialStep: 'chapter',
+              target: 'search',
+              initialVersion: searchVersion,
               skipChapterSelection: true,
               skipVerseSelection: true,
               initialBook: searchBook || undefined,

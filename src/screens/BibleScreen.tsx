@@ -31,7 +31,8 @@ export default function BibleScreen() {
     highlights,
     bulkToggleHighlight,
     navigateTo,
-    changeChapter
+    changeChapter,
+    addHistoryEntry
   } = useBible();
 
   const router = useRouter();
@@ -84,6 +85,18 @@ export default function BibleScreen() {
       setTimeout(() => { isAutoScrolling.current = false; }, 500);
     }
   }, [setBlinkingVerse]);
+
+  useEffect(() => {
+    if (isReady && version && book && chapter) {
+      addHistoryEntry({
+        version,
+        bookAbbrev: book,
+        bookName: currentBook?.name || book,
+        chapter,
+        verse: verse || 1
+      });
+    }
+  }, [isReady, version, book, chapter, currentBook, addHistoryEntry]);
 
   useEffect(() => {
     if (isReady) {

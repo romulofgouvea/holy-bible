@@ -18,8 +18,10 @@ interface BibleModalOptions {
   onConfirm?: (selection: SelectionData) => void;
   skipChapterSelection?: boolean;
   skipVerseSelection?: boolean;
+  initialVersion?: string;
   initialBook?: Book;
   initialChapter?: number;
+  target?: 'read' | 'search';
 }
 
 interface BibleModalContextType {
