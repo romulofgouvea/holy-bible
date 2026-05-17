@@ -72,8 +72,8 @@ export function BibleHistoryModal({ visible, onClose, onSelect }: BibleHistoryMo
       fontWeight: '500',
     },
     versionBadge: {
-      paddingHorizontal: ms(DESIGN.spacing.xs),
-      paddingVertical: ms(DESIGN.spacing.xs),
+      paddingHorizontal: ms(DESIGN.spacing.sm),
+      paddingVertical: ms(DESIGN.spacing.sm),
       borderRadius: ms(DESIGN.borderRadius.sm),
       marginLeft: ms(DESIGN.spacing.md),
     },
