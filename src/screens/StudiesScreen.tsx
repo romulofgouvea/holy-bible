@@ -347,7 +347,8 @@ export default function EstudosScreen() {
           </View>
         }
       >
-        <ScrollView keyboardShouldPersistTaps="handled">
+        <ScrollView keyboardShouldPersistTaps="handled"
+          contentContainerStyle={{ padding: ms(DESIGN.spacing.md) }}>
           <BibleText style={[styles.sectionTitle, { color: colors.textMuted }]}>Título do Estudo</BibleText>
           <TextInput
             style={[
