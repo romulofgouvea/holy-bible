@@ -25,6 +25,7 @@ import { useResponsive } from '../hooks/useResponsive';
 import { useStudies } from '../hooks/useStudies';
 import { useTheme } from '../hooks/useTheme';
 import { useBibleModals } from '../hooks/useBibleModals';
+import { LIMITS } from '../constants/limits';
 
 const noOutline = Platform.select({ web: { outline: 'none', outlineWidth: 0 } as any, default: {} });
 
@@ -137,6 +138,7 @@ export default function StudyEditorScreen() {
             placeholder="Nome do estudo"
             placeholderTextColor={colors.onPrimary + '80'}
             editable={!isReadonly}
+            maxLength={LIMITS.STUDY_TITLE_MAX_LENGTH}
             underlineColorAndroid="transparent"
           />
         }

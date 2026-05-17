@@ -25,6 +25,7 @@ import { ROUTES, ROUTE_LABELS } from '../constants/routes';
 import { useResponsive } from '../hooks/useResponsive';
 import { Study, useStudies } from '../hooks/useStudies';
 import { useTheme } from '../hooks/useTheme';
+import { LIMITS } from '../constants/limits';
 import { exportToPDF } from '../utils/export';
 
 export default function EstudosScreen() {
@@ -360,6 +361,7 @@ export default function EstudosScreen() {
             placeholderTextColor={colors.textMuted}
             value={newTitle}
             onChangeText={setNewTitle}
+            maxLength={LIMITS.STUDY_TITLE_MAX_LENGTH}
             underlineColorAndroid="transparent"
           />
           <BibleText style={[styles.sectionTitle, { color: colors.textMuted, marginTop: ms(DESIGN.spacing.sm) }]}>Descrição (Opcional)</BibleText>

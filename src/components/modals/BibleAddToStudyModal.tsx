@@ -9,6 +9,7 @@ import { BiblePageEmpty } from '../BiblePageEmpty';
 import { BibleText } from '../BibleText';
 import { BiblePageModal } from './BiblePageModal';
 import { SelectedVerse } from './BibleVerseActionSheet';
+import { LIMITS } from '../../constants/limits';
 
 type BibleAddToStudyModalProps = {
   visible: boolean;
@@ -173,6 +174,7 @@ export function BibleAddToStudyModal({ visible, onClose, selectedVerses, onShowT
               value={newTitle}
               onChangeText={setNewTitle}
               autoFocus
+              maxLength={LIMITS.STUDY_TITLE_MAX_LENGTH}
               underlineColorAndroid="transparent"
             />
           </ScrollView>
