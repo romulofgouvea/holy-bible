@@ -633,7 +633,7 @@ export default function SearchScreen() {
         }
       />
 
-      {showResults && (
+      {(showResults || showNoResults) && (
         <View style={[styles.resultsInfoContainer, { backgroundColor: colors.surface, borderBottomColor: colors.border }]}>
           <View style={styles.appliedFilterLabel}>
             <BibleText style={[styles.appliedFilterText, { color: colors.textMuted, fontSize: ms(DESIGN.fontSize.xs) }]}>

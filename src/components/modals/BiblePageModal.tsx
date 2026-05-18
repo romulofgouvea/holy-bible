@@ -58,11 +58,16 @@ export function BiblePageModal({ visible, onClose, children, header, footer, ful
     }
   }, [visible, fadeAnim]);
 
+  const onCloseRef = useRef(onClose);
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
+
   useEffect(() => {
     if (!visible) return;
 
     const backAction = () => {
-      onClose();
+      onCloseRef.current();
       return true;
     };
 
@@ -72,7 +77,7 @@ export function BiblePageModal({ visible, onClose, children, header, footer, ful
     );
 
     return () => backHandler.remove();
-  }, [visible, onClose]);
+  }, [visible]);
 
   if (!rendered) return null;
 
