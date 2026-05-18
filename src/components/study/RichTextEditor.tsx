@@ -12,6 +12,7 @@ import { BibleText } from '../BibleText';
 
 export type RichTextEditorRef = {
   insertVerseHtml: (html: string) => void;
+  blur: () => void;
 };
 
 type Props = {
@@ -108,6 +109,9 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
   React.useImperativeHandle(ref, () => ({
     insertVerseHtml: (html: string) => {
       injectToEditor(`window.insertHtml(\`${html.replace(/`/g, '\\`')}\`); true;`);
+    },
+    blur: () => {
+      injectToEditor(`document.getElementById('editor').blur(); true;`);
     }
   }));
 
@@ -256,6 +260,26 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
       <script>
         const editor = document.getElementById('editor');
         let debounceTimer;
+        let savedRange = null;
+
+        function saveSelection() {
+          let sel = window.getSelection();
+          if (sel && sel.rangeCount > 0) {
+            let range = sel.getRangeAt(0);
+            if (editor.contains(range.commonAncestorContainer)) {
+              savedRange = range;
+            }
+          }
+        }
+
+        window.restoreSelection = function() {
+          if (savedRange) {
+            let sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(savedRange);
+          }
+          editor.focus();
+        };
         
         editor.addEventListener('input', function() {
           clearTimeout(debounceTimer);
@@ -302,10 +326,13 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
           else window.parent.postMessage(msg, '*');
         }
 
-        document.addEventListener('selectionchange', updateFormatState);
+        document.addEventListener('selectionchange', function() {
+          saveSelection();
+          updateFormatState();
+        });
 
         window.execCmd = function(cmd, value) {
-          editor.focus();
+          window.restoreSelection();
           
           let sel = window.getSelection();
           let node = sel && sel.rangeCount > 0 ? sel.anchorNode : null;
@@ -321,6 +348,7 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
             document.execCommand(cmd, false, value);
           }
           
+          saveSelection();
           setTimeout(updateFormatState, 50);
         };
         
@@ -401,7 +429,7 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
         };
 
         window.changeFontSize = function(delta) {
-          editor.focus();
+          window.restoreSelection();
           
           var selection = window.getSelection();
           if (!selection || selection.rangeCount === 0 || selection.isCollapsed) return;
@@ -428,10 +456,11 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
           
           var newSize = newIndex + 1;
           document.execCommand('fontSize', false, newSize);
+          saveSelection();
         };
 
         window.toggleTaskList = function() {
-          editor.focus();
+          window.restoreSelection();
           let sel = window.getSelection();
           if (!sel.rangeCount) return;
           let node = sel.anchorNode;
@@ -459,11 +488,13 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
                if (li2) {
                  let ul2 = li2.closest('ul');
                  if (ul2) ul2.classList.add('task-list');
+                 saveSelection();
                  updateFormatState();
                }
              }, 50);
              return;
           }
+          saveSelection();
           setTimeout(updateFormatState, 50);
         };
 

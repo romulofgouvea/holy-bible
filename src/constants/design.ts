@@ -56,7 +56,7 @@ export const DESIGN = {
     xl: 40,
   },
   layout: {
-    headerHeight: 56,
+    headerHeight: 64,
     footerHeight: 64,
     listPaddingBottom: 100,
     emptyPaddingTop: 80,

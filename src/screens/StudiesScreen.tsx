@@ -21,11 +21,11 @@ import { BiblePageEmpty } from '../components/BiblePageEmpty';
 import { BibleSkeleton } from '../components/BibleSkeleton';
 import { BibleText } from '../components/BibleText';
 import { DonateModal } from '../components/modals/DonateModal';
+import { LIMITS } from '../constants/limits';
 import { ROUTES, ROUTE_LABELS } from '../constants/routes';
 import { useResponsive } from '../hooks/useResponsive';
 import { Study, useStudies } from '../hooks/useStudies';
 import { useTheme } from '../hooks/useTheme';
-import { LIMITS } from '../constants/limits';
 import { exportToPDF } from '../utils/export';
 
 export default function EstudosScreen() {
@@ -436,7 +436,6 @@ export default function EstudosScreen() {
           { icon: 'file-plus', label: 'Novo Estudo', onPress: () => setIsModalVisible(true) },
           { icon: 'trash-2', label: 'Excluir Estudos', onPress: () => setSelectionPurpose('delete') },
           { icon: 'share-2', label: 'Compartilhar', onPress: () => setSelectionPurpose('share') },
-          { icon: 'trash', label: 'Lixeira', onPress: () => router.push(ROUTES.TRASH as any) }
         ]}
       />
 

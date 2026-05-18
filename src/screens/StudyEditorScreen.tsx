@@ -55,11 +55,13 @@ export default function StudyEditorScreen() {
   const editorRef = useRef<RichTextEditorRef>(null);
   const saveTimeout = useRef<any>(null);
   const hydrated = useRef(false);
+  const initialContentRef = useRef<string>('');
 
   useEffect(() => {
     if (study && !hydrated.current) {
       setTitle(study.title);
       setHtmlContent(study.content);
+      initialContentRef.current = study.content;
       hydrated.current = true;
     }
   }, [study]);
@@ -93,6 +95,8 @@ export default function StudyEditorScreen() {
   const { openModal } = useBibleModals();
 
   const openVersePicker = async () => {
+    Keyboard.dismiss();
+    editorRef.current?.blur();
     let currentPos = studyPosition;
     try {
       const stored = await AsyncStorage.getItem(STORAGE_KEYS.CURRENT_STUDY);
@@ -232,7 +236,7 @@ export default function StudyEditorScreen() {
       >
         <RichTextEditor
           ref={editorRef}
-          initialHtml={htmlContent}
+          initialHtml={initialContentRef.current}
           onChange={setHtmlContent}
           onOpenVersePicker={openVersePicker}
           showToolbar={showToolbar}

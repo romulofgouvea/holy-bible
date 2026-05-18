@@ -80,7 +80,7 @@ export function BibleHeader({
   const hasLeftButton = showMenu || showBack;
 
   return (
-    <View testID="bible-header" style={[styles.header, { backgroundColor: backgroundColor || colors.primary, minHeight: ms(56), paddingHorizontal: ms(DESIGN.spacing.lg), paddingVertical: ms(DESIGN.spacing.md), shadowColor: colors.shadow }]}>
+    <View testID="bible-header" style={[styles.header, { backgroundColor: backgroundColor || colors.primary, height: ms(DESIGN.layout.headerHeight), paddingHorizontal: ms(DESIGN.spacing.lg), shadowColor: colors.shadow }]}>
       {hasLeftButton && (
         <View style={styles.leftButtonContainer}>
           {showMenu && (

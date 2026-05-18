@@ -33,6 +33,9 @@ import { useTheme } from '../hooks/useTheme';
 import { impactLight, selectionHaptic } from '../utils/haptics';
 import { handleSmartBack } from '../utils/navigation';
 
+function removeAccents(str: string): string {
+  return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
 
 export type SearchResult = {
   bookName: string;
@@ -51,30 +54,34 @@ export type SearchFilter = {
 
 const MAX_HISTORY = 20;
 
-
-
 const HighlightText = React.memo(({ text, query, colors, fontSizeMultiplier, ms, DESIGN, styles }: { text: string; query: string; colors: any; fontSizeMultiplier: number; ms: (v: number) => number; DESIGN: any; styles: any }) => {
   const currentSize = ms(DESIGN.fontSize.xxl * fontSizeMultiplier);
   const currentLineHeight = ms(DESIGN.spacing.xxl * fontSizeMultiplier);
   const textStyle = { color: colors.onBackground, fontSize: currentSize, lineHeight: currentLineHeight };
 
-  const cleanQuery = query.trim().toLowerCase();
+  const cleanQuery = removeAccents(query.trim()).toLowerCase();
   if (!cleanQuery) {
     return <BibleText variant="reading" style={[styles.verseText, textStyle]}>{text}</BibleText>;
   }
 
-  const escapeRegExp = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  const rawParts = text.split(new RegExp(`(${escapeRegExp(cleanQuery)})`, 'gi'));
+  const normalizedText = removeAccents(text).toLowerCase();
   const tokens: { text: string; highlighted: boolean }[] = [];
-  for (const part of rawParts) {
-    if (part.toLowerCase() === cleanQuery) {
-      tokens.push({ text: part, highlighted: true });
-    } else {
-      const words = part.split(/(\s+)/);
-      for (const w of words) {
-        if (w) tokens.push({ text: w, highlighted: false });
-      }
+  
+  let lastIdx = 0;
+  let idx = normalizedText.indexOf(cleanQuery);
+  
+  while (idx !== -1) {
+    if (idx > lastIdx) {
+      tokens.push({ text: text.slice(lastIdx, idx), highlighted: false });
     }
+    tokens.push({ text: text.slice(idx, idx + cleanQuery.length), highlighted: true });
+    
+    lastIdx = idx + cleanQuery.length;
+    idx = normalizedText.indexOf(cleanQuery, lastIdx);
+  }
+  
+  if (lastIdx < text.length) {
+    tokens.push({ text: text.slice(lastIdx), highlighted: false });
   }
 
   return (
@@ -426,7 +433,7 @@ export default function SearchScreen() {
     setIsSearching(true);
     const delay = immediate ? 0 : 350;
     searchTimeout.current = setTimeout(() => {
-      const term = q.trim().toLowerCase();
+      const term = removeAccents(q.trim()).toLowerCase();
       const found: SearchResult[] = [];
 
       const booksToSearch = scope === 'bible'
@@ -445,7 +452,7 @@ export default function SearchScreen() {
 
         for (const { idx, verses } of chaptersToSearch) {
           for (let vi = 0; vi < verses.length; vi++) {
-            if (verses[vi].toLowerCase().includes(term)) {
+            if (removeAccents(verses[vi]).toLowerCase().includes(term)) {
               found.push({
                 bookName: book.name,
                 bookAbbrev: book.abbrev,
