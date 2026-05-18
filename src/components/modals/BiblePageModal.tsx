@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useMemo } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Animated, BackHandler, KeyboardAvoidingView, Platform, Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useResponsive } from '../../hooks/useResponsive';
@@ -17,7 +17,7 @@ type BiblePageModalProps = {
 export function BiblePageModal({ visible, onClose, children, header, footer, fullHeight }: BiblePageModalProps) {
   const { colors } = useTheme();
   const { ms, DESIGN } = useResponsive();
-  
+
   const styles = useMemo(() => StyleSheet.create({
     backdrop: {
       flex: 1,
@@ -80,9 +80,9 @@ export function BiblePageModal({ visible, onClose, children, header, footer, ful
     <Animated.View style={[StyleSheet.absoluteFill, { zIndex: 9999, elevation: 9999, opacity: fadeAnim }]}>
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'padding'}>
         <View style={[styles.backdrop, { padding: ms(DESIGN.spacing.lg), backgroundColor: colors.overlay }]}>
-          <Pressable 
-            style={StyleSheet.absoluteFill} 
-            onPress={onClose} 
+          <Pressable
+            style={StyleSheet.absoluteFill}
+            onPress={onClose}
           />
           <View
             style={[

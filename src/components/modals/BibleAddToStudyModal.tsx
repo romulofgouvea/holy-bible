@@ -1,15 +1,15 @@
 import { FlashList } from '@shopify/flash-list';
 import React, { useMemo, useState } from 'react';
 import { Platform, ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
+import { LIMITS } from '../../constants/limits';
 import { useResponsive } from '../../hooks/useResponsive';
 import { useStudies } from '../../hooks/useStudies';
 import { useTheme } from '../../hooks/useTheme';
+import { SelectedVerse } from '../../models';
 import { BibleIcon } from '../BibleIcon';
 import { BiblePageEmpty } from '../BiblePageEmpty';
 import { BibleText } from '../BibleText';
 import { BiblePageModal } from './BiblePageModal';
-import { SelectedVerse } from '../../models';
-import { LIMITS } from '../../constants/limits';
 
 type BibleAddToStudyModalProps = {
   visible: boolean;

@@ -363,9 +363,63 @@ export default function SearchScreen() {
         let finalSearchState: SearchFilter | null = savedSearch ? JSON.parse(savedSearch) : null;
 
         if (finalSearchState) {
-          setQuery('');
-          saveSearchState({ query: '', book: '', chapter: undefined });
-          if (finalSearchState.version) setSearchVersion(finalSearchState.version);
+          if (params.from === 'bible') {
+            const restoredQuery = finalSearchState.query || '';
+            const restoredVersion = finalSearchState.version || version || 'NAA';
+            
+            let restoredBook: Book | null = null;
+            const restoredBookAbbrev = finalSearchState.book;
+            if (restoredBookAbbrev) {
+              const books = getBibleData(restoredVersion);
+              restoredBook = books.find(b => b.abbrev.toLowerCase() === restoredBookAbbrev.toLowerCase() || b.name.toLowerCase() === restoredBookAbbrev.toLowerCase()) || null;
+            }
+            const restoredChapter = finalSearchState.chapter || null;
+
+            setQuery(restoredQuery);
+            setSearchVersion(restoredVersion);
+            setSearchBook(restoredBook);
+            setSearchChapter(restoredChapter);
+
+            if (restoredQuery.trim().length >= 2) {
+              setIsSearching(true);
+              const term = removeAccents(restoredQuery.trim()).toLowerCase();
+              const found: SearchResult[] = [];
+              const searchVersionBooks = getBibleData(restoredVersion);
+              
+              const scope = restoredChapter ? 'chapter' : restoredBook ? 'book' : 'bible';
+              const booksToSearch = scope === 'bible'
+                ? searchVersionBooks
+                : restoredBook ? [restoredBook] : searchVersionBooks;
+
+              if (booksToSearch) {
+                for (const book of booksToSearch) {
+                  const chaptersToSearch = scope === 'chapter' && restoredChapter
+                    ? [{ idx: restoredChapter - 1, verses: book.chapters[restoredChapter - 1] || [] }]
+                    : book.chapters.map((verses, idx) => ({ idx, verses }));
+
+                  for (const { idx, verses } of chaptersToSearch) {
+                    for (let vi = 0; vi < verses.length; vi++) {
+                      if (removeAccents(verses[vi]).toLowerCase().includes(term)) {
+                        found.push({
+                          bookName: book.name,
+                          bookAbbrev: book.abbrev,
+                          chapter: idx + 1,
+                          verse: vi + 1,
+                          text: verses[vi],
+                        });
+                      }
+                    }
+                  }
+                }
+              }
+              setResults(found);
+              setIsSearching(false);
+            }
+          } else {
+            setQuery('');
+            saveSearchState({ query: '', book: '', chapter: undefined });
+            if (finalSearchState.version) setSearchVersion(finalSearchState.version);
+          }
         }
 
         if (savedHistory) setHistory(JSON.parse(savedHistory));

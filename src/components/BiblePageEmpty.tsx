@@ -25,31 +25,36 @@ export function BiblePageEmpty({
   const { colors } = useTheme();
   const { ms, DESIGN } = useResponsive();
   const styles = useMemo(() => StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: ms(DESIGN.spacing.xxl),
-    textAlign: 'center',
-  },
-  title: {
-    fontWeight: '800',
-  },
-  description: {
-    textAlign: 'center',
-    lineHeight: ms(20),
-  },
-}), [ms, colors, DESIGN]);
+    container: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: ms(DESIGN.spacing.xxl),
+    },
+    title: {
+      fontWeight: '800',
+      textAlign: 'center',
+    },
+    description: {
+      textAlign: 'center',
+      lineHeight: ms(DESIGN.fontSize.lg * 1.3),
+    },
+  }), [ms, colors, DESIGN]);
 
 
   return (
     <View style={styles.container}>
-      <BibleIcon name={icon} size={ms(72)} containerSize={72} color={colors.textMuted} />
-      <BibleText style={[styles.title, { fontSize: ms(22), color: colors.textMuted, marginTop: ms(24) }]}>
+      <BibleIcon
+        name={icon}
+        size={ms(DESIGN.icon.xl * 1.8)}
+        containerSize={ms(DESIGN.icon.xl * 2)}
+        color={colors.textMuted}
+      />
+      <BibleText style={[styles.title, { fontSize: ms(DESIGN.fontSize.xxl), color: colors.textMuted, marginTop: ms(DESIGN.spacing.xl) }]}>
         {title}
       </BibleText>
       {description && (
-        <BibleText style={[styles.description, { fontSize: ms(DESIGN.spacing.lg), color: colors.textMuted, marginTop: ms(8) }]}>
+        <BibleText style={[styles.description, { fontSize: ms(DESIGN.fontSize.md), color: colors.textMuted, marginTop: ms(DESIGN.spacing.sm) }]}>
           {description}
         </BibleText>
       )}
@@ -57,7 +62,7 @@ export function BiblePageEmpty({
         <BibleButton
           label={actionLabel}
           onPress={onAction}
-          style={{ marginTop: ms(24) }}
+          style={{ marginTop: ms(DESIGN.spacing.xl) }}
           variant="outline"
         />
       )}
