@@ -90,7 +90,7 @@ export const COLOR_THEMES: Record<ColorThemeKey, { label: string; swatch: string
     },
     dark: {
       ...DARK_BASE,
-      primary: '#008080',
+      primary: '#1FB5B5',
       primaryVariant: '#004D40',
       secondary: '#4DB6AC',
       secondaryVariant: '#002D2D',
@@ -112,7 +112,7 @@ export const COLOR_THEMES: Record<ColorThemeKey, { label: string; swatch: string
     },
     dark: {
       ...DARK_BASE,
-      primary: '#606770',
+      primary: '#7E8896',
       primaryVariant: '#394047',
       secondary: '#ADB5BD',
       secondaryVariant: '#212529',
@@ -134,7 +134,7 @@ export const COLOR_THEMES: Record<ColorThemeKey, { label: string; swatch: string
     },
     dark: {
       ...DARK_BASE,
-      primary: '#820AD1',
+      primary: '#9F5FE3',
       primaryVariant: '#4406A1',
       secondary: '#B768FF',
       secondaryVariant: '#1D0033',
@@ -156,7 +156,7 @@ export const COLOR_THEMES: Record<ColorThemeKey, { label: string; swatch: string
     },
     dark: {
       ...DARK_BASE,
-      primary: '#1877F2',
+      primary: '#5197FF',
       primaryVariant: '#0A57C2',
       secondary: '#73A5F8',
       secondaryVariant: '#051E3D',
@@ -178,7 +178,7 @@ export const COLOR_THEMES: Record<ColorThemeKey, { label: string; swatch: string
     },
     dark: {
       ...DARK_BASE,
-      primary: '#f37321',
+      primary: '#FF8E42',
       primaryVariant: '#B84F0E',
       secondary: '#FFA76B',
       secondaryVariant: '#3D1B00',
@@ -200,7 +200,7 @@ export const COLOR_THEMES: Record<ColorThemeKey, { label: string; swatch: string
     },
     dark: {
       ...DARK_BASE,
-      primary: '#1DB954',
+      primary: '#32D76E',
       primaryVariant: '#10853B',
       secondary: '#5EEA8F',
       secondaryVariant: '#0A2D16',
