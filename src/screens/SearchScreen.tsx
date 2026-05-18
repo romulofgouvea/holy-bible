@@ -48,8 +48,8 @@ export type SearchResult = {
 export type SearchFilter = {
   query: string;
   version: string;
-  book?: string;
-  chapter?: number;
+  book?: string | null;
+  chapter?: number | null;
 };
 
 const MAX_HISTORY = 20;
@@ -85,19 +85,29 @@ const HighlightText = React.memo(({ text, query, colors, fontSizeMultiplier, ms,
   }
 
   return (
-    <View style={styles.highlightTextContainer}>
+    <BibleText variant="reading" style={[styles.verseText, textStyle]}>
       {tokens.map((token, i) =>
         token.highlighted ? (
-          <View key={i} style={[styles.highlightedToken, { backgroundColor: colors.primary + '20' }]}>
-            <BibleText variant="reading" style={[styles.verseText, { color: colors.primary, fontWeight: '800', fontSize: currentSize, lineHeight: currentLineHeight }]}>
-              {token.text}
-            </BibleText>
-          </View>
+          <BibleText
+            key={i}
+            variant="reading"
+            style={[
+              styles.verseText,
+              textStyle,
+              {
+                color: colors.primary,
+                fontWeight: '800',
+                backgroundColor: colors.primary + '20',
+              }
+            ]}
+          >
+            {token.text}
+          </BibleText>
         ) : (
-          <BibleText key={i} variant="reading" style={[styles.verseText, textStyle]}>{token.text}</BibleText>
+          token.text
         )
       )}
-    </View>
+    </BibleText>
   );
 });
 
@@ -342,11 +352,10 @@ export default function SearchScreen() {
   const searchTimeout = useRef<any>(null);
   const inputRef = useRef<TextInput>(null);
 
-  // Unified Search State persist function
   const saveSearchState = async (updates: Partial<SearchFilter>) => {
     try {
       const stored = await AsyncStorage.getItem(STORAGE_KEYS.CURRENT_SEARCH);
-      const current = stored ? JSON.parse(stored) : { query: '', version: version || 'NAA', book: 'Gn', chapter: 1, verse: 1 };
+      const current = stored ? JSON.parse(stored) : { query: '', version: version || 'NAA', book: null, chapter: null };
       const next = { ...current, ...updates };
       await AsyncStorage.setItem(STORAGE_KEYS.CURRENT_SEARCH, JSON.stringify(next));
     } catch (e) { }
@@ -435,8 +444,8 @@ export default function SearchScreen() {
   const saveFilters = (v: string, b: string | null, c: number | null) => {
     saveSearchState({
       version: v,
-      book: b || '',
-      chapter: c || 1
+      book: b,
+      chapter: c
     });
   };
 

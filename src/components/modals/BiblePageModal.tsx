@@ -83,7 +83,7 @@ export function BiblePageModal({ visible, onClose, children, header, footer, ful
 
   return (
     <Animated.View style={[StyleSheet.absoluteFill, { zIndex: 9999, elevation: 9999, opacity: fadeAnim }]}>
-      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'padding'}>
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <View style={[styles.backdrop, { padding: ms(DESIGN.spacing.lg), backgroundColor: colors.overlay }]}>
           <Pressable
             style={StyleSheet.absoluteFill}

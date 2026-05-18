@@ -1,7 +1,7 @@
 import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import React, { useEffect, useRef, useState , useMemo } from 'react';
-import { Animated, Modal, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { Animated, Modal, Platform, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { DRAWER_ITEMS } from '../constants/routes';
 import { useResponsive } from '../hooks/useResponsive';
@@ -33,55 +33,55 @@ export function BibleDrawerMenu(props: DrawerMenuProps) {
   const drawerWidth = Math.min(ms(280), width * 0.72);
   const { colors } = useTheme();
   const styles = useMemo(() => StyleSheet.create({
-  backdrop: {
-    ...StyleSheet.absoluteFillObject,
-  },
-  drawer: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    bottom: 0,
-    elevation: 24,
-    shadowOffset: { width: ms(4), height: 0 },
-    shadowOpacity: 0.18,
-    shadowRadius: 12,
-  },
-  drawerHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 0,
-  },
-  drawerLogo: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexShrink: 0,
-  },
-  drawerTitle: {
-    flex: 1,
-    fontWeight: '800',
-    letterSpacing: 0.3,
-  },
-  menuList: {
-    flex: 1,
-  },
-  menuItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 0,
-  },
-  menuIconWrap: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexShrink: 0,
-  },
-  menuLabel: {
-    fontWeight: '600',
-    flex: 1,
-  },
-  bottomSection: {
-    gap: ms(DESIGN.spacing.xs),
-  },
-}), [ms, colors, DESIGN]);
+    backdrop: {
+      ...StyleSheet.absoluteFillObject,
+    },
+    drawer: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      bottom: 0,
+      elevation: 24,
+      shadowOffset: { width: ms(4), height: 0 },
+      shadowOpacity: 0.18,
+      shadowRadius: 12,
+    },
+    drawerHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 0,
+    },
+    drawerLogo: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      flexShrink: 0,
+    },
+    drawerTitle: {
+      flex: 1,
+      fontWeight: '800',
+      letterSpacing: 0.3,
+    },
+    menuList: {
+      flex: 1,
+    },
+    menuItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 0,
+    },
+    menuIconWrap: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      flexShrink: 0,
+    },
+    menuLabel: {
+      fontWeight: '600',
+      flex: 1,
+    },
+    bottomSection: {
+      gap: ms(DESIGN.spacing.xs),
+    },
+  }), [ms, colors, DESIGN]);
 
   const [isModalVisible, setIsModalVisible] = useState(visible);
   const router = useRouter();
@@ -213,8 +213,8 @@ export function BibleDrawerMenu(props: DrawerMenuProps) {
             {MENU_ITEMS.map(renderItem)}
           </View>
 
-          <View style={[styles.bottomSection, { paddingHorizontal: ms(DESIGN.spacing.sm), paddingBottom: Math.max(ms(DESIGN.spacing.lg), insets.bottom + ms(DESIGN.spacing.sm)) }]}>
-            <BibleDivider margin={8} />
+          <View style={[styles.bottomSection, { paddingHorizontal: ms(DESIGN.spacing.sm), paddingBottom: Platform.OS === 'ios' ? Math.max(ms(DESIGN.spacing.lg), insets.bottom + ms(DESIGN.spacing.sm)) : 0 }]}>
+            <BibleDivider />
             {BOTTOM_ITEMS.map(renderItem)}
           </View>
         </Animated.View>

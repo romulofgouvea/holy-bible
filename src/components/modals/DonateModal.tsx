@@ -17,7 +17,7 @@ type Props = {
 export function DonateModal({ visible, onClose }: Props) {
   const { ms, DESIGN } = useResponsive();
   const { colors } = useTheme();
-  
+
   const styles = useMemo(() => StyleSheet.create({
     header: {
       flexDirection: 'row',
@@ -137,7 +137,7 @@ export function DonateModal({ visible, onClose }: Props) {
             <View style={[styles.pixIconCircle, { backgroundColor: colors.primary }]}>
               <BibleText style={{ color: colors.onPrimary, fontWeight: '900', fontSize: ms(DESIGN.fontSize.xs) }}>PIX</BibleText>
             </View>
-            <BibleText style={[styles.pixLabel, { color: colors.textMuted, fontSize: ms(DESIGN.fontSize.md), fontWeight: '700' }]}>
+            <BibleText style={[styles.pixLabel, { color: colors.onSurface, fontSize: ms(DESIGN.fontSize.md), fontWeight: '700' }]}>
               CHAVE (E-MAIL)
             </BibleText>
           </View>
