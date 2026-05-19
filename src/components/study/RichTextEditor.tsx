@@ -348,6 +348,14 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
             document.execCommand(cmd, false, value);
           }
           
+          if (cmd === 'undo' || cmd === 'redo') {
+            setTimeout(() => {
+              const msg = JSON.stringify({ type: 'contentChanged', data: editor.innerHTML });
+              if (window.ReactNativeWebView) window.ReactNativeWebView.postMessage(msg);
+              else window.parent.postMessage(msg, '*');
+            }, 100);
+          }
+          
           saveSelection();
           setTimeout(updateFormatState, 50);
         };
@@ -772,6 +780,18 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
                 <View style={{ width: ms(DESIGN.fontSize.xxl), height: ms(DESIGN.fontSize.xxl), borderRadius: ms(DESIGN.borderRadius.sm), borderWidth: 1.5, borderColor: colors.textMuted, alignItems: 'center', justifyContent: 'center' }}>
                   <View style={{ width: ms(DESIGN.spacing.lg), height: 1.5, backgroundColor: colors.textMuted, transform: [{ rotate: '45deg' }] }} />
                 </View>
+              </TouchableOpacity>
+            </View>
+
+            <BibleDivider vertical height={20} margin={ms(DESIGN.spacing.sm)} />
+
+            <View style={[styles.rowGroup, { backgroundColor: colors.surfaceHighlight, borderColor: colors.border }]}>
+              <TouchableOpacity style={styles.groupBtn} onPress={() => execDocumentCmd('undo')}>
+                <BibleIcon name="rotate-ccw" color={colors.onSurface} />
+              </TouchableOpacity>
+              <BibleDivider vertical height={"60%"} />
+              <TouchableOpacity style={styles.groupBtn} onPress={() => execDocumentCmd('redo')}>
+                <BibleIcon name="rotate-cw" color={colors.onSurface} />
               </TouchableOpacity>
             </View>
 
