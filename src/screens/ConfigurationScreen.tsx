@@ -22,6 +22,13 @@ import { useReaderSettings } from '../hooks/useReaderSettings';
 import { useResponsive } from '../hooks/useResponsive';
 import { useStudies } from '../hooks/useStudies';
 import { useTheme } from '../hooks/useTheme';
+import {
+  buildAppBackupJson,
+  countRestoredStudies,
+  parseBackupRaw,
+  restoreAppStorage,
+  writeAutoBackupFile,
+} from '../utils/backup';
 import { impactLight, selectionHaptic } from '../utils/haptics';
 
 const COLOR_THEME_OPTIONS = Object.entries(COLOR_THEMES).map(([key, value]) => ({
@@ -101,7 +108,7 @@ export default function ConfigurationScreen() {
   const { setReaderTheme, readerTheme } = useReaderSettings();
   const { clearHistory } = useHistory();
   const [isDrawerVisible, setIsDrawerVisible] = useState(false);
-  const { studies, importBulk } = useStudies();
+  const { importBulk, reloadFromStorage } = useStudies();
   const router = useRouter();
   const [isAutoBackupEnabled, setIsAutoBackupEnabled] = useState(false);
   const [isDonateVisible, setIsDonateVisible] = useState(false);
@@ -144,11 +151,9 @@ export default function ConfigurationScreen() {
           await AsyncStorage.setItem(STORAGE_KEYS.AUTO_BACKUP, 'true');
           setIsAutoBackupEnabled(true);
 
-          if (studies.length > 0) {
-            try {
-              await (FileSystem as any).writeAsStringAsync(fileUri, JSON.stringify(studies, null, 2));
-            } catch (e) { }
-          }
+          try {
+            await writeAutoBackupFile();
+          } catch (e) { }
           setAlertInfo({ title: 'Sucesso', message: 'Backup automático configurado para a pasta escolhida!' });
         } else {
           setIsAutoBackupEnabled(false);
@@ -162,10 +167,9 @@ export default function ConfigurationScreen() {
     } else {
       setIsAutoBackupEnabled(true);
       await AsyncStorage.setItem(STORAGE_KEYS.AUTO_BACKUP, 'true');
-      if (Platform.OS !== 'web' && studies.length > 0) {
+      if (Platform.OS !== 'web') {
         try {
-          const path = `${(FileSystem as any).documentDirectory}backup_estudos_automatico.json`;
-          await (FileSystem as any).writeAsStringAsync(path, JSON.stringify(studies, null, 2));
+          await writeAutoBackupFile();
         } catch (e) { }
       }
     }
@@ -173,27 +177,29 @@ export default function ConfigurationScreen() {
 
   const handleManualBackup = async () => {
     try {
-      if (studies.length === 0) {
-        setAlertInfo({ title: 'Aviso', message: 'Não há estudos para exportar.' });
-        return;
-      }
-      const json = JSON.stringify(studies, null, 2);
+      const json = await buildAppBackupJson(true);
+      const fileBaseName = `backup_biblia_${new Date().getTime()}`;
       if (Platform.OS === 'web') {
         const blob = new Blob([json], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
-        const a = document.createElement('a'); a.href = url; a.download = `backup_estudos_biblia_${new Date().getTime()}.json`; a.click();
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${fileBaseName}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        setAlertInfo({ title: 'Sucesso', message: 'Backup completo do aplicativo exportado com sucesso!' });
       } else if (Platform.OS === 'android') {
         const permissions = await (FileSystem as any).StorageAccessFramework.requestDirectoryPermissionsAsync();
         if (permissions.granted) {
-          const fileName = `backup_estudos_${new Date().getTime()}`;
-          const fileUri = await (FileSystem as any).StorageAccessFramework.createFileAsync(permissions.directoryUri, fileName, 'application/json');
+          const fileUri = await (FileSystem as any).StorageAccessFramework.createFileAsync(permissions.directoryUri, fileBaseName, 'application/json');
           await (FileSystem as any).writeAsStringAsync(fileUri, json);
-          setAlertInfo({ title: 'Sucesso', message: 'Backup exportado e salvo na pasta escolhida com sucesso!' });
+          setAlertInfo({ title: 'Sucesso', message: 'Backup completo exportado e salvo na pasta escolhida!' });
         }
       } else {
-        const path = `${(FileSystem as any).documentDirectory}backup_estudos_${new Date().getTime()}.json`;
+        const path = `${(FileSystem as any).documentDirectory}${fileBaseName}.json`;
         await (FileSystem as any).writeAsStringAsync(path, json);
         await Sharing.shareAsync(path, { mimeType: 'application/json' });
+        setAlertInfo({ title: 'Sucesso', message: 'Backup completo do aplicativo exportado com sucesso!' });
       }
     } catch (err) {
       setAlertInfo({ title: 'Erro', message: 'Não foi possível criar o arquivo de backup.', isDanger: true });
@@ -219,16 +225,28 @@ export default function ConfigurationScreen() {
         raw = await (FileSystem as any).readAsStringAsync(result.assets[0].uri);
       }
 
-      const parsed = JSON.parse(raw);
-      if (!Array.isArray(parsed)) {
-        setAlertInfo({ title: 'Erro', message: 'Formato de arquivo inválido. É esperado um backup de múltiplos estudos (Array). Se você está tentando importar um único estudo antigo, crie um novo e cole os dados.', isDanger: true });
+      const parsed = parseBackupRaw(raw);
+
+      if ('legacyStudies' in parsed) {
+        const legacy = parsed.legacyStudies;
+        if (!Array.isArray(legacy)) {
+          setAlertInfo({ title: 'Erro', message: 'Formato de arquivo inválido.', isDanger: true });
+          return;
+        }
+        const importedCount = importBulk(legacy);
+        setAlertInfo({
+          title: 'Restauração Concluída',
+          message: `${importedCount} estudo(s) restaurado(s).\n\n(${legacy.length - importedCount} ignorados pois já existem no app.)`,
+        });
         return;
       }
 
-      const importedCount = importBulk(parsed);
+      const restoredKeys = await restoreAppStorage(parsed.storage);
+      await reloadFromStorage();
+      const studyCount = countRestoredStudies(parsed.storage);
       setAlertInfo({
         title: 'Restauração Concluída',
-        message: `${importedCount} estudo(s) restaurado(s) com sucesso.\n\n(${parsed.length - importedCount} ignorados pois já existem no app.)`
+        message: `Backup completo restaurado com sucesso.\n\n${restoredKeys} chave(s) do aplicativo.\n${studyCount} estudo(s) no arquivo.`,
       });
     } catch (err) {
       console.log('Import err', err);
@@ -324,7 +342,7 @@ export default function ConfigurationScreen() {
         <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border, shadowColor: colors.shadow }]}>
           <SettingsItem
             label="Backup Automático"
-            description="Salvar estudos na pasta do App"
+            description="Salvar backup completo do app na pasta escolhida"
             icon="refresh-cw"
             onPress={() => handleToggleAutoBackup(!isAutoBackupEnabled)}
             rightElement={
@@ -339,7 +357,7 @@ export default function ConfigurationScreen() {
 
           <SettingsItem
             label="Exportar Backup"
-            description="Salvar ou compartilhar o arquivo de backup"
+            description="Salvar backup completo do app (estudos, histórico, configurações)"
             icon="download"
             onPress={handleManualBackup}
           />
@@ -348,7 +366,7 @@ export default function ConfigurationScreen() {
 
           <SettingsItem
             label="Restaurar do Backup"
-            description="Importar arquivo de backup com todos os seus estudos"
+            description="Restaurar backup completo ou arquivo antigo só de estudos"
             icon="upload"
             onPress={handleImport}
           />

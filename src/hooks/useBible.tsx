@@ -4,6 +4,7 @@ import { DeviceEventEmitter } from 'react-native';
 import { STORAGE_KEYS } from '../constants/storage';
 import { availableVersions, getBibleData } from '../data';
 import { Book, HighlightItem } from '../models';
+import { BACKUP_RESTORED_EVENT } from '../utils/backup';
 import { useHistory } from './useHistory';
 
 type BibleContextType = {
@@ -178,6 +179,11 @@ export function BibleProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     loadState();
+  }, [loadState]);
+
+  useEffect(() => {
+    const sub = DeviceEventEmitter.addListener(BACKUP_RESTORED_EVENT, loadState);
+    return () => sub.remove();
   }, [loadState]);
 
   const setVersion = useCallback((v: string) => {

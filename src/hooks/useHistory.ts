@@ -1,6 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useCallback, useEffect, useState } from 'react';
+import { DeviceEventEmitter } from 'react-native';
 import { STORAGE_KEYS } from '../constants/storage';
+import { BACKUP_RESTORED_EVENT } from '../utils/backup';
 import { HistoryItem } from '../models';
 export type { HistoryItem };
 
@@ -50,6 +52,8 @@ export function useHistory() {
 
   useEffect(() => {
     loadHistory();
+    const sub = DeviceEventEmitter.addListener(BACKUP_RESTORED_EVENT, loadHistory);
+    return () => sub.remove();
   }, [loadHistory]);
 
   return { history, addHistoryEntry, clearHistory, loadHistory };

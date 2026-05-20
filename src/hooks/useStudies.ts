@@ -1,7 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useCallback, useEffect, useState } from 'react';
+import { DeviceEventEmitter } from 'react-native';
 import { STORAGE_KEYS } from '../constants/storage';
 import { Study } from '../models';
+import { BACKUP_RESTORED_EVENT, writeAutoBackupFile } from '../utils/backup';
 export type { Study };
 
 function makeId() {
@@ -29,55 +31,52 @@ function migrateBlocksToHtml(blocks: any[]) {
   }).join('') || '<p><br></p>';
 }
 
+function parseStudiesFromRaw(raw: string | null): Study[] {
+  if (!raw) return [];
+  const parsed = JSON.parse(raw);
+  const now = Date.now();
+  const THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;
+
+  return parsed.filter((s: any) => {
+    if (s.isActive === false && s.deletedAt && now - s.deletedAt > THIRTY_DAYS) return false;
+    return true;
+  }).map((s: any) => {
+    if (s.blocks && (!s.content || s.content.trim() === '')) {
+      s.content = migrateBlocksToHtml(s.blocks);
+    }
+    if (!s.content) s.content = '<p><br></p>';
+    delete s.blocks;
+    return s as Study;
+  });
+}
+
 export function useStudies() {
   const [studies, setStudies] = useState<Study[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  useEffect(() => {
-    AsyncStorage.getItem(STORAGE_KEYS.STUDIES).then((raw) => {
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        const now = Date.now();
-        const THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;
-
-        const migrated = parsed.filter((s: any) => {
-          if (s.isActive === false && s.deletedAt && now - s.deletedAt > THIRTY_DAYS) return false;
-          return true;
-        }).map((s: any) => {
-          if (s.blocks && (!s.content || s.content.trim() === '')) {
-            s.content = migrateBlocksToHtml(s.blocks);
-          }
-          if (!s.content) s.content = '<p><br></p>';
-          delete s.blocks;
-          return s as Study;
-        });
-        setStudies(migrated);
-      }
+  const reloadFromStorage = useCallback(async () => {
+    try {
+      const raw = await AsyncStorage.getItem(STORAGE_KEYS.STUDIES);
+      setStudies(parseStudiesFromRaw(raw));
+    } catch {
+      setStudies([]);
+    } finally {
       setIsLoaded(true);
-    }).catch(() => setIsLoaded(true));
+    }
   }, []);
+
+  useEffect(() => {
+    reloadFromStorage();
+    const sub = DeviceEventEmitter.addListener(BACKUP_RESTORED_EVENT, reloadFromStorage);
+    return () => sub.remove();
+  }, [reloadFromStorage]);
 
   const persist = useCallback((updated: Study[]) => {
     setStudies(updated);
     AsyncStorage.setItem(STORAGE_KEYS.STUDIES, JSON.stringify(updated)).catch(() => { });
 
     AsyncStorage.getItem(STORAGE_KEYS.AUTO_BACKUP).then(val => {
-      if (val === 'true') {
-        const { Platform } = require('react-native');
-        if (Platform.OS !== 'web') {
-          const FileSystem = require('expo-file-system/legacy');
-          if (Platform.OS === 'android') {
-            AsyncStorage.getItem(STORAGE_KEYS.AUTO_BACKUP_FILE_URI).then(fileUri => {
-              if (fileUri) {
-                FileSystem.writeAsStringAsync(fileUri, JSON.stringify(updated, null, 2)).catch(() => { });
-              }
-            }).catch(() => { });
-          } else {
-            const path = `${FileSystem.documentDirectory}backup_estudos_automatico.json`;
-            FileSystem.writeAsStringAsync(path, JSON.stringify(updated, null, 2)).catch(() => { });
-          }
-        }
-      }
+      if (val === 'true') writeAutoBackupFile().catch(() => { });
     }).catch(() => { });
   }, []);
 
@@ -168,6 +167,7 @@ export function useStudies() {
     isLoaded,
     createStudy,
     importBulk,
+    reloadFromStorage,
     updateStudy,
     deleteStudy,
     deleteMultiple,

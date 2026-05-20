@@ -1,6 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { DeviceEventEmitter } from 'react-native';
 import { STORAGE_KEYS } from '../constants/storage';
+import { BACKUP_RESTORED_EVENT } from '../utils/backup';
 
 import {
   COLOR_THEMES,
@@ -38,22 +40,26 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [colorTheme, setColorThemeState] = useState<ColorThemeKey>('teal');
   const [hapticsEnabled, setHapticsEnabled] = useState(true);
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const [savedDark, savedTheme, savedHaptics] = await Promise.all([
-          AsyncStorage.getItem(STORAGE_KEYS.DARK_MODE),
-          AsyncStorage.getItem(STORAGE_KEYS.APP_COLOR_THEME),
-          AsyncStorage.getItem(STORAGE_KEYS.HAPTICS_ENABLED),
-        ]);
-        if (savedDark !== null) setIsDarkMode(savedDark === 'true');
-        if (savedHaptics !== null) setHapticsEnabled(savedHaptics === 'true');
-        if (savedTheme && Object.keys(COLOR_THEMES).includes(savedTheme)) {
-          setColorThemeState(savedTheme as ColorThemeKey);
-        }
-      } catch (e) { }
-    })();
+  const loadThemeSettings = useCallback(async () => {
+    try {
+      const [savedDark, savedTheme, savedHaptics] = await Promise.all([
+        AsyncStorage.getItem(STORAGE_KEYS.DARK_MODE),
+        AsyncStorage.getItem(STORAGE_KEYS.APP_COLOR_THEME),
+        AsyncStorage.getItem(STORAGE_KEYS.HAPTICS_ENABLED),
+      ]);
+      if (savedDark !== null) setIsDarkMode(savedDark === 'true');
+      if (savedHaptics !== null) setHapticsEnabled(savedHaptics === 'true');
+      if (savedTheme && Object.keys(COLOR_THEMES).includes(savedTheme)) {
+        setColorThemeState(savedTheme as ColorThemeKey);
+      }
+    } catch (e) { }
   }, []);
+
+  useEffect(() => {
+    loadThemeSettings();
+    const sub = DeviceEventEmitter.addListener(BACKUP_RESTORED_EVENT, loadThemeSettings);
+    return () => sub.remove();
+  }, [loadThemeSettings]);
 
   useEffect(() => {
     setHapticsGlobal(hapticsEnabled);

@@ -1,8 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, useContext, useEffect, useState, useMemo, useCallback } from 'react';
-import { Platform } from 'react-native';
+import { DeviceEventEmitter, Platform } from 'react-native';
 import { COLOR_THEMES, ThemeColors, sepiaColors, ColorThemeKey } from '../constants/colors';
 import { STORAGE_KEYS } from '../constants/storage';
+import { BACKUP_RESTORED_EVENT } from '../utils/backup';
 import { useTheme } from './useTheme';
 
 import { ReaderTheme, ReaderFont, TextAlign } from '../models';
@@ -30,24 +31,28 @@ export const ReaderSettingsProvider = ({ children }: { children: React.ReactNode
   const [readerTheme, setReaderThemeState] = useState<ReaderTheme>('light');
   const [readerFont, setReaderFontState] = useState<ReaderFont>('poppins');
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const [savedFontSize, savedAlign, savedTheme, savedFont] = await Promise.all([
-          AsyncStorage.getItem(STORAGE_KEYS.FONT_SIZE),
-          AsyncStorage.getItem(STORAGE_KEYS.TEXT_ALIGN),
-          AsyncStorage.getItem(STORAGE_KEYS.READER_THEME),
-          AsyncStorage.getItem(STORAGE_KEYS.READER_FONT),
-        ]);
+  const loadReaderSettings = useCallback(async () => {
+    try {
+      const [savedFontSize, savedAlign, savedTheme, savedFont] = await Promise.all([
+        AsyncStorage.getItem(STORAGE_KEYS.FONT_SIZE),
+        AsyncStorage.getItem(STORAGE_KEYS.TEXT_ALIGN),
+        AsyncStorage.getItem(STORAGE_KEYS.READER_THEME),
+        AsyncStorage.getItem(STORAGE_KEYS.READER_FONT),
+      ]);
 
-        if (savedFontSize !== null) setFontSizeMultiplierState(Number(savedFontSize));
-        if (savedAlign !== null) setTextAlignState(savedAlign as TextAlign);
-        if (savedTheme !== null) setReaderThemeState(savedTheme as ReaderTheme);
-        if (savedFont !== null) setReaderFontState(savedFont as ReaderFont);
-      } catch (e) { }
-      setIsLoaded(true);
-    })();
+      if (savedFontSize !== null) setFontSizeMultiplierState(Number(savedFontSize));
+      if (savedAlign !== null) setTextAlignState(savedAlign as TextAlign);
+      if (savedTheme !== null) setReaderThemeState(savedTheme as ReaderTheme);
+      if (savedFont !== null) setReaderFontState(savedFont as ReaderFont);
+    } catch (e) { }
+    setIsLoaded(true);
   }, []);
+
+  useEffect(() => {
+    loadReaderSettings();
+    const sub = DeviceEventEmitter.addListener(BACKUP_RESTORED_EVENT, loadReaderSettings);
+    return () => sub.remove();
+  }, [loadReaderSettings]);
 
   const setFontSizeMultiplier = useCallback(async (val: number) => {
     setFontSizeMultiplierState(val);
