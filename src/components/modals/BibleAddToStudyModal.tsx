@@ -102,10 +102,24 @@ export function BibleAddToStudyModal({ visible, onClose, selectedVerses, onShowT
     }
 
     const version = sorted[0].version;
-    ref = `${ref} (${version})`;
 
     const versesBody = sorted.map(v => `<div class="verse-line"><span class="verse-num">${v.verse}</span> <span class="verse-text">${v.text}</span></div>`).join('');
 
+    const hasCompare = sorted.some(v => v.compareText);
+    if (hasCompare) {
+      const compareVersion = sorted.find(v => v.compareVersion)?.compareVersion || '';
+      const compareVersesBody = sorted.map(v => {
+        if (!v.compareText) return '';
+        return `<div class="verse-line"><span class="verse-num">${v.verse}</span> <span class="verse-text">${v.compareText}</span></div>`;
+      }).join('');
+      
+      const refPrimary = `${ref} (${version})`;
+      const refCompare = `${ref} (${compareVersion})`;
+
+      return `<blockquote class="bible-verse" contenteditable="false"><div class="remove-verse-btn" contenteditable="false">×</div><div class="verse-title">${refPrimary}</div>${versesBody}</blockquote><blockquote class="bible-verse" contenteditable="false"><div class="remove-verse-btn" contenteditable="false">×</div><div class="verse-title">${refCompare}</div>${compareVersesBody}</blockquote><p><br></p>`;
+    }
+
+    ref = `${ref} (${version})`;
     return `<blockquote class="bible-verse" contenteditable="false"><div class="remove-verse-btn" contenteditable="false">×</div><div class="verse-title">${ref}</div>${versesBody}</blockquote><p><br></p>`;
   };
 

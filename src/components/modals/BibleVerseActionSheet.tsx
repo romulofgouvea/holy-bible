@@ -5,9 +5,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { VERSE_HIGHLIGHTS as HIGHLIGHT_COLORS } from '../../constants/colors';
 import { useResponsive } from '../../hooks/useResponsive';
 import { useTheme } from '../../hooks/useTheme';
+import { SelectedVerse } from '../../models';
 import { BibleIcon } from '../BibleIcon';
 import { BibleAddToStudyModal } from './BibleAddToStudyModal';
-import { SelectedVerse } from '../../models';
 
 type VerseActionSheetProps = {
   visible: boolean;
@@ -89,12 +89,8 @@ export function BibleVerseActionSheet(props: VerseActionSheetProps) {
 
   const count = selectedVerses.length;
 
-  const buildText = () => {
-    if (count === 0) return '';
-    const sorted = [...selectedVerses].sort((a, b) => a.chapter !== b.chapter ? a.chapter - b.chapter : a.verse - b.verse);
+  const buildFormattedRanges = (sorted: SelectedVerse[]) => {
     const sameChapter = sorted.every((v) => v.chapter === sorted[0].chapter);
-
-    let formattedRanges = '';
     if (sameChapter) {
       const groups: string[] = [];
       let start = sorted[0].verse;
@@ -109,18 +105,33 @@ export function BibleVerseActionSheet(props: VerseActionSheetProps) {
         }
       }
       groups.push(start === end ? `${start}` : `${start}-${end}`);
-      formattedRanges = groups.join(', ');
-    } else {
-      formattedRanges = count === 1
-        ? `${sorted[0].verse}`
-        : `${sorted[0].chapter}:${sorted[0].verse}–${sorted[sorted.length - 1].chapter}:${sorted[sorted.length - 1].verse}`;
+      return { ranges: groups.join(', '), sameChapter };
     }
+    const ranges = sorted.length === 1
+      ? `${sorted[0].verse}`
+      : `${sorted[0].chapter}:${sorted[0].verse}–${sorted[sorted.length - 1].chapter}:${sorted[sorted.length - 1].verse}`;
+    return { ranges, sameChapter };
+  };
+
+  const buildText = () => {
+    if (count === 0) return '';
+    const sorted = [...selectedVerses].sort((a, b) => a.chapter !== b.chapter ? a.chapter - b.chapter : a.verse - b.verse);
+    const { ranges, sameChapter } = buildFormattedRanges(sorted);
 
     const header = sameChapter
-      ? `${sorted[0].bookName} ${sorted[0].chapter}:${formattedRanges}`
-      : `${sorted[0].bookName} ${formattedRanges}`;
+      ? `${sorted[0].bookName} ${sorted[0].chapter}:${ranges}`
+      : `${sorted[0].bookName} ${ranges}`;
 
+    const versionLabel = sorted[0].version.toUpperCase();
     const body = sorted.map((v) => `${v.verse} ${v.text}`).join('\n');
+
+    const hasCompare = sorted.some(v => v.compareText);
+    if (hasCompare) {
+      const compareVersionLabel = sorted.find(v => v.compareVersion)?.compareVersion?.toUpperCase() || '';
+      const compareBody = sorted.map((v) => v.compareText ? `${v.verse} ${v.compareText}` : '').filter(Boolean).join('\n');
+      return `${header}\n\n${versionLabel}\n${body}\n\n${compareVersionLabel}\n${compareBody}`;
+    }
+
     return `${header}\n${body}`;
   };
 

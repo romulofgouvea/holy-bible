@@ -1,0 +1,22 @@
+---
+description: Validação antes de commit — format, lint, tsc, checklist
+alwaysApply: true
+---
+
+# Validation Rules
+
+## Before Every Commit
+
+- No hardcoded styles; all sizes use `useResponsive`
+- No unused imports or components
+- No debug logs
+- Formatting, lint, and TypeScript pass
+
+## Required Commands
+
+```bash
+npm run format
+npm run lint
+npm run tsc
+git status
+```

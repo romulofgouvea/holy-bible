@@ -30,6 +30,8 @@ export type SelectedVerse = {
   bookName: string;
   bookAbbrev: string;
   version: string;
+  compareText?: string;
+  compareVersion?: string;
 };
 
 export type HistoryItem = {

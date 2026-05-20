@@ -9,6 +9,8 @@
     "ios": "expo run:ios",
     "web": "expo start --web",
     "lint": "expo lint",
+    "tsc": "tsc --noEmit",
+    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",
     "build:apk": "npx expo run:android --variant release",
     "local:build:preview": "powershell -ExecutionPolicy Bypass -File \"./local-builds/build.ps1\"",
     "local:submit:preview": "npm run local:build:preview && npm run local:deploy:preview",
