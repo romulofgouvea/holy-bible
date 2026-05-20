@@ -1,9 +1,11 @@
 import { BibleVerseActionSheet } from '@/components/modals/BibleVerseActionSheet';
 import { ReaderSettingsModal } from '@/components/modals/ReaderSettingsModal';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { STORAGE_KEYS } from '../constants/storage';
 import { Book, SelectedVerse } from '@/models';
 import { useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Animated, PanResponder, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Animated, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { BibleDivider } from '../components/BibleDivider';
 import { BibleDrawerMenu } from '../components/BibleDrawerMenu';
 import { BibleIcon } from '../components/BibleIcon';
@@ -71,39 +73,55 @@ export default function BibleScreen() {
     }];
   }, [secondCurrentBook, chapter]);
 
-  const [splitRatio, setSplitRatio] = useState(0.5);
-  const startSplitRatio = useRef(0.5);
-  const isDraggingDivider = useRef(false);
   const [splitOrientation, setSplitOrientation] = useState<'vertical' | 'horizontal'>('vertical');
-  const [containerLayout, setContainerLayout] = useState({ x: 0, y: 0, width: 0, height: 0 });
-
-  // Refs to avoid stale closures in PanResponder callbacks
-  const splitRatioRef = useRef(splitRatio);
-  const splitOrientationRef = useRef(splitOrientation);
-  const containerLayoutRef = useRef(containerLayout);
-
-  const firstHalfRef = useRef<View>(null);
-  const secondHalfRef = useRef<View>(null);
-  const currentDragRatio = useRef(splitRatio);
+  const [isControlGroupExpanded, setIsControlGroupExpanded] = useState(false);
+  const controlGroupAnim = useRef(new Animated.Value(0)).current;
+  const hasRestored = useRef(false);
 
   useEffect(() => {
-    splitRatioRef.current = splitRatio;
-    currentDragRatio.current = splitRatio;
-  }, [splitRatio]);
+    if (!isReady) return;
+    const restoreCompare = async () => {
+      try {
+        const saved = await AsyncStorage.getItem(STORAGE_KEYS.BIBLE_COMPARE);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed && parsed.versionCurrent && parsed.versionCompare) {
+            navigateTo({ version: parsed.versionCurrent });
+            setSecondVersion(parsed.versionCompare);
+            setIsSplitScreen(true);
+          }
+        }
+      } catch (e) {
+      } finally {
+        hasRestored.current = true;
+      }
+    };
+    restoreCompare();
+  }, [isReady, navigateTo]);
 
   useEffect(() => {
-    splitOrientationRef.current = splitOrientation;
-  }, [splitOrientation]);
-
-  useEffect(() => {
-    containerLayoutRef.current = containerLayout;
-  }, [containerLayout]);
+    if (!isReady || !hasRestored.current) return;
+    const syncStorage = async () => {
+      try {
+        if (isSplitScreen) {
+          const data = {
+            versionCurrent: version,
+            versionCompare: secondVersion,
+          };
+          await AsyncStorage.setItem(STORAGE_KEYS.BIBLE_COMPARE, JSON.stringify(data));
+        } else {
+          await AsyncStorage.removeItem(STORAGE_KEYS.BIBLE_COMPARE);
+        }
+      } catch (e) {
+      }
+    };
+    syncStorage();
+  }, [isReady, isSplitScreen, version, secondVersion]);
 
   const isScrollingTop = useRef(false);
   const isScrollingBottom = useRef(false);
 
   const handleFirstScroll = useCallback((event: any) => {
-    if (isDraggingDivider.current) return;
     if (isScrollingBottom.current) return;
     isScrollingTop.current = true;
     if (secondSectionListRef.current) {
@@ -116,7 +134,6 @@ export default function BibleScreen() {
   }, []);
 
   const handleSecondScroll = useCallback((event: any) => {
-    if (isDraggingDivider.current) return;
     if (isScrollingTop.current) return;
     isScrollingBottom.current = true;
     if (sectionListRef.current) {
@@ -130,98 +147,20 @@ export default function BibleScreen() {
 
   const handleToggleOrientation = useCallback(() => {
     setSplitOrientation(prev => prev === 'vertical' ? 'horizontal' : 'vertical');
-    setSplitRatio(0.5);
-  }, []);
+    setIsControlGroupExpanded(false);
+    controlGroupAnim.setValue(0);
+  }, [controlGroupAnim]);
 
-  const panResponder = useRef(
-    PanResponder.create({
-      onStartShouldSetPanResponder: () => false, // Set to false so nested TouchableOpacity buttons receive touch down events instantly
-      onMoveShouldSetPanResponder: () => true,
-      onStartShouldSetPanResponderCapture: () => false,
-      onMoveShouldSetPanResponderCapture: (evt, gestureState) => {
-        return Math.abs(gestureState.dx) > 10 || Math.abs(gestureState.dy) > 10;
-      },
-      onPanResponderGrant: () => {
-        isDraggingDivider.current = true;
-        startSplitRatio.current = splitRatioRef.current;
-      },
-      onPanResponderMove: (evt, gestureState) => {
-        const layoutHeight = containerLayoutRef.current.height || height;
-        const layoutWidth = containerLayoutRef.current.width || width;
-        if (layoutHeight === 0 || layoutWidth === 0) return;
-
-        let newRatio = 0.5;
-        if (splitOrientationRef.current === 'vertical') {
-          const deltaY = gestureState.dy;
-          const ratioDelta = deltaY / layoutHeight;
-          newRatio = Math.max(0.35, Math.min(0.65, startSplitRatio.current + ratioDelta));
-        } else {
-          const deltaX = gestureState.dx;
-          const ratioDelta = deltaX / layoutWidth;
-          newRatio = Math.max(0.35, Math.min(0.65, startSplitRatio.current + ratioDelta));
-        }
-
-        currentDragRatio.current = newRatio;
-
-        // Perform native size mutation for butter-smooth 60fps dragging on Android/iOS/Web (bypasses full React re-renders)
-        const isVert = splitOrientationRef.current === 'vertical';
-        const firstPercent = `${newRatio * 100}%`;
-        const secondPercent = `${(1 - newRatio) * 100}%`;
-
-        // Calculate absolute numeric sizes for native layout updates (since setNativeProps does not support percentage strings on native views)
-        const firstPixelSize = isVert ? newRatio * layoutHeight : newRatio * layoutWidth;
-        const secondPixelSize = isVert ? (1 - newRatio) * layoutHeight : (1 - newRatio) * layoutWidth;
-
-        let success = false;
-        if (firstHalfRef.current && secondHalfRef.current) {
-          if (typeof firstHalfRef.current.setNativeProps === 'function' && typeof secondHalfRef.current.setNativeProps === 'function') {
-            firstHalfRef.current.setNativeProps({
-              style: {
-                flex: newRatio,
-                width: isVert ? '100%' : firstPixelSize,
-                height: isVert ? firstPixelSize : '100%',
-              }
-            });
-            secondHalfRef.current.setNativeProps({
-              style: {
-                flex: 1 - newRatio,
-                width: isVert ? '100%' : secondPixelSize,
-                height: isVert ? secondPixelSize : '100%',
-              }
-            });
-            success = true;
-          } else {
-            // Web/DOM fallback
-            const firstStyle = (firstHalfRef.current as any).style;
-            const secondStyle = (secondHalfRef.current as any).style;
-            if (firstStyle && secondStyle) {
-              firstStyle.flex = String(newRatio);
-              firstStyle.width = isVert ? '100%' : firstPercent;
-              firstStyle.height = isVert ? firstPercent : '100%';
-
-              secondStyle.flex = String(1 - newRatio);
-              secondStyle.width = isVert ? '100%' : secondPercent;
-              secondStyle.height = isVert ? secondPercent : '100%';
-              success = true;
-            }
-          }
-        }
-        if (!success) {
-          setSplitRatio(newRatio);
-        }
-      },
-      onPanResponderRelease: () => {
-        isDraggingDivider.current = false;
-        // Sync final ratio back to state once interaction finishes
-        setSplitRatio(currentDragRatio.current);
-      },
-      onPanResponderTerminate: () => {
-        isDraggingDivider.current = false;
-        // Reset or commit to state depending on behavior (committing ensures it stays where user terminated)
-        setSplitRatio(currentDragRatio.current);
-      },
-    })
-  ).current;
+  const handleToggleControlGroup = useCallback(() => {
+    const toValue = isControlGroupExpanded ? 0 : 1;
+    setIsControlGroupExpanded(!isControlGroupExpanded);
+    Animated.spring(controlGroupAnim, {
+      toValue,
+      useNativeDriver: false,
+      friction: 8,
+      tension: 100,
+    }).start();
+  }, [isControlGroupExpanded, controlGroupAnim]);
 
   const styles = useMemo(() => StyleSheet.create({
     content: { flex: 1 },
@@ -244,15 +183,6 @@ export default function BibleScreen() {
       paddingHorizontal: ms(DESIGN.spacing.md),
       zIndex: 20,
     },
-    miniHeaderVertical: {
-      width: ms(DESIGN.spacing.xl),
-      height: '100%',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      zIndex: 20,
-      overflow: 'visible',
-    },
     versionBadge: {
       borderWidth: 1,
       borderColor: colors.border,
@@ -273,18 +203,6 @@ export default function BibleScreen() {
       fontWeight: 'bold',
       letterSpacing: 0.5,
     },
-    dragHandleHorizontal: {
-      width: ms(DESIGN.button.height.sm),
-      height: ms(DESIGN.spacing.xs + DESIGN.spacing.tiny),
-      borderRadius: ms((DESIGN.spacing.xs + DESIGN.spacing.tiny) / 2),
-      backgroundColor: primaryColor,
-    },
-    dragHandleVertical: {
-      width: ms(DESIGN.spacing.xs + DESIGN.spacing.tiny),
-      height: ms(DESIGN.button.height.sm),
-      borderRadius: ms((DESIGN.spacing.xs + DESIGN.spacing.tiny) / 2),
-      backgroundColor: primaryColor,
-    },
     actionRow: {
       flexDirection: 'row',
       alignItems: 'center',
@@ -300,7 +218,25 @@ export default function BibleScreen() {
       alignItems: 'center',
       justifyContent: 'center',
     },
-  }), [ms, colors, DESIGN, primaryColor]);
+    floatingControlGroup: {
+      position: 'absolute',
+      left: '50%',
+      top: '50%',
+      backgroundColor: colors.background,
+      borderColor: colors.border,
+      borderWidth: 1,
+      borderRadius: ms(DESIGN.borderRadius.md),
+      alignItems: 'center',
+      justifyContent: 'center',
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.15,
+      shadowRadius: 3,
+      elevation: 3,
+      zIndex: 30,
+      overflow: 'hidden',
+    },
+  }), [ms, colors, DESIGN]);
 
   const [isActionSheetVisible, setIsActionSheetVisible] = useState(false);
   const [selectedVerses, setSelectedVerses] = useState<SelectedVerse[]>([]);
@@ -457,7 +393,6 @@ export default function BibleScreen() {
               onSelect: (s) => {
                 if (s.version) {
                   setSecondVersion(s.version);
-                  setSplitRatio(0.5);
                   setIsSplitScreen(true);
                 }
               }
@@ -476,30 +411,10 @@ export default function BibleScreen() {
       />
 
       <Animated.View style={{ flex: 1, opacity: fadeAnim }}>
-        <View
-          ref={containerRef}
-          style={styles.content}
-          onLayout={(event) => {
-            const { width, height } = event.nativeEvent.layout;
-            setContainerLayout({ x: 0, y: 0, width, height });
-          }}
-        >
+        <View style={styles.content}>
           {isSplitScreen ? (
-            <View style={{ flex: 1, flexDirection: splitOrientation === 'vertical' ? 'column' : 'row' }}>
-              {/* Top/Left Half */}
-              <View
-                ref={firstHalfRef}
-                style={{
-                  flex: splitRatio,
-                  position: 'relative',
-                  width: splitOrientation === 'vertical' ? '100%' : `${splitRatio * 100}%`,
-                  height: splitOrientation === 'vertical' ? `${splitRatio * 100}%` : '100%',
-                  minWidth: splitOrientation === 'vertical' ? undefined : '25%',
-                  maxWidth: splitOrientation === 'vertical' ? undefined : '75%',
-                  minHeight: splitOrientation === 'vertical' ? '25%' : undefined,
-                  maxHeight: splitOrientation === 'vertical' ? '75%' : undefined,
-                }}
-              >
+            <View style={{ flex: 1, flexDirection: splitOrientation === 'vertical' ? 'column' : 'row', position: 'relative' }}>
+              <View style={{ flex: 1, position: 'relative' }}>
                 {splitOrientation === 'horizontal' && (
                   <>
                     <View
@@ -551,193 +466,185 @@ export default function BibleScreen() {
                 </View>
               </View>
 
-              {/* Divider Handle Container / Mini-Header */}
               {splitOrientation === 'vertical' && <BibleDivider />}
-              <View
-                style={[
-                  splitOrientation === 'vertical' ? styles.miniHeaderHorizontal : styles.miniHeaderVertical,
-                  {
-                    backgroundColor: splitOrientation === 'vertical' ? colors.background : 'transparent',
-                  }
-                ]}
-              >
-                {splitOrientation === 'vertical' ? (
-                  // Horizontal Divider (Vertical Split)
-                  <>
-                    {/* Left: Version Badge Pill */}
-                    <TouchableOpacity
-                      style={styles.versionBadge}
-                      onPress={() => {
-                        openModal({
-                          initialStep: 'version',
-                          target: 'study',
-                          onSelect: (s) => {
-                            if (s.version) {
-                              setSecondVersion(s.version);
-                            }
+              {splitOrientation === 'vertical' ? (
+                <View
+                  style={[
+                    styles.miniHeaderHorizontal,
+                    { backgroundColor: colors.background }
+                  ]}
+                >
+                  <TouchableOpacity
+                    style={styles.versionBadge}
+                    onPress={() => {
+                      openModal({
+                        initialStep: 'version',
+                        target: 'study',
+                        onSelect: (s) => {
+                          if (s.version) {
+                            setSecondVersion(s.version);
                           }
-                        });
+                        }
+                      });
+                    }}
+                    activeOpacity={0.7}
+                  >
+                    <BibleText style={[styles.versionBadgeText, { color: primaryColor }]}>
+                      {secondVersion.toUpperCase()}
+                    </BibleText>
+                  </TouchableOpacity>
+
+                  <View style={{ flex: 1 }} />
+
+                  <View style={styles.actionRow}>
+                    <TouchableOpacity
+                      style={[styles.splitHandleBtn, { backgroundColor: primaryColor + '1F' }]}
+                      onPress={handleToggleOrientation}
+                      hitSlop={{
+                        top: DESIGN.spacing.sm,
+                        bottom: DESIGN.spacing.sm,
+                        left: DESIGN.spacing.sm,
+                        right: DESIGN.spacing.sm
                       }}
-                      activeOpacity={0.7}
                     >
-                      <BibleText style={[styles.versionBadgeText, { color: primaryColor }]}>
-                        {secondVersion.toUpperCase()}
-                      </BibleText>
+                      <BibleIcon
+                        name="columns"
+                        color={primaryColor}
+                        size={ms(DESIGN.icon.xs)}
+                      />
                     </TouchableOpacity>
 
-                    {/* Middle: Drag Handle Area */}
-                    <View
-                      style={{
-                        flex: 1,
-                        alignSelf: 'stretch',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                      }}
-                      {...panResponder.panHandlers}
-                    >
-                      <View style={styles.dragHandleHorizontal} />
-                    </View>
+                    <View style={{ width: ms(DESIGN.spacing.sm) }} />
 
-                    {/* Right: Actions */}
-                    <View style={styles.actionRow}>
+                    <TouchableOpacity
+                      style={[styles.splitHandleBtn, { backgroundColor: (colors.error || '#FF4D4D') + '1F' }]}
+                      onPress={() => setIsSplitScreen(false)}
+                      hitSlop={{
+                        top: DESIGN.spacing.sm,
+                        bottom: DESIGN.spacing.sm,
+                        left: DESIGN.spacing.sm,
+                        right: DESIGN.spacing.sm
+                      }}
+                    >
+                      <BibleIcon name="x" color={colors.error || '#FF4D4D'} size={ms(DESIGN.icon.xs)} />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              ) : (
+                <>
+                  <BibleDivider
+                    vertical
+                    size={ms(DESIGN.spacing.xs)}
+                    style={{
+                      position: 'absolute',
+                      left: '50%',
+                      top: 0,
+                      bottom: 0,
+                      zIndex: 25,
+                      transform: [{ translateX: -1 }],
+                    }}
+                  />
+
+                  <Animated.View style={[
+                    styles.floatingControlGroup,
+                    {
+                      width: controlGroupAnim.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [ms(DESIGN.spacing.xxl), ms(DESIGN.button.height.sm)],
+                      }),
+                      height: controlGroupAnim.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [ms(DESIGN.spacing.xxl), ms(DESIGN.button.height.sm * 3 + DESIGN.spacing.sm * 2)],
+                      }),
+                      transform: [
+                        { translateX: controlGroupAnim.interpolate({
+                            inputRange: [0, 1],
+                            outputRange: [-ms(DESIGN.spacing.xxl) / 2, -ms(DESIGN.button.height.sm) / 2],
+                          })
+                        },
+                        { translateY: controlGroupAnim.interpolate({
+                            inputRange: [0, 1],
+                            outputRange: [-ms(DESIGN.spacing.xxl) / 2, -ms(DESIGN.button.height.sm * 3 + DESIGN.spacing.sm * 2) / 2],
+                          })
+                        },
+                      ],
+                    }
+                  ]}>
+                    {isControlGroupExpanded ? (
+                      <>
+                        <TouchableOpacity
+                          style={[styles.splitHandleBtn, { backgroundColor: primaryColor + '1F' }]}
+                          onPress={handleToggleOrientation}
+                          hitSlop={{
+                            top: DESIGN.spacing.sm,
+                            bottom: DESIGN.spacing.sm,
+                            left: DESIGN.spacing.sm,
+                            right: DESIGN.spacing.sm
+                          }}
+                        >
+                          <BibleIcon
+                            name="align-justify"
+                            color={primaryColor}
+                            size={ms(DESIGN.icon.xs)}
+                          />
+                        </TouchableOpacity>
+
+                        <View style={{ height: ms(DESIGN.spacing.sm) }} />
+
+                        <TouchableOpacity
+                          style={[styles.splitHandleBtn, { backgroundColor: (colors.error || '#FF4D4D') + '1F' }]}
+                          onPress={() => setIsSplitScreen(false)}
+                          hitSlop={{
+                            top: DESIGN.spacing.sm,
+                            bottom: DESIGN.spacing.sm,
+                            left: DESIGN.spacing.sm,
+                            right: DESIGN.spacing.sm
+                          }}
+                        >
+                          <BibleIcon name="x" color={colors.error || '#FF4D4D'} size={ms(DESIGN.icon.xs)} />
+                        </TouchableOpacity>
+
+                        <View style={{ height: ms(DESIGN.spacing.sm) }} />
+
+                        <TouchableOpacity
+                          style={[styles.splitHandleBtn, { backgroundColor: colors.border + '40' }]}
+                          onPress={handleToggleControlGroup}
+                          hitSlop={{
+                            top: DESIGN.spacing.sm,
+                            bottom: DESIGN.spacing.sm,
+                            left: DESIGN.spacing.sm,
+                            right: DESIGN.spacing.sm
+                          }}
+                        >
+                          <BibleIcon name="chevron-up" color={colors.textSecondary} size={ms(DESIGN.icon.xs)} />
+                        </TouchableOpacity>
+                      </>
+                    ) : (
                       <TouchableOpacity
-                        style={[styles.splitHandleBtn, { backgroundColor: primaryColor + '1F' }]}
-                        onPress={handleToggleOrientation}
-                        hitSlop={{
-                          top: DESIGN.spacing.sm,
-                          bottom: DESIGN.spacing.sm,
-                          left: DESIGN.spacing.sm,
-                          right: DESIGN.spacing.sm
+                        onPress={handleToggleControlGroup}
+                        style={{
+                          flex: 1,
+                          width: '100%',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          backgroundColor: primaryColor,
+                          borderRadius: ms(DESIGN.borderRadius.md),
                         }}
+                        activeOpacity={0.7}
                       >
                         <BibleIcon
-                          name="columns"
-                          color={primaryColor}
+                          name="more-vertical"
+                          color={colors.onPrimary}
                           size={ms(DESIGN.icon.xs)}
                         />
                       </TouchableOpacity>
-
-                      <View style={{ width: ms(DESIGN.spacing.sm) }} />
-
-                      <TouchableOpacity
-                        style={[styles.splitHandleBtn, { backgroundColor: (colors.error || '#FF4D4D') + '1F' }]}
-                        onPress={() => setIsSplitScreen(false)}
-                        hitSlop={{
-                          top: DESIGN.spacing.sm,
-                          bottom: DESIGN.spacing.sm,
-                          left: DESIGN.spacing.sm,
-                          right: DESIGN.spacing.sm
-                        }}
-                      >
-                        <BibleIcon name="x" color={colors.error || '#FF4D4D'} size={ms(DESIGN.icon.xs)} />
-                      </TouchableOpacity>
-                    </View>
-                  </>
-                ) : (
-                  // Vertical Divider (Horizontal Split / Side-by-Side)
-                  <>
-                    {/* Centered vertical line */}
-                    <BibleDivider
-                      vertical
-                      size={ms(DESIGN.spacing.xs)}
-                      style={{
-                        position: 'absolute',
-                        left: '50%',
-                        top: 0,
-                        bottom: 0,
-                        transform: [{ translateX: -1 }],
-                      }}
-                    />
-
-                    {/* Draggable Top Half Spacer */}
-                    <View
-                      style={{
-                        flex: 1,
-                        alignSelf: 'stretch',
-                      }}
-                      {...panResponder.panHandlers}
-                    />
-
-                    {/* Middle Floating Control Group */}
-                    <View
-                      style={{
-                        width: ms(DESIGN.button.height.sm),
-                        height: ms(DESIGN.button.height.sm * 2 + DESIGN.spacing.sm),
-                        backgroundColor: colors.background,
-                        borderColor: colors.border,
-                        borderWidth: 1,
-                        borderRadius: ms(DESIGN.borderRadius.md),
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        shadowColor: '#000',
-                        shadowOffset: { width: 0, height: 2 },
-                        shadowOpacity: 0.15,
-                        shadowRadius: 3,
-                        elevation: 3,
-                        zIndex: 30,
-                      }}
-                    >
-                      <TouchableOpacity
-                        style={[styles.splitHandleBtn, { backgroundColor: primaryColor + '1F' }]}
-                        onPress={handleToggleOrientation}
-                        hitSlop={{
-                          top: DESIGN.spacing.sm,
-                          bottom: DESIGN.spacing.sm,
-                          left: DESIGN.spacing.sm,
-                          right: DESIGN.spacing.sm
-                        }}
-                      >
-                        <BibleIcon
-                          name="align-justify"
-                          color={primaryColor}
-                          size={ms(DESIGN.icon.xs)}
-                        />
-                      </TouchableOpacity>
-
-                      <View style={{ height: ms(DESIGN.spacing.sm) }} />
-
-                      <TouchableOpacity
-                        style={[styles.splitHandleBtn, { backgroundColor: (colors.error || '#FF4D4D') + '1F' }]}
-                        onPress={() => setIsSplitScreen(false)}
-                        hitSlop={{
-                          top: DESIGN.spacing.sm,
-                          bottom: DESIGN.spacing.sm,
-                          left: DESIGN.spacing.sm,
-                          right: DESIGN.spacing.sm
-                        }}
-                      >
-                        <BibleIcon name="x" color={colors.error || '#FF4D4D'} size={ms(DESIGN.icon.xs)} />
-                      </TouchableOpacity>
-                    </View>
-
-                    {/* Draggable Bottom Half Spacer */}
-                    <View
-                      style={{
-                        flex: 1,
-                        alignSelf: 'stretch',
-                      }}
-                      {...panResponder.panHandlers}
-                    />
-                  </>
-                )}
-              </View>
+                    )}
+                  </Animated.View>
+                </>
+              )}
               {splitOrientation === 'vertical' && <BibleDivider />}
 
-              {/* Bottom/Right Half */}
-              <View
-                ref={secondHalfRef}
-                style={{
-                  flex: 1 - splitRatio,
-                  position: 'relative',
-                  flexDirection: 'column',
-                  width: splitOrientation === 'vertical' ? '100%' : `${(1 - splitRatio) * 100}%`,
-                  height: splitOrientation === 'vertical' ? `${(1 - splitRatio) * 100}%` : '100%',
-                  minWidth: splitOrientation === 'vertical' ? undefined : '25%',
-                  maxWidth: splitOrientation === 'vertical' ? undefined : '75%',
-                  minHeight: splitOrientation === 'vertical' ? '25%' : undefined,
-                  maxHeight: splitOrientation === 'vertical' ? '75%' : undefined,
-                }}
-              >
+              <View style={{ flex: 1, position: 'relative', flexDirection: 'column' }}>
                 {splitOrientation === 'horizontal' && (
                   <>
                     <View
