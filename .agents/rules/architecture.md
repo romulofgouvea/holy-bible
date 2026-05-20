@@ -47,3 +47,5 @@ trigger: always_on
 - Duplicate business logic
 - UI logic inside services
 - Circular dependencies
+
+- Never comments

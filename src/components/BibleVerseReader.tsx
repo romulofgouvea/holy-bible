@@ -31,6 +31,11 @@ type VerseReaderProps = {
     onViewableItemsChanged?: ({ viewableItems }: { viewableItems: any[] }) => void;
     viewabilityConfig?: any;
     listRef?: React.RefObject<any>;
+    onScroll?: (event: any) => void;
+    onScrollBeginDrag?: (event: any) => void;
+    onScrollEndDrag?: (event: any) => void;
+    onMomentumScrollEnd?: (event: any) => void;
+    scrollEventThrottle?: number;
 };
 
 const VerseRow = React.memo(({
@@ -99,7 +104,8 @@ const VerseRow = React.memo(({
 export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
     const {
         sections, blinkingVerse, highlights, selectedKeys, bookAbbrev, version,
-        onVersePress, onViewableItemsChanged, viewabilityConfig, listRef
+        onVersePress, onViewableItemsChanged, viewabilityConfig, listRef,
+        onScroll, onScrollBeginDrag, onScrollEndDrag, onMomentumScrollEnd, scrollEventThrottle
     } = props;
     const { ms, DESIGN } = useResponsive();
     const { colors } = useTheme();
@@ -242,6 +248,11 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
                 onViewableItemsChanged={onViewableItemsChanged}
                 viewabilityConfig={viewabilityConfig}
                 showsVerticalScrollIndicator={false}
+                onScroll={onScroll}
+                onScrollBeginDrag={onScrollBeginDrag}
+                onScrollEndDrag={onScrollEndDrag}
+                onMomentumScrollEnd={onMomentumScrollEnd}
+                scrollEventThrottle={scrollEventThrottle}
             />
         </View>
     );

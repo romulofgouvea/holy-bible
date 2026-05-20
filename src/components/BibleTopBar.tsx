@@ -22,10 +22,12 @@ export type BibleTopBarProps = {
     onOpenSettings: () => void;
     onOpenSearch: () => void;
     onOpenHistory: () => void;
+    isSplitScreen?: boolean;
+    onToggleCompare?: () => void;
 };
 
 export const BibleTopBar = React.memo((props: BibleTopBarProps) => {
-    const { version, bookName, currentChapter, onOpenVersion, onOpenBook, onOpenChapter, onPrevChapter, onNextChapter, onOpenMenu, onOpenSettings, onOpenSearch, onOpenHistory } = props;
+    const { version, bookName, currentChapter, onOpenVersion, onOpenBook, onOpenChapter, onPrevChapter, onNextChapter, onOpenMenu, onOpenSettings, onOpenSearch, onOpenHistory, isSplitScreen, onToggleCompare } = props;
     const { ms, DESIGN } = useResponsive();
     const { colors } = useTheme();
     const { readerColors, readerTheme } = useReaderSettings();
@@ -86,6 +88,11 @@ export const BibleTopBar = React.memo((props: BibleTopBarProps) => {
                         icon: 'type',
                         label: ROUTE_LABELS.APPEARANCE,
                         onPress: onOpenSettings,
+                    },
+                    {
+                        icon: isSplitScreen ? 'x-circle' : 'columns',
+                        label: isSplitScreen ? 'Fechar Comparação' : 'Comparar Versão',
+                        onPress: () => onToggleCompare?.(),
                     },
                 ]}
             />
