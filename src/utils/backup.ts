@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DeviceEventEmitter } from 'react-native';
 import { STORAGE_KEYS } from '../constants/storage';
+import { availableVersions, getBibleData } from '../data';
 
 export const BACKUP_FORMAT_VERSION = 2;
 export const BACKUP_RESTORED_EVENT = 'app-backup-restored';
@@ -96,4 +97,12 @@ export async function writeAutoBackupFile(): Promise<void> {
 
   const path = `${FileSystem.documentDirectory}backup_estudos_automatico.json`;
   await FileSystem.writeAsStringAsync(path, json).catch(() => { });
+}
+
+export async function clearAllAppStorage(): Promise<void> {
+  const firstVersion = availableVersions[0] || 'NAA';
+  const firstBook = getBibleData(firstVersion)[0]?.abbrev || 'gn';
+
+  await AsyncStorage.multiRemove(Object.values(STORAGE_KEYS));
+  DeviceEventEmitter.emit(BACKUP_RESTORED_EVENT);
 }

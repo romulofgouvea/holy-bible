@@ -24,6 +24,7 @@ import { useStudies } from '../hooks/useStudies';
 import { useTheme } from '../hooks/useTheme';
 import {
   buildAppBackupJson,
+  clearAllAppStorage,
   countRestoredStudies,
   parseBackupRaw,
   restoreAppStorage,
@@ -115,15 +116,29 @@ export default function ConfigurationScreen() {
   const [isThemeModalVisible, setIsThemeModalVisible] = useState(false);
   const [alertInfo, setAlertInfo] = useState<{ title: string; message: string; isDanger?: boolean } | null>(null);
   const [isClearCacheConfirmVisible, setIsClearCacheConfirmVisible] = useState(false);
+  const [isClearAllConfirmVisible, setIsClearAllConfirmVisible] = useState(false);
 
   const handleClearCache = async () => {
     try {
       await clearHistory();
       setIsClearCacheConfirmVisible(false);
-      setAlertInfo({ title: 'Limpar Histórico', message: 'Histórico limpo com sucesso.' });
     } catch (e) {
-      console.error('Failed to clear cache', e);
       setAlertInfo({ title: 'Erro', message: 'Não foi possível limpar o histórico.', isDanger: true });
+    }
+  };
+
+  const handleClearAll = async () => {
+    try {
+      await clearAllAppStorage();
+      setIsClearAllConfirmVisible(false);
+      setIsAutoBackupEnabled(false);
+      await reloadFromStorage();
+      setAlertInfo({
+        title: 'Dados apagados',
+        message: 'Todos os dados do aplicativo foram removidos. O app foi restaurado ao estado inicial.',
+      });
+    } catch (e) {
+      setAlertInfo({ title: 'Erro', message: 'Não foi possível limpar os dados do aplicativo.', isDanger: true });
     }
   };
 
@@ -336,6 +351,13 @@ export default function ConfigurationScreen() {
             icon="clock"
             onPress={() => setIsClearCacheConfirmVisible(true)}
           />
+          <View style={{ height: 1, backgroundColor: colors.border, marginLeft: ms(DESIGN.layout.settingsIconOffset) }} />
+          <SettingsItem
+            label="Limpar Tudo"
+            description="Limpar todos os dados do aplicativo"
+            icon="trash"
+            onPress={() => setIsClearAllConfirmVisible(true)}
+          />
         </View>
 
         <BibleText style={{ marginTop: ms(DESIGN.spacing.xl), marginLeft: ms(DESIGN.spacing.sm), marginBottom: ms(DESIGN.spacing.sm), fontSize: ms(DESIGN.fontSize.md), fontWeight: '700', color: colors.textMuted }}>BACKUP E RESTAURAÇÃO</BibleText>
@@ -389,6 +411,16 @@ export default function ConfigurationScreen() {
         isDanger
         onConfirm={handleClearCache}
         onCancel={() => setIsClearCacheConfirmVisible(false)}
+      />
+
+      <BibleConfirmModal
+        visible={isClearAllConfirmVisible}
+        title="Limpar Tudo"
+        message="Tem certeza que deseja limpar todos os dados do aplicativo? Isso removerá estudos, destaques, histórico, configurações e posição de leitura. Esta ação não pode ser desfeita."
+        confirmText="Limpar Tudo"
+        isDanger
+        onConfirm={handleClearAll}
+        onCancel={() => setIsClearAllConfirmVisible(false)}
       />
 
       <BibleConfirmModal

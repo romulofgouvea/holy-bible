@@ -1,7 +1,11 @@
-import React, { useMemo } from 'react';
-import { Modal, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Feather } from '@expo/vector-icons';
+import React, { useEffect, useMemo, useRef } from 'react';
+import { Animated, Modal, Pressable, StyleSheet, View } from 'react-native';
 import { useResponsive } from '../../hooks/useResponsive';
 import { useTheme } from '../../hooks/useTheme';
+import { BibleButton } from '../BibleButton';
+import { BibleDivider } from '../BibleDivider';
+import { BibleIcon } from '../BibleIcon';
 import { BibleText } from '../BibleText';
 
 type ConfirmModalProps = {
@@ -11,6 +15,7 @@ type ConfirmModalProps = {
   confirmText?: string;
   cancelText?: string;
   isDanger?: boolean;
+  icon?: keyof typeof Feather.glyphMap;
   onConfirm: () => void;
   onCancel?: () => void;
 };
@@ -22,75 +27,143 @@ export function BibleConfirmModal({
   confirmText = 'Confirmar',
   cancelText = 'Cancelar',
   isDanger = false,
+  icon,
   onConfirm,
   onCancel,
 }: ConfirmModalProps) {
   const { ms, DESIGN } = useResponsive();
-  const { colors } = useTheme();
-  
+  const { colors, isDarkMode } = useTheme();
+  const messageColor = isDarkMode ? 'rgba(255, 255, 255, 0.82)' : 'rgba(28, 30, 33, 0.78)';
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+
+  const accentColor = isDanger ? colors.error : colors.primary;
+  const headerIcon = icon ?? (isDanger ? 'alert-triangle' : 'help-circle');
+
+  useEffect(() => {
+    Animated.timing(fadeAnim, {
+      toValue: visible ? 1 : 0,
+      duration: visible ? 180 : 120,
+      useNativeDriver: true,
+    }).start();
+  }, [visible, fadeAnim]);
+
   const styles = useMemo(() => StyleSheet.create({
     backdrop: {
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      padding: ms(DESIGN.spacing.xl),
+      padding: ms(DESIGN.spacing.lg),
     },
     dialog: {
-      borderRadius: ms(DESIGN.borderRadius.lg),
-      padding: ms(DESIGN.spacing.xl),
       width: '100%',
       maxWidth: ms(DESIGN.maxWidth.sm),
-      elevation: 8,
+      borderRadius: ms(DESIGN.borderRadius.lg),
+      borderWidth: 1,
+      overflow: 'hidden',
+      elevation: 10,
       shadowOffset: { width: 0, height: ms(DESIGN.spacing.xs) },
-      shadowOpacity: 0.15,
-      shadowRadius: ms(DESIGN.borderRadius.sm),
+      shadowOpacity: 0.25,
+      shadowRadius: ms(DESIGN.borderRadius.md),
     },
-    title: {
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: ms(DESIGN.spacing.md),
+      padding: ms(DESIGN.spacing.lg),
+    },
+    headerText: {
+      flex: 1,
       fontWeight: '800',
-      marginBottom: ms(DESIGN.spacing.xs),
+    },
+    body: {
+      padding: ms(DESIGN.spacing.lg),
     },
     message: {
-      lineHeight: ms(DESIGN.spacing.xl),
-      marginBottom: ms(DESIGN.spacing.lg),
+      lineHeight: ms(DESIGN.fontSize.xl),
     },
-    actions: {
+    footer: {
+      padding: ms(DESIGN.spacing.lg),
+      gap: ms(DESIGN.spacing.sm),
+    },
+    actionsRow: {
       flexDirection: 'row',
-      justifyContent: 'flex-end',
-      gap: ms(DESIGN.spacing.md),
+      gap: ms(DESIGN.spacing.sm),
     },
-    btn: {
-      paddingVertical: ms(DESIGN.spacing.sm),
-      paddingHorizontal: ms(DESIGN.spacing.lg),
-      borderRadius: ms(DESIGN.borderRadius.md),
-      alignItems: 'center',
-      justifyContent: 'center',
+    actionBtn: {
+      flex: 1,
     },
-    cancelText: {
-      fontWeight: '600',
-    },
-    confirmText: {
-      fontWeight: '700',
-    },
-  }), [ms, colors, DESIGN]);
+  }), [ms, DESIGN]);
 
   return (
-    <Modal visible={visible} transparent animationType="fade">
-      <View style={[styles.backdrop, { backgroundColor: colors.overlay }]}>
-        <View style={[styles.dialog, { backgroundColor: colors.surface, shadowColor: colors.shadow }]}>
-          <BibleText style={[styles.title, { fontSize: ms(DESIGN.fontSize.lg), color: colors.onSurface, fontWeight: '700' }]}>{title}</BibleText>
-          <BibleText style={[styles.message, { fontSize: ms(DESIGN.fontSize.md), color: colors.textMuted, marginTop: ms(DESIGN.spacing.xs) }]}>{message}</BibleText>
-          <View style={styles.actions}>
-            {onCancel && (
-              <TouchableOpacity style={[styles.btn, { backgroundColor: colors.surfaceHighlight }]} onPress={onCancel}>
-                <BibleText style={[styles.cancelText, { fontSize: ms(DESIGN.fontSize.md), color: colors.onSurface }]}>{cancelText}</BibleText>
-              </TouchableOpacity>
-            )}
-            <TouchableOpacity style={[styles.btn, { backgroundColor: isDanger ? colors.error : colors.primary }]} onPress={onConfirm}>
-              <BibleText style={[styles.confirmText, { fontSize: ms(DESIGN.fontSize.md), color: isDanger ? colors.onError : colors.onPrimary, fontWeight: '700' }]}>{confirmText}</BibleText>
-            </TouchableOpacity>
+    <Modal visible={visible} transparent animationType="none" statusBarTranslucent>
+      <Animated.View style={[styles.backdrop, { opacity: fadeAnim, backgroundColor: colors.overlay }]}>
+        <Pressable style={StyleSheet.absoluteFill} onPress={onCancel} />
+        <Animated.View
+          style={[
+            styles.dialog,
+            {
+              opacity: fadeAnim,
+              transform: [{
+                scale: fadeAnim.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [0.96, 1],
+                }),
+              }],
+              backgroundColor: colors.background,
+              borderColor: colors.border,
+              shadowColor: colors.shadow,
+            },
+          ]}
+        >
+          <View style={styles.header}>
+            <BibleIcon
+              name={headerIcon}
+              color={accentColor}
+              backgroundColor={accentColor + '18'}
+              containerSize={DESIGN.icon.xl}
+              borderRadius={DESIGN.borderRadius.md}
+            />
+            <BibleText style={[styles.headerText, { fontSize: ms(DESIGN.fontSize.lg), color: colors.onBackground }]}>
+              {title}
+            </BibleText>
           </View>
-        </View>
-      </View>
+
+          <BibleDivider />
+
+          <View style={styles.body}>
+            <BibleText style={[styles.message, { fontSize: ms(DESIGN.fontSize.md), color: messageColor }]}>
+              {message}
+            </BibleText>
+          </View>
+
+          <BibleDivider />
+
+          <View style={styles.footer}>
+            {onCancel ? (
+              <View style={styles.actionsRow}>
+                <BibleButton
+                  label={cancelText}
+                  variant="outline"
+                  style={styles.actionBtn}
+                  onPress={onCancel}
+                />
+                <BibleButton
+                  label={confirmText}
+                  variant="primary"
+                  style={styles.actionBtn}
+                  onPress={onConfirm}
+                />
+              </View>
+            ) : (
+              <BibleButton
+                label={confirmText}
+                variant="primary"
+                onPress={onConfirm}
+              />
+            )}
+          </View>
+        </Animated.View>
+      </Animated.View>
     </Modal>
   );
 }
