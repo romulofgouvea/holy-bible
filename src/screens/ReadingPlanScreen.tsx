@@ -1,6 +1,6 @@
 import { FlashList } from '@shopify/flash-list';
 import { useRouter } from 'expo-router';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { Platform, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import { BibleDrawerMenu } from '../components/BibleDrawerMenu';
 import { BibleHeader } from '../components/BibleHeader';
@@ -106,21 +106,7 @@ export default function ReadingPlanScreen() {
         return lastIdx;
     }, [selectedPlan, flatDays, isDayCompleted]);
 
-    useEffect(() => {
-        if (screenView === 'detail' && lastCompletedIndex >= 0 && !hasScrolledRef.current) {
-            hasScrolledRef.current = true;
-            setTimeout(() => {
-                listRef.current?.scrollToIndex({
-                    index: Math.min(lastCompletedIndex, flatDays.length - 1),
-                    animated: true,
-                    viewPosition: 0,
-                });
-            }, 300);
-        }
-        if (screenView !== 'detail') {
-            hasScrolledRef.current = false;
-        }
-    }, [screenView, lastCompletedIndex, flatDays.length]);
+    // Auto-scroll remoted by user request
 
     const isSelectionMode = isDeleteMode || selectedDeleteIds.size > 0;
 
@@ -355,17 +341,16 @@ export default function ReadingPlanScreen() {
     const renderPlanListItem = useCallback(({ item }: { item: ActiveBiblePlan }) => {
         const template = BIBLE_PLAN_TEMPLATES.find(t => t.id === item.templateId);
         if (!template) return null;
-        const { completedCount, totalDays, progressPercent, delayDays, aheadDays, startedAt } = getBiblePlanStats(item, template.months);
-        const startDateText = new Date(startedAt).toLocaleDateString('pt-BR');
+        const { completedCount, totalDays, progressPercent, delayDays, aheadDays } = getBiblePlanStats(item, template.months);
         const isSelected = selectedDeleteIds.has(item.id);
 
         return (
             <TouchableOpacity
                 style={[styles.card, {
                     backgroundColor: isSelected ? colors.primary + '20' : colors.surface,
-                    borderColor: isSelected ? colors.primary + '40' : colors.border,
+                    borderColor: isSelected ? colors.primary + '20' : colors.border,
                     borderWidth: isSelected ? ms(2) : 1,
-                    shadowColor: colors.shadow,
+                    elevation: isSelected ? 0 : 1,
                 }]}
                 onPress={() => isSelectionMode ? toggleDeleteSelection(item.id) : handleOpenPlan(item.id)}
                 activeOpacity={0.7}
@@ -398,12 +383,9 @@ export default function ReadingPlanScreen() {
                             <BibleText style={{ fontWeight: '700', fontSize: ms(DESIGN.fontSize.lg), color: colors.onSurface }} numberOfLines={1}>
                                 {item.title}
                             </BibleText>
-                            <BibleText style={{ fontSize: ms(DESIGN.fontSize.md), color: colors.textMuted, marginTop: ms(2) }}>
-                                {completedCount} de {totalDays} dias · {progressPercent}%
-                            </BibleText>
-                            <View style={{ flexDirection: 'row', alignItems: 'center', gap: ms(4), marginTop: ms(4), flexWrap: 'wrap' }}>
-                                <BibleText style={{ fontSize: ms(DESIGN.fontSize.sm), color: colors.textMuted }}>
-                                    Início: {startDateText}
+                            <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: ms(8), marginTop: ms(2) }}>
+                                <BibleText style={{ fontSize: ms(DESIGN.fontSize.md), color: colors.textMuted }}>
+                                    {completedCount} de {totalDays} dias · {progressPercent}%
                                 </BibleText>
                                 {(delayDays > 0 || aheadDays > 0) && (
                                     <View style={{
@@ -411,7 +393,6 @@ export default function ReadingPlanScreen() {
                                         paddingHorizontal: ms(6),
                                         paddingVertical: ms(2),
                                         borderRadius: ms(DESIGN.borderRadius.sm),
-                                        marginLeft: ms(4),
                                     }}>
                                         <BibleText style={{ fontSize: ms(DESIGN.fontSize.xs), color: delayDays > 0 ? colors.error : '#1DB954', fontWeight: '700' }}>
                                             {delayDays > 0
@@ -542,58 +523,109 @@ export default function ReadingPlanScreen() {
                     borderColor: colors.border,
                     shadowColor: colors.shadow,
                     marginBottom: ms(DESIGN.spacing.md),
+                    position: 'relative',
                 }]}>
+
+                    {(delayDays > 0 || aheadDays > 0) && (
+                        <View style={{
+                            position: 'absolute',
+                            top: ms(DESIGN.button.padding.sm),
+                            right: ms(DESIGN.button.padding.sm),
+                            backgroundColor: delayDays > 0 ? colors.error + '15' : '#1DB95415',
+                            paddingHorizontal: ms(8),
+                            paddingVertical: ms(4),
+                            borderRadius: ms(DESIGN.borderRadius.sm),
+                            borderWidth: 1,
+                            borderColor: delayDays > 0 ? colors.error + '30' : '#1DB95430',
+                            zIndex: 1,
+                        }}>
+                            <BibleText style={{ fontSize: ms(DESIGN.fontSize.xs), color: delayDays > 0 ? colors.error : '#1DB954', fontWeight: '700' }}>
+                                {delayDays > 0
+                                    ? `Atrasado ${delayDays} ${delayDays === 1 ? 'dia' : 'dias'}`
+                                    : `Adiantado ${aheadDays} ${aheadDays === 1 ? 'dia' : 'dias'}`
+                                }
+                            </BibleText>
+                        </View>
+                    )}
+
                     <View style={styles.planCardContent}>
-                        <BibleText style={{ fontWeight: '800', fontSize: ms(DESIGN.fontSize.lg), color: colors.onSurface }}>
+                        <BibleText style={{ fontWeight: '800', fontSize: ms(DESIGN.fontSize.lg), color: colors.onSurface, paddingRight: ms(80) }}>
                             {selectedPlan.title}
                         </BibleText>
-                        <BibleText style={{ fontSize: ms(DESIGN.fontSize.md), color: colors.textMuted, marginTop: ms(2) }}>
-                            {completedCount} de {totalDays} dias · {progressPercent}%
-                        </BibleText>
-                        <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: ms(16), marginTop: ms(12), marginBottom: ms(DESIGN.spacing.sm) }}>
-                            <View>
-                                <BibleText style={{ fontSize: ms(DESIGN.fontSize.xs), color: colors.textMuted, textTransform: 'uppercase', fontWeight: '800' }}>Início</BibleText>
-                                <BibleText style={{ fontSize: ms(DESIGN.fontSize.sm), color: colors.onSurface, fontWeight: '600' }}>{startDateText}</BibleText>
-                            </View>
-                            <View>
-                                <BibleText style={{ fontSize: ms(DESIGN.fontSize.xs), color: colors.textMuted, textTransform: 'uppercase', fontWeight: '800' }}>Fim previsto</BibleText>
-                                <BibleText style={{ fontSize: ms(DESIGN.fontSize.sm), color: colors.onSurface, fontWeight: '600' }}>{new Date(expectedEndMs).toLocaleDateString('pt-BR')}</BibleText>
-                            </View>
-                            {(delayDays > 0 || aheadDays > 0) && (
-                                <View>
-                                    <BibleText style={{ fontSize: ms(DESIGN.fontSize.xs), color: delayDays > 0 ? colors.error : '#1DB954', textTransform: 'uppercase', fontWeight: '800' }}>Conclusão estimada</BibleText>
-                                    <BibleText style={{ fontSize: ms(DESIGN.fontSize.sm), color: delayDays > 0 ? colors.error : '#1DB954', fontWeight: '700' }}>{new Date(estimatedEndMs).toLocaleDateString('pt-BR')}</BibleText>
+
+                        <View style={{ marginTop: ms(16), marginBottom: ms(16) }}>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: ms(12) }}>
+                                <View style={{ flex: 1 }}>
+                                    <BibleText style={{ fontSize: ms(DESIGN.fontSize.xs), color: colors.textMuted, textTransform: 'uppercase', fontWeight: '800' }}>Início</BibleText>
+                                    <BibleText style={{ fontSize: ms(DESIGN.fontSize.sm), color: colors.onSurface, fontWeight: '600', marginTop: ms(2) }}>{startDateText}</BibleText>
                                 </View>
-                            )}
+                                <View style={{ flex: 1 }}>
+                                    <BibleText style={{ fontSize: ms(DESIGN.fontSize.xs), color: colors.textMuted, textTransform: 'uppercase', fontWeight: '800' }}>Fim previsto</BibleText>
+                                    <BibleText style={{ fontSize: ms(DESIGN.fontSize.sm), color: colors.onSurface, fontWeight: '600', marginTop: ms(2) }}>{new Date(expectedEndMs).toLocaleDateString('pt-BR')}</BibleText>
+                                </View>
+                            </View>
+
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                {(delayDays > 0 || aheadDays > 0) && (
+                                    <View style={{ flex: 1 }}>
+                                        <BibleText style={{ fontSize: ms(DESIGN.fontSize.xs), color: delayDays > 0 ? colors.error : '#1DB954', textTransform: 'uppercase', fontWeight: '800' }}>Conclusão estimada</BibleText>
+                                        <BibleText style={{ fontSize: ms(DESIGN.fontSize.sm), color: delayDays > 0 ? colors.error : '#1DB954', fontWeight: '700', marginTop: ms(2) }}>{new Date(estimatedEndMs).toLocaleDateString('pt-BR')}</BibleText>
+                                    </View>
+                                )}
+                                {!(delayDays > 0 || aheadDays > 0) && (
+                                    <View style={{ flex: 1 }} />
+                                )}
+                                <View style={{ flex: 1 }} />
+                            </View>
                         </View>
 
-                        {(delayDays > 0 || aheadDays > 0) && (
-                            <View style={{ flexDirection: 'row', marginBottom: ms(DESIGN.spacing.sm) }}>
-                                <View style={{
-                                    backgroundColor: delayDays > 0 ? colors.error + '15' : '#1DB95415',
-                                    paddingHorizontal: ms(8),
-                                    paddingVertical: ms(4),
-                                    borderRadius: ms(DESIGN.borderRadius.sm),
-                                    borderWidth: 1,
-                                    borderColor: delayDays > 0 ? colors.error + '30' : '#1DB95430',
-                                }}>
-                                    <BibleText style={{ fontSize: ms(DESIGN.fontSize.xs), color: delayDays > 0 ? colors.error : '#1DB954', fontWeight: '700' }}>
-                                        {delayDays > 0
-                                            ? `Atrasado ${delayDays} ${delayDays === 1 ? 'dia' : 'dias'}`
-                                            : `Adiantado ${aheadDays} ${aheadDays === 1 ? 'dia' : 'dias'}`
-                                        }
-                                    </BibleText>
-                                </View>
+                        <View>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: ms(DESIGN.spacing.xs) }}>
+                                <BibleText style={{ fontSize: ms(DESIGN.fontSize.sm), color: colors.textMuted, textTransform: 'uppercase', fontWeight: '800' }}>
+                                    Progresso de leitura:
+                                </BibleText>
+                                <BibleText style={{ fontSize: ms(DESIGN.fontSize.sm), color: colors.onSurface, fontWeight: '700' }}>
+                                    {completedCount} de {totalDays} dias · {progressPercent}%
+                                </BibleText>
                             </View>
-                        )}
-                        <View style={[styles.progressBarBg, { backgroundColor: colors.border }]}>
-                            <View style={[styles.progressBarFill, { width: `${progressPercent}%`, backgroundColor: colors.primary }]} />
+                            <View style={[styles.progressBarBg, { backgroundColor: colors.border }]}>
+                                <View style={[styles.progressBarFill, { width: `${progressPercent}%`, backgroundColor: colors.primary }]} />
+                            </View>
                         </View>
                     </View>
                 </View>
+                {lastCompletedIndex >= 0 && (
+                    <TouchableOpacity
+                        style={{
+                            backgroundColor: colors.primary + '15',
+                            padding: ms(DESIGN.spacing.md),
+                            borderRadius: ms(DESIGN.borderRadius.md),
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            marginBottom: ms(DESIGN.spacing.md),
+                            gap: ms(8),
+                            borderWidth: 1,
+                            borderColor: colors.primary + '30',
+                        }}
+                        onPress={() => {
+                            listRef.current?.scrollToIndex({
+                                index: Math.min(lastCompletedIndex, flatDays.length - 1),
+                                animated: true,
+                                viewPosition: 0,
+                            });
+                        }}
+                        activeOpacity={0.7}
+                    >
+                        <BibleIcon name="arrow-down-circle" color={colors.primary} size={ms(DESIGN.icon.sm)} />
+                        <BibleText style={{ color: colors.primary, fontWeight: '700', fontSize: ms(DESIGN.fontSize.md) }}>
+                            Ir para última leitura
+                        </BibleText>
+                    </TouchableOpacity>
+                )}
             </View>
         );
-    }, [selectedPlan, selectedTemplate, getBiblePlanStats, styles, colors, ms, DESIGN]);
+    }, [selectedPlan, selectedTemplate, getBiblePlanStats, styles, colors, ms, DESIGN, lastCompletedIndex, flatDays.length]);
 
     const listHeader = useMemo(() => (
         <BibleText style={[styles.sectionLabel, { color: colors.textMuted, marginBottom: ms(DESIGN.spacing.xs) }]}>
