@@ -257,21 +257,20 @@ export default function BibleScreen() {
       borderRadius: ms(DESIGN.borderRadius.md),
       paddingHorizontal: ms(DESIGN.spacing.md),
       paddingVertical: ms(DESIGN.spacing.sm),
-      minWidth: ms(DESIGN.button.height.sm),
-      backgroundColor: colors.background,
+      backgroundColor: colors.surface,
       alignItems: 'center',
       justifyContent: 'center',
-      opacity: 0.9,
+      flexDirection: 'row',
       shadowColor: colors.shadow,
-      shadowOffset: { width: 0, height: ms(1) },
-      shadowOpacity: 0.1,
-      shadowRadius: ms(1),
-      elevation: 1,
+      shadowOffset: { width: 0, height: ms(2) },
+      shadowOpacity: 0.15,
+      shadowRadius: ms(4),
+      elevation: 3,
     },
     versionBadgeText: {
-      fontSize: ms(DESIGN.fontSize.md),
+      fontSize: ms(DESIGN.fontSize.lg),
       fontWeight: '800',
-      letterSpacing: 0.8,
+      letterSpacing: 1,
     },
     actionRow: {
       flexDirection: 'row',
@@ -420,7 +419,7 @@ export default function BibleScreen() {
   const { openModal } = useBibleModals();
 
   const renderVersionBadge = (label: string, onPress: () => void) => (
-    <TouchableOpacity style={styles.versionBadge} onPress={onPress} activeOpacity={0.7}>
+    <TouchableOpacity style={styles.versionBadge} onPress={onPress} activeOpacity={0.8}>
       <BibleText style={[styles.versionBadgeText, { color: primaryColor }]}>
         {label.toUpperCase()}
       </BibleText>
@@ -434,19 +433,8 @@ export default function BibleScreen() {
       </Animated.View>
 
       <BibleTopBar
-        version={version}
         bookName={currentBook.name}
         currentChapter={chapter}
-        onOpenVersion={() => openModal({
-          initialStep: 'version',
-          initialVersion: version,
-          onSelect: (s) => {
-            if (s.version) {
-              navigateTo({ version: s.version });
-              setTimeout(() => scrollToVerse(verse, chapter), 600);
-            }
-          }
-        })}
         onOpenBook={() => openModal({
           initialStep: 'book',
           onSelect: (s) => {
@@ -669,6 +657,16 @@ export default function BibleScreen() {
             </View>
           ) : (
             <View style={styles.splitPane}>
+              {renderVersionBadge(version, () => openModal({
+                initialStep: 'version',
+                initialVersion: version,
+                onSelect: (s) => {
+                  if (s.version) {
+                    navigateTo({ version: s.version });
+                    setTimeout(() => scrollToVerse(verse, chapter), 600);
+                  }
+                }
+              }))}
               <BibleVerseReader
                 listRef={sectionListRef}
                 sections={sectionData}

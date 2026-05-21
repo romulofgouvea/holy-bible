@@ -10,10 +10,8 @@ import { BibleIcon } from './BibleIcon';
 import { BibleText } from './BibleText';
 
 export type BibleTopBarProps = {
-    version: string;
     bookName: string;
     currentChapter: number;
-    onOpenVersion: () => void;
     onOpenBook: () => void;
     onOpenChapter: () => void;
     onPrevChapter: () => void;
@@ -27,7 +25,7 @@ export type BibleTopBarProps = {
 };
 
 export const BibleTopBar = React.memo((props: BibleTopBarProps) => {
-    const { version, bookName, currentChapter, onOpenVersion, onOpenBook, onOpenChapter, onPrevChapter, onNextChapter, onOpenMenu, onOpenSettings, onOpenSearch, onOpenHistory, isSplitScreen, onToggleCompare } = props;
+    const { bookName, currentChapter, onOpenBook, onOpenChapter, onPrevChapter, onNextChapter, onOpenMenu, onOpenSettings, onOpenSearch, onOpenHistory, isSplitScreen, onToggleCompare } = props;
     const { ms, DESIGN } = useResponsive();
     const { colors } = useTheme();
     const { readerColors, readerTheme } = useReaderSettings();
@@ -48,9 +46,6 @@ export const BibleTopBar = React.memo((props: BibleTopBarProps) => {
                 onMenuPress={onOpenMenu}
                 leftContent={
                     <View style={styles.leftButtons}>
-                        <TouchableOpacity style={[styles.topBarButton, { backgroundColor: btnBg, height: ms(DESIGN.button.height.sm), paddingHorizontal: ms(DESIGN.spacing.md), marginHorizontal: ms(DESIGN.spacing.tiny), borderRadius: ms(DESIGN.borderRadius.sm), flexShrink: 0 }]} onPress={onOpenVersion}>
-                            <BibleText style={[styles.topBarButtonText, { fontSize: ms(DESIGN.fontSize.md), color: btnText }]}>{version}</BibleText>
-                        </TouchableOpacity>
                         <TouchableOpacity style={[styles.topBarButton, { backgroundColor: btnBg, height: ms(DESIGN.button.height.sm), paddingHorizontal: ms(DESIGN.spacing.md), marginHorizontal: ms(DESIGN.spacing.tiny), borderRadius: ms(DESIGN.borderRadius.sm), flexShrink: 1, minWidth: 0 }]} onPress={onOpenBook}>
                             <BibleText style={[styles.topBarButtonText, { fontSize: ms(DESIGN.fontSize.md), color: btnText }]} numberOfLines={1}>{bookName}</BibleText>
                         </TouchableOpacity>
