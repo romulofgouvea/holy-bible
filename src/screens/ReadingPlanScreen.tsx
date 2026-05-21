@@ -1,7 +1,7 @@
 import { FlashList } from '@shopify/flash-list';
 import { useRouter } from 'expo-router';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { Platform, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, Platform, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import { BibleDrawerMenu } from '../components/BibleDrawerMenu';
 import { BibleHeader } from '../components/BibleHeader';
 import { BibleIcon } from '../components/BibleIcon';
@@ -16,10 +16,14 @@ import { useBible } from '../hooks/useBible';
 import { useBiblePlan } from '../hooks/useBiblePlan';
 import { useResponsive } from '../hooks/useResponsive';
 import { useTheme } from '../hooks/useTheme';
+import { useToast } from '../hooks/useToast';
+import { BibleToast } from '../components/BibleToast';
 import { ActiveBiblePlan } from '../models';
 import { BiblePlanDay, BiblePlanMonth, BiblePlanTemplate } from '../models/BiblePlanModels';
 
-type ScreenView = 'list' | 'templates' | 'detail';
+import { BiblePageModal } from '../components/modals/BiblePageModal';
+
+type ScreenView = 'list' | 'detail';
 
 type FlatDayItem = BiblePlanDay & {
     monthNumber: number;
@@ -61,11 +65,14 @@ export default function ReadingPlanScreen() {
         isDayCompleted,
         getDayCompletedAt,
         removeBiblePlan,
+        removeBiblePlans,
         getBiblePlanStats,
         updateStartDate,
     } = useBiblePlan();
+    const { toast, opacity, show } = useToast();
 
     const [screenView, setScreenView] = useState<ScreenView>('list');
+    const [isTemplateModalVisible, setIsTemplateModalVisible] = useState(false);
     const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
     const [isDrawerVisible, setIsDrawerVisible] = useState(false);
     const [isDonateVisible, setIsDonateVisible] = useState(false);
@@ -120,11 +127,11 @@ export default function ReadingPlanScreen() {
     }, []);
 
     const handleConfirmDelete = useCallback(() => {
-        selectedDeleteIds.forEach(id => removeBiblePlan(id));
+        removeBiblePlans(Array.from(selectedDeleteIds));
         setSelectedDeleteIds(new Set());
         setIsDeleteMode(false);
         setIsDeleteConfirmVisible(false);
-    }, [selectedDeleteIds, removeBiblePlan]);
+    }, [selectedDeleteIds, removeBiblePlans]);
 
     const exitDeleteMode = useCallback(() => {
         setIsDeleteMode(false);
@@ -252,18 +259,25 @@ export default function ReadingPlanScreen() {
         if (screenView === 'detail') {
             setScreenView('list');
             setSelectedPlanId(null);
-        } else if (screenView === 'templates') {
-            setScreenView('list');
         }
     }, [screenView]);
 
     const handleSelectTemplate = useCallback((template: BiblePlanTemplate) => {
-        const newPlan = createBiblePlan(template);
-        setStartDatePlanId(newPlan.id);
-        const today = new Date();
-        setPendingStartDate(formatDateForInput(today));
-        setIsStartDatePickerVisible(true);
-    }, [createBiblePlan]);
+        const existingPlan = activePlans.find(p => p.templateId === template.id);
+        if (existingPlan) {
+            setIsTemplateModalVisible(false);
+            setTimeout(() => {
+                show('Você já possui este plano em andamento.', 'warning');
+            }, 300);
+            return;
+        }
+
+        setIsTemplateModalVisible(false);
+        setTimeout(() => {
+            createBiblePlan(template);
+            show('Plano adicionado', 'success');
+        }, 300);
+    }, [activePlans, createBiblePlan, show]);
 
     const handleDayPress = useCallback((item: FlatDayItem) => {
         if (item.books.length === 0) return;
@@ -318,7 +332,10 @@ export default function ReadingPlanScreen() {
         {
             icon: 'plus' as const,
             label: 'Novo Plano',
-            onPress: () => setScreenView('templates'),
+            onPress: () => {
+                setIsActionsVisible(false);
+                setTimeout(() => setIsTemplateModalVisible(true), 300);
+            },
         },
         {
             icon: 'trash-2' as const,
@@ -380,10 +397,10 @@ export default function ReadingPlanScreen() {
                             />
                         )}
                         <View style={{ flex: 1 }}>
-                            <BibleText style={{ fontWeight: '700', fontSize: ms(DESIGN.fontSize.lg), color: colors.onSurface }} numberOfLines={1}>
+                            <BibleText style={{ fontWeight: '600', fontSize: ms(DESIGN.fontSize.lg), color: colors.onSurface }} numberOfLines={2}>
                                 {item.title}
                             </BibleText>
-                            <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: ms(8), marginTop: ms(2) }}>
+                            <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: ms(8), marginTop: ms(4) }}>
                                 <BibleText style={{ fontSize: ms(DESIGN.fontSize.md), color: colors.textMuted }}>
                                     {completedCount} de {totalDays} dias · {progressPercent}%
                                 </BibleText>
@@ -404,6 +421,9 @@ export default function ReadingPlanScreen() {
                                 )}
                             </View>
                         </View>
+                        <View style={{ opacity: isSelectionMode ? 0.2 : 0.8 }}>
+                            <BibleIcon name="chevron-right" color={colors.textMuted} size={ms(DESIGN.fontSize.xl)} />
+                        </View>
                     </View>
                     <View style={[styles.progressBarBg, { backgroundColor: colors.border, marginTop: ms(DESIGN.spacing.md) }]}>
                         <View style={[styles.progressBarFill, { width: `${progressPercent}%`, backgroundColor: colors.primary }]} />
@@ -422,23 +442,16 @@ export default function ReadingPlanScreen() {
                 activeOpacity={0.7}
             >
                 <View style={styles.templateCardContent}>
-                    <View style={[styles.iconWrap, { backgroundColor: colors.primary + '20' }]}>
-                        <BibleIcon name={item.icon as any} color={colors.primary} size={ms(DESIGN.icon.sm)} />
-                    </View>
-                    <View style={{ flex: 1 }}>
-                        <BibleText style={{ fontWeight: '700', fontSize: ms(DESIGN.fontSize.lg), color: colors.onSurface }}>
+                    <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <BibleText style={{ fontWeight: '700', fontSize: ms(DESIGN.fontSize.lg), color: colors.onSurface, flex: 1, marginRight: ms(12) }}>
                             {item.title}
                         </BibleText>
-                        <BibleText style={{ fontSize: ms(DESIGN.fontSize.md), color: colors.textMuted }}>
-                            {item.description}
-                        </BibleText>
-                        <View style={[styles.daysTag, { backgroundColor: colors.primary + '20' }]}>
+                        <View style={[styles.daysTag, { backgroundColor: colors.primary + '20', marginTop: 0, alignSelf: 'center' }]}>
                             <BibleText style={{ fontSize: ms(DESIGN.fontSize.sm), color: colors.primary, fontWeight: '700' }}>
                                 {totalDays} dias
                             </BibleText>
                         </View>
                     </View>
-                    <BibleIcon name="chevron-right" color={colors.textMuted} size={ms(DESIGN.fontSize.xl)} />
                 </View>
             </TouchableOpacity>
         );
@@ -633,7 +646,7 @@ export default function ReadingPlanScreen() {
         </BibleText>
     ), [styles, colors, ms, DESIGN]);
 
-    const isInSubView = screenView === 'detail' || screenView === 'templates';
+    const isInSubView = screenView === 'detail';
 
     if (!isLoaded) return null;
 
@@ -659,9 +672,8 @@ export default function ReadingPlanScreen() {
             ) : (
                 <BibleHeader
                     title={
-                        screenView === 'templates' ? 'Escolher Plano' :
-                            screenView === 'detail' ? (selectedPlan?.title ?? 'Plano de Leitura') :
-                                ROUTE_LABELS[ROUTES.READING_PLAN]
+                        screenView === 'detail' ? (selectedPlan?.title ?? 'Plano de Leitura') :
+                            ROUTE_LABELS[ROUTES.READING_PLAN]
                     }
                     showMenu={!isInSubView}
                     showBack={isInSubView}
@@ -695,23 +707,6 @@ export default function ReadingPlanScreen() {
                                 description="Toque nos 3 pontos para adicionar um plano de leitura"
                                 icon="calendar"
                             />
-                        }
-                    />
-                )}
-
-                {screenView === 'templates' && (
-                    <FlashList
-                        data={BIBLE_PLAN_TEMPLATES}
-                        keyExtractor={t => t.id}
-                        // @ts-ignore
-                        estimatedItemSize={ms(110)}
-                        renderItem={renderTemplateItem}
-                        contentContainerStyle={styles.listContent}
-                        showsVerticalScrollIndicator={false}
-                        ListHeaderComponent={
-                            <BibleText style={[styles.sectionLabel, { color: colors.textMuted, marginBottom: ms(DESIGN.spacing.sm) }]}>
-                                Planos disponíveis
-                            </BibleText>
                         }
                     />
                 )}
@@ -778,6 +773,50 @@ export default function ReadingPlanScreen() {
                     </View>
                 }
             />
+
+            <BiblePageModal
+                visible={isTemplateModalVisible}
+                onClose={() => setIsTemplateModalVisible(false)}
+                header={
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <BibleIcon
+                            name="list"
+                            size={ms(DESIGN.spacing.lg)}
+                            color={colors.primary}
+                            backgroundColor={colors.primary + '25'}
+                            style={{ marginRight: ms(DESIGN.spacing.sm) }}
+                        />
+                        <BibleText style={{ flex: 1, fontSize: ms(DESIGN.fontSize.lg), fontWeight: '800', color: colors.primary }}>
+                            Escolher Plano
+                        </BibleText>
+                        <BibleIcon
+                            name="x"
+                            color={colors.error}
+                            backgroundColor={colors.error + '20'}
+                            onPress={() => setIsTemplateModalVisible(false)}
+                            style={{ marginLeft: 'auto' }}
+                        />
+                    </View>
+                }
+                fullHeight={true}
+            >
+                <FlashList
+                    data={BIBLE_PLAN_TEMPLATES}
+                    keyExtractor={t => t.id}
+                    // @ts-ignore
+                    estimatedItemSize={ms(110)}
+                    renderItem={renderTemplateItem}
+                    contentContainerStyle={styles.listContent}
+                    showsVerticalScrollIndicator={false}
+                    ListHeaderComponent={
+                        <BibleText style={[styles.sectionLabel, { color: colors.textMuted, marginBottom: ms(DESIGN.spacing.sm) }]}>
+                            Planos disponíveis
+                        </BibleText>
+                    }
+                />
+            </BiblePageModal>
+
+            <BibleToast opacity={opacity} toast={toast} />
         </View>
     );
 }

@@ -94,6 +94,10 @@ export function useBiblePlan() {
     persist(activePlans.filter(p => p.id !== planId));
   }, [activePlans, persist]);
 
+  const removeBiblePlans = useCallback((planIds: string[]) => {
+    persist(activePlans.filter(p => !planIds.includes(p.id)));
+  }, [activePlans, persist]);
+
   const clearAllBiblePlans = useCallback(() => {
     persist([]);
   }, [persist]);
@@ -141,6 +145,7 @@ export function useBiblePlan() {
     isDayCompleted,
     getDayCompletedAt,
     removeBiblePlan,
+    removeBiblePlans,
     clearAllBiblePlans,
     updateStartDate,
     getBiblePlanStats,
