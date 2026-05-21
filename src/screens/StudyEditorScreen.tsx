@@ -1,10 +1,9 @@
-import { useLocalSearchParams, usePathname, useRouter } from 'expo-router';
-import React, { useEffect, useRef, useState , useMemo } from 'react';
+import { useLocalSearchParams, usePathname } from 'expo-router';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Keyboard,
   KeyboardAvoidingView,
   Platform,
-  ScrollView,
   StyleSheet,
   TextInput,
   TouchableOpacity,
@@ -13,22 +12,20 @@ import {
 import { exportToPDF } from '../utils/export';
 import { handleSmartBack } from '../utils/navigation';
 
-import { BibleConfirmModal } from '@/components/modals/BibleConfirmModal';
-import { BibleActionsDrawer } from '@/components/modals/BibleActionsDrawer';
 import { BibleIcon } from '@/components/BibleIcon';
+import { BibleActionsDrawer } from '@/components/modals/BibleActionsDrawer';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BibleHeader } from '../components/BibleHeader';
 import { BibleSkeleton } from '../components/BibleSkeleton';
-import { BibleText } from '../components/BibleText';
 import { ReaderSettingsModal } from '../components/modals/ReaderSettingsModal';
 import { RichTextEditor, RichTextEditorRef } from '../components/study/RichTextEditor';
+import { LIMITS } from '../constants/limits';
+import { STORAGE_KEYS } from '../constants/storage';
+import { getBibleData } from '../data/bible-version';
+import { useBibleModals } from '../hooks/useBibleModals';
 import { useResponsive } from '../hooks/useResponsive';
 import { useStudies } from '../hooks/useStudies';
 import { useTheme } from '../hooks/useTheme';
-import { useBibleModals } from '../hooks/useBibleModals';
-import { LIMITS } from '../constants/limits';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { STORAGE_KEYS } from '../constants/storage';
-import { getBibleData } from '../data';
 
 const noOutline = Platform.select({ web: { outline: 'none', outlineWidth: 0 } as any, default: {} });
 
@@ -38,7 +35,7 @@ export default function StudyEditorScreen() {
   const pathname = usePathname();
   const { ms, DESIGN } = useResponsive();
   const { colors } = useTheme();
-  
+
   const styles = useMemo(() => StyleSheet.create({
     titleInput: { flex: 1, fontWeight: '700' },
   }), [ms, colors, DESIGN]);
@@ -88,7 +85,7 @@ export default function StudyEditorScreen() {
         if (stored) {
           setStudyPosition(JSON.parse(stored));
         }
-      } catch (e) {}
+      } catch (e) { }
     })();
   }, []);
 
@@ -104,7 +101,7 @@ export default function StudyEditorScreen() {
         currentPos = JSON.parse(stored);
         setStudyPosition(currentPos);
       }
-    } catch (e) {}
+    } catch (e) { }
 
     const books = getBibleData(currentPos.version);
     const foundBook = books.find(b => b.abbrev.toLowerCase() === currentPos.book.toLowerCase() || b.name.toLowerCase() === currentPos.book.toLowerCase()) || books[0];
@@ -124,7 +121,7 @@ export default function StudyEditorScreen() {
         setStudyPosition(nextPos);
         try {
           await AsyncStorage.setItem(STORAGE_KEYS.CURRENT_STUDY, JSON.stringify(nextPos));
-        } catch (e) {}
+        } catch (e) { }
 
         onInsertVerseHtml(selection);
       }
@@ -150,7 +147,7 @@ export default function StudyEditorScreen() {
 
     const bookDisplayName = book.name || book.abbrev;
     const ref = `${bookDisplayName} ${chapter}: ${formattedRanges} (${version.toUpperCase()})`;
-    
+
     const lines = verseObjects.map((v: any) => {
       return `<div class="verse-line"><span class="verse-num">${v.verse}</span> <span class="verse-text">${v.text}</span></div>`;
     }).join('');
@@ -198,12 +195,12 @@ export default function StudyEditorScreen() {
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: ms(DESIGN.spacing.xs) }}>
             {!isReadonly && (
               <TouchableOpacity
-                style={{ 
-                  width: ms(DESIGN.button.height.sm), 
-                  height: ms(DESIGN.button.height.sm), 
-                  borderRadius: ms(DESIGN.borderRadius.md), 
-                  alignItems: 'center', 
-                  justifyContent: 'center' 
+                style={{
+                  width: ms(DESIGN.button.height.sm),
+                  height: ms(DESIGN.button.height.sm),
+                  borderRadius: ms(DESIGN.borderRadius.md),
+                  alignItems: 'center',
+                  justifyContent: 'center'
                 }}
                 onPress={() => {
                   if (showToolbar) Keyboard.dismiss();
@@ -214,12 +211,12 @@ export default function StudyEditorScreen() {
               </TouchableOpacity>
             )}
             <TouchableOpacity
-              style={{ 
-                width: ms(DESIGN.button.height.sm), 
-                height: ms(DESIGN.button.height.sm), 
-                borderRadius: ms(DESIGN.borderRadius.md), 
-                alignItems: 'center', 
-                justifyContent: 'center' 
+              style={{
+                width: ms(DESIGN.button.height.sm),
+                height: ms(DESIGN.button.height.sm),
+                borderRadius: ms(DESIGN.borderRadius.md),
+                alignItems: 'center',
+                justifyContent: 'center'
               }}
               onPress={() => setMenuVisible(true)}
             >

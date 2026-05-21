@@ -2,12 +2,11 @@ import { VERSE_HIGHLIGHTS } from '@/constants/colors';
 import { FlashList } from '@shopify/flash-list';
 import React, { useEffect, useMemo, useRef } from 'react';
 import { Animated, StyleSheet, TouchableOpacity, View } from 'react-native';
-import { ALIASES } from '../data';
+import { ALIASES } from '../data/bible-version';
 import { useReaderSettings } from '../hooks/useReaderSettings';
 import { useResponsive } from '../hooks/useResponsive';
 import { useTheme } from '../hooks/useTheme';
 import { impactLight } from '../utils/haptics';
-import { BibleIcon } from './BibleIcon';
 import { BibleText } from './BibleText';
 
 type VerseItem = {

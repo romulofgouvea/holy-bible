@@ -1,8 +1,8 @@
+import { STORAGE_KEYS } from '@/constants/storage';
+import { availableVersions, getBibleData } from '@/data/bible-version';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Redirect, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { STORAGE_KEYS } from '@/constants/storage';
-import { availableVersions, getBibleData } from '@/data';
 
 function stripAccents(s: string) {
   return s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();

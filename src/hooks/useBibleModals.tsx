@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useContext, useMemo, useState } from 'react';
-import { Book } from '../data';
+import { Book } from '../data/bible-version';
 
 type ModalType = 'version' | 'book' | 'chapter' | 'verse' | 'verses' | null;
 

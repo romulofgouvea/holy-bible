@@ -1,7 +1,7 @@
-import { useState, useCallback, useMemo } from 'react';
-import { availableVersions, getBibleData } from '../data';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useCallback, useMemo, useState } from 'react';
 import { STORAGE_KEYS } from '../constants/storage';
+import { availableVersions, getBibleData } from '../data/bible-version';
 
 export function useVersions() {
   const [currentVersion, setCurrentVersionState] = useState(availableVersions[0] || 'NAA');
@@ -10,7 +10,7 @@ export function useVersions() {
     setCurrentVersionState(v);
     try {
       await AsyncStorage.setItem(STORAGE_KEYS.BIBLE_VERSION_GLOBAL, v);
-    } catch (e) {}
+    } catch (e) { }
   }, []);
 
   const versionOptions = useMemo(() => {

@@ -24,7 +24,7 @@ import { BibleText } from '../components/BibleText';
 import { DonateModal } from '../components/modals/DonateModal';
 import { ROUTES } from '../constants/routes';
 import { STORAGE_KEYS } from '../constants/storage';
-import { Book, getBibleData } from '../data';
+import { Book, getBibleData } from '../data/bible-version';
 import { useBible } from '../hooks/useBible';
 import { useBibleModals } from '../hooks/useBibleModals';
 import { useReaderSettings } from '../hooks/useReaderSettings';
@@ -66,20 +66,20 @@ const HighlightText = React.memo(({ text, query, colors, fontSizeMultiplier, ms,
 
   const normalizedText = removeAccents(text).toLowerCase();
   const tokens: { text: string; highlighted: boolean }[] = [];
-  
+
   let lastIdx = 0;
   let idx = normalizedText.indexOf(cleanQuery);
-  
+
   while (idx !== -1) {
     if (idx > lastIdx) {
       tokens.push({ text: text.slice(lastIdx, idx), highlighted: false });
     }
     tokens.push({ text: text.slice(idx, idx + cleanQuery.length), highlighted: true });
-    
+
     lastIdx = idx + cleanQuery.length;
     idx = normalizedText.indexOf(cleanQuery, lastIdx);
   }
-  
+
   if (lastIdx < text.length) {
     tokens.push({ text: text.slice(lastIdx), highlighted: false });
   }
@@ -375,7 +375,7 @@ export default function SearchScreen() {
           if (params.from === 'bible') {
             const restoredQuery = finalSearchState.query || '';
             const restoredVersion = finalSearchState.version || version || 'NAA';
-            
+
             let restoredBook: Book | null = null;
             const restoredBookAbbrev = finalSearchState.book;
             if (restoredBookAbbrev) {
@@ -394,7 +394,7 @@ export default function SearchScreen() {
               const term = removeAccents(restoredQuery.trim()).toLowerCase();
               const found: SearchResult[] = [];
               const searchVersionBooks = getBibleData(restoredVersion);
-              
+
               const scope = restoredChapter ? 'chapter' : restoredBook ? 'book' : 'bible';
               const booksToSearch = scope === 'bible'
                 ? searchVersionBooks

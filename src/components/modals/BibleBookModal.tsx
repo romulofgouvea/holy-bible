@@ -2,16 +2,16 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import { STORAGE_KEYS } from '../../constants/storage';
-import { Book } from '../../data';
 import bibleBooks from '../../data/bible-books.json';
+import { Book } from '../../data/bible-version';
 import { useResponsive } from '../../hooks/useResponsive';
 import { useTheme } from '../../hooks/useTheme';
 import { BibleCountPill } from '../BibleCountPill';
 import { BibleGridBlock } from '../BibleGridBlock';
 import { BibleIcon } from '../BibleIcon';
 import { BibleListCard } from '../BibleListCard';
-import { BiblePageModal } from './BiblePageModal';
 import { BibleText } from '../BibleText';
+import { BiblePageModal } from './BiblePageModal';
 
 type BibleBookModalProps = {
   visible: boolean;
@@ -41,68 +41,68 @@ const ABBREV_TO_NAME: Record<string, string> = {};
 export function BibleBookModal({ visible, onClose, books, versionSigla, onVersionPress, onSelect, currentBookAbbrev, showVersionPill }: BibleBookModalProps) {
   const { ms, height, width, DESIGN } = useResponsive();
   const { colors } = useTheme();
-  
+
   const styles = useMemo(() => StyleSheet.create({
     header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-    iconBtn: { 
-      width: ms(DESIGN.icon.lg), 
-      height: ms(DESIGN.icon.lg), 
-      borderRadius: ms(DESIGN.borderRadius.sm), 
-      justifyContent: 'center', 
-      alignItems: 'center' 
+    iconBtn: {
+      width: ms(DESIGN.icon.lg),
+      height: ms(DESIGN.icon.lg),
+      borderRadius: ms(DESIGN.borderRadius.sm),
+      justifyContent: 'center',
+      alignItems: 'center'
     },
     headerActionSpacing: { marginLeft: ms(DESIGN.spacing.sm) },
     headerIconWrap: { marginRight: ms(DESIGN.spacing.sm) },
     title: { flex: 1, fontWeight: '700' },
-    versionPill: { 
-      flexDirection: 'row', 
-      alignItems: 'center', 
-      paddingHorizontal: ms(DESIGN.spacing.sm), 
-      height: ms(DESIGN.icon.lg), 
-      borderRadius: ms(DESIGN.borderRadius.sm), 
-      marginRight: ms(DESIGN.spacing.sm) 
+    versionPill: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingHorizontal: ms(DESIGN.spacing.sm),
+      height: ms(DESIGN.icon.lg),
+      borderRadius: ms(DESIGN.borderRadius.sm),
+      marginRight: ms(DESIGN.spacing.sm)
     },
     versionPillText: { fontWeight: '800' },
-    searchContainer: { 
-      flexDirection: 'row', 
-      alignItems: 'center', 
-      borderWidth: 1, 
-      borderRadius: ms(DESIGN.borderRadius.md), 
-      paddingHorizontal: ms(DESIGN.spacing.md), 
-      marginTop: ms(DESIGN.spacing.lg), 
-      height: ms(DESIGN.button.height.md) 
+    searchContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      borderWidth: 1,
+      borderRadius: ms(DESIGN.borderRadius.md),
+      paddingHorizontal: ms(DESIGN.spacing.md),
+      marginTop: ms(DESIGN.spacing.lg),
+      height: ms(DESIGN.button.height.md)
     },
     searchIcon: { marginRight: ms(DESIGN.spacing.sm) },
     searchInput: { flex: 1, height: '100%', ...({ outlineStyle: 'none' } as any) },
-    scrollContent: { 
-      paddingBottom: ms(DESIGN.spacing.lg), 
-      paddingTop: ms(DESIGN.spacing.lg), 
-      paddingHorizontal: ms(DESIGN.spacing.lg) 
+    scrollContent: {
+      paddingBottom: ms(DESIGN.spacing.lg),
+      paddingTop: ms(DESIGN.spacing.lg),
+      paddingHorizontal: ms(DESIGN.spacing.lg)
     },
     footer: { paddingTop: ms(DESIGN.spacing.xs) },
-    viewToggles: { 
-      flexDirection: 'row', 
-      alignItems: 'center', 
-      borderRadius: ms(DESIGN.borderRadius.sm), 
-      padding: ms(DESIGN.spacing.tiny), 
-      gap: ms(DESIGN.spacing.tiny), 
-      marginLeft: ms(DESIGN.spacing.sm), 
-      height: ms(DESIGN.icon.lg) 
+    viewToggles: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      borderRadius: ms(DESIGN.borderRadius.sm),
+      padding: ms(DESIGN.spacing.tiny),
+      gap: ms(DESIGN.spacing.tiny),
+      marginLeft: ms(DESIGN.spacing.sm),
+      height: ms(DESIGN.icon.lg)
     },
-    toggleBtn: { 
-      width: ms(DESIGN.icon.md), 
-      height: ms(DESIGN.icon.md), 
-      justifyContent: 'center', 
-      alignItems: 'center', 
-      borderRadius: ms(DESIGN.borderRadius.xs) 
+    toggleBtn: {
+      width: ms(DESIGN.icon.md),
+      height: ms(DESIGN.icon.md),
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderRadius: ms(DESIGN.borderRadius.xs)
     },
-    gridContainer: { 
-      flexDirection: 'row', 
-      flexWrap: 'wrap', 
-      gap: ms(DESIGN.spacing.sm), 
-      justifyContent: 'flex-start', 
-      marginBottom: ms(DESIGN.spacing.sm), 
-      width: '100%' 
+    gridContainer: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: ms(DESIGN.spacing.sm),
+      justifyContent: 'flex-start',
+      marginBottom: ms(DESIGN.spacing.sm),
+      width: '100%'
     },
     listGroup: { gap: ms(DESIGN.spacing.sm), marginBottom: ms(DESIGN.spacing.sm) },
     testamentSectionHeader: {

@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Book, getBibleData } from '../../data';
+import { Book, getBibleData } from '../../data/bible-version';
 import { useBible } from '../../hooks/useBible';
 import { useBibleModals } from '../../hooks/useBibleModals';
 import { useResponsive } from '../../hooks/useResponsive';

@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DeviceEventEmitter } from 'react-native';
 import { STORAGE_KEYS } from '../constants/storage';
-import { availableVersions, getBibleData } from '../data';
+import { availableVersions, getBibleData } from '../data/bible-version';
 
 export const BACKUP_FORMAT_VERSION = 2;
 export const BACKUP_RESTORED_EVENT = 'app-backup-restored';

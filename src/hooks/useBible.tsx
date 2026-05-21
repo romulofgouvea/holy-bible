@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { DeviceEventEmitter } from 'react-native';
 import { STORAGE_KEYS } from '../constants/storage';
-import { availableVersions, getBibleData } from '../data';
+import { availableVersions, getBibleData } from '../data/bible-version';
 import { Book, HighlightItem } from '../models';
 import { BACKUP_RESTORED_EVENT } from '../utils/backup';
 import { useHistory } from './useHistory';
@@ -45,7 +45,7 @@ export function BibleProvider({ children }: { children: React.ReactNode }) {
   const [book, setBookState] = useState('gn');
   const [chapter, setChapterState] = useState(1);
   const [verse, setVerseState] = useState(1);
-  
+
   const [visibleChapter, setVisibleChapter] = useState(1);
   const [visibleVerse, setVisibleVerse] = useState(1);
   const [blinkingVerse, setBlinkingVerse] = useState<string | null>(null);
@@ -121,7 +121,7 @@ export function BibleProvider({ children }: { children: React.ReactNode }) {
       if (savedHighlights) {
         const parsed = JSON.parse(savedHighlights);
         const normalized: Record<string, HighlightItem> = {};
-        
+
         if (Array.isArray(parsed)) {
           parsed.forEach((item: any) => {
             let abbrev = item.abbrev;
@@ -131,7 +131,7 @@ export function BibleProvider({ children }: { children: React.ReactNode }) {
               abbrev = foundBook ? foundBook.abbrev : item.book;
             }
             if (!abbrev) abbrev = 'gn';
-            
+
             const key = `${abbrev}-${item.chapter}-${item.verse}`;
             normalized[key] = {
               color: item.color,

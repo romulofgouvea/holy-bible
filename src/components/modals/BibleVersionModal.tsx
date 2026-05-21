@@ -2,15 +2,15 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import { STORAGE_KEYS } from '../../constants/storage';
-import { ALIASES, BibleVersionInfo } from '../../data';
+import { ALIASES, BibleVersionInfo } from '../../data/bible-version';
 import { useResponsive } from '../../hooks/useResponsive';
 import { useTheme } from '../../hooks/useTheme';
 import { BibleCountPill } from '../BibleCountPill';
 import { BibleGridBlock } from '../BibleGridBlock';
 import { BibleIcon } from '../BibleIcon';
 import { BibleListCard } from '../BibleListCard';
-import { BiblePageModal } from './BiblePageModal';
 import { BibleText } from '../BibleText';
+import { BiblePageModal } from './BiblePageModal';
 
 type BibleVersionModalProps = {
   visible: boolean;
@@ -22,7 +22,7 @@ type BibleVersionModalProps = {
 export function BibleVersionModal({ visible, onClose, onSelect, currentVersionSigla }: BibleVersionModalProps) {
   const { ms, height, width, DESIGN } = useResponsive();
   const { colors } = useTheme();
-  
+
   const styles = useMemo(() => StyleSheet.create({
     header: {
       flexDirection: 'row',
@@ -60,28 +60,28 @@ export function BibleVersionModal({ visible, onClose, onSelect, currentVersionSi
       ...({ outlineStyle: 'none' } as any),
     },
     list: { flexGrow: 1, gap: ms(DESIGN.spacing.sm), padding: ms(DESIGN.spacing.lg) },
-    viewToggles: { 
-      flexDirection: 'row', 
-      alignItems: 'center', 
-      borderRadius: ms(DESIGN.borderRadius.sm), 
-      padding: ms(DESIGN.spacing.xs), 
-      gap: ms(DESIGN.spacing.xs), 
-      marginLeft: ms(DESIGN.spacing.sm), 
-      height: ms(DESIGN.icon.lg) 
+    viewToggles: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      borderRadius: ms(DESIGN.borderRadius.sm),
+      padding: ms(DESIGN.spacing.xs),
+      gap: ms(DESIGN.spacing.xs),
+      marginLeft: ms(DESIGN.spacing.sm),
+      height: ms(DESIGN.icon.lg)
     },
-    toggleBtn: { 
-      width: ms(DESIGN.icon.md), 
-      height: ms(DESIGN.icon.md), 
-      justifyContent: 'center', 
-      alignItems: 'center', 
-      borderRadius: ms(DESIGN.borderRadius.xs) 
+    toggleBtn: {
+      width: ms(DESIGN.icon.md),
+      height: ms(DESIGN.icon.md),
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderRadius: ms(DESIGN.borderRadius.xs)
     },
-    gridContainer: { 
-      flexDirection: 'row', 
-      flexWrap: 'wrap', 
-      gap: ms(DESIGN.spacing.sm), 
-      justifyContent: 'flex-start', 
-      width: '100%' 
+    gridContainer: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: ms(DESIGN.spacing.sm),
+      justifyContent: 'flex-start',
+      width: '100%'
     },
   }), [ms, colors, DESIGN]);
 

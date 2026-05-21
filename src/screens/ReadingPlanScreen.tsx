@@ -11,7 +11,7 @@ import { BibleActionsDrawer } from '../components/modals/BibleActionsDrawer';
 import { BibleConfirmModal } from '../components/modals/BibleConfirmModal';
 import { DonateModal } from '../components/modals/DonateModal';
 import { ROUTE_LABELS, ROUTES } from '../constants/routes';
-import { BIBLE_PLAN_TEMPLATES } from '../data/biblePlanRegistry';
+import { BIBLE_PLAN_TEMPLATES } from '../data/bible-plan/biblePlanRegistry';
 import { useBible } from '../hooks/useBible';
 import { useBiblePlan } from '../hooks/useBiblePlan';
 import { useResponsive } from '../hooks/useResponsive';

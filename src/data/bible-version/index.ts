@@ -1,8 +1,8 @@
 import bibleVersions from './bible-versions.json';
 
-import { Book, BibleVersionInfo } from '../models';
+import { BibleVersionInfo, Book } from '../../models';
 
-export type { Book, BibleVersionInfo };
+export type { BibleVersionInfo, Book };
 
 export const ALIASES = bibleVersions as BibleVersionInfo[];
 export const availableVersions = ALIASES.map(v => v.sigla);
