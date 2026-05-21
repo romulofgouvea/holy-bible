@@ -49,7 +49,7 @@ export function BibleVersionModal({ visible, onClose, onSelect, currentVersionSi
       borderRadius: ms(DESIGN.borderRadius.md),
       paddingHorizontal: ms(DESIGN.spacing.md),
       marginTop: ms(DESIGN.spacing.lg),
-      height: ms(DESIGN.button.height.md),
+      height: ms(DESIGN.height.md),
     },
     searchIcon: {
       marginRight: ms(DESIGN.spacing.sm),

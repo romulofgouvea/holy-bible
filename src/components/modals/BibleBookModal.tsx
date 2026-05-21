@@ -70,7 +70,7 @@ export function BibleBookModal({ visible, onClose, books, versionSigla, onVersio
       borderRadius: ms(DESIGN.borderRadius.md),
       paddingHorizontal: ms(DESIGN.spacing.md),
       marginTop: ms(DESIGN.spacing.lg),
-      height: ms(DESIGN.button.height.md)
+      height: ms(DESIGN.height.md)
     },
     searchIcon: { marginRight: ms(DESIGN.spacing.sm) },
     searchInput: { flex: 1, height: '100%', ...({ outlineStyle: 'none' } as any) },

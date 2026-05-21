@@ -33,20 +33,11 @@ export const DESIGN = {
     massive: 80,
     extraMassive: 100,
   },
-  button: {
-    height: {
-      sm: 36,
-      md: 44,
-      lg: 52,
-    },
-    padding: {
-      sm: 12,
-      md: 16,
-      lg: 24,
-    },
-  },
-  input: {
-    height: 48,
+  height: {
+    sm: 36,
+    md: 44,
+    input: 48,
+    lg: 52,
   },
   icon: {
     xs: 16,

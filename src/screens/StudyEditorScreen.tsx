@@ -196,8 +196,8 @@ export default function StudyEditorScreen() {
             {!isReadonly && (
               <TouchableOpacity
                 style={{
-                  width: ms(DESIGN.button.height.sm),
-                  height: ms(DESIGN.button.height.sm),
+                  width: ms(DESIGN.height.sm),
+                  height: ms(DESIGN.height.sm),
                   borderRadius: ms(DESIGN.borderRadius.md),
                   alignItems: 'center',
                   justifyContent: 'center'
@@ -212,8 +212,8 @@ export default function StudyEditorScreen() {
             )}
             <TouchableOpacity
               style={{
-                width: ms(DESIGN.button.height.sm),
-                height: ms(DESIGN.button.height.sm),
+                width: ms(DESIGN.height.sm),
+                height: ms(DESIGN.height.sm),
                 borderRadius: ms(DESIGN.borderRadius.md),
                 alignItems: 'center',
                 justifyContent: 'center'

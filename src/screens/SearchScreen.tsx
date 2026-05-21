@@ -172,7 +172,7 @@ export default function SearchScreen() {
       flex: 1,
       flexDirection: 'row',
       alignItems: 'center',
-      height: ms(DESIGN.button.height.md),
+      height: ms(DESIGN.height.md),
       borderRadius: ms(DESIGN.borderRadius.md),
       paddingHorizontal: ms(DESIGN.spacing.sm),
       borderWidth: 1,

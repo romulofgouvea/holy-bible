@@ -62,8 +62,8 @@ export default function EstudosScreen() {
     cardContent: {
       flexDirection: 'row',
       alignItems: 'center',
-      paddingHorizontal: ms(DESIGN.button.padding.sm),
-      paddingVertical: ms(DESIGN.button.padding.sm),
+      paddingHorizontal: ms(DESIGN.spacing.sm),
+      paddingVertical: ms(DESIGN.spacing.sm),
       gap: ms(DESIGN.spacing.md)
     },
     cardIcon: {
@@ -77,8 +77,8 @@ export default function EstudosScreen() {
     cardTitle: { fontWeight: '700' },
     cardDate: { marginTop: ms(DESIGN.spacing.tiny) },
     deleteBtn: {
-      width: ms(DESIGN.button.height.sm),
-      height: ms(DESIGN.button.height.sm),
+      width: ms(DESIGN.height.sm),
+      height: ms(DESIGN.height.sm),
       alignItems: 'center',
       justifyContent: 'center',
       borderRadius: ms(DESIGN.borderRadius.md)

@@ -53,8 +53,8 @@ export default function TrashScreen() {
     cardContent: { 
       flexDirection: 'row', 
       alignItems: 'center', 
-      paddingHorizontal: ms(DESIGN.button.padding.sm), 
-      paddingVertical: ms(DESIGN.button.padding.sm), 
+      paddingHorizontal: ms(DESIGN.spacing.sm), 
+      paddingVertical: ms(DESIGN.spacing.sm), 
       gap: ms(DESIGN.spacing.md) 
     },
     cardIcon: { 
@@ -212,7 +212,7 @@ export default function TrashScreen() {
           rightContent={
             <TouchableOpacity
               onPress={() => setMenuVisible(true)}
-              style={{ width: ms(DESIGN.button.height.md), height: ms(DESIGN.button.height.md), alignItems: 'center', justifyContent: 'center' }}
+              style={{ width: ms(DESIGN.height.md), height: ms(DESIGN.height.md), alignItems: 'center', justifyContent: 'center' }}
             >
               <BibleIcon name="more-vertical" color={colors.onPrimary} size={ms(DESIGN.fontSize.xxl)} />
             </TouchableOpacity>

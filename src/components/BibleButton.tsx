@@ -35,14 +35,14 @@ export function BibleButton({
       justifyContent: 'center',
       borderRadius: ms(DESIGN.borderRadius.md),
       paddingHorizontal: ms(
-        size === 'sm' ? DESIGN.button.padding.sm : 
-        size === 'lg' ? DESIGN.button.padding.lg : 
-        DESIGN.button.padding.md
+        size === 'sm' ? DESIGN.spacing.sm : 
+        size === 'lg' ? DESIGN.spacing.lg : 
+        DESIGN.spacing.md
       ),
       height: ms(
-        size === 'sm' ? DESIGN.button.height.sm : 
-        size === 'lg' ? DESIGN.button.height.lg : 
-        DESIGN.button.height.md
+        size === 'sm' ? DESIGN.height.sm : 
+        size === 'lg' ? DESIGN.height.lg : 
+        DESIGN.height.md
       ),
     };
 

@@ -539,23 +539,23 @@ export default function BibleScreen() {
                   top: splitOrientation === 'vertical' ? '45%' : '50%',
                   width: controlGroupAnim.interpolate({
                     inputRange: [0, 1],
-                    outputRange: [ms(DESIGN.spacing.xxl), splitOrientation === 'horizontal' ? ms(DESIGN.button.height.sm) : ms(DESIGN.button.height.sm * 3 + DESIGN.spacing.sm * 2)],
+                    outputRange: [ms(DESIGN.spacing.xxl), splitOrientation === 'horizontal' ? ms(DESIGN.height.sm) : ms(DESIGN.height.sm * 3 + DESIGN.spacing.sm * 2)],
                   }),
                   height: controlGroupAnim.interpolate({
                     inputRange: [0, 1],
-                    outputRange: [ms(DESIGN.spacing.xxl), splitOrientation === 'horizontal' ? ms(DESIGN.button.height.sm * 3 + DESIGN.spacing.sm * 2) : ms(DESIGN.button.height.sm)],
+                    outputRange: [ms(DESIGN.spacing.xxl), splitOrientation === 'horizontal' ? ms(DESIGN.height.sm * 3 + DESIGN.spacing.sm * 2) : ms(DESIGN.height.sm)],
                   }),
                   transform: [
                     {
                       translateX: controlGroupAnim.interpolate({
                         inputRange: [0, 1],
-                        outputRange: [-ms(DESIGN.spacing.xxl) / 2, -(splitOrientation === 'horizontal' ? ms(DESIGN.button.height.sm) : ms(DESIGN.button.height.sm * 3 + DESIGN.spacing.sm * 2)) / 2],
+                        outputRange: [-ms(DESIGN.spacing.xxl) / 2, -(splitOrientation === 'horizontal' ? ms(DESIGN.height.sm) : ms(DESIGN.height.sm * 3 + DESIGN.spacing.sm * 2)) / 2],
                       })
                     },
                     {
                       translateY: controlGroupAnim.interpolate({
                         inputRange: [0, 1],
-                        outputRange: [-ms(DESIGN.spacing.xxl) / 2, -(splitOrientation === 'horizontal' ? ms(DESIGN.button.height.sm * 3 + DESIGN.spacing.sm * 2) : ms(DESIGN.button.height.sm)) / 2],
+                        outputRange: [-ms(DESIGN.spacing.xxl) / 2, -(splitOrientation === 'horizontal' ? ms(DESIGN.height.sm * 3 + DESIGN.spacing.sm * 2) : ms(DESIGN.height.sm)) / 2],
                       })
                     },
                   ],

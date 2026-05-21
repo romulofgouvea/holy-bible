@@ -180,8 +180,8 @@ export default function ReadingPlanScreen() {
         templateCardContent: {
             flexDirection: 'row',
             alignItems: 'center',
-            paddingHorizontal: ms(DESIGN.button.padding.sm),
-            paddingVertical: ms(DESIGN.button.padding.sm),
+            paddingHorizontal: ms(DESIGN.spacing.sm),
+            paddingVertical: ms(DESIGN.spacing.sm),
             gap: ms(DESIGN.spacing.md),
         },
         iconWrap: {
@@ -213,8 +213,8 @@ export default function ReadingPlanScreen() {
             shadowRadius: ms(DESIGN.borderRadius.xs),
             flexDirection: 'row',
             alignItems: 'center',
-            paddingHorizontal: ms(DESIGN.button.padding.sm),
-            paddingVertical: ms(DESIGN.button.padding.sm),
+            paddingHorizontal: ms(DESIGN.spacing.sm),
+            paddingVertical: ms(DESIGN.spacing.sm),
             gap: ms(DESIGN.spacing.md),
         },
         checkbox: {
@@ -545,8 +545,8 @@ export default function ReadingPlanScreen() {
                     {(delayDays > 0 || aheadDays > 0) && (
                         <View style={{
                             position: 'absolute',
-                            top: ms(DESIGN.button.padding.sm),
-                            right: ms(DESIGN.button.padding.sm),
+                            top: ms(DESIGN.spacing.sm),
+                            right: ms(DESIGN.spacing.sm),
                             backgroundColor: delayDays > 0 ? colors.error + '15' : '#1DB95415',
                             paddingHorizontal: ms(8),
                             paddingVertical: ms(4),

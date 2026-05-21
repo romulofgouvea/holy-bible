@@ -33,7 +33,7 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
   const styles = useMemo(() => StyleSheet.create({
     toolbar: {
       flexDirection: 'row',
-      height: ms(DESIGN.button.height.lg),
+      height: ms(DESIGN.height.lg),
       borderBottomWidth: 1,
       zIndex: 5,
       // Soft shadow for premium feel
@@ -53,7 +53,7 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
     groupBtn: {
       flexDirection: 'row',
       paddingHorizontal: ms(DESIGN.spacing.md),
-      height: ms(DESIGN.button.height.sm),
+      height: ms(DESIGN.height.sm),
       alignItems: 'center',
       justifyContent: 'center',
     },
@@ -208,8 +208,8 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
           position: absolute;
           top: 0;
           right: 0;
-          width: ${ms(DESIGN.button.height.md)}px;
-          height: ${ms(DESIGN.button.height.md)}px;
+          width: ${ms(DESIGN.height.md)}px;
+          height: ${ms(DESIGN.height.md)}px;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -765,7 +765,7 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
               {VERSE_HIGHLIGHTS.map((h, i) => (
                 <React.Fragment key={h.id}>
                   <TouchableOpacity
-                    style={[styles.groupBtn, { width: ms(DESIGN.button.height.sm) }]}
+                    style={[styles.groupBtn, { width: ms(DESIGN.height.sm) }]}
                     onPress={() => applyHighlight(h.hex)}
                   >
                     <View style={{ width: ms(DESIGN.fontSize.xxl), height: ms(DESIGN.fontSize.xxl), borderRadius: ms(DESIGN.borderRadius.sm), backgroundColor: h.hex, borderWidth: 1, borderColor: colors.border }} />
@@ -774,7 +774,7 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
                 </React.Fragment>
               ))}
               <TouchableOpacity
-                style={[styles.groupBtn, { width: ms(DESIGN.button.height.sm) }]}
+                style={[styles.groupBtn, { width: ms(DESIGN.height.sm) }]}
                 onPress={() => applyHighlight('transparent')}
               >
                 <View style={{ width: ms(DESIGN.fontSize.xxl), height: ms(DESIGN.fontSize.xxl), borderRadius: ms(DESIGN.borderRadius.sm), borderWidth: 1.5, borderColor: colors.textMuted, alignItems: 'center', justifyContent: 'center' }}>

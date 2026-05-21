@@ -49,7 +49,7 @@ export function ReaderSettingsModal({ visible, onClose }: { visible: boolean; on
     },
     unifiedRow: {
       flexDirection: 'row',
-      height: ms(DESIGN.button.height.md),
+      height: ms(DESIGN.height.md),
       borderRadius: ms(DESIGN.borderRadius.md),
       alignItems: 'center',
       overflow: 'hidden',

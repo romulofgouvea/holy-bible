@@ -43,8 +43,8 @@ export function BibleAddToStudyModal({ visible, onClose, selectedVerses, onShowT
     studyItemContent: {
       flexDirection: 'row',
       alignItems: 'center',
-      paddingHorizontal: ms(DESIGN.button.padding.sm),
-      paddingVertical: ms(DESIGN.button.padding.sm),
+      paddingHorizontal: ms(DESIGN.spacing.sm),
+      paddingVertical: ms(DESIGN.spacing.sm),
       gap: ms(DESIGN.spacing.md),
     },
     empty: { padding: ms(DESIGN.spacing.giant), alignItems: 'center' },

@@ -79,7 +79,7 @@ export function DonateModal({ visible, onClose }: Props) {
     },
     copyBtn: {
       flexDirection: 'row',
-      height: ms(DESIGN.button.height.lg),
+      height: ms(DESIGN.height.lg),
       borderRadius: ms(DESIGN.borderRadius.md),
       alignItems: 'center',
       justifyContent: 'center',
