@@ -1,12 +1,13 @@
 import { FlashList } from '@shopify/flash-list';
 import { useRouter } from 'expo-router';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { Alert, Platform, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
+import { Platform, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import { BibleDrawerMenu } from '../components/BibleDrawerMenu';
 import { BibleHeader } from '../components/BibleHeader';
 import { BibleIcon } from '../components/BibleIcon';
 import { BiblePageEmpty } from '../components/BiblePageEmpty';
 import { BibleText } from '../components/BibleText';
+import { BibleToast } from '../components/BibleToast';
 import { BibleActionsDrawer } from '../components/modals/BibleActionsDrawer';
 import { BibleConfirmModal } from '../components/modals/BibleConfirmModal';
 import { DonateModal } from '../components/modals/DonateModal';
@@ -17,7 +18,6 @@ import { useBiblePlan } from '../hooks/useBiblePlan';
 import { useResponsive } from '../hooks/useResponsive';
 import { useTheme } from '../hooks/useTheme';
 import { useToast } from '../hooks/useToast';
-import { BibleToast } from '../components/BibleToast';
 import { ActiveBiblePlan } from '../models';
 import { BiblePlanDay, BiblePlanMonth, BiblePlanTemplate } from '../models/BiblePlanModels';
 
@@ -442,15 +442,18 @@ export default function ReadingPlanScreen() {
                 activeOpacity={0.7}
             >
                 <View style={styles.templateCardContent}>
-                    <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <BibleText style={{ fontWeight: '700', fontSize: ms(DESIGN.fontSize.lg), color: colors.onSurface, flex: 1, marginRight: ms(12) }}>
+                    <View style={{ flex: 1 }}>
+                        <BibleText style={{ fontWeight: '700', fontSize: ms(DESIGN.fontSize.lg), color: colors.onSurface }} numberOfLines={1}>
                             {item.title}
                         </BibleText>
-                        <View style={[styles.daysTag, { backgroundColor: colors.primary + '20', marginTop: 0, alignSelf: 'center' }]}>
-                            <BibleText style={{ fontSize: ms(DESIGN.fontSize.sm), color: colors.primary, fontWeight: '700' }}>
-                                {totalDays} dias
-                            </BibleText>
-                        </View>
+                        <BibleText style={{ fontSize: ms(DESIGN.fontSize.sm), color: colors.textMuted, fontWeight: '400', marginTop: ms(2) }} numberOfLines={2}>
+                            {item.description}
+                        </BibleText>
+                    </View>
+                    <View style={[styles.daysTag, { backgroundColor: colors.primary + '20', marginTop: 0, alignSelf: 'center', flexShrink: 0 }]}>
+                        <BibleText style={{ fontSize: ms(DESIGN.fontSize.sm), color: colors.primary, fontWeight: '700' }}>
+                            {totalDays} dias
+                        </BibleText>
                     </View>
                 </View>
             </TouchableOpacity>

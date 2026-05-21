@@ -9,25 +9,25 @@ const yearPlan = yearData as BiblePlanMonth[];
 
 export const BIBLE_PLAN_TEMPLATES: BiblePlanTemplate[] = [
   {
-    id: 'cronological-month-plan',
-    title: 'Leitura Anual - Cronológica',
-    description: 'Leitura cronológica da Bíblia dividida em meses.',
-    icon: 'calendar',
-    months: cronologicalMonths,
+    id: 'year-plan',
+    title: 'Clássica',
+    description: 'Leitura da Bíblia dividida por ano.',
+    icon: 'list',
+    months: yearPlan,
   },
   {
     id: 'year-month-plan',
-    title: 'Leitura Anual - Dividida em Meses',
-    description: 'Leitura completa da Bíblia dividida em meses.',
+    title: 'Clássica - Mês a Mês',
+    description: 'Leitura completa dividida em meses.',
     icon: 'book',
     months: monthPlan,
   },
   {
-    id: 'year-plan',
-    title: 'Leitura Anual - Por Ano',
-    description: 'Leitura da Bíblia dividida por ano.',
-    icon: 'list',
-    months: yearPlan,
+    id: 'cronological-month-plan',
+    title: 'Cronológica - Mês a Mês',
+    description: 'Leitura cronológica dividida em meses.',
+    icon: 'calendar',
+    months: cronologicalMonths,
   }
 ];
 
