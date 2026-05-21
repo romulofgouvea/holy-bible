@@ -16,7 +16,6 @@ ALIASES.forEach(v => {
   try {
     bibleDataFiles[v.sigla] = jsonContext(`./${v.sigla}.json`);
   } catch (e) {
-    console.warn(`[BibleData] Aviso: Arquivo ${v.sigla}.json não encontrado na compilação.`);
   }
 });
 
@@ -25,7 +24,6 @@ export const getBibleData = (sigla: string): Book[] => {
     const data = bibleDataFiles[sigla];
     
     if (!data) {
-      console.warn(`[BibleData] Versão ${sigla} não foi montada no Record. Verifique os arquivos JSON.`);
       return [];
     }
     
@@ -34,7 +32,6 @@ export const getBibleData = (sigla: string): Book[] => {
     
     return [];
   } catch (error) {
-    console.warn(`[BibleData] Erro ao carregar versão ${sigla}.`);
     return [];
   }
 };

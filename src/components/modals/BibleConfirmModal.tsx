@@ -18,6 +18,7 @@ type ConfirmModalProps = {
   icon?: keyof typeof Feather.glyphMap;
   onConfirm: () => void;
   onCancel?: () => void;
+  customContent?: React.ReactNode;
 };
 
 export function BibleConfirmModal({
@@ -30,7 +31,9 @@ export function BibleConfirmModal({
   icon,
   onConfirm,
   onCancel,
+  customContent,
 }: ConfirmModalProps) {
+
   const { ms, DESIGN } = useResponsive();
   const { colors, isDarkMode } = useTheme();
   const messageColor = isDarkMode ? 'rgba(255, 255, 255, 0.82)' : 'rgba(28, 30, 33, 0.78)';
@@ -134,6 +137,7 @@ export function BibleConfirmModal({
             <BibleText style={[styles.message, { fontSize: ms(DESIGN.fontSize.md), color: messageColor }]}>
               {message}
             </BibleText>
+            {customContent}
           </View>
 
           <BibleDivider />

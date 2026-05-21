@@ -16,7 +16,6 @@ export function useHistory() {
         setHistory(JSON.parse(stored));
       }
     } catch (e) {
-      console.error('Failed to load history', e);
     }
   }, []);
 
@@ -41,7 +40,6 @@ export function useHistory() {
       await AsyncStorage.setItem(STORAGE_KEYS.BIBLE_HISTORY, JSON.stringify(newHistory));
       setHistory(newHistory);
     } catch (e) {
-      console.error('Failed to save history', e);
     }
   }, []);
 

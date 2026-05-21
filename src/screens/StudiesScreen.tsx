@@ -186,7 +186,6 @@ export default function EstudosScreen() {
       setSelectedIds(new Set());
       setSelectionPurpose(null);
     } catch (e) {
-      console.error('Export failed', e);
     }
   };
 

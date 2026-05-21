@@ -54,6 +54,44 @@ export type Study = {
   deletedAt?: number;
 };
 
+// Reading Plan Domain Models
+export type ReadingPlanEntry = {
+  bookAbbrev: string;
+  chapter: number;
+};
+
+export type ReadingPlanDay = {
+  day: number;
+  entries: ReadingPlanEntry[];
+  isCompleted: boolean;
+  completedAt?: number;
+  group?: string;
+  label?: string;
+  reading?: string;
+};
+
+export type ReadingPlan = {
+  id: string;
+  templateId: string;
+  title: string;
+  totalDays: number;
+  startedAt: number;
+  days: ReadingPlanDay[];
+};
+
+export type ActiveBiblePlanDay = {
+  isCompleted: boolean;
+  completedAt?: number;
+};
+
+export type ActiveBiblePlan = {
+  id: string;
+  templateId: string;
+  title: string;
+  startedAt: number;
+  completedDays: Record<string, ActiveBiblePlanDay>;
+};
+
 // Reader Settings Domain Models
 export type ReaderTheme = 'light' | 'dark' | 'sepia';
 export type ReaderFont = 'poppins' | 'monospace';

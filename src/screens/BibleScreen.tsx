@@ -15,6 +15,7 @@ import { BibleTopBar } from '../components/BibleTopBar';
 import { BibleVerseReader } from '../components/BibleVerseReader';
 import { BibleHistoryModal } from '../components/modals/BibleHistoryModal';
 import { DonateModal } from '../components/modals/DonateModal';
+import { ROUTES } from '../constants/routes';
 import { STORAGE_KEYS } from '../constants/storage';
 import { getBibleData } from '../data';
 import { useBible } from '../hooks/useBible';
@@ -27,17 +28,16 @@ import { useToast } from '../hooks/useToast';
 
 export default function BibleScreen() {
   const {
-    isReady,
-    version, versionBooks,
-    book, currentBook,
-    chapter, chapterCount,
-    verse,
+    version, setVersion, book, setBook, chapter, setChapter, verse, setVerse,
+    versionBooks, currentBook, chapterCount, sectionData,
+    visibleChapter, setVisibleChapter,
+    visibleVerse, setVisibleVerse,
     blinkingVerse, setBlinkingVerse,
-    sectionData,
-    highlights,
-    bulkToggleHighlight,
+    highlights, bulkToggleHighlight,
     navigateTo,
-    changeChapter
+    changeChapter,
+    readingPlanGoal,
+    isReady
   } = useBible();
 
   const router = useRouter();
@@ -666,7 +666,7 @@ export default function BibleScreen() {
               </View>
             </View>
           ) : (
-              <View style={styles.splitPane}>
+            <View style={styles.splitPane}>
               <BibleVerseReader
                 listRef={sectionListRef}
                 sections={sectionData}
@@ -686,17 +686,17 @@ export default function BibleScreen() {
             <Animated.View
               pointerEvents={isNavInteractive ? 'box-none' : 'none'}
               style={[
-              styles.floatingNav,
-              {
-                opacity: navVisibleAnim,
-                transform: [{
-                  translateY: navVisibleAnim.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [ms(24), 0],
-                  }),
-                }],
-              },
-            ]}>
+                styles.floatingNav,
+                {
+                  opacity: navVisibleAnim,
+                  transform: [{
+                    translateY: navVisibleAnim.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [ms(24), 0],
+                    }),
+                  }],
+                },
+              ]}>
               <BibleIcon
                 name="chevron-left"
                 size={navIconSize}

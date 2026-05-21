@@ -33,6 +33,8 @@ type BibleContextType = {
   navigateTo: (p: { version?: string; book?: string; chapter?: number; verse?: number }) => void;
   changeChapter: (deltaOrValue: number, onComplete?: (newChapter: number) => void) => void;
   addHistoryEntry: (entry: { version: string; bookAbbrev: string; bookName: string; chapter: number; verse: number }) => Promise<void>;
+  readingPlanGoal: { bookAbbrev: string; chapter: number } | null;
+  setReadingPlanGoal: (goal: { bookAbbrev: string; chapter: number } | null) => void;
 };
 
 const BibleContext = createContext<BibleContextType | undefined>(undefined);
@@ -48,6 +50,7 @@ export function BibleProvider({ children }: { children: React.ReactNode }) {
   const [visibleVerse, setVisibleVerse] = useState(1);
   const [blinkingVerse, setBlinkingVerse] = useState<string | null>(null);
   const [highlights, setHighlights] = useState<Record<string, HighlightItem>>({});
+  const [readingPlanGoal, setReadingPlanGoal] = useState<{ bookAbbrev: string; chapter: number } | null>(null);
   const [isReady, setIsReady] = useState(false);
   const isReadyRef = useRef(false);
 
@@ -321,7 +324,8 @@ export function BibleProvider({ children }: { children: React.ReactNode }) {
       visibleVerse, setVisibleVerse,
       blinkingVerse, setBlinkingVerse,
       highlights, toggleHighlight, bulkToggleHighlight,
-      isReady, navigateTo, changeChapter, addHistoryEntry
+      isReady, navigateTo, changeChapter, addHistoryEntry,
+      readingPlanGoal, setReadingPlanGoal
     }}>
       {children}
     </BibleContext.Provider>

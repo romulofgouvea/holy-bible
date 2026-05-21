@@ -17,6 +17,7 @@ import { DonateModal } from '../components/modals/DonateModal';
 import { SettingsItem } from '../components/SettingsItem';
 import { ROUTES, ROUTE_LABELS } from '../constants/routes';
 import { STORAGE_KEYS } from '../constants/storage';
+import { useBiblePlan } from '../hooks/useBiblePlan';
 import { useHistory } from '../hooks/useHistory';
 import { useReaderSettings } from '../hooks/useReaderSettings';
 import { useResponsive } from '../hooks/useResponsive';
@@ -106,10 +107,11 @@ export default function ConfigurationScreen() {
     modalTitle: { fontWeight: '800' },
   }), [ms, colors, DESIGN]);
 
-  const { setReaderTheme, readerTheme } = useReaderSettings();
+  const { setReaderTheme } = useReaderSettings();
   const { clearHistory } = useHistory();
   const [isDrawerVisible, setIsDrawerVisible] = useState(false);
   const { importBulk, reloadFromStorage } = useStudies();
+  const { clearAllBiblePlans } = useBiblePlan();
   const router = useRouter();
   const [isAutoBackupEnabled, setIsAutoBackupEnabled] = useState(false);
   const [isDonateVisible, setIsDonateVisible] = useState(false);
@@ -117,6 +119,7 @@ export default function ConfigurationScreen() {
   const [alertInfo, setAlertInfo] = useState<{ title: string; message: string; isDanger?: boolean } | null>(null);
   const [isClearCacheConfirmVisible, setIsClearCacheConfirmVisible] = useState(false);
   const [isClearAllConfirmVisible, setIsClearAllConfirmVisible] = useState(false);
+  const [isClearPlanConfirmVisible, setIsClearPlanConfirmVisible] = useState(false);
 
   const handleClearCache = async () => {
     try {
@@ -264,7 +267,6 @@ export default function ConfigurationScreen() {
         message: `Backup completo restaurado com sucesso.\n\n${restoredKeys} chave(s) do aplicativo.\n${studyCount} estudo(s) no arquivo.`,
       });
     } catch (err) {
-      console.log('Import err', err);
       setAlertInfo({ title: 'Erro', message: 'Não foi possível tratar o arquivo de restauração.', isDanger: true });
     }
   };
@@ -358,6 +360,13 @@ export default function ConfigurationScreen() {
             icon="trash"
             onPress={() => setIsClearAllConfirmVisible(true)}
           />
+          <View style={{ height: 1, backgroundColor: colors.border, marginLeft: ms(DESIGN.layout.settingsIconOffset) }} />
+          <SettingsItem
+            label="Resetar Plano de Leitura"
+            description="Remove o plano ativo e o progresso de leitura"
+            icon="calendar"
+            onPress={() => setIsClearPlanConfirmVisible(true)}
+          />
         </View>
 
         <BibleText style={{ marginTop: ms(DESIGN.spacing.xl), marginLeft: ms(DESIGN.spacing.sm), marginBottom: ms(DESIGN.spacing.sm), fontSize: ms(DESIGN.fontSize.md), fontWeight: '700', color: colors.textMuted }}>BACKUP E RESTAURAÇÃO</BibleText>
@@ -421,6 +430,16 @@ export default function ConfigurationScreen() {
         isDanger
         onConfirm={handleClearAll}
         onCancel={() => setIsClearAllConfirmVisible(false)}
+      />
+
+      <BibleConfirmModal
+        visible={isClearPlanConfirmVisible}
+        title="Resetar Plano de Leitura"
+        message="Tem certeza? O progresso atual será perdido. Você poderá escolher um novo plano."
+        confirmText="Resetar"
+        isDanger
+        onConfirm={() => { clearAllBiblePlans(); setIsClearPlanConfirmVisible(false); }}
+        onCancel={() => setIsClearPlanConfirmVisible(false)}
       />
 
       <BibleConfirmModal

@@ -7,6 +7,7 @@ import { useReaderSettings } from '../hooks/useReaderSettings';
 import { useResponsive } from '../hooks/useResponsive';
 import { useTheme } from '../hooks/useTheme';
 import { impactLight } from '../utils/haptics';
+import { BibleIcon } from './BibleIcon';
 import { BibleText } from './BibleText';
 
 type VerseItem = {
@@ -209,13 +210,15 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
                     if (item.type === 'footer') {
                         const primaryLow = primaryColor + '1A';
                         return (
-                            <View style={[styles.copyrightCard, { backgroundColor: primaryLow, borderLeftColor: primaryColor }]}>
-                                <BibleText style={[styles.copyrightTitle, { color: primaryColor }]}>
-                                    {item.versionInfo?.name} ({item.versionInfo?.sigla})
-                                </BibleText>
-                                <BibleText style={[styles.copyrightText, { color: readerColors.onBackground, opacity: 0.6 }]}>
-                                    {item.copyright}
-                                </BibleText>
+                            <View>
+                                <View style={[styles.copyrightCard, { backgroundColor: primaryLow, borderLeftColor: primaryColor }]}>
+                                    <BibleText style={[styles.copyrightTitle, { color: primaryColor }]}>
+                                        {item.versionInfo?.name} ({item.versionInfo?.sigla})
+                                    </BibleText>
+                                    <BibleText style={[styles.copyrightText, { color: readerColors.onBackground, opacity: 0.6 }]}>
+                                        {item.copyright}
+                                    </BibleText>
+                                </View>
                             </View>
                         );
                     }

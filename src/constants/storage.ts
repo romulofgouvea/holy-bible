@@ -23,4 +23,5 @@ export const STORAGE_KEYS = {
   APP_CLEARED: 'bible_app_cleared',
   BIBLE_HISTORY: 'bible_history',
   BIBLE_COMPARE: 'bible_compare',
+  READING_PLAN: 'bible_reading_plan',
 };
