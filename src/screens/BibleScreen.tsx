@@ -79,7 +79,7 @@ export default function BibleScreen() {
   const hasRestored = useRef(false);
 
   useEffect(() => {
-    if (!isReady) return;
+    if (!isReady || hasRestored.current) return;
     const restoreCompare = async () => {
       try {
         const saved = await AsyncStorage.getItem(STORAGE_KEYS.BIBLE_COMPARE);
@@ -439,6 +439,7 @@ export default function BibleScreen() {
         currentChapter={chapter}
         onOpenVersion={() => openModal({
           initialStep: 'version',
+          initialVersion: version,
           onSelect: (s) => {
             if (s.version) {
               navigateTo({ version: s.version });
@@ -509,6 +510,7 @@ export default function BibleScreen() {
               <View style={splitOrientation === 'vertical' ? styles.splitPaneTop : styles.splitPane}>
                 {renderVersionBadge(version, () => openModal({
                   initialStep: 'version',
+                  initialVersion: version,
                   onSelect: (s) => {
                     if (s.version) {
                       navigateTo({ version: s.version });
@@ -646,6 +648,7 @@ export default function BibleScreen() {
                 {renderVersionBadge(secondVersion, () => openModal({
                   initialStep: 'version',
                   target: 'study',
+                  initialVersion: secondVersion,
                   onSelect: (s) => {
                     if (s.version) setSecondVersion(s.version);
                   }

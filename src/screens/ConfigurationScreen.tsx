@@ -1,3 +1,4 @@
+import { BibleDivider } from '@/components/BibleDivider';
 import { BibleIcon } from '@/components/BibleIcon';
 import { BibleConfirmModal } from '@/components/modals/BibleConfirmModal';
 import { COLOR_THEMES, ColorThemeKey } from '@/constants/colors';
@@ -297,9 +298,7 @@ export default function ConfigurationScreen() {
               />
             }
           />
-
-          <View style={{ height: 1, backgroundColor: colors.border, marginLeft: ms(DESIGN.layout.settingsIconOffset) }} />
-
+          <BibleDivider style={{ marginLeft: ms(DESIGN.layout.settingsIconOffset) }} />
           <SettingsItem
             label="Vibração"
             description="Feedback tátil ao tocar nos itens"
@@ -312,9 +311,7 @@ export default function ConfigurationScreen() {
               />
             }
           />
-
-          <View style={{ height: 1, backgroundColor: colors.border, marginLeft: ms(DESIGN.layout.settingsIconOffset) }} />
-
+          <BibleDivider style={{ marginLeft: ms(DESIGN.layout.settingsIconOffset) }} />
           <SettingsItem
             label="Cor do Aplicativo"
             description="Escolha a paleta de cores do app"
@@ -346,26 +343,26 @@ export default function ConfigurationScreen() {
             icon="trash-2"
             onPress={() => router.push(ROUTES.TRASH as any)}
           />
-          <View style={{ height: 1, backgroundColor: colors.border, marginLeft: ms(DESIGN.layout.settingsIconOffset) }} />
+          <BibleDivider style={{ marginLeft: ms(DESIGN.layout.settingsIconOffset) }} />
           <SettingsItem
             label="Limpar Histórico"
             description="Remove todo o historico de pesquisa de versiculos"
             icon="clock"
             onPress={() => setIsClearCacheConfirmVisible(true)}
           />
-          <View style={{ height: 1, backgroundColor: colors.border, marginLeft: ms(DESIGN.layout.settingsIconOffset) }} />
+          <BibleDivider style={{ marginLeft: ms(DESIGN.layout.settingsIconOffset) }} />
+          <SettingsItem
+            label="Limpar Plano de Leitura"
+            description="Remove todos os planos de leitura"
+            icon="calendar"
+            onPress={() => setIsClearPlanConfirmVisible(true)}
+          />
+          <BibleDivider style={{ marginLeft: ms(DESIGN.layout.settingsIconOffset) }} />
           <SettingsItem
             label="Limpar Tudo"
             description="Limpar todos os dados do aplicativo"
             icon="trash"
             onPress={() => setIsClearAllConfirmVisible(true)}
-          />
-          <View style={{ height: 1, backgroundColor: colors.border, marginLeft: ms(DESIGN.layout.settingsIconOffset) }} />
-          <SettingsItem
-            label="Resetar Plano de Leitura"
-            description="Remove o plano ativo e o progresso de leitura"
-            icon="calendar"
-            onPress={() => setIsClearPlanConfirmVisible(true)}
           />
         </View>
 
@@ -383,18 +380,14 @@ export default function ConfigurationScreen() {
               />
             }
           />
-
-          <View style={{ height: 1, backgroundColor: colors.border, marginLeft: ms(DESIGN.layout.settingsIconOffset) }} />
-
+          <BibleDivider style={{ marginLeft: ms(DESIGN.layout.settingsIconOffset) }} />
           <SettingsItem
             label="Exportar Backup"
             description="Salvar backup completo do app (estudos, histórico, configurações)"
             icon="download"
             onPress={handleManualBackup}
           />
-
-          <View style={{ height: 1, backgroundColor: colors.border, marginLeft: ms(DESIGN.layout.settingsIconOffset) }} />
-
+          <BibleDivider style={{ marginLeft: ms(DESIGN.layout.settingsIconOffset) }} />
           <SettingsItem
             label="Restaurar do Backup"
             description="Restaurar backup completo ou arquivo antigo só de estudos"
