@@ -3,6 +3,7 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useR
 import { DeviceEventEmitter } from 'react-native';
 import { STORAGE_KEYS } from '../constants/storage';
 import { availableVersions, getBibleData } from '../data/bible-version';
+import { getBibleTitles } from '../data/bible-titles';
 import { Book, HighlightItem } from '../models';
 import { BACKUP_RESTORED_EVENT } from '../utils/backup';
 import { useHistory } from './useHistory';
@@ -66,16 +67,27 @@ export function BibleProvider({ children }: { children: React.ReactNode }) {
 
   const sectionData = useMemo(() => {
     const verses = currentBook.chapters[chapter - 1] || [];
+    
+    const versionTitles = getBibleTitles(version);
+    const bookTitles = versionTitles?.books.find(b => b.abbrev === currentBook.abbrev);
+    const chapterTitles = bookTitles?.chapters.find(c => c.number === chapter)?.titles || [];
+
     return [{
       title: `${currentBook.name} ${chapter}`,
-      data: verses.map((text, i) => ({
-        bookAbbrev: currentBook.abbrev,
-        chapter,
-        verse: i + 1,
-        text
-      }))
+      data: verses.map((text, i) => {
+        const verseNum = i + 1;
+        const titlesForVerse = chapterTitles.filter(t => t.startVerse === verseNum);
+        
+        return {
+          bookAbbrev: currentBook.abbrev,
+          chapter,
+          verse: verseNum,
+          text,
+          titles: titlesForVerse
+        };
+      })
     }];
-  }, [currentBook, chapter]);
+  }, [currentBook, chapter, version]);
 
   const updateCurrentRead = useCallback(async (v: string, b: string, c: number, ve: number) => {
     try {

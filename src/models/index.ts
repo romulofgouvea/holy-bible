@@ -96,3 +96,28 @@ export type ActiveBiblePlan = {
 export type ReaderTheme = 'light' | 'dark' | 'sepia';
 export type ReaderFont = 'poppins' | 'monospace';
 export type TextAlign = 'auto' | 'left' | 'right' | 'center' | 'justify';
+
+// Bible Title Models
+export interface VerseTitle {
+  title: string;
+  startVerse: number;
+  endVerse: number;
+  type: 'section' | 'subsection' | 'speech' | string;
+  positionIndex: number;
+}
+
+export interface ChapterTitle {
+  number: number;
+  titles: VerseTitle[];
+}
+
+export interface BookTitle {
+  name: string;
+  abbrev: string;
+  chapters: ChapterTitle[];
+}
+
+export interface VersionTitle {
+  version: string;
+  books: BookTitle[];
+}

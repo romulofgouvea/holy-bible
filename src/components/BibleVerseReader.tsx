@@ -9,10 +9,13 @@ import { useTheme } from '../hooks/useTheme';
 import { impactLight } from '../utils/haptics';
 import { BibleText } from './BibleText';
 
+import { VerseTitle } from '../models';
+
 type VerseItem = {
     chapter: number;
     verse: number;
     text: string;
+    titles?: VerseTitle[];
 };
 
 type SectionType = {
@@ -63,6 +66,42 @@ const VerseRow = React.memo(({
         ]
     });
 
+    const zeroIndexTitles = item.titles?.filter((t: any) => t.positionIndex === 0) || [];
+    const midVerseTitles = item.titles?.filter((t: any) => t.positionIndex > 0) || [];
+
+    const renderMidVerseTitlesAndText = () => {
+        if (midVerseTitles.length === 0) {
+            return <React.Fragment>{'\u00A0\u00A0'}{item.text}</React.Fragment>;
+        }
+
+        const elements = [];
+        let currentTextIndex = 0;
+
+        const sortedTitles = [...midVerseTitles].sort((a, b) => a.positionIndex - b.positionIndex);
+
+        sortedTitles.forEach((t, index) => {
+            const textBefore = item.text.substring(currentTextIndex, t.positionIndex);
+            elements.push(<React.Fragment key={`text-${index}`}>{index === 0 ? '\u00A0\u00A0' : ''}{textBefore}</React.Fragment>);
+            currentTextIndex = t.positionIndex;
+
+            elements.push(
+                <BibleText key={`title-${index}`} style={{
+                    color: primaryColor,
+                    fontWeight: t.type === 'section' ? '700' : '500',
+                    fontStyle: t.type === 'speech' ? 'italic' : 'normal',
+                }}>
+                    {'\n\n'}{t.title}{'\n'}
+                </BibleText>
+            );
+        });
+
+        if (currentTextIndex < item.text.length) {
+            elements.push(<React.Fragment key="text-end">{item.text.substring(currentTextIndex)}</React.Fragment>);
+        }
+
+        return elements;
+    };
+
     return (
         <TouchableOpacity onPress={() => { impactLight(); onVersePress(item); }} activeOpacity={0.7}>
             <Animated.View style={[
@@ -70,6 +109,16 @@ const VerseRow = React.memo(({
                 { backgroundColor: animatedBackgroundColor },
                 isSelected && { borderLeftColor: primaryColor },
             ]}>
+                {zeroIndexTitles.map((t: any, i: number) => (
+                    <BibleText key={`zero-title-${i}`} style={[styles.sectionTitle, { 
+                        color: primaryColor, 
+                        fontSize: ms(DESIGN.fontSize.xl * fontSizeMultiplier),
+                        fontStyle: t.type === 'speech' ? 'italic' : 'normal',
+                    }]}>
+                        {t.title}
+                    </BibleText>
+                ))}
+                
                 <BibleText
                     variant="reading"
                     style={[styles.verseText, {
@@ -82,7 +131,7 @@ const VerseRow = React.memo(({
                     <BibleText style={{ color: primaryColor, fontWeight: '700', fontSize: ms(DESIGN.fontSize.lg * fontSizeMultiplier) }}>
                         {item.verse}
                     </BibleText>
-                    {'\u00A0\u00A0'}{item.text}
+                    {renderMidVerseTitlesAndText()}
                 </BibleText>
             </Animated.View>
         </TouchableOpacity>
@@ -125,6 +174,11 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
         chapterHeaderText: {
             fontWeight: '800',
             letterSpacing: 0.5,
+        },
+        sectionTitle: {
+            fontWeight: '700',
+            marginBottom: ms(DESIGN.spacing.md),
+            letterSpacing: 0.3,
         },
         verseRow: {
             paddingVertical: ms(DESIGN.spacing.md),
