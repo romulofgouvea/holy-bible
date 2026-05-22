@@ -454,21 +454,44 @@ export default function ReadingPlanScreen() {
         );
     }, [styles, colors, ms, DESIGN, getBiblePlanStats, handleOpenPlan, isSelectionMode, selectedDeleteIds, toggleDeleteSelection]);
 
-    const renderTemplateItem = useCallback(({ item }: { item: BiblePlanTemplate }) => {
-        const totalDays = item.months.reduce((acc, m) => acc + m.days.length, 0);
+    const groupedTemplates = useMemo(() => {
+        return [
+            { id: 'header-3', type: 'header', title: '3 Meses' },
+            ...BIBLE_PLAN_TEMPLATES.filter(t => t.id.includes('three-months')),
+            { id: 'header-6', type: 'header', title: '6 Meses' },
+            ...BIBLE_PLAN_TEMPLATES.filter(t => t.id.includes('six-months')),
+            { id: 'header-12', type: 'header', title: '1 Ano' },
+            ...BIBLE_PLAN_TEMPLATES.filter(t => !t.id.includes('three-months') && !t.id.includes('six-months')),
+        ];
+    }, []);
+
+    const renderTemplateItem = useCallback(({ item }: { item: any }) => {
+        if (item.type === 'header') {
+            return (
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: ms(DESIGN.spacing.md), marginBottom: ms(DESIGN.spacing.xs) }}>
+                    <BibleText style={[styles.sectionLabel, { color: colors.textMuted, flex: 1 }]}>
+                        {item.title}
+                    </BibleText>
+                    <View style={{ height: 1, backgroundColor: colors.border, flex: 1, opacity: 0.5 }} />
+                </View>
+            );
+        }
+
+        const template = item as BiblePlanTemplate;
+        const totalDays = template.months.reduce((acc, m) => acc + m.days.length, 0);
         return (
             <TouchableOpacity
                 style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border, shadowColor: colors.shadow }]}
-                onPress={() => handleSelectTemplate(item)}
+                onPress={() => handleSelectTemplate(template)}
                 activeOpacity={0.7}
             >
                 <View style={styles.templateCardContent}>
                     <View style={{ flex: 1 }}>
                         <BibleText style={{ fontWeight: '700', fontSize: ms(DESIGN.fontSize.lg), color: colors.onSurface }} numberOfLines={1}>
-                            {item.title}
+                            {template.title}
                         </BibleText>
                         <BibleText style={{ fontSize: ms(DESIGN.fontSize.sm), color: colors.textMuted, fontWeight: '400', marginTop: ms(2) }} numberOfLines={2}>
-                            {item.description}
+                            {template.description}
                         </BibleText>
                     </View>
                     <View style={[styles.daysTag, { backgroundColor: colors.primary + '20', marginTop: 0, alignSelf: 'center', flexShrink: 0 }]}>
@@ -837,18 +860,13 @@ export default function ReadingPlanScreen() {
                 fullHeight={true}
             >
                 <FlashList
-                    data={BIBLE_PLAN_TEMPLATES}
+                    data={groupedTemplates}
                     keyExtractor={t => t.id}
                     // @ts-ignore
                     estimatedItemSize={ms(110)}
                     renderItem={renderTemplateItem}
                     contentContainerStyle={[styles.listContent, { paddingBottom: ms(DESIGN.spacing.lg) }]}
                     showsVerticalScrollIndicator={false}
-                    ListHeaderComponent={
-                        <BibleText style={[styles.sectionLabel, { color: colors.textMuted, marginBottom: ms(DESIGN.spacing.sm) }]}>
-                            Planos disponíveis
-                        </BibleText>
-                    }
                 />
             </BiblePageModal>
 

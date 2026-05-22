@@ -1,0 +1,5438 @@
+[
+  {
+    "monthNumber": 1,
+    "month": "Leitura Anual",
+    "theme": "Antigo Testamento em 1 ano",
+    "days": [
+      {
+        "day": 1,
+        "reading": "Gêne 1-2",
+        "books": [
+          {
+            "abbrev": "Gn",
+            "name": "Gênesis",
+            "chapters": [
+              1,
+              2
+            ]
+          }
+        ]
+      },
+      {
+        "day": 2,
+        "reading": "Gêne 3-5",
+        "books": [
+          {
+            "abbrev": "Gn",
+            "name": "Gênesis",
+            "chapters": [
+              3,
+              4,
+              5
+            ]
+          }
+        ]
+      },
+      {
+        "day": 3,
+        "reading": "Gêne 6-8",
+        "books": [
+          {
+            "abbrev": "Gn",
+            "name": "Gênesis",
+            "chapters": [
+              6,
+              7,
+              8
+            ]
+          }
+        ]
+      },
+      {
+        "day": 4,
+        "reading": "Gêne 9-11",
+        "books": [
+          {
+            "abbrev": "Gn",
+            "name": "Gênesis",
+            "chapters": [
+              9,
+              10,
+              11
+            ]
+          }
+        ]
+      },
+      {
+        "day": 5,
+        "reading": "Gêne 12-14",
+        "books": [
+          {
+            "abbrev": "Gn",
+            "name": "Gênesis",
+            "chapters": [
+              12,
+              13,
+              14
+            ]
+          }
+        ]
+      },
+      {
+        "day": 6,
+        "reading": "Gêne 15-17",
+        "books": [
+          {
+            "abbrev": "Gn",
+            "name": "Gênesis",
+            "chapters": [
+              15,
+              16,
+              17
+            ]
+          }
+        ]
+      },
+      {
+        "day": 7,
+        "reading": "Gêne 18-19",
+        "books": [
+          {
+            "abbrev": "Gn",
+            "name": "Gênesis",
+            "chapters": [
+              18,
+              19
+            ]
+          }
+        ]
+      },
+      {
+        "day": 8,
+        "reading": "Gêne 20-22",
+        "books": [
+          {
+            "abbrev": "Gn",
+            "name": "Gênesis",
+            "chapters": [
+              20,
+              21,
+              22
+            ]
+          }
+        ]
+      },
+      {
+        "day": 9,
+        "reading": "Gêne 23-24",
+        "books": [
+          {
+            "abbrev": "Gn",
+            "name": "Gênesis",
+            "chapters": [
+              23,
+              24
+            ]
+          }
+        ]
+      },
+      {
+        "day": 10,
+        "reading": "Gêne 25",
+        "books": [
+          {
+            "abbrev": "Gn",
+            "name": "Gênesis",
+            "chapters": [
+              25
+            ]
+          }
+        ]
+      },
+      {
+        "day": 11,
+        "reading": "Gêne 26-27",
+        "books": [
+          {
+            "abbrev": "Gn",
+            "name": "Gênesis",
+            "chapters": [
+              26,
+              27
+            ]
+          }
+        ]
+      },
+      {
+        "day": 12,
+        "reading": "Gêne 28-29",
+        "books": [
+          {
+            "abbrev": "Gn",
+            "name": "Gênesis",
+            "chapters": [
+              28,
+              29
+            ]
+          }
+        ]
+      },
+      {
+        "day": 13,
+        "reading": "Gêne 30-31",
+        "books": [
+          {
+            "abbrev": "Gn",
+            "name": "Gênesis",
+            "chapters": [
+              30,
+              31
+            ]
+          }
+        ]
+      },
+      {
+        "day": 14,
+        "reading": "Gêne 32-33",
+        "books": [
+          {
+            "abbrev": "Gn",
+            "name": "Gênesis",
+            "chapters": [
+              32,
+              33
+            ]
+          }
+        ]
+      },
+      {
+        "day": 15,
+        "reading": "Gêne 34-35",
+        "books": [
+          {
+            "abbrev": "Gn",
+            "name": "Gênesis",
+            "chapters": [
+              34,
+              35
+            ]
+          }
+        ]
+      },
+      {
+        "day": 16,
+        "reading": "Gêne 36-37",
+        "books": [
+          {
+            "abbrev": "Gn",
+            "name": "Gênesis",
+            "chapters": [
+              36,
+              37
+            ]
+          }
+        ]
+      },
+      {
+        "day": 17,
+        "reading": "Gêne 38-39",
+        "books": [
+          {
+            "abbrev": "Gn",
+            "name": "Gênesis",
+            "chapters": [
+              38,
+              39
+            ]
+          }
+        ]
+      },
+      {
+        "day": 18,
+        "reading": "Gêne 40-41",
+        "books": [
+          {
+            "abbrev": "Gn",
+            "name": "Gênesis",
+            "chapters": [
+              40,
+              41
+            ]
+          }
+        ]
+      },
+      {
+        "day": 19,
+        "reading": "Gêne 42-43",
+        "books": [
+          {
+            "abbrev": "Gn",
+            "name": "Gênesis",
+            "chapters": [
+              42,
+              43
+            ]
+          }
+        ]
+      },
+      {
+        "day": 20,
+        "reading": "Gêne 44-45",
+        "books": [
+          {
+            "abbrev": "Gn",
+            "name": "Gênesis",
+            "chapters": [
+              44,
+              45
+            ]
+          }
+        ]
+      },
+      {
+        "day": 21,
+        "reading": "Gêne 46-47",
+        "books": [
+          {
+            "abbrev": "Gn",
+            "name": "Gênesis",
+            "chapters": [
+              46,
+              47
+            ]
+          }
+        ]
+      },
+      {
+        "day": 22,
+        "reading": "Gêne 48-49",
+        "books": [
+          {
+            "abbrev": "Gn",
+            "name": "Gênesis",
+            "chapters": [
+              48,
+              49
+            ]
+          }
+        ]
+      },
+      {
+        "day": 23,
+        "reading": "Gêne 50; Êxod 1-2",
+        "books": [
+          {
+            "abbrev": "Gn",
+            "name": "Gênesis",
+            "chapters": [
+              50
+            ]
+          },
+          {
+            "abbrev": "Êx",
+            "name": "Êxodo",
+            "chapters": [
+              1,
+              2
+            ]
+          }
+        ]
+      },
+      {
+        "day": 24,
+        "reading": "Êxod 3-4",
+        "books": [
+          {
+            "abbrev": "Êx",
+            "name": "Êxodo",
+            "chapters": [
+              3,
+              4
+            ]
+          }
+        ]
+      },
+      {
+        "day": 25,
+        "reading": "Êxod 5-7",
+        "books": [
+          {
+            "abbrev": "Êx",
+            "name": "Êxodo",
+            "chapters": [
+              5,
+              6,
+              7
+            ]
+          }
+        ]
+      },
+      {
+        "day": 26,
+        "reading": "Êxod 8",
+        "books": [
+          {
+            "abbrev": "Êx",
+            "name": "Êxodo",
+            "chapters": [
+              8
+            ]
+          }
+        ]
+      },
+      {
+        "day": 27,
+        "reading": "Êxod 9-11",
+        "books": [
+          {
+            "abbrev": "Êx",
+            "name": "Êxodo",
+            "chapters": [
+              9,
+              10,
+              11
+            ]
+          }
+        ]
+      },
+      {
+        "day": 28,
+        "reading": "Êxod 12",
+        "books": [
+          {
+            "abbrev": "Êx",
+            "name": "Êxodo",
+            "chapters": [
+              12
+            ]
+          }
+        ]
+      },
+      {
+        "day": 29,
+        "reading": "Êxod 13-14",
+        "books": [
+          {
+            "abbrev": "Êx",
+            "name": "Êxodo",
+            "chapters": [
+              13,
+              14
+            ]
+          }
+        ]
+      },
+      {
+        "day": 30,
+        "reading": "Êxod 15-16",
+        "books": [
+          {
+            "abbrev": "Êx",
+            "name": "Êxodo",
+            "chapters": [
+              15,
+              16
+            ]
+          }
+        ]
+      },
+      {
+        "day": 31,
+        "reading": "Êxod 17-19",
+        "books": [
+          {
+            "abbrev": "Êx",
+            "name": "Êxodo",
+            "chapters": [
+              17,
+              18,
+              19
+            ]
+          }
+        ]
+      },
+      {
+        "day": 32,
+        "reading": "Êxod 20-21",
+        "books": [
+          {
+            "abbrev": "Êx",
+            "name": "Êxodo",
+            "chapters": [
+              20,
+              21
+            ]
+          }
+        ]
+      },
+      {
+        "day": 33,
+        "reading": "Êxod 22-23",
+        "books": [
+          {
+            "abbrev": "Êx",
+            "name": "Êxodo",
+            "chapters": [
+              22,
+              23
+            ]
+          }
+        ]
+      },
+      {
+        "day": 34,
+        "reading": "Êxod 24-26",
+        "books": [
+          {
+            "abbrev": "Êx",
+            "name": "Êxodo",
+            "chapters": [
+              24,
+              25,
+              26
+            ]
+          }
+        ]
+      },
+      {
+        "day": 35,
+        "reading": "Êxod 27-28",
+        "books": [
+          {
+            "abbrev": "Êx",
+            "name": "Êxodo",
+            "chapters": [
+              27,
+              28
+            ]
+          }
+        ]
+      },
+      {
+        "day": 36,
+        "reading": "Êxod 29",
+        "books": [
+          {
+            "abbrev": "Êx",
+            "name": "Êxodo",
+            "chapters": [
+              29
+            ]
+          }
+        ]
+      },
+      {
+        "day": 37,
+        "reading": "Êxod 30-31",
+        "books": [
+          {
+            "abbrev": "Êx",
+            "name": "Êxodo",
+            "chapters": [
+              30,
+              31
+            ]
+          }
+        ]
+      },
+      {
+        "day": 38,
+        "reading": "Êxod 32-33",
+        "books": [
+          {
+            "abbrev": "Êx",
+            "name": "Êxodo",
+            "chapters": [
+              32,
+              33
+            ]
+          }
+        ]
+      },
+      {
+        "day": 39,
+        "reading": "Êxod 34-35",
+        "books": [
+          {
+            "abbrev": "Êx",
+            "name": "Êxodo",
+            "chapters": [
+              34,
+              35
+            ]
+          }
+        ]
+      },
+      {
+        "day": 40,
+        "reading": "Êxod 36-37",
+        "books": [
+          {
+            "abbrev": "Êx",
+            "name": "Êxodo",
+            "chapters": [
+              36,
+              37
+            ]
+          }
+        ]
+      },
+      {
+        "day": 41,
+        "reading": "Êxod 38-39",
+        "books": [
+          {
+            "abbrev": "Êx",
+            "name": "Êxodo",
+            "chapters": [
+              38,
+              39
+            ]
+          }
+        ]
+      },
+      {
+        "day": 42,
+        "reading": "Êxod 40; Leví 1",
+        "books": [
+          {
+            "abbrev": "Êx",
+            "name": "Êxodo",
+            "chapters": [
+              40
+            ]
+          },
+          {
+            "abbrev": "Lv",
+            "name": "Levítico",
+            "chapters": [
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "day": 43,
+        "reading": "Leví 2-4",
+        "books": [
+          {
+            "abbrev": "Lv",
+            "name": "Levítico",
+            "chapters": [
+              2,
+              3,
+              4
+            ]
+          }
+        ]
+      },
+      {
+        "day": 44,
+        "reading": "Leví 5-6",
+        "books": [
+          {
+            "abbrev": "Lv",
+            "name": "Levítico",
+            "chapters": [
+              5,
+              6
+            ]
+          }
+        ]
+      },
+      {
+        "day": 45,
+        "reading": "Leví 7-8",
+        "books": [
+          {
+            "abbrev": "Lv",
+            "name": "Levítico",
+            "chapters": [
+              7,
+              8
+            ]
+          }
+        ]
+      },
+      {
+        "day": 46,
+        "reading": "Leví 9-10",
+        "books": [
+          {
+            "abbrev": "Lv",
+            "name": "Levítico",
+            "chapters": [
+              9,
+              10
+            ]
+          }
+        ]
+      },
+      {
+        "day": 47,
+        "reading": "Leví 11-12",
+        "books": [
+          {
+            "abbrev": "Lv",
+            "name": "Levítico",
+            "chapters": [
+              11,
+              12
+            ]
+          }
+        ]
+      },
+      {
+        "day": 48,
+        "reading": "Leví 13",
+        "books": [
+          {
+            "abbrev": "Lv",
+            "name": "Levítico",
+            "chapters": [
+              13
+            ]
+          }
+        ]
+      },
+      {
+        "day": 49,
+        "reading": "Leví 14",
+        "books": [
+          {
+            "abbrev": "Lv",
+            "name": "Levítico",
+            "chapters": [
+              14
+            ]
+          }
+        ]
+      },
+      {
+        "day": 50,
+        "reading": "Leví 15-16",
+        "books": [
+          {
+            "abbrev": "Lv",
+            "name": "Levítico",
+            "chapters": [
+              15,
+              16
+            ]
+          }
+        ]
+      },
+      {
+        "day": 51,
+        "reading": "Leví 17-18",
+        "books": [
+          {
+            "abbrev": "Lv",
+            "name": "Levítico",
+            "chapters": [
+              17,
+              18
+            ]
+          }
+        ]
+      },
+      {
+        "day": 52,
+        "reading": "Leví 19-20",
+        "books": [
+          {
+            "abbrev": "Lv",
+            "name": "Levítico",
+            "chapters": [
+              19,
+              20
+            ]
+          }
+        ]
+      },
+      {
+        "day": 53,
+        "reading": "Leví 21-22",
+        "books": [
+          {
+            "abbrev": "Lv",
+            "name": "Levítico",
+            "chapters": [
+              21,
+              22
+            ]
+          }
+        ]
+      },
+      {
+        "day": 54,
+        "reading": "Leví 23-24",
+        "books": [
+          {
+            "abbrev": "Lv",
+            "name": "Levítico",
+            "chapters": [
+              23,
+              24
+            ]
+          }
+        ]
+      },
+      {
+        "day": 55,
+        "reading": "Leví 25",
+        "books": [
+          {
+            "abbrev": "Lv",
+            "name": "Levítico",
+            "chapters": [
+              25
+            ]
+          }
+        ]
+      },
+      {
+        "day": 56,
+        "reading": "Leví 26-27",
+        "books": [
+          {
+            "abbrev": "Lv",
+            "name": "Levítico",
+            "chapters": [
+              26,
+              27
+            ]
+          }
+        ]
+      },
+      {
+        "day": 57,
+        "reading": "Núme 1",
+        "books": [
+          {
+            "abbrev": "Nm",
+            "name": "Números",
+            "chapters": [
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "day": 58,
+        "reading": "Núme 2-3",
+        "books": [
+          {
+            "abbrev": "Nm",
+            "name": "Números",
+            "chapters": [
+              2,
+              3
+            ]
+          }
+        ]
+      },
+      {
+        "day": 59,
+        "reading": "Núme 4",
+        "books": [
+          {
+            "abbrev": "Nm",
+            "name": "Números",
+            "chapters": [
+              4
+            ]
+          }
+        ]
+      },
+      {
+        "day": 60,
+        "reading": "Núme 5-6",
+        "books": [
+          {
+            "abbrev": "Nm",
+            "name": "Números",
+            "chapters": [
+              5,
+              6
+            ]
+          }
+        ]
+      },
+      {
+        "day": 61,
+        "reading": "Núme 7",
+        "books": [
+          {
+            "abbrev": "Nm",
+            "name": "Números",
+            "chapters": [
+              7
+            ]
+          }
+        ]
+      },
+      {
+        "day": 62,
+        "reading": "Núme 8-9",
+        "books": [
+          {
+            "abbrev": "Nm",
+            "name": "Números",
+            "chapters": [
+              8,
+              9
+            ]
+          }
+        ]
+      },
+      {
+        "day": 63,
+        "reading": "Núme 10-11",
+        "books": [
+          {
+            "abbrev": "Nm",
+            "name": "Números",
+            "chapters": [
+              10,
+              11
+            ]
+          }
+        ]
+      },
+      {
+        "day": 64,
+        "reading": "Núme 12-13",
+        "books": [
+          {
+            "abbrev": "Nm",
+            "name": "Números",
+            "chapters": [
+              12,
+              13
+            ]
+          }
+        ]
+      },
+      {
+        "day": 65,
+        "reading": "Núme 14-15",
+        "books": [
+          {
+            "abbrev": "Nm",
+            "name": "Números",
+            "chapters": [
+              14,
+              15
+            ]
+          }
+        ]
+      },
+      {
+        "day": 66,
+        "reading": "Núme 16-17",
+        "books": [
+          {
+            "abbrev": "Nm",
+            "name": "Números",
+            "chapters": [
+              16,
+              17
+            ]
+          }
+        ]
+      },
+      {
+        "day": 67,
+        "reading": "Núme 18-19",
+        "books": [
+          {
+            "abbrev": "Nm",
+            "name": "Números",
+            "chapters": [
+              18,
+              19
+            ]
+          }
+        ]
+      },
+      {
+        "day": 68,
+        "reading": "Núme 20-21",
+        "books": [
+          {
+            "abbrev": "Nm",
+            "name": "Números",
+            "chapters": [
+              20,
+              21
+            ]
+          }
+        ]
+      },
+      {
+        "day": 69,
+        "reading": "Núme 22",
+        "books": [
+          {
+            "abbrev": "Nm",
+            "name": "Números",
+            "chapters": [
+              22
+            ]
+          }
+        ]
+      },
+      {
+        "day": 70,
+        "reading": "Núme 23-25",
+        "books": [
+          {
+            "abbrev": "Nm",
+            "name": "Números",
+            "chapters": [
+              23,
+              24,
+              25
+            ]
+          }
+        ]
+      },
+      {
+        "day": 71,
+        "reading": "Núme 26-27",
+        "books": [
+          {
+            "abbrev": "Nm",
+            "name": "Números",
+            "chapters": [
+              26,
+              27
+            ]
+          }
+        ]
+      },
+      {
+        "day": 72,
+        "reading": "Núme 28-29",
+        "books": [
+          {
+            "abbrev": "Nm",
+            "name": "Números",
+            "chapters": [
+              28,
+              29
+            ]
+          }
+        ]
+      },
+      {
+        "day": 73,
+        "reading": "Núme 30-31",
+        "books": [
+          {
+            "abbrev": "Nm",
+            "name": "Números",
+            "chapters": [
+              30,
+              31
+            ]
+          }
+        ]
+      },
+      {
+        "day": 74,
+        "reading": "Núme 32",
+        "books": [
+          {
+            "abbrev": "Nm",
+            "name": "Números",
+            "chapters": [
+              32
+            ]
+          }
+        ]
+      },
+      {
+        "day": 75,
+        "reading": "Núme 33-34",
+        "books": [
+          {
+            "abbrev": "Nm",
+            "name": "Números",
+            "chapters": [
+              33,
+              34
+            ]
+          }
+        ]
+      },
+      {
+        "day": 76,
+        "reading": "Núme 35-36",
+        "books": [
+          {
+            "abbrev": "Nm",
+            "name": "Números",
+            "chapters": [
+              35,
+              36
+            ]
+          }
+        ]
+      },
+      {
+        "day": 77,
+        "reading": "Deut 1-2",
+        "books": [
+          {
+            "abbrev": "Dt",
+            "name": "Deuteronômio",
+            "chapters": [
+              1,
+              2
+            ]
+          }
+        ]
+      },
+      {
+        "day": 78,
+        "reading": "Deut 3-4",
+        "books": [
+          {
+            "abbrev": "Dt",
+            "name": "Deuteronômio",
+            "chapters": [
+              3,
+              4
+            ]
+          }
+        ]
+      },
+      {
+        "day": 79,
+        "reading": "Deut 5",
+        "books": [
+          {
+            "abbrev": "Dt",
+            "name": "Deuteronômio",
+            "chapters": [
+              5
+            ]
+          }
+        ]
+      },
+      {
+        "day": 80,
+        "reading": "Deut 6-7",
+        "books": [
+          {
+            "abbrev": "Dt",
+            "name": "Deuteronômio",
+            "chapters": [
+              6,
+              7
+            ]
+          }
+        ]
+      },
+      {
+        "day": 81,
+        "reading": "Deut 8-10",
+        "books": [
+          {
+            "abbrev": "Dt",
+            "name": "Deuteronômio",
+            "chapters": [
+              8,
+              9,
+              10
+            ]
+          }
+        ]
+      },
+      {
+        "day": 82,
+        "reading": "Deut 11",
+        "books": [
+          {
+            "abbrev": "Dt",
+            "name": "Deuteronômio",
+            "chapters": [
+              11
+            ]
+          }
+        ]
+      },
+      {
+        "day": 83,
+        "reading": "Deut 12-14",
+        "books": [
+          {
+            "abbrev": "Dt",
+            "name": "Deuteronômio",
+            "chapters": [
+              12,
+              13,
+              14
+            ]
+          }
+        ]
+      },
+      {
+        "day": 84,
+        "reading": "Deut 15-16",
+        "books": [
+          {
+            "abbrev": "Dt",
+            "name": "Deuteronômio",
+            "chapters": [
+              15,
+              16
+            ]
+          }
+        ]
+      },
+      {
+        "day": 85,
+        "reading": "Deut 17-18",
+        "books": [
+          {
+            "abbrev": "Dt",
+            "name": "Deuteronômio",
+            "chapters": [
+              17,
+              18
+            ]
+          }
+        ]
+      },
+      {
+        "day": 86,
+        "reading": "Deut 19-21",
+        "books": [
+          {
+            "abbrev": "Dt",
+            "name": "Deuteronômio",
+            "chapters": [
+              19,
+              20,
+              21
+            ]
+          }
+        ]
+      },
+      {
+        "day": 87,
+        "reading": "Deut 22-23",
+        "books": [
+          {
+            "abbrev": "Dt",
+            "name": "Deuteronômio",
+            "chapters": [
+              22,
+              23
+            ]
+          }
+        ]
+      },
+      {
+        "day": 88,
+        "reading": "Deut 24-25",
+        "books": [
+          {
+            "abbrev": "Dt",
+            "name": "Deuteronômio",
+            "chapters": [
+              24,
+              25
+            ]
+          }
+        ]
+      },
+      {
+        "day": 89,
+        "reading": "Deut 26-27",
+        "books": [
+          {
+            "abbrev": "Dt",
+            "name": "Deuteronômio",
+            "chapters": [
+              26,
+              27
+            ]
+          }
+        ]
+      },
+      {
+        "day": 90,
+        "reading": "Deut 28",
+        "books": [
+          {
+            "abbrev": "Dt",
+            "name": "Deuteronômio",
+            "chapters": [
+              28
+            ]
+          }
+        ]
+      },
+      {
+        "day": 91,
+        "reading": "Deut 29-30",
+        "books": [
+          {
+            "abbrev": "Dt",
+            "name": "Deuteronômio",
+            "chapters": [
+              29,
+              30
+            ]
+          }
+        ]
+      },
+      {
+        "day": 92,
+        "reading": "Deut 31-32",
+        "books": [
+          {
+            "abbrev": "Dt",
+            "name": "Deuteronômio",
+            "chapters": [
+              31,
+              32
+            ]
+          }
+        ]
+      },
+      {
+        "day": 93,
+        "reading": "Deut 33-34",
+        "books": [
+          {
+            "abbrev": "Dt",
+            "name": "Deuteronômio",
+            "chapters": [
+              33,
+              34
+            ]
+          }
+        ]
+      },
+      {
+        "day": 94,
+        "reading": "Josu 1-3",
+        "books": [
+          {
+            "abbrev": "Js",
+            "name": "Josué",
+            "chapters": [
+              1,
+              2,
+              3
+            ]
+          }
+        ]
+      },
+      {
+        "day": 95,
+        "reading": "Josu 4-6",
+        "books": [
+          {
+            "abbrev": "Js",
+            "name": "Josué",
+            "chapters": [
+              4,
+              5,
+              6
+            ]
+          }
+        ]
+      },
+      {
+        "day": 96,
+        "reading": "Josu 7",
+        "books": [
+          {
+            "abbrev": "Js",
+            "name": "Josué",
+            "chapters": [
+              7
+            ]
+          }
+        ]
+      },
+      {
+        "day": 97,
+        "reading": "Josu 8-9",
+        "books": [
+          {
+            "abbrev": "Js",
+            "name": "Josué",
+            "chapters": [
+              8,
+              9
+            ]
+          }
+        ]
+      },
+      {
+        "day": 98,
+        "reading": "Josu 10",
+        "books": [
+          {
+            "abbrev": "Js",
+            "name": "Josué",
+            "chapters": [
+              10
+            ]
+          }
+        ]
+      },
+      {
+        "day": 99,
+        "reading": "Josu 11-13",
+        "books": [
+          {
+            "abbrev": "Js",
+            "name": "Josué",
+            "chapters": [
+              11,
+              12,
+              13
+            ]
+          }
+        ]
+      },
+      {
+        "day": 100,
+        "reading": "Josu 14-16",
+        "books": [
+          {
+            "abbrev": "Js",
+            "name": "Josué",
+            "chapters": [
+              14,
+              15,
+              16
+            ]
+          }
+        ]
+      },
+      {
+        "day": 101,
+        "reading": "Josu 17-18",
+        "books": [
+          {
+            "abbrev": "Js",
+            "name": "Josué",
+            "chapters": [
+              17,
+              18
+            ]
+          }
+        ]
+      },
+      {
+        "day": 102,
+        "reading": "Josu 19-21",
+        "books": [
+          {
+            "abbrev": "Js",
+            "name": "Josué",
+            "chapters": [
+              19,
+              20,
+              21
+            ]
+          }
+        ]
+      },
+      {
+        "day": 103,
+        "reading": "Josu 22",
+        "books": [
+          {
+            "abbrev": "Js",
+            "name": "Josué",
+            "chapters": [
+              22
+            ]
+          }
+        ]
+      },
+      {
+        "day": 104,
+        "reading": "Josu 23-24",
+        "books": [
+          {
+            "abbrev": "Js",
+            "name": "Josué",
+            "chapters": [
+              23,
+              24
+            ]
+          }
+        ]
+      },
+      {
+        "day": 105,
+        "reading": "Juíz 1-2",
+        "books": [
+          {
+            "abbrev": "Jz",
+            "name": "Juízes",
+            "chapters": [
+              1,
+              2
+            ]
+          }
+        ]
+      },
+      {
+        "day": 106,
+        "reading": "Juíz 3-4",
+        "books": [
+          {
+            "abbrev": "Jz",
+            "name": "Juízes",
+            "chapters": [
+              3,
+              4
+            ]
+          }
+        ]
+      },
+      {
+        "day": 107,
+        "reading": "Juíz 5-6",
+        "books": [
+          {
+            "abbrev": "Jz",
+            "name": "Juízes",
+            "chapters": [
+              5,
+              6
+            ]
+          }
+        ]
+      },
+      {
+        "day": 108,
+        "reading": "Juíz 7-8",
+        "books": [
+          {
+            "abbrev": "Jz",
+            "name": "Juízes",
+            "chapters": [
+              7,
+              8
+            ]
+          }
+        ]
+      },
+      {
+        "day": 109,
+        "reading": "Juíz 9",
+        "books": [
+          {
+            "abbrev": "Jz",
+            "name": "Juízes",
+            "chapters": [
+              9
+            ]
+          }
+        ]
+      },
+      {
+        "day": 110,
+        "reading": "Juíz 10-11",
+        "books": [
+          {
+            "abbrev": "Jz",
+            "name": "Juízes",
+            "chapters": [
+              10,
+              11
+            ]
+          }
+        ]
+      },
+      {
+        "day": 111,
+        "reading": "Juíz 12-13",
+        "books": [
+          {
+            "abbrev": "Jz",
+            "name": "Juízes",
+            "chapters": [
+              12,
+              13
+            ]
+          }
+        ]
+      },
+      {
+        "day": 112,
+        "reading": "Juíz 14-15",
+        "books": [
+          {
+            "abbrev": "Jz",
+            "name": "Juízes",
+            "chapters": [
+              14,
+              15
+            ]
+          }
+        ]
+      },
+      {
+        "day": 113,
+        "reading": "Juíz 16-18",
+        "books": [
+          {
+            "abbrev": "Jz",
+            "name": "Juízes",
+            "chapters": [
+              16,
+              17,
+              18
+            ]
+          }
+        ]
+      },
+      {
+        "day": 114,
+        "reading": "Juíz 19",
+        "books": [
+          {
+            "abbrev": "Jz",
+            "name": "Juízes",
+            "chapters": [
+              19
+            ]
+          }
+        ]
+      },
+      {
+        "day": 115,
+        "reading": "Juíz 20",
+        "books": [
+          {
+            "abbrev": "Jz",
+            "name": "Juízes",
+            "chapters": [
+              20
+            ]
+          }
+        ]
+      },
+      {
+        "day": 116,
+        "reading": "Juíz 21; Rute 1-2",
+        "books": [
+          {
+            "abbrev": "Jz",
+            "name": "Juízes",
+            "chapters": [
+              21
+            ]
+          },
+          {
+            "abbrev": "Rt",
+            "name": "Rute",
+            "chapters": [
+              1,
+              2
+            ]
+          }
+        ]
+      },
+      {
+        "day": 117,
+        "reading": "Rute 3-4",
+        "books": [
+          {
+            "abbrev": "Rt",
+            "name": "Rute",
+            "chapters": [
+              3,
+              4
+            ]
+          }
+        ]
+      },
+      {
+        "day": 118,
+        "reading": "1 Sa 1-2",
+        "books": [
+          {
+            "abbrev": "1Sm",
+            "name": "1 Samuel",
+            "chapters": [
+              1,
+              2
+            ]
+          }
+        ]
+      },
+      {
+        "day": 119,
+        "reading": "1 Sa 3-5",
+        "books": [
+          {
+            "abbrev": "1Sm",
+            "name": "1 Samuel",
+            "chapters": [
+              3,
+              4,
+              5
+            ]
+          }
+        ]
+      },
+      {
+        "day": 120,
+        "reading": "1 Sa 6-8",
+        "books": [
+          {
+            "abbrev": "1Sm",
+            "name": "1 Samuel",
+            "chapters": [
+              6,
+              7,
+              8
+            ]
+          }
+        ]
+      },
+      {
+        "day": 121,
+        "reading": "1 Sa 9-10",
+        "books": [
+          {
+            "abbrev": "1Sm",
+            "name": "1 Samuel",
+            "chapters": [
+              9,
+              10
+            ]
+          }
+        ]
+      },
+      {
+        "day": 122,
+        "reading": "1 Sa 11-12",
+        "books": [
+          {
+            "abbrev": "1Sm",
+            "name": "1 Samuel",
+            "chapters": [
+              11,
+              12
+            ]
+          }
+        ]
+      },
+      {
+        "day": 123,
+        "reading": "1 Sa 13-14",
+        "books": [
+          {
+            "abbrev": "1Sm",
+            "name": "1 Samuel",
+            "chapters": [
+              13,
+              14
+            ]
+          }
+        ]
+      },
+      {
+        "day": 124,
+        "reading": "1 Sa 15",
+        "books": [
+          {
+            "abbrev": "1Sm",
+            "name": "1 Samuel",
+            "chapters": [
+              15
+            ]
+          }
+        ]
+      },
+      {
+        "day": 125,
+        "reading": "1 Sa 16-17",
+        "books": [
+          {
+            "abbrev": "1Sm",
+            "name": "1 Samuel",
+            "chapters": [
+              16,
+              17
+            ]
+          }
+        ]
+      },
+      {
+        "day": 126,
+        "reading": "1 Sa 18-19",
+        "books": [
+          {
+            "abbrev": "1Sm",
+            "name": "1 Samuel",
+            "chapters": [
+              18,
+              19
+            ]
+          }
+        ]
+      },
+      {
+        "day": 127,
+        "reading": "1 Sa 20",
+        "books": [
+          {
+            "abbrev": "1Sm",
+            "name": "1 Samuel",
+            "chapters": [
+              20
+            ]
+          }
+        ]
+      },
+      {
+        "day": 128,
+        "reading": "1 Sa 21-23",
+        "books": [
+          {
+            "abbrev": "1Sm",
+            "name": "1 Samuel",
+            "chapters": [
+              21,
+              22,
+              23
+            ]
+          }
+        ]
+      },
+      {
+        "day": 129,
+        "reading": "1 Sa 24-25",
+        "books": [
+          {
+            "abbrev": "1Sm",
+            "name": "1 Samuel",
+            "chapters": [
+              24,
+              25
+            ]
+          }
+        ]
+      },
+      {
+        "day": 130,
+        "reading": "1 Sa 26",
+        "books": [
+          {
+            "abbrev": "1Sm",
+            "name": "1 Samuel",
+            "chapters": [
+              26
+            ]
+          }
+        ]
+      },
+      {
+        "day": 131,
+        "reading": "1 Sa 27-29",
+        "books": [
+          {
+            "abbrev": "1Sm",
+            "name": "1 Samuel",
+            "chapters": [
+              27,
+              28,
+              29
+            ]
+          }
+        ]
+      },
+      {
+        "day": 132,
+        "reading": "1 Sa 30-31; 2 Sa 1",
+        "books": [
+          {
+            "abbrev": "1Sm",
+            "name": "1 Samuel",
+            "chapters": [
+              30,
+              31
+            ]
+          },
+          {
+            "abbrev": "2Sm",
+            "name": "2 Samuel",
+            "chapters": [
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "day": 133,
+        "reading": "2 Sa 2-3",
+        "books": [
+          {
+            "abbrev": "2Sm",
+            "name": "2 Samuel",
+            "chapters": [
+              2,
+              3
+            ]
+          }
+        ]
+      },
+      {
+        "day": 134,
+        "reading": "2 Sa 4-5",
+        "books": [
+          {
+            "abbrev": "2Sm",
+            "name": "2 Samuel",
+            "chapters": [
+              4,
+              5
+            ]
+          }
+        ]
+      },
+      {
+        "day": 135,
+        "reading": "2 Sa 6-7",
+        "books": [
+          {
+            "abbrev": "2Sm",
+            "name": "2 Samuel",
+            "chapters": [
+              6,
+              7
+            ]
+          }
+        ]
+      },
+      {
+        "day": 136,
+        "reading": "2 Sa 8-10",
+        "books": [
+          {
+            "abbrev": "2Sm",
+            "name": "2 Samuel",
+            "chapters": [
+              8,
+              9,
+              10
+            ]
+          }
+        ]
+      },
+      {
+        "day": 137,
+        "reading": "2 Sa 11-12",
+        "books": [
+          {
+            "abbrev": "2Sm",
+            "name": "2 Samuel",
+            "chapters": [
+              11,
+              12
+            ]
+          }
+        ]
+      },
+      {
+        "day": 138,
+        "reading": "2 Sa 13-14",
+        "books": [
+          {
+            "abbrev": "2Sm",
+            "name": "2 Samuel",
+            "chapters": [
+              13,
+              14
+            ]
+          }
+        ]
+      },
+      {
+        "day": 139,
+        "reading": "2 Sa 15",
+        "books": [
+          {
+            "abbrev": "2Sm",
+            "name": "2 Samuel",
+            "chapters": [
+              15
+            ]
+          }
+        ]
+      },
+      {
+        "day": 140,
+        "reading": "2 Sa 16-17",
+        "books": [
+          {
+            "abbrev": "2Sm",
+            "name": "2 Samuel",
+            "chapters": [
+              16,
+              17
+            ]
+          }
+        ]
+      },
+      {
+        "day": 141,
+        "reading": "2 Sa 18-19",
+        "books": [
+          {
+            "abbrev": "2Sm",
+            "name": "2 Samuel",
+            "chapters": [
+              18,
+              19
+            ]
+          }
+        ]
+      },
+      {
+        "day": 142,
+        "reading": "2 Sa 20",
+        "books": [
+          {
+            "abbrev": "2Sm",
+            "name": "2 Samuel",
+            "chapters": [
+              20
+            ]
+          }
+        ]
+      },
+      {
+        "day": 143,
+        "reading": "2 Sa 21-22",
+        "books": [
+          {
+            "abbrev": "2Sm",
+            "name": "2 Samuel",
+            "chapters": [
+              21,
+              22
+            ]
+          }
+        ]
+      },
+      {
+        "day": 144,
+        "reading": "2 Sa 23-24",
+        "books": [
+          {
+            "abbrev": "2Sm",
+            "name": "2 Samuel",
+            "chapters": [
+              23,
+              24
+            ]
+          }
+        ]
+      },
+      {
+        "day": 145,
+        "reading": "1 Re 1",
+        "books": [
+          {
+            "abbrev": "1Rs",
+            "name": "1 Reis",
+            "chapters": [
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "day": 146,
+        "reading": "1 Re 2",
+        "books": [
+          {
+            "abbrev": "1Rs",
+            "name": "1 Reis",
+            "chapters": [
+              2
+            ]
+          }
+        ]
+      },
+      {
+        "day": 147,
+        "reading": "1 Re 3-5",
+        "books": [
+          {
+            "abbrev": "1Rs",
+            "name": "1 Reis",
+            "chapters": [
+              3,
+              4,
+              5
+            ]
+          }
+        ]
+      },
+      {
+        "day": 148,
+        "reading": "1 Re 6",
+        "books": [
+          {
+            "abbrev": "1Rs",
+            "name": "1 Reis",
+            "chapters": [
+              6
+            ]
+          }
+        ]
+      },
+      {
+        "day": 149,
+        "reading": "1 Re 7",
+        "books": [
+          {
+            "abbrev": "1Rs",
+            "name": "1 Reis",
+            "chapters": [
+              7
+            ]
+          }
+        ]
+      },
+      {
+        "day": 150,
+        "reading": "1 Re 8",
+        "books": [
+          {
+            "abbrev": "1Rs",
+            "name": "1 Reis",
+            "chapters": [
+              8
+            ]
+          }
+        ]
+      },
+      {
+        "day": 151,
+        "reading": "1 Re 9-10",
+        "books": [
+          {
+            "abbrev": "1Rs",
+            "name": "1 Reis",
+            "chapters": [
+              9,
+              10
+            ]
+          }
+        ]
+      },
+      {
+        "day": 152,
+        "reading": "1 Re 11-12",
+        "books": [
+          {
+            "abbrev": "1Rs",
+            "name": "1 Reis",
+            "chapters": [
+              11,
+              12
+            ]
+          }
+        ]
+      },
+      {
+        "day": 153,
+        "reading": "1 Re 13",
+        "books": [
+          {
+            "abbrev": "1Rs",
+            "name": "1 Reis",
+            "chapters": [
+              13
+            ]
+          }
+        ]
+      },
+      {
+        "day": 154,
+        "reading": "1 Re 14-15",
+        "books": [
+          {
+            "abbrev": "1Rs",
+            "name": "1 Reis",
+            "chapters": [
+              14,
+              15
+            ]
+          }
+        ]
+      },
+      {
+        "day": 155,
+        "reading": "1 Re 16-17",
+        "books": [
+          {
+            "abbrev": "1Rs",
+            "name": "1 Reis",
+            "chapters": [
+              16,
+              17
+            ]
+          }
+        ]
+      },
+      {
+        "day": 156,
+        "reading": "1 Re 18",
+        "books": [
+          {
+            "abbrev": "1Rs",
+            "name": "1 Reis",
+            "chapters": [
+              18
+            ]
+          }
+        ]
+      },
+      {
+        "day": 157,
+        "reading": "1 Re 19-20",
+        "books": [
+          {
+            "abbrev": "1Rs",
+            "name": "1 Reis",
+            "chapters": [
+              19,
+              20
+            ]
+          }
+        ]
+      },
+      {
+        "day": 158,
+        "reading": "1 Re 21",
+        "books": [
+          {
+            "abbrev": "1Rs",
+            "name": "1 Reis",
+            "chapters": [
+              21
+            ]
+          }
+        ]
+      },
+      {
+        "day": 159,
+        "reading": "1 Re 22; 2 Re 1",
+        "books": [
+          {
+            "abbrev": "1Rs",
+            "name": "1 Reis",
+            "chapters": [
+              22
+            ]
+          },
+          {
+            "abbrev": "2Rs",
+            "name": "2 Reis",
+            "chapters": [
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "day": 160,
+        "reading": "2 Re 2-3",
+        "books": [
+          {
+            "abbrev": "2Rs",
+            "name": "2 Reis",
+            "chapters": [
+              2,
+              3
+            ]
+          }
+        ]
+      },
+      {
+        "day": 161,
+        "reading": "2 Re 4",
+        "books": [
+          {
+            "abbrev": "2Rs",
+            "name": "2 Reis",
+            "chapters": [
+              4
+            ]
+          }
+        ]
+      },
+      {
+        "day": 162,
+        "reading": "2 Re 5-6",
+        "books": [
+          {
+            "abbrev": "2Rs",
+            "name": "2 Reis",
+            "chapters": [
+              5,
+              6
+            ]
+          }
+        ]
+      },
+      {
+        "day": 163,
+        "reading": "2 Re 7-8",
+        "books": [
+          {
+            "abbrev": "2Rs",
+            "name": "2 Reis",
+            "chapters": [
+              7,
+              8
+            ]
+          }
+        ]
+      },
+      {
+        "day": 164,
+        "reading": "2 Re 9",
+        "books": [
+          {
+            "abbrev": "2Rs",
+            "name": "2 Reis",
+            "chapters": [
+              9
+            ]
+          }
+        ]
+      },
+      {
+        "day": 165,
+        "reading": "2 Re 10-11",
+        "books": [
+          {
+            "abbrev": "2Rs",
+            "name": "2 Reis",
+            "chapters": [
+              10,
+              11
+            ]
+          }
+        ]
+      },
+      {
+        "day": 166,
+        "reading": "2 Re 12-13",
+        "books": [
+          {
+            "abbrev": "2Rs",
+            "name": "2 Reis",
+            "chapters": [
+              12,
+              13
+            ]
+          }
+        ]
+      },
+      {
+        "day": 167,
+        "reading": "2 Re 14-15",
+        "books": [
+          {
+            "abbrev": "2Rs",
+            "name": "2 Reis",
+            "chapters": [
+              14,
+              15
+            ]
+          }
+        ]
+      },
+      {
+        "day": 168,
+        "reading": "2 Re 16-17",
+        "books": [
+          {
+            "abbrev": "2Rs",
+            "name": "2 Reis",
+            "chapters": [
+              16,
+              17
+            ]
+          }
+        ]
+      },
+      {
+        "day": 169,
+        "reading": "2 Re 18",
+        "books": [
+          {
+            "abbrev": "2Rs",
+            "name": "2 Reis",
+            "chapters": [
+              18
+            ]
+          }
+        ]
+      },
+      {
+        "day": 170,
+        "reading": "2 Re 19-20",
+        "books": [
+          {
+            "abbrev": "2Rs",
+            "name": "2 Reis",
+            "chapters": [
+              19,
+              20
+            ]
+          }
+        ]
+      },
+      {
+        "day": 171,
+        "reading": "2 Re 21-22",
+        "books": [
+          {
+            "abbrev": "2Rs",
+            "name": "2 Reis",
+            "chapters": [
+              21,
+              22
+            ]
+          }
+        ]
+      },
+      {
+        "day": 172,
+        "reading": "2 Re 23-24",
+        "books": [
+          {
+            "abbrev": "2Rs",
+            "name": "2 Reis",
+            "chapters": [
+              23,
+              24
+            ]
+          }
+        ]
+      },
+      {
+        "day": 173,
+        "reading": "2 Re 25; 1 Cr 1",
+        "books": [
+          {
+            "abbrev": "2Rs",
+            "name": "2 Reis",
+            "chapters": [
+              25
+            ]
+          },
+          {
+            "abbrev": "1Cr",
+            "name": "1 Crônicas",
+            "chapters": [
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "day": 174,
+        "reading": "1 Cr 2-3",
+        "books": [
+          {
+            "abbrev": "1Cr",
+            "name": "1 Crônicas",
+            "chapters": [
+              2,
+              3
+            ]
+          }
+        ]
+      },
+      {
+        "day": 175,
+        "reading": "1 Cr 4-5",
+        "books": [
+          {
+            "abbrev": "1Cr",
+            "name": "1 Crônicas",
+            "chapters": [
+              4,
+              5
+            ]
+          }
+        ]
+      },
+      {
+        "day": 176,
+        "reading": "1 Cr 6-7",
+        "books": [
+          {
+            "abbrev": "1Cr",
+            "name": "1 Crônicas",
+            "chapters": [
+              6,
+              7
+            ]
+          }
+        ]
+      },
+      {
+        "day": 177,
+        "reading": "1 Cr 8-9",
+        "books": [
+          {
+            "abbrev": "1Cr",
+            "name": "1 Crônicas",
+            "chapters": [
+              8,
+              9
+            ]
+          }
+        ]
+      },
+      {
+        "day": 178,
+        "reading": "1 Cr 10-11",
+        "books": [
+          {
+            "abbrev": "1Cr",
+            "name": "1 Crônicas",
+            "chapters": [
+              10,
+              11
+            ]
+          }
+        ]
+      },
+      {
+        "day": 179,
+        "reading": "1 Cr 12-14",
+        "books": [
+          {
+            "abbrev": "1Cr",
+            "name": "1 Crônicas",
+            "chapters": [
+              12,
+              13,
+              14
+            ]
+          }
+        ]
+      },
+      {
+        "day": 180,
+        "reading": "1 Cr 15-16",
+        "books": [
+          {
+            "abbrev": "1Cr",
+            "name": "1 Crônicas",
+            "chapters": [
+              15,
+              16
+            ]
+          }
+        ]
+      },
+      {
+        "day": 181,
+        "reading": "1 Cr 17-20",
+        "books": [
+          {
+            "abbrev": "1Cr",
+            "name": "1 Crônicas",
+            "chapters": [
+              17,
+              18,
+              19,
+              20
+            ]
+          }
+        ]
+      },
+      {
+        "day": 182,
+        "reading": "1 Cr 21-22",
+        "books": [
+          {
+            "abbrev": "1Cr",
+            "name": "1 Crônicas",
+            "chapters": [
+              21,
+              22
+            ]
+          }
+        ]
+      },
+      {
+        "day": 183,
+        "reading": "1 Cr 23-25",
+        "books": [
+          {
+            "abbrev": "1Cr",
+            "name": "1 Crônicas",
+            "chapters": [
+              23,
+              24,
+              25
+            ]
+          }
+        ]
+      },
+      {
+        "day": 184,
+        "reading": "1 Cr 26-27",
+        "books": [
+          {
+            "abbrev": "1Cr",
+            "name": "1 Crônicas",
+            "chapters": [
+              26,
+              27
+            ]
+          }
+        ]
+      },
+      {
+        "day": 185,
+        "reading": "1 Cr 28-29",
+        "books": [
+          {
+            "abbrev": "1Cr",
+            "name": "1 Crônicas",
+            "chapters": [
+              28,
+              29
+            ]
+          }
+        ]
+      },
+      {
+        "day": 186,
+        "reading": "2 Cr 1-3",
+        "books": [
+          {
+            "abbrev": "2Cr",
+            "name": "2 Crônicas",
+            "chapters": [
+              1,
+              2,
+              3
+            ]
+          }
+        ]
+      },
+      {
+        "day": 187,
+        "reading": "2 Cr 4-5",
+        "books": [
+          {
+            "abbrev": "2Cr",
+            "name": "2 Crônicas",
+            "chapters": [
+              4,
+              5
+            ]
+          }
+        ]
+      },
+      {
+        "day": 188,
+        "reading": "2 Cr 6-7",
+        "books": [
+          {
+            "abbrev": "2Cr",
+            "name": "2 Crônicas",
+            "chapters": [
+              6,
+              7
+            ]
+          }
+        ]
+      },
+      {
+        "day": 189,
+        "reading": "2 Cr 8-9",
+        "books": [
+          {
+            "abbrev": "2Cr",
+            "name": "2 Crônicas",
+            "chapters": [
+              8,
+              9
+            ]
+          }
+        ]
+      },
+      {
+        "day": 190,
+        "reading": "2 Cr 10-13",
+        "books": [
+          {
+            "abbrev": "2Cr",
+            "name": "2 Crônicas",
+            "chapters": [
+              10,
+              11,
+              12,
+              13
+            ]
+          }
+        ]
+      },
+      {
+        "day": 191,
+        "reading": "2 Cr 14-16",
+        "books": [
+          {
+            "abbrev": "2Cr",
+            "name": "2 Crônicas",
+            "chapters": [
+              14,
+              15,
+              16
+            ]
+          }
+        ]
+      },
+      {
+        "day": 192,
+        "reading": "2 Cr 17-18",
+        "books": [
+          {
+            "abbrev": "2Cr",
+            "name": "2 Crônicas",
+            "chapters": [
+              17,
+              18
+            ]
+          }
+        ]
+      },
+      {
+        "day": 193,
+        "reading": "2 Cr 19-21",
+        "books": [
+          {
+            "abbrev": "2Cr",
+            "name": "2 Crônicas",
+            "chapters": [
+              19,
+              20,
+              21
+            ]
+          }
+        ]
+      },
+      {
+        "day": 194,
+        "reading": "2 Cr 22-23",
+        "books": [
+          {
+            "abbrev": "2Cr",
+            "name": "2 Crônicas",
+            "chapters": [
+              22,
+              23
+            ]
+          }
+        ]
+      },
+      {
+        "day": 195,
+        "reading": "2 Cr 24-25",
+        "books": [
+          {
+            "abbrev": "2Cr",
+            "name": "2 Crônicas",
+            "chapters": [
+              24,
+              25
+            ]
+          }
+        ]
+      },
+      {
+        "day": 196,
+        "reading": "2 Cr 26-28",
+        "books": [
+          {
+            "abbrev": "2Cr",
+            "name": "2 Crônicas",
+            "chapters": [
+              26,
+              27,
+              28
+            ]
+          }
+        ]
+      },
+      {
+        "day": 197,
+        "reading": "2 Cr 29",
+        "books": [
+          {
+            "abbrev": "2Cr",
+            "name": "2 Crônicas",
+            "chapters": [
+              29
+            ]
+          }
+        ]
+      },
+      {
+        "day": 198,
+        "reading": "2 Cr 30-31",
+        "books": [
+          {
+            "abbrev": "2Cr",
+            "name": "2 Crônicas",
+            "chapters": [
+              30,
+              31
+            ]
+          }
+        ]
+      },
+      {
+        "day": 199,
+        "reading": "2 Cr 32-33",
+        "books": [
+          {
+            "abbrev": "2Cr",
+            "name": "2 Crônicas",
+            "chapters": [
+              32,
+              33
+            ]
+          }
+        ]
+      },
+      {
+        "day": 200,
+        "reading": "2 Cr 34",
+        "books": [
+          {
+            "abbrev": "2Cr",
+            "name": "2 Crônicas",
+            "chapters": [
+              34
+            ]
+          }
+        ]
+      },
+      {
+        "day": 201,
+        "reading": "2 Cr 35-36; Esdr 1",
+        "books": [
+          {
+            "abbrev": "2Cr",
+            "name": "2 Crônicas",
+            "chapters": [
+              35,
+              36
+            ]
+          },
+          {
+            "abbrev": "Ed",
+            "name": "Esdras",
+            "chapters": [
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "day": 202,
+        "reading": "Esdr 2-3",
+        "books": [
+          {
+            "abbrev": "Ed",
+            "name": "Esdras",
+            "chapters": [
+              2,
+              3
+            ]
+          }
+        ]
+      },
+      {
+        "day": 203,
+        "reading": "Esdr 4-6",
+        "books": [
+          {
+            "abbrev": "Ed",
+            "name": "Esdras",
+            "chapters": [
+              4,
+              5,
+              6
+            ]
+          }
+        ]
+      },
+      {
+        "day": 204,
+        "reading": "Esdr 7",
+        "books": [
+          {
+            "abbrev": "Ed",
+            "name": "Esdras",
+            "chapters": [
+              7
+            ]
+          }
+        ]
+      },
+      {
+        "day": 205,
+        "reading": "Esdr 8-10",
+        "books": [
+          {
+            "abbrev": "Ed",
+            "name": "Esdras",
+            "chapters": [
+              8,
+              9,
+              10
+            ]
+          }
+        ]
+      },
+      {
+        "day": 206,
+        "reading": "Neem 1-2",
+        "books": [
+          {
+            "abbrev": "Ne",
+            "name": "Neemias",
+            "chapters": [
+              1,
+              2
+            ]
+          }
+        ]
+      },
+      {
+        "day": 207,
+        "reading": "Neem 3-4",
+        "books": [
+          {
+            "abbrev": "Ne",
+            "name": "Neemias",
+            "chapters": [
+              3,
+              4
+            ]
+          }
+        ]
+      },
+      {
+        "day": 208,
+        "reading": "Neem 5-7",
+        "books": [
+          {
+            "abbrev": "Ne",
+            "name": "Neemias",
+            "chapters": [
+              5,
+              6,
+              7
+            ]
+          }
+        ]
+      },
+      {
+        "day": 209,
+        "reading": "Neem 8",
+        "books": [
+          {
+            "abbrev": "Ne",
+            "name": "Neemias",
+            "chapters": [
+              8
+            ]
+          }
+        ]
+      },
+      {
+        "day": 210,
+        "reading": "Neem 9-10",
+        "books": [
+          {
+            "abbrev": "Ne",
+            "name": "Neemias",
+            "chapters": [
+              9,
+              10
+            ]
+          }
+        ]
+      },
+      {
+        "day": 211,
+        "reading": "Neem 11-12",
+        "books": [
+          {
+            "abbrev": "Ne",
+            "name": "Neemias",
+            "chapters": [
+              11,
+              12
+            ]
+          }
+        ]
+      },
+      {
+        "day": 212,
+        "reading": "Neem 13; Este 1",
+        "books": [
+          {
+            "abbrev": "Ne",
+            "name": "Neemias",
+            "chapters": [
+              13
+            ]
+          },
+          {
+            "abbrev": "Et",
+            "name": "Ester",
+            "chapters": [
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "day": 213,
+        "reading": "Este 2-4",
+        "books": [
+          {
+            "abbrev": "Et",
+            "name": "Ester",
+            "chapters": [
+              2,
+              3,
+              4
+            ]
+          }
+        ]
+      },
+      {
+        "day": 214,
+        "reading": "Este 5-7",
+        "books": [
+          {
+            "abbrev": "Et",
+            "name": "Ester",
+            "chapters": [
+              5,
+              6,
+              7
+            ]
+          }
+        ]
+      },
+      {
+        "day": 215,
+        "reading": "Este 8-10",
+        "books": [
+          {
+            "abbrev": "Et",
+            "name": "Ester",
+            "chapters": [
+              8,
+              9,
+              10
+            ]
+          }
+        ]
+      },
+      {
+        "day": 216,
+        "reading": "Jó 1-4",
+        "books": [
+          {
+            "abbrev": "Jó",
+            "name": "Jó",
+            "chapters": [
+              1,
+              2,
+              3,
+              4
+            ]
+          }
+        ]
+      },
+      {
+        "day": 217,
+        "reading": "Jó 5-8",
+        "books": [
+          {
+            "abbrev": "Jó",
+            "name": "Jó",
+            "chapters": [
+              5,
+              6,
+              7,
+              8
+            ]
+          }
+        ]
+      },
+      {
+        "day": 218,
+        "reading": "Jó 9-12",
+        "books": [
+          {
+            "abbrev": "Jó",
+            "name": "Jó",
+            "chapters": [
+              9,
+              10,
+              11,
+              12
+            ]
+          }
+        ]
+      },
+      {
+        "day": 219,
+        "reading": "Jó 13-16",
+        "books": [
+          {
+            "abbrev": "Jó",
+            "name": "Jó",
+            "chapters": [
+              13,
+              14,
+              15,
+              16
+            ]
+          }
+        ]
+      },
+      {
+        "day": 220,
+        "reading": "Jó 17-20",
+        "books": [
+          {
+            "abbrev": "Jó",
+            "name": "Jó",
+            "chapters": [
+              17,
+              18,
+              19,
+              20
+            ]
+          }
+        ]
+      },
+      {
+        "day": 221,
+        "reading": "Jó 21-24",
+        "books": [
+          {
+            "abbrev": "Jó",
+            "name": "Jó",
+            "chapters": [
+              21,
+              22,
+              23,
+              24
+            ]
+          }
+        ]
+      },
+      {
+        "day": 222,
+        "reading": "Jó 25-29",
+        "books": [
+          {
+            "abbrev": "Jó",
+            "name": "Jó",
+            "chapters": [
+              25,
+              26,
+              27,
+              28,
+              29
+            ]
+          }
+        ]
+      },
+      {
+        "day": 223,
+        "reading": "Jó 30-32",
+        "books": [
+          {
+            "abbrev": "Jó",
+            "name": "Jó",
+            "chapters": [
+              30,
+              31,
+              32
+            ]
+          }
+        ]
+      },
+      {
+        "day": 224,
+        "reading": "Jó 33-35",
+        "books": [
+          {
+            "abbrev": "Jó",
+            "name": "Jó",
+            "chapters": [
+              33,
+              34,
+              35
+            ]
+          }
+        ]
+      },
+      {
+        "day": 225,
+        "reading": "Jó 36-38",
+        "books": [
+          {
+            "abbrev": "Jó",
+            "name": "Jó",
+            "chapters": [
+              36,
+              37,
+              38
+            ]
+          }
+        ]
+      },
+      {
+        "day": 226,
+        "reading": "Jó 39-42; Salm 1",
+        "books": [
+          {
+            "abbrev": "Jó",
+            "name": "Jó",
+            "chapters": [
+              39,
+              40,
+              41,
+              42
+            ]
+          },
+          {
+            "abbrev": "Sl",
+            "name": "Salmos",
+            "chapters": [
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "day": 227,
+        "reading": "Salm 2-8",
+        "books": [
+          {
+            "abbrev": "Sl",
+            "name": "Salmos",
+            "chapters": [
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8
+            ]
+          }
+        ]
+      },
+      {
+        "day": 228,
+        "reading": "Salm 9-17",
+        "books": [
+          {
+            "abbrev": "Sl",
+            "name": "Salmos",
+            "chapters": [
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17
+            ]
+          }
+        ]
+      },
+      {
+        "day": 229,
+        "reading": "Salm 18-21",
+        "books": [
+          {
+            "abbrev": "Sl",
+            "name": "Salmos",
+            "chapters": [
+              18,
+              19,
+              20,
+              21
+            ]
+          }
+        ]
+      },
+      {
+        "day": 230,
+        "reading": "Salm 22-27",
+        "books": [
+          {
+            "abbrev": "Sl",
+            "name": "Salmos",
+            "chapters": [
+              22,
+              23,
+              24,
+              25,
+              26,
+              27
+            ]
+          }
+        ]
+      },
+      {
+        "day": 231,
+        "reading": "Salm 28-33",
+        "books": [
+          {
+            "abbrev": "Sl",
+            "name": "Salmos",
+            "chapters": [
+              28,
+              29,
+              30,
+              31,
+              32,
+              33
+            ]
+          }
+        ]
+      },
+      {
+        "day": 232,
+        "reading": "Salm 34-37",
+        "books": [
+          {
+            "abbrev": "Sl",
+            "name": "Salmos",
+            "chapters": [
+              34,
+              35,
+              36,
+              37
+            ]
+          }
+        ]
+      },
+      {
+        "day": 233,
+        "reading": "Salm 38-41",
+        "books": [
+          {
+            "abbrev": "Sl",
+            "name": "Salmos",
+            "chapters": [
+              38,
+              39,
+              40,
+              41
+            ]
+          }
+        ]
+      },
+      {
+        "day": 234,
+        "reading": "Salm 42-48",
+        "books": [
+          {
+            "abbrev": "Sl",
+            "name": "Salmos",
+            "chapters": [
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48
+            ]
+          }
+        ]
+      },
+      {
+        "day": 235,
+        "reading": "Salm 49-54",
+        "books": [
+          {
+            "abbrev": "Sl",
+            "name": "Salmos",
+            "chapters": [
+              49,
+              50,
+              51,
+              52,
+              53,
+              54
+            ]
+          }
+        ]
+      },
+      {
+        "day": 236,
+        "reading": "Salm 55-60",
+        "books": [
+          {
+            "abbrev": "Sl",
+            "name": "Salmos",
+            "chapters": [
+              55,
+              56,
+              57,
+              58,
+              59,
+              60
+            ]
+          }
+        ]
+      },
+      {
+        "day": 237,
+        "reading": "Salm 61-67",
+        "books": [
+          {
+            "abbrev": "Sl",
+            "name": "Salmos",
+            "chapters": [
+              61,
+              62,
+              63,
+              64,
+              65,
+              66,
+              67
+            ]
+          }
+        ]
+      },
+      {
+        "day": 238,
+        "reading": "Salm 68-71",
+        "books": [
+          {
+            "abbrev": "Sl",
+            "name": "Salmos",
+            "chapters": [
+              68,
+              69,
+              70,
+              71
+            ]
+          }
+        ]
+      },
+      {
+        "day": 239,
+        "reading": "Salm 72-76",
+        "books": [
+          {
+            "abbrev": "Sl",
+            "name": "Salmos",
+            "chapters": [
+              72,
+              73,
+              74,
+              75,
+              76
+            ]
+          }
+        ]
+      },
+      {
+        "day": 240,
+        "reading": "Salm 77-78",
+        "books": [
+          {
+            "abbrev": "Sl",
+            "name": "Salmos",
+            "chapters": [
+              77,
+              78
+            ]
+          }
+        ]
+      },
+      {
+        "day": 241,
+        "reading": "Salm 79-85",
+        "books": [
+          {
+            "abbrev": "Sl",
+            "name": "Salmos",
+            "chapters": [
+              79,
+              80,
+              81,
+              82,
+              83,
+              84,
+              85
+            ]
+          }
+        ]
+      },
+      {
+        "day": 242,
+        "reading": "Salm 86-89",
+        "books": [
+          {
+            "abbrev": "Sl",
+            "name": "Salmos",
+            "chapters": [
+              86,
+              87,
+              88,
+              89
+            ]
+          }
+        ]
+      },
+      {
+        "day": 243,
+        "reading": "Salm 90-96",
+        "books": [
+          {
+            "abbrev": "Sl",
+            "name": "Salmos",
+            "chapters": [
+              90,
+              91,
+              92,
+              93,
+              94,
+              95,
+              96
+            ]
+          }
+        ]
+      },
+      {
+        "day": 244,
+        "reading": "Salm 97-103",
+        "books": [
+          {
+            "abbrev": "Sl",
+            "name": "Salmos",
+            "chapters": [
+              97,
+              98,
+              99,
+              100,
+              101,
+              102,
+              103
+            ]
+          }
+        ]
+      },
+      {
+        "day": 245,
+        "reading": "Salm 104-106",
+        "books": [
+          {
+            "abbrev": "Sl",
+            "name": "Salmos",
+            "chapters": [
+              104,
+              105,
+              106
+            ]
+          }
+        ]
+      },
+      {
+        "day": 246,
+        "reading": "Salm 107-109",
+        "books": [
+          {
+            "abbrev": "Sl",
+            "name": "Salmos",
+            "chapters": [
+              107,
+              108,
+              109
+            ]
+          }
+        ]
+      },
+      {
+        "day": 247,
+        "reading": "Salm 110-118",
+        "books": [
+          {
+            "abbrev": "Sl",
+            "name": "Salmos",
+            "chapters": [
+              110,
+              111,
+              112,
+              113,
+              114,
+              115,
+              116,
+              117,
+              118
+            ]
+          }
+        ]
+      },
+      {
+        "day": 248,
+        "reading": "Salm 119",
+        "books": [
+          {
+            "abbrev": "Sl",
+            "name": "Salmos",
+            "chapters": [
+              119
+            ]
+          }
+        ]
+      },
+      {
+        "day": 249,
+        "reading": "Salm 120-127",
+        "books": [
+          {
+            "abbrev": "Sl",
+            "name": "Salmos",
+            "chapters": [
+              120,
+              121,
+              122,
+              123,
+              124,
+              125,
+              126,
+              127
+            ]
+          }
+        ]
+      },
+      {
+        "day": 250,
+        "reading": "Salm 128-137",
+        "books": [
+          {
+            "abbrev": "Sl",
+            "name": "Salmos",
+            "chapters": [
+              128,
+              129,
+              130,
+              131,
+              132,
+              133,
+              134,
+              135,
+              136,
+              137
+            ]
+          }
+        ]
+      },
+      {
+        "day": 251,
+        "reading": "Salm 138-144",
+        "books": [
+          {
+            "abbrev": "Sl",
+            "name": "Salmos",
+            "chapters": [
+              138,
+              139,
+              140,
+              141,
+              142,
+              143,
+              144
+            ]
+          }
+        ]
+      },
+      {
+        "day": 252,
+        "reading": "Salm 145-150; Prov 1",
+        "books": [
+          {
+            "abbrev": "Sl",
+            "name": "Salmos",
+            "chapters": [
+              145,
+              146,
+              147,
+              148,
+              149,
+              150
+            ]
+          },
+          {
+            "abbrev": "Pv",
+            "name": "Provérbios",
+            "chapters": [
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "day": 253,
+        "reading": "Prov 2-5",
+        "books": [
+          {
+            "abbrev": "Pv",
+            "name": "Provérbios",
+            "chapters": [
+              2,
+              3,
+              4,
+              5
+            ]
+          }
+        ]
+      },
+      {
+        "day": 254,
+        "reading": "Prov 6-8",
+        "books": [
+          {
+            "abbrev": "Pv",
+            "name": "Provérbios",
+            "chapters": [
+              6,
+              7,
+              8
+            ]
+          }
+        ]
+      },
+      {
+        "day": 255,
+        "reading": "Prov 9-12",
+        "books": [
+          {
+            "abbrev": "Pv",
+            "name": "Provérbios",
+            "chapters": [
+              9,
+              10,
+              11,
+              12
+            ]
+          }
+        ]
+      },
+      {
+        "day": 256,
+        "reading": "Prov 13-15",
+        "books": [
+          {
+            "abbrev": "Pv",
+            "name": "Provérbios",
+            "chapters": [
+              13,
+              14,
+              15
+            ]
+          }
+        ]
+      },
+      {
+        "day": 257,
+        "reading": "Prov 16-19",
+        "books": [
+          {
+            "abbrev": "Pv",
+            "name": "Provérbios",
+            "chapters": [
+              16,
+              17,
+              18,
+              19
+            ]
+          }
+        ]
+      },
+      {
+        "day": 258,
+        "reading": "Prov 20-22",
+        "books": [
+          {
+            "abbrev": "Pv",
+            "name": "Provérbios",
+            "chapters": [
+              20,
+              21,
+              22
+            ]
+          }
+        ]
+      },
+      {
+        "day": 259,
+        "reading": "Prov 23-25",
+        "books": [
+          {
+            "abbrev": "Pv",
+            "name": "Provérbios",
+            "chapters": [
+              23,
+              24,
+              25
+            ]
+          }
+        ]
+      },
+      {
+        "day": 260,
+        "reading": "Prov 26-29",
+        "books": [
+          {
+            "abbrev": "Pv",
+            "name": "Provérbios",
+            "chapters": [
+              26,
+              27,
+              28,
+              29
+            ]
+          }
+        ]
+      },
+      {
+        "day": 261,
+        "reading": "Prov 30-31; Ecle 1",
+        "books": [
+          {
+            "abbrev": "Pv",
+            "name": "Provérbios",
+            "chapters": [
+              30,
+              31
+            ]
+          },
+          {
+            "abbrev": "Ec",
+            "name": "Eclesiastes",
+            "chapters": [
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "day": 262,
+        "reading": "Ecle 2-4",
+        "books": [
+          {
+            "abbrev": "Ec",
+            "name": "Eclesiastes",
+            "chapters": [
+              2,
+              3,
+              4
+            ]
+          }
+        ]
+      },
+      {
+        "day": 263,
+        "reading": "Ecle 5-7",
+        "books": [
+          {
+            "abbrev": "Ec",
+            "name": "Eclesiastes",
+            "chapters": [
+              5,
+              6,
+              7
+            ]
+          }
+        ]
+      },
+      {
+        "day": 264,
+        "reading": "Ecle 8-11",
+        "books": [
+          {
+            "abbrev": "Ec",
+            "name": "Eclesiastes",
+            "chapters": [
+              8,
+              9,
+              10,
+              11
+            ]
+          }
+        ]
+      },
+      {
+        "day": 265,
+        "reading": "Ecle 12; Cânt 1-4",
+        "books": [
+          {
+            "abbrev": "Ec",
+            "name": "Eclesiastes",
+            "chapters": [
+              12
+            ]
+          },
+          {
+            "abbrev": "Ct",
+            "name": "Cânticos",
+            "chapters": [
+              1,
+              2,
+              3,
+              4
+            ]
+          }
+        ]
+      },
+      {
+        "day": 266,
+        "reading": "Cânt 5-8; Isaí 1",
+        "books": [
+          {
+            "abbrev": "Ct",
+            "name": "Cânticos",
+            "chapters": [
+              5,
+              6,
+              7,
+              8
+            ]
+          },
+          {
+            "abbrev": "Is",
+            "name": "Isaías",
+            "chapters": [
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "day": 267,
+        "reading": "Isaí 2-4",
+        "books": [
+          {
+            "abbrev": "Is",
+            "name": "Isaías",
+            "chapters": [
+              2,
+              3,
+              4
+            ]
+          }
+        ]
+      },
+      {
+        "day": 268,
+        "reading": "Isaí 5-7",
+        "books": [
+          {
+            "abbrev": "Is",
+            "name": "Isaías",
+            "chapters": [
+              5,
+              6,
+              7
+            ]
+          }
+        ]
+      },
+      {
+        "day": 269,
+        "reading": "Isaí 8-9",
+        "books": [
+          {
+            "abbrev": "Is",
+            "name": "Isaías",
+            "chapters": [
+              8,
+              9
+            ]
+          }
+        ]
+      },
+      {
+        "day": 270,
+        "reading": "Isaí 10-13",
+        "books": [
+          {
+            "abbrev": "Is",
+            "name": "Isaías",
+            "chapters": [
+              10,
+              11,
+              12,
+              13
+            ]
+          }
+        ]
+      },
+      {
+        "day": 271,
+        "reading": "Isaí 14-16",
+        "books": [
+          {
+            "abbrev": "Is",
+            "name": "Isaías",
+            "chapters": [
+              14,
+              15,
+              16
+            ]
+          }
+        ]
+      },
+      {
+        "day": 272,
+        "reading": "Isaí 17-20",
+        "books": [
+          {
+            "abbrev": "Is",
+            "name": "Isaías",
+            "chapters": [
+              17,
+              18,
+              19,
+              20
+            ]
+          }
+        ]
+      },
+      {
+        "day": 273,
+        "reading": "Isaí 21-23",
+        "books": [
+          {
+            "abbrev": "Is",
+            "name": "Isaías",
+            "chapters": [
+              21,
+              22,
+              23
+            ]
+          }
+        ]
+      },
+      {
+        "day": 274,
+        "reading": "Isaí 24-27",
+        "books": [
+          {
+            "abbrev": "Is",
+            "name": "Isaías",
+            "chapters": [
+              24,
+              25,
+              26,
+              27
+            ]
+          }
+        ]
+      },
+      {
+        "day": 275,
+        "reading": "Isaí 28-29",
+        "books": [
+          {
+            "abbrev": "Is",
+            "name": "Isaías",
+            "chapters": [
+              28,
+              29
+            ]
+          }
+        ]
+      },
+      {
+        "day": 276,
+        "reading": "Isaí 30-32",
+        "books": [
+          {
+            "abbrev": "Is",
+            "name": "Isaías",
+            "chapters": [
+              30,
+              31,
+              32
+            ]
+          }
+        ]
+      },
+      {
+        "day": 277,
+        "reading": "Isaí 33-35",
+        "books": [
+          {
+            "abbrev": "Is",
+            "name": "Isaías",
+            "chapters": [
+              33,
+              34,
+              35
+            ]
+          }
+        ]
+      },
+      {
+        "day": 278,
+        "reading": "Isaí 36-37",
+        "books": [
+          {
+            "abbrev": "Is",
+            "name": "Isaías",
+            "chapters": [
+              36,
+              37
+            ]
+          }
+        ]
+      },
+      {
+        "day": 279,
+        "reading": "Isaí 38-40",
+        "books": [
+          {
+            "abbrev": "Is",
+            "name": "Isaías",
+            "chapters": [
+              38,
+              39,
+              40
+            ]
+          }
+        ]
+      },
+      {
+        "day": 280,
+        "reading": "Isaí 41-43",
+        "books": [
+          {
+            "abbrev": "Is",
+            "name": "Isaías",
+            "chapters": [
+              41,
+              42,
+              43
+            ]
+          }
+        ]
+      },
+      {
+        "day": 281,
+        "reading": "Isaí 44-45",
+        "books": [
+          {
+            "abbrev": "Is",
+            "name": "Isaías",
+            "chapters": [
+              44,
+              45
+            ]
+          }
+        ]
+      },
+      {
+        "day": 282,
+        "reading": "Isaí 46-48",
+        "books": [
+          {
+            "abbrev": "Is",
+            "name": "Isaías",
+            "chapters": [
+              46,
+              47,
+              48
+            ]
+          }
+        ]
+      },
+      {
+        "day": 283,
+        "reading": "Isaí 49-50",
+        "books": [
+          {
+            "abbrev": "Is",
+            "name": "Isaías",
+            "chapters": [
+              49,
+              50
+            ]
+          }
+        ]
+      },
+      {
+        "day": 284,
+        "reading": "Isaí 51-54",
+        "books": [
+          {
+            "abbrev": "Is",
+            "name": "Isaías",
+            "chapters": [
+              51,
+              52,
+              53,
+              54
+            ]
+          }
+        ]
+      },
+      {
+        "day": 285,
+        "reading": "Isaí 55-57",
+        "books": [
+          {
+            "abbrev": "Is",
+            "name": "Isaías",
+            "chapters": [
+              55,
+              56,
+              57
+            ]
+          }
+        ]
+      },
+      {
+        "day": 286,
+        "reading": "Isaí 58-60",
+        "books": [
+          {
+            "abbrev": "Is",
+            "name": "Isaías",
+            "chapters": [
+              58,
+              59,
+              60
+            ]
+          }
+        ]
+      },
+      {
+        "day": 287,
+        "reading": "Isaí 61-64",
+        "books": [
+          {
+            "abbrev": "Is",
+            "name": "Isaías",
+            "chapters": [
+              61,
+              62,
+              63,
+              64
+            ]
+          }
+        ]
+      },
+      {
+        "day": 288,
+        "reading": "Isaí 65-66",
+        "books": [
+          {
+            "abbrev": "Is",
+            "name": "Isaías",
+            "chapters": [
+              65,
+              66
+            ]
+          }
+        ]
+      },
+      {
+        "day": 289,
+        "reading": "Jere 1-2",
+        "books": [
+          {
+            "abbrev": "Jr",
+            "name": "Jeremias",
+            "chapters": [
+              1,
+              2
+            ]
+          }
+        ]
+      },
+      {
+        "day": 290,
+        "reading": "Jere 3-4",
+        "books": [
+          {
+            "abbrev": "Jr",
+            "name": "Jeremias",
+            "chapters": [
+              3,
+              4
+            ]
+          }
+        ]
+      },
+      {
+        "day": 291,
+        "reading": "Jere 5-6",
+        "books": [
+          {
+            "abbrev": "Jr",
+            "name": "Jeremias",
+            "chapters": [
+              5,
+              6
+            ]
+          }
+        ]
+      },
+      {
+        "day": 292,
+        "reading": "Jere 7-8",
+        "books": [
+          {
+            "abbrev": "Jr",
+            "name": "Jeremias",
+            "chapters": [
+              7,
+              8
+            ]
+          }
+        ]
+      },
+      {
+        "day": 293,
+        "reading": "Jere 9-10",
+        "books": [
+          {
+            "abbrev": "Jr",
+            "name": "Jeremias",
+            "chapters": [
+              9,
+              10
+            ]
+          }
+        ]
+      },
+      {
+        "day": 294,
+        "reading": "Jere 11-13",
+        "books": [
+          {
+            "abbrev": "Jr",
+            "name": "Jeremias",
+            "chapters": [
+              11,
+              12,
+              13
+            ]
+          }
+        ]
+      },
+      {
+        "day": 295,
+        "reading": "Jere 14-15",
+        "books": [
+          {
+            "abbrev": "Jr",
+            "name": "Jeremias",
+            "chapters": [
+              14,
+              15
+            ]
+          }
+        ]
+      },
+      {
+        "day": 296,
+        "reading": "Jere 16-17",
+        "books": [
+          {
+            "abbrev": "Jr",
+            "name": "Jeremias",
+            "chapters": [
+              16,
+              17
+            ]
+          }
+        ]
+      },
+      {
+        "day": 297,
+        "reading": "Jere 18-20",
+        "books": [
+          {
+            "abbrev": "Jr",
+            "name": "Jeremias",
+            "chapters": [
+              18,
+              19,
+              20
+            ]
+          }
+        ]
+      },
+      {
+        "day": 298,
+        "reading": "Jere 21-22",
+        "books": [
+          {
+            "abbrev": "Jr",
+            "name": "Jeremias",
+            "chapters": [
+              21,
+              22
+            ]
+          }
+        ]
+      },
+      {
+        "day": 299,
+        "reading": "Jere 23-25",
+        "books": [
+          {
+            "abbrev": "Jr",
+            "name": "Jeremias",
+            "chapters": [
+              23,
+              24,
+              25
+            ]
+          }
+        ]
+      },
+      {
+        "day": 300,
+        "reading": "Jere 26",
+        "books": [
+          {
+            "abbrev": "Jr",
+            "name": "Jeremias",
+            "chapters": [
+              26
+            ]
+          }
+        ]
+      },
+      {
+        "day": 301,
+        "reading": "Jere 27-29",
+        "books": [
+          {
+            "abbrev": "Jr",
+            "name": "Jeremias",
+            "chapters": [
+              27,
+              28,
+              29
+            ]
+          }
+        ]
+      },
+      {
+        "day": 302,
+        "reading": "Jere 30",
+        "books": [
+          {
+            "abbrev": "Jr",
+            "name": "Jeremias",
+            "chapters": [
+              30
+            ]
+          }
+        ]
+      },
+      {
+        "day": 303,
+        "reading": "Jere 31-32",
+        "books": [
+          {
+            "abbrev": "Jr",
+            "name": "Jeremias",
+            "chapters": [
+              31,
+              32
+            ]
+          }
+        ]
+      },
+      {
+        "day": 304,
+        "reading": "Jere 33",
+        "books": [
+          {
+            "abbrev": "Jr",
+            "name": "Jeremias",
+            "chapters": [
+              33
+            ]
+          }
+        ]
+      },
+      {
+        "day": 305,
+        "reading": "Jere 34-35",
+        "books": [
+          {
+            "abbrev": "Jr",
+            "name": "Jeremias",
+            "chapters": [
+              34,
+              35
+            ]
+          }
+        ]
+      },
+      {
+        "day": 306,
+        "reading": "Jere 36-37",
+        "books": [
+          {
+            "abbrev": "Jr",
+            "name": "Jeremias",
+            "chapters": [
+              36,
+              37
+            ]
+          }
+        ]
+      },
+      {
+        "day": 307,
+        "reading": "Jere 38-40",
+        "books": [
+          {
+            "abbrev": "Jr",
+            "name": "Jeremias",
+            "chapters": [
+              38,
+              39,
+              40
+            ]
+          }
+        ]
+      },
+      {
+        "day": 308,
+        "reading": "Jere 41-42",
+        "books": [
+          {
+            "abbrev": "Jr",
+            "name": "Jeremias",
+            "chapters": [
+              41,
+              42
+            ]
+          }
+        ]
+      },
+      {
+        "day": 309,
+        "reading": "Jere 43-44",
+        "books": [
+          {
+            "abbrev": "Jr",
+            "name": "Jeremias",
+            "chapters": [
+              43,
+              44
+            ]
+          }
+        ]
+      },
+      {
+        "day": 310,
+        "reading": "Jere 45-47",
+        "books": [
+          {
+            "abbrev": "Jr",
+            "name": "Jeremias",
+            "chapters": [
+              45,
+              46,
+              47
+            ]
+          }
+        ]
+      },
+      {
+        "day": 311,
+        "reading": "Jere 48-49",
+        "books": [
+          {
+            "abbrev": "Jr",
+            "name": "Jeremias",
+            "chapters": [
+              48,
+              49
+            ]
+          }
+        ]
+      },
+      {
+        "day": 312,
+        "reading": "Jere 50",
+        "books": [
+          {
+            "abbrev": "Jr",
+            "name": "Jeremias",
+            "chapters": [
+              50
+            ]
+          }
+        ]
+      },
+      {
+        "day": 313,
+        "reading": "Jere 51",
+        "books": [
+          {
+            "abbrev": "Jr",
+            "name": "Jeremias",
+            "chapters": [
+              51
+            ]
+          }
+        ]
+      },
+      {
+        "day": 314,
+        "reading": "Jere 52",
+        "books": [
+          {
+            "abbrev": "Jr",
+            "name": "Jeremias",
+            "chapters": [
+              52
+            ]
+          }
+        ]
+      },
+      {
+        "day": 315,
+        "reading": "Lame 1-2",
+        "books": [
+          {
+            "abbrev": "Lm",
+            "name": "Lamentações",
+            "chapters": [
+              1,
+              2
+            ]
+          }
+        ]
+      },
+      {
+        "day": 316,
+        "reading": "Lame 3-5",
+        "books": [
+          {
+            "abbrev": "Lm",
+            "name": "Lamentações",
+            "chapters": [
+              3,
+              4,
+              5
+            ]
+          }
+        ]
+      },
+      {
+        "day": 317,
+        "reading": "Ezeq 1-3",
+        "books": [
+          {
+            "abbrev": "Ez",
+            "name": "Ezequiel",
+            "chapters": [
+              1,
+              2,
+              3
+            ]
+          }
+        ]
+      },
+      {
+        "day": 318,
+        "reading": "Ezeq 4-6",
+        "books": [
+          {
+            "abbrev": "Ez",
+            "name": "Ezequiel",
+            "chapters": [
+              4,
+              5,
+              6
+            ]
+          }
+        ]
+      },
+      {
+        "day": 319,
+        "reading": "Ezeq 7-8",
+        "books": [
+          {
+            "abbrev": "Ez",
+            "name": "Ezequiel",
+            "chapters": [
+              7,
+              8
+            ]
+          }
+        ]
+      },
+      {
+        "day": 320,
+        "reading": "Ezeq 9-11",
+        "books": [
+          {
+            "abbrev": "Ez",
+            "name": "Ezequiel",
+            "chapters": [
+              9,
+              10,
+              11
+            ]
+          }
+        ]
+      },
+      {
+        "day": 321,
+        "reading": "Ezeq 12-13",
+        "books": [
+          {
+            "abbrev": "Ez",
+            "name": "Ezequiel",
+            "chapters": [
+              12,
+              13
+            ]
+          }
+        ]
+      },
+      {
+        "day": 322,
+        "reading": "Ezeq 14-15",
+        "books": [
+          {
+            "abbrev": "Ez",
+            "name": "Ezequiel",
+            "chapters": [
+              14,
+              15
+            ]
+          }
+        ]
+      },
+      {
+        "day": 323,
+        "reading": "Ezeq 16-17",
+        "books": [
+          {
+            "abbrev": "Ez",
+            "name": "Ezequiel",
+            "chapters": [
+              16,
+              17
+            ]
+          }
+        ]
+      },
+      {
+        "day": 324,
+        "reading": "Ezeq 18-19",
+        "books": [
+          {
+            "abbrev": "Ez",
+            "name": "Ezequiel",
+            "chapters": [
+              18,
+              19
+            ]
+          }
+        ]
+      },
+      {
+        "day": 325,
+        "reading": "Ezeq 20",
+        "books": [
+          {
+            "abbrev": "Ez",
+            "name": "Ezequiel",
+            "chapters": [
+              20
+            ]
+          }
+        ]
+      },
+      {
+        "day": 326,
+        "reading": "Ezeq 21-22",
+        "books": [
+          {
+            "abbrev": "Ez",
+            "name": "Ezequiel",
+            "chapters": [
+              21,
+              22
+            ]
+          }
+        ]
+      },
+      {
+        "day": 327,
+        "reading": "Ezeq 23",
+        "books": [
+          {
+            "abbrev": "Ez",
+            "name": "Ezequiel",
+            "chapters": [
+              23
+            ]
+          }
+        ]
+      },
+      {
+        "day": 328,
+        "reading": "Ezeq 24-26",
+        "books": [
+          {
+            "abbrev": "Ez",
+            "name": "Ezequiel",
+            "chapters": [
+              24,
+              25,
+              26
+            ]
+          }
+        ]
+      },
+      {
+        "day": 329,
+        "reading": "Ezeq 27-28",
+        "books": [
+          {
+            "abbrev": "Ez",
+            "name": "Ezequiel",
+            "chapters": [
+              27,
+              28
+            ]
+          }
+        ]
+      },
+      {
+        "day": 330,
+        "reading": "Ezeq 29-30",
+        "books": [
+          {
+            "abbrev": "Ez",
+            "name": "Ezequiel",
+            "chapters": [
+              29,
+              30
+            ]
+          }
+        ]
+      },
+      {
+        "day": 331,
+        "reading": "Ezeq 31-32",
+        "books": [
+          {
+            "abbrev": "Ez",
+            "name": "Ezequiel",
+            "chapters": [
+              31,
+              32
+            ]
+          }
+        ]
+      },
+      {
+        "day": 332,
+        "reading": "Ezeq 33",
+        "books": [
+          {
+            "abbrev": "Ez",
+            "name": "Ezequiel",
+            "chapters": [
+              33
+            ]
+          }
+        ]
+      },
+      {
+        "day": 333,
+        "reading": "Ezeq 34-36",
+        "books": [
+          {
+            "abbrev": "Ez",
+            "name": "Ezequiel",
+            "chapters": [
+              34,
+              35,
+              36
+            ]
+          }
+        ]
+      },
+      {
+        "day": 334,
+        "reading": "Ezeq 37",
+        "books": [
+          {
+            "abbrev": "Ez",
+            "name": "Ezequiel",
+            "chapters": [
+              37
+            ]
+          }
+        ]
+      },
+      {
+        "day": 335,
+        "reading": "Ezeq 38-39",
+        "books": [
+          {
+            "abbrev": "Ez",
+            "name": "Ezequiel",
+            "chapters": [
+              38,
+              39
+            ]
+          }
+        ]
+      },
+      {
+        "day": 336,
+        "reading": "Ezeq 40",
+        "books": [
+          {
+            "abbrev": "Ez",
+            "name": "Ezequiel",
+            "chapters": [
+              40
+            ]
+          }
+        ]
+      },
+      {
+        "day": 337,
+        "reading": "Ezeq 41-43",
+        "books": [
+          {
+            "abbrev": "Ez",
+            "name": "Ezequiel",
+            "chapters": [
+              41,
+              42,
+              43
+            ]
+          }
+        ]
+      },
+      {
+        "day": 338,
+        "reading": "Ezeq 44",
+        "books": [
+          {
+            "abbrev": "Ez",
+            "name": "Ezequiel",
+            "chapters": [
+              44
+            ]
+          }
+        ]
+      },
+      {
+        "day": 339,
+        "reading": "Ezeq 45-46",
+        "books": [
+          {
+            "abbrev": "Ez",
+            "name": "Ezequiel",
+            "chapters": [
+              45,
+              46
+            ]
+          }
+        ]
+      },
+      {
+        "day": 340,
+        "reading": "Ezeq 47-48",
+        "books": [
+          {
+            "abbrev": "Ez",
+            "name": "Ezequiel",
+            "chapters": [
+              47,
+              48
+            ]
+          }
+        ]
+      },
+      {
+        "day": 341,
+        "reading": "Dani 1-2",
+        "books": [
+          {
+            "abbrev": "Dn",
+            "name": "Daniel",
+            "chapters": [
+              1,
+              2
+            ]
+          }
+        ]
+      },
+      {
+        "day": 342,
+        "reading": "Dani 3",
+        "books": [
+          {
+            "abbrev": "Dn",
+            "name": "Daniel",
+            "chapters": [
+              3
+            ]
+          }
+        ]
+      },
+      {
+        "day": 343,
+        "reading": "Dani 4-5",
+        "books": [
+          {
+            "abbrev": "Dn",
+            "name": "Daniel",
+            "chapters": [
+              4,
+              5
+            ]
+          }
+        ]
+      },
+      {
+        "day": 344,
+        "reading": "Dani 6",
+        "books": [
+          {
+            "abbrev": "Dn",
+            "name": "Daniel",
+            "chapters": [
+              6
+            ]
+          }
+        ]
+      },
+      {
+        "day": 345,
+        "reading": "Dani 7-8",
+        "books": [
+          {
+            "abbrev": "Dn",
+            "name": "Daniel",
+            "chapters": [
+              7,
+              8
+            ]
+          }
+        ]
+      },
+      {
+        "day": 346,
+        "reading": "Dani 9-10",
+        "books": [
+          {
+            "abbrev": "Dn",
+            "name": "Daniel",
+            "chapters": [
+              9,
+              10
+            ]
+          }
+        ]
+      },
+      {
+        "day": 347,
+        "reading": "Dani 11-12",
+        "books": [
+          {
+            "abbrev": "Dn",
+            "name": "Daniel",
+            "chapters": [
+              11,
+              12
+            ]
+          }
+        ]
+      },
+      {
+        "day": 348,
+        "reading": "Osei 1-4",
+        "books": [
+          {
+            "abbrev": "Os",
+            "name": "Oséias",
+            "chapters": [
+              1,
+              2,
+              3,
+              4
+            ]
+          }
+        ]
+      },
+      {
+        "day": 349,
+        "reading": "Osei 5-8",
+        "books": [
+          {
+            "abbrev": "Os",
+            "name": "Oséias",
+            "chapters": [
+              5,
+              6,
+              7,
+              8
+            ]
+          }
+        ]
+      },
+      {
+        "day": 350,
+        "reading": "Osei 9-13",
+        "books": [
+          {
+            "abbrev": "Os",
+            "name": "Oséias",
+            "chapters": [
+              9,
+              10,
+              11,
+              12,
+              13
+            ]
+          }
+        ]
+      },
+      {
+        "day": 351,
+        "reading": "Osei 14; Joel 1-2",
+        "books": [
+          {
+            "abbrev": "Os",
+            "name": "Oséias",
+            "chapters": [
+              14
+            ]
+          },
+          {
+            "abbrev": "Jl",
+            "name": "Joel",
+            "chapters": [
+              1,
+              2
+            ]
+          }
+        ]
+      },
+      {
+        "day": 352,
+        "reading": "Joel 3; Amós 1-2",
+        "books": [
+          {
+            "abbrev": "Jl",
+            "name": "Joel",
+            "chapters": [
+              3
+            ]
+          },
+          {
+            "abbrev": "Am",
+            "name": "Amós",
+            "chapters": [
+              1,
+              2
+            ]
+          }
+        ]
+      },
+      {
+        "day": 353,
+        "reading": "Amós 3-6",
+        "books": [
+          {
+            "abbrev": "Am",
+            "name": "Amós",
+            "chapters": [
+              3,
+              4,
+              5,
+              6
+            ]
+          }
+        ]
+      },
+      {
+        "day": 354,
+        "reading": "Amós 7-9",
+        "books": [
+          {
+            "abbrev": "Am",
+            "name": "Amós",
+            "chapters": [
+              7,
+              8,
+              9
+            ]
+          }
+        ]
+      },
+      {
+        "day": 355,
+        "reading": "Obad; Jona 1-3",
+        "books": [
+          {
+            "abbrev": "Ob",
+            "name": "Obadias",
+            "chapters": [
+              1
+            ]
+          },
+          {
+            "abbrev": "Jn",
+            "name": "Jonas",
+            "chapters": [
+              1,
+              2,
+              3
+            ]
+          }
+        ]
+      },
+      {
+        "day": 356,
+        "reading": "Jona 4; Miqu 1-4",
+        "books": [
+          {
+            "abbrev": "Jn",
+            "name": "Jonas",
+            "chapters": [
+              4
+            ]
+          },
+          {
+            "abbrev": "Mq",
+            "name": "Miquéias",
+            "chapters": [
+              1,
+              2,
+              3,
+              4
+            ]
+          }
+        ]
+      },
+      {
+        "day": 357,
+        "reading": "Miqu 5-7",
+        "books": [
+          {
+            "abbrev": "Mq",
+            "name": "Miquéias",
+            "chapters": [
+              5,
+              6,
+              7
+            ]
+          }
+        ]
+      },
+      {
+        "day": 358,
+        "reading": "Naum 1-3; Haba 1",
+        "books": [
+          {
+            "abbrev": "Na",
+            "name": "Naum",
+            "chapters": [
+              1,
+              2,
+              3
+            ]
+          },
+          {
+            "abbrev": "Hc",
+            "name": "Habacuque",
+            "chapters": [
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "day": 359,
+        "reading": "Haba 2-3; Sofo 1",
+        "books": [
+          {
+            "abbrev": "Hc",
+            "name": "Habacuque",
+            "chapters": [
+              2,
+              3
+            ]
+          },
+          {
+            "abbrev": "Sf",
+            "name": "Sofonias",
+            "chapters": [
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "day": 360,
+        "reading": "Sofo 2-3; Ageu 1-2",
+        "books": [
+          {
+            "abbrev": "Sf",
+            "name": "Sofonias",
+            "chapters": [
+              2,
+              3
+            ]
+          },
+          {
+            "abbrev": "Ag",
+            "name": "Ageu",
+            "chapters": [
+              1,
+              2
+            ]
+          }
+        ]
+      },
+      {
+        "day": 361,
+        "reading": "Zaca 1-3",
+        "books": [
+          {
+            "abbrev": "Zc",
+            "name": "Zacarias",
+            "chapters": [
+              1,
+              2,
+              3
+            ]
+          }
+        ]
+      },
+      {
+        "day": 362,
+        "reading": "Zaca 4-8",
+        "books": [
+          {
+            "abbrev": "Zc",
+            "name": "Zacarias",
+            "chapters": [
+              4,
+              5,
+              6,
+              7,
+              8
+            ]
+          }
+        ]
+      },
+      {
+        "day": 363,
+        "reading": "Zaca 9-11",
+        "books": [
+          {
+            "abbrev": "Zc",
+            "name": "Zacarias",
+            "chapters": [
+              9,
+              10,
+              11
+            ]
+          }
+        ]
+      },
+      {
+        "day": 364,
+        "reading": "Zaca 12-14",
+        "books": [
+          {
+            "abbrev": "Zc",
+            "name": "Zacarias",
+            "chapters": [
+              12,
+              13,
+              14
+            ]
+          }
+        ]
+      },
+      {
+        "day": 365,
+        "reading": "Mala 1-4",
+        "books": [
+          {
+            "abbrev": "Ml",
+            "name": "Malaquias",
+            "chapters": [
+              1,
+              2,
+              3,
+              4
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]
