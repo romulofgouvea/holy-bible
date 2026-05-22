@@ -3,9 +3,9 @@ import { ReaderSettingsModal } from '@/components/modals/ReaderSettingsModal';
 import { Book, SelectedVerse } from '@/models';
 import { MaterialIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Animated, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Animated, StyleSheet, TouchableOpacity, View, BackHandler } from 'react-native';
 import { BibleDivider } from '../components/BibleDivider';
 import { BibleDrawerMenu } from '../components/BibleDrawerMenu';
 import { BibleIcon } from '../components/BibleIcon';
@@ -16,6 +16,7 @@ import { BibleTopBar } from '../components/BibleTopBar';
 import { BibleVerseReader } from '../components/BibleVerseReader';
 import { BibleHistoryModal } from '../components/modals/BibleHistoryModal';
 import { DonateModal } from '../components/modals/DonateModal';
+import { BibleConfirmModal } from '../components/modals/BibleConfirmModal';
 import { STORAGE_KEYS } from '../constants/storage';
 import { getBibleTitles } from '../data/bible-titles';
 import { getBibleData } from '../data/bible-version';
@@ -50,6 +51,22 @@ export default function BibleScreen() {
   const primaryColor = readerTheme === 'sepia' ? readerColors.primary : colors.primary;
 
   const [isSplitScreen, setIsSplitScreen] = useState(false);
+  const [isExitConfirmVisible, setIsExitConfirmVisible] = useState(false);
+
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => {
+        if (!router.canGoBack()) {
+          setIsExitConfirmVisible(true);
+          return true;
+        }
+        return false;
+      };
+
+      const subscription = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+      return () => subscription.remove();
+    }, [router])
+  );
   const [secondVersion, setSecondVersion] = useState('ARA');
   const secondSectionListRef = useRef<any>(null);
   const containerRef = useRef<View>(null);
@@ -787,6 +804,15 @@ export default function BibleScreen() {
 
       <ReaderSettingsModal visible={isSettingsModalVisible} onClose={() => setIsSettingsModalVisible(false)} />
       <DonateModal visible={isDonateVisible} onClose={() => setIsDonateVisible(false)} />
+      <BibleConfirmModal
+        visible={isExitConfirmVisible}
+        title="Sair do aplicativo"
+        message="Tem certeza que deseja sair do aplicativo?"
+        confirmText="Sair"
+        isDanger={true}
+        onConfirm={() => BackHandler.exitApp()}
+        onCancel={() => setIsExitConfirmVisible(false)}
+      />
       <BibleToast opacity={opacity} toast={toast} />
     </View>
   );

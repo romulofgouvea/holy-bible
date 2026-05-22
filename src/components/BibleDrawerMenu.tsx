@@ -148,7 +148,7 @@ export function BibleDrawerMenu(props: DrawerMenuProps) {
     if (item.onPress) {
       setTimeout(() => item.onPress!(), 150);
     } else if (item.route) {
-      setTimeout(() => router.push(item.route as any), 150);
+      setTimeout(() => router.navigate(item.route as any), 150);
     }
   };
 

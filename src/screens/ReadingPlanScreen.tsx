@@ -1,7 +1,7 @@
 import { FlashList } from '@shopify/flash-list';
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { Platform, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
+import { Platform, StyleSheet, TextInput, TouchableOpacity, View, BackHandler } from 'react-native';
 import { BibleDrawerMenu } from '../components/BibleDrawerMenu';
 import { BibleHeader } from '../components/BibleHeader';
 import { BibleIcon } from '../components/BibleIcon';
@@ -114,6 +114,28 @@ export default function ReadingPlanScreen() {
     }, [selectedPlan, flatDays, isDayCompleted]);
 
     // Auto-scroll remoted by user request
+
+    useFocusEffect(
+        useCallback(() => {
+            const onBackPress = () => {
+                if (screenView === 'detail') {
+                    setScreenView('list');
+                    setSelectedPlanId(null);
+                    return true;
+                }
+                if (isDeleteMode || selectedDeleteIds.size > 0) {
+                    setIsDeleteMode(false);
+                    setSelectedDeleteIds(new Set());
+                    return true;
+                }
+                return false;
+            };
+
+            const subscription = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+            return () => subscription.remove();
+        }, [screenView, isDeleteMode, selectedDeleteIds.size])
+    );
 
     const isSelectionMode = isDeleteMode || selectedDeleteIds.size > 0;
 
@@ -293,7 +315,7 @@ export default function ReadingPlanScreen() {
 
         setReadingPlanGoal({ bookAbbrev: lastBook.abbrev, chapter: lastChapter });
         navigateTo({ book: firstBook.abbrev, chapter: firstChapter, verse: 1 });
-        router.push(ROUTES.BIBLE as any);
+        router.navigate(ROUTES.BIBLE as any);
     }, [navigateTo, setReadingPlanGoal, router]);
 
     const handleToggleDay = useCallback((planId: string, monthNumber: number, day: number) => {
