@@ -3,12 +3,20 @@ import * as fs from 'fs';
 import * as https from 'https';
 import * as path from 'path';
 
-const VERSIONS = ['ara']; // Rodando inicialmente apenas ARA para validação
+const VERSIONS = ['ara', 'naa', 'nvt', 'nvi'];
 const BASE_URL = 'https://www.bible.com';
+
+// https://www.bible.com/pt/bible/1608/GEN.1.ARA
+// https://www.bible.com/pt/bible/1840/GEN.1.NAA
+// https://www.bible.com/pt/bible/1930/GEN.1.NVT
+// https://www.bible.com/pt/bible/4360/GEN.1.NVI
 
 // ID das versões no bible.com
 const VERSION_IDS: Record<string, string> = {
-  'ara': '1608'
+  'ara': '1608',
+  'naa': '1840',
+  'nvt': '1930',
+  'nvi': '4360'
 };
 
 const BIBLE_COM_MAPPING: Record<string, string> = {
@@ -135,11 +143,11 @@ async function main() {
               if (kind) {
                 const clone = $(el).clone();
                 clone.find('span[class*="__hide"], span[class*="__x"], span[class*="__f"], span[class*="__note"]').remove();
-                
+
                 const heading = clone.find('span[class*="__heading"]').text().trim() || clone.text().trim();
                 // Limpar múltiplos espaços que podem sobrar ao remover tags do meio
                 const cleanHeading = heading.replace(/\s{2,}/g, ' ');
-                
+
                 if (cleanHeading) sequence.push({ type: 'title', kind, heading: cleanHeading });
               }
             } else if ($(el).is('span')) {

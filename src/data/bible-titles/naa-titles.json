@@ -2501,7 +2501,7 @@
             {
               "title": "As festas solenes",
               "startVerse": 1,
-              "endVerse": 44,
+              "endVerse": 2,
               "type": "subsection",
               "positionIndex": 0
             },
@@ -2529,6 +2529,13 @@
             {
               "title": "O Pentecostes",
               "startVerse": 15,
+              "endVerse": 22,
+              "type": "subsection",
+              "positionIndex": 0
+            },
+            {
+              "title": "A Festa do Ano-Novo",
+              "startVerse": 23,
               "endVerse": 25,
               "type": "subsection",
               "positionIndex": 0
@@ -3871,7 +3878,7 @@
             {
               "title": "As três festas",
               "startVerse": 1,
-              "endVerse": 17,
+              "endVerse": 1,
               "type": "subsection",
               "positionIndex": 0
             },
@@ -4581,7 +4588,7 @@
             {
               "title": "As heranças das nove tribos e meia",
               "startVerse": 1,
-              "endVerse": 63,
+              "endVerse": 1,
               "type": "subsection",
               "positionIndex": 0
             },
@@ -5111,7 +5118,7 @@
               "positionIndex": 0
             },
             {
-              "title": "Sansão fere mil homens com uma queixada de jumento",
+              "title": "Sansão mata mil homens com uma queixada de jumento",
               "startVerse": 14,
               "endVerse": 20,
               "type": "subsection",
@@ -10110,7 +10117,7 @@
             {
               "title": "A queixa de Jó",
               "startVerse": 1,
-              "endVerse": 26,
+              "endVerse": 1,
               "type": "subsection",
               "positionIndex": 0
             },
@@ -10143,7 +10150,7 @@
             {
               "title": "Primeira fala de Elifaz",
               "startVerse": 1,
-              "endVerse": 21,
+              "endVerse": 1,
               "type": "subsection",
               "positionIndex": 0
             },
@@ -10195,7 +10202,7 @@
             {
               "title": "Resposta de Jó",
               "startVerse": 1,
-              "endVerse": 30,
+              "endVerse": 1,
               "type": "subsection",
               "positionIndex": 0
             },
@@ -10254,7 +10261,7 @@
             {
               "title": "Primeira fala de Bildade",
               "startVerse": 1,
-              "endVerse": 22,
+              "endVerse": 1,
               "type": "subsection",
               "positionIndex": 0
             },
@@ -10280,7 +10287,7 @@
             {
               "title": "Resposta de Jó",
               "startVerse": 1,
-              "endVerse": 35,
+              "endVerse": 1,
               "type": "subsection",
               "positionIndex": 0
             },
@@ -10339,7 +10346,7 @@
             {
               "title": "Primeira fala de Zofar",
               "startVerse": 1,
-              "endVerse": 20,
+              "endVerse": 1,
               "type": "subsection",
               "positionIndex": 0
             },
@@ -10372,7 +10379,7 @@
             {
               "title": "Resposta de Jó",
               "startVerse": 1,
-              "endVerse": 25,
+              "endVerse": 1,
               "type": "subsection",
               "positionIndex": 0
             },
@@ -10464,7 +10471,7 @@
             {
               "title": "Segunda fala de Elifaz",
               "startVerse": 1,
-              "endVerse": 35,
+              "endVerse": 1,
               "type": "subsection",
               "positionIndex": 0
             },
@@ -10490,7 +10497,7 @@
             {
               "title": "Resposta de Jó",
               "startVerse": 1,
-              "endVerse": 22,
+              "endVerse": 1,
               "type": "subsection",
               "positionIndex": 0
             },
@@ -10542,7 +10549,7 @@
             {
               "title": "Segunda fala de Bildade",
               "startVerse": 1,
-              "endVerse": 21,
+              "endVerse": 1,
               "type": "subsection",
               "positionIndex": 0
             },
@@ -10568,7 +10575,7 @@
             {
               "title": "Resposta de Jó",
               "startVerse": 1,
-              "endVerse": 29,
+              "endVerse": 1,
               "type": "subsection",
               "positionIndex": 0
             },
@@ -10608,7 +10615,7 @@
             {
               "title": "Segunda fala de Zofar",
               "startVerse": 1,
-              "endVerse": 29,
+              "endVerse": 3,
               "type": "subsection",
               "positionIndex": 0
             },
@@ -10641,7 +10648,7 @@
             {
               "title": "Resposta de Jó",
               "startVerse": 1,
-              "endVerse": 34,
+              "endVerse": 1,
               "type": "subsection",
               "positionIndex": 0
             },
@@ -10681,7 +10688,7 @@
             {
               "title": "Terceira fala de Elifaz",
               "startVerse": 1,
-              "endVerse": 30,
+              "endVerse": 1,
               "type": "subsection",
               "positionIndex": 0
             },
@@ -10714,7 +10721,7 @@
             {
               "title": "Resposta de Jó",
               "startVerse": 1,
-              "endVerse": 17,
+              "endVerse": 1,
               "type": "subsection",
               "positionIndex": 0
             },
@@ -10780,7 +10787,7 @@
             {
               "title": "Terceira fala de Bildade",
               "startVerse": 1,
-              "endVerse": 6,
+              "endVerse": 1,
               "type": "subsection",
               "positionIndex": 0
             },
@@ -10806,7 +10813,7 @@
             {
               "title": "Continuação da terceira fala de Bildade",
               "startVerse": 5,
-              "endVerse": 14,
+              "endVerse": 5,
               "type": "subsection",
               "positionIndex": 0
             },
@@ -10825,7 +10832,7 @@
             {
               "title": "Resposta de Jó",
               "startVerse": 1,
-              "endVerse": 23,
+              "endVerse": 1,
               "type": "subsection",
               "positionIndex": 0
             },
@@ -10858,7 +10865,7 @@
             {
               "title": "Elogio da sabedoria",
               "startVerse": 1,
-              "endVerse": 28,
+              "endVerse": 1,
               "type": "subsection",
               "positionIndex": 0
             },
@@ -10891,7 +10898,7 @@
             {
               "title": "Defesa final de Jó",
               "startVerse": 1,
-              "endVerse": 25,
+              "endVerse": 1,
               "type": "subsection",
               "positionIndex": 0
             },
@@ -10997,7 +11004,7 @@
             {
               "title": "Primeira fala de Eliú",
               "startVerse": 6,
-              "endVerse": 22,
+              "endVerse": 6,
               "type": "subsection",
               "positionIndex": 0
             },
@@ -11063,7 +11070,7 @@
             {
               "title": "Segunda fala de Eliú",
               "startVerse": 1,
-              "endVerse": 37,
+              "endVerse": 4,
               "type": "subsection",
               "positionIndex": 0
             },
@@ -11096,7 +11103,7 @@
             {
               "title": "Terceira fala de Eliú",
               "startVerse": 1,
-              "endVerse": 16,
+              "endVerse": 5,
               "type": "subsection",
               "positionIndex": 0
             },
@@ -11122,7 +11129,7 @@
             {
               "title": "Quarta fala de Eliú",
               "startVerse": 1,
-              "endVerse": 33,
+              "endVerse": 4,
               "type": "subsection",
               "positionIndex": 0
             },
@@ -11174,7 +11181,7 @@
             {
               "title": "Primeira resposta de Deus a Jó",
               "startVerse": 1,
-              "endVerse": 41,
+              "endVerse": 3,
               "type": "subsection",
               "positionIndex": 0
             },
@@ -11254,7 +11261,7 @@
             {
               "title": "Segunda e última resposta de Deus a Jó",
               "startVerse": 6,
-              "endVerse": 24,
+              "endVerse": 6,
               "type": "subsection",
               "positionIndex": 0
             },
@@ -11356,7 +11363,7 @@
               "title": "Salmo de Davi quando fugia de Absalão, seu filho",
               "startVerse": 1,
               "endVerse": 8,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -11375,7 +11382,7 @@
               "title": "Ao mestre de canto, com instrumentos de cordas. Salmo de Davi",
               "startVerse": 1,
               "endVerse": 8,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -11394,7 +11401,7 @@
               "title": "Ao mestre de canto, para flautas. Salmo de Davi",
               "startVerse": 1,
               "endVerse": 12,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -11413,7 +11420,7 @@
               "title": "Ao mestre de canto, com instrumentos de oito cordas. Salmo de Davi",
               "startVerse": 1,
               "endVerse": 10,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -11432,7 +11439,7 @@
               "title": "Cântico de Davi. Entoado ao Senhor, com respeito às palavras de Cuxe, benjamita",
               "startVerse": 1,
               "endVerse": 17,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -11448,10 +11455,10 @@
               "positionIndex": 0
             },
             {
-              "title": "Ao mestre de canto, segundo a melodia \"Os lagares\". Salmo de Davi",
+              "title": "Ao mestre de canto, segundo a melodia “Os lagares”. Salmo de Davi",
               "startVerse": 1,
               "endVerse": 9,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -11467,10 +11474,10 @@
               "positionIndex": 0
             },
             {
-              "title": "Ao mestre de canto, segundo a melodia \"A morte para o filho\". Salmo de Davi",
+              "title": "Ao mestre de canto, segundo a melodia “A morte para o filho”. Salmo de Davi",
               "startVerse": 1,
               "endVerse": 20,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -11501,7 +11508,7 @@
               "title": "Ao mestre de canto. Salmo de Davi",
               "startVerse": 1,
               "endVerse": 7,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -11520,7 +11527,7 @@
               "title": "Ao mestre de canto, para instrumentos de oito cordas. Salmo de Davi",
               "startVerse": 1,
               "endVerse": 8,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -11539,7 +11546,7 @@
               "title": "Ao mestre de canto. Salmo de Davi",
               "startVerse": 1,
               "endVerse": 6,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -11558,7 +11565,7 @@
               "title": "Ao mestre de canto. Salmo de Davi",
               "startVerse": 1,
               "endVerse": 7,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -11577,7 +11584,7 @@
               "title": "Salmo de Davi",
               "startVerse": 1,
               "endVerse": 5,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -11596,7 +11603,7 @@
               "title": "Hino de Davi",
               "startVerse": 1,
               "endVerse": 11,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -11615,7 +11622,7 @@
               "title": "Oração de Davi",
               "startVerse": 1,
               "endVerse": 15,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -11634,7 +11641,7 @@
               "title": "Ao mestre de canto. Salmo de Davi, servo do Senhor, o qual dirigiu ao Senhor as palavras deste cântico, no dia em que o Senhor o livrou de todos os seus inimigos e das mãos de Saul. Ele disse:",
               "startVerse": 1,
               "endVerse": 50,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -11653,7 +11660,7 @@
               "title": "Ao mestre de canto. Salmo de Davi",
               "startVerse": 1,
               "endVerse": 14,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -11672,7 +11679,7 @@
               "title": "Ao mestre de canto. Salmo de Davi",
               "startVerse": 1,
               "endVerse": 9,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -11691,7 +11698,7 @@
               "title": "Ao mestre de canto. Salmo de Davi",
               "startVerse": 1,
               "endVerse": 13,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -11707,10 +11714,10 @@
               "positionIndex": 0
             },
             {
-              "title": "Ao mestre de canto, segundo a melodia \"Corça da manhã\". Salmo de Davi",
+              "title": "Ao mestre de canto, segundo a melodia “Corça da manhã”. Salmo de Davi",
               "startVerse": 1,
               "endVerse": 31,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -11729,7 +11736,7 @@
               "title": "Salmo de Davi",
               "startVerse": 1,
               "endVerse": 6,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -11748,7 +11755,7 @@
               "title": "Salmo de Davi",
               "startVerse": 1,
               "endVerse": 10,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -11767,7 +11774,7 @@
               "title": "De Davi",
               "startVerse": 1,
               "endVerse": 22,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -11786,7 +11793,7 @@
               "title": "Salmo de Davi",
               "startVerse": 1,
               "endVerse": 12,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -11805,7 +11812,7 @@
               "title": "Salmo de Davi",
               "startVerse": 1,
               "endVerse": 14,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -11824,7 +11831,7 @@
               "title": "Salmo de Davi",
               "startVerse": 1,
               "endVerse": 9,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -11843,7 +11850,7 @@
               "title": "Salmo de Davi",
               "startVerse": 1,
               "endVerse": 11,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -11862,7 +11869,7 @@
               "title": "Salmo de Davi. Cântico da dedicação da casa",
               "startVerse": 1,
               "endVerse": 12,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -11881,7 +11888,7 @@
               "title": "Ao mestre de canto. Salmo de Davi",
               "startVerse": 1,
               "endVerse": 24,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -11900,7 +11907,7 @@
               "title": "De Davi. Salmo didático",
               "startVerse": 1,
               "endVerse": 11,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -11931,7 +11938,7 @@
               "title": "Salmo de Davi, quando se fingiu de louco na presença de Abimeleque e, por este expulso, ele se foi",
               "startVerse": 1,
               "endVerse": 22,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -11950,7 +11957,7 @@
               "title": "Salmo de Davi",
               "startVerse": 1,
               "endVerse": 28,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -11969,7 +11976,7 @@
               "title": "Ao mestre de canto. De Davi, servo do Senhor",
               "startVerse": 1,
               "endVerse": 12,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -11988,7 +11995,7 @@
               "title": "Salmo de Davi",
               "startVerse": 1,
               "endVerse": 40,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -12007,7 +12014,7 @@
               "title": "Salmo de Davi. Em memória",
               "startVerse": 1,
               "endVerse": 22,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -12026,7 +12033,7 @@
               "title": "Ao mestre de canto, Jedutum. Salmo de Davi",
               "startVerse": 1,
               "endVerse": 13,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -12045,7 +12052,7 @@
               "title": "Ao mestre de canto. Salmo de Davi",
               "startVerse": 1,
               "endVerse": 17,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -12064,7 +12071,7 @@
               "title": "Ao mestre de canto. Salmo de Davi",
               "startVerse": 1,
               "endVerse": 13,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -12083,7 +12090,7 @@
               "title": "Ao mestre de canto. Salmo didático dos filhos de Corá",
               "startVerse": 1,
               "endVerse": 11,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -12114,7 +12121,7 @@
               "title": "Ao mestre de canto. Dos filhos de Corá. Salmo didático",
               "startVerse": 1,
               "endVerse": 26,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -12130,10 +12137,10 @@
               "positionIndex": 0
             },
             {
-              "title": "Ao mestre de canto, segundo a melodia \"Os lírios\". Dos filhos de Corá. Salmo didático. Cântico de amor",
+              "title": "Ao mestre de canto, segundo a melodia “Os lírios”. Dos filhos de Corá. Salmo didático. Cântico de amor",
               "startVerse": 1,
               "endVerse": 17,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -12152,7 +12159,7 @@
               "title": "Ao mestre de canto. Dos filhos de Corá. Em voz de soprano. Cântico",
               "startVerse": 1,
               "endVerse": 11,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -12171,7 +12178,7 @@
               "title": "Ao mestre de canto. Salmo dos filhos de Corá",
               "startVerse": 1,
               "endVerse": 9,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -12190,7 +12197,7 @@
               "title": "Cântico. Salmo dos filhos de Corá",
               "startVerse": 1,
               "endVerse": 14,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -12209,7 +12216,7 @@
               "title": "Ao mestre de canto. Salmo dos filhos de Corá",
               "startVerse": 1,
               "endVerse": 20,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -12228,7 +12235,7 @@
               "title": "Salmo de Asafe",
               "startVerse": 1,
               "endVerse": 23,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -12247,7 +12254,7 @@
               "title": "Ao mestre de canto. Salmo de Davi, quando o profeta Natã foi falar com ele, depois de ele ter estado com Bate-Seba",
               "startVerse": 1,
               "endVerse": 19,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -12266,7 +12273,7 @@
               "title": "Ao mestre de canto. Salmo didático de Davi, quando Doegue, edomita, foi contar a Saul que Davi tinha ido à casa de Abimeleque",
               "startVerse": 1,
               "endVerse": 9,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -12285,7 +12292,7 @@
               "title": "Ao mestre de canto. Salmo didático de Davi, para cítara",
               "startVerse": 1,
               "endVerse": 6,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -12301,10 +12308,10 @@
               "positionIndex": 0
             },
             {
-              "title": "Ao mestre de canto. Salmo didático. Para instrumentos de cordas. De Davi, quando os zifeus foram dizer a Saul: \"Não está Davi escondido entre nós?\"",
+              "title": "Ao mestre de canto. Salmo didático. Para instrumentos de cordas. De Davi, quando os zifeus foram dizer a Saul: “Não está Davi escondido entre nós?”",
               "startVerse": 1,
               "endVerse": 7,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -12323,7 +12330,7 @@
               "title": "Ao mestre de canto. Para instrumentos de cordas. Salmo didático de Davi",
               "startVerse": 1,
               "endVerse": 23,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -12339,10 +12346,10 @@
               "positionIndex": 0
             },
             {
-              "title": "Ao mestre de canto, segundo a melodia \"A pomba nos terebintos distantes\". Hino de Davi, quando os filisteus o prenderam em Gate",
+              "title": "Ao mestre de canto, segundo a melodia “A pomba nos terebintos distantes”. Hino de Davi, quando os filisteus o prenderam em Gate",
               "startVerse": 1,
               "endVerse": 13,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -12358,10 +12365,10 @@
               "positionIndex": 0
             },
             {
-              "title": "Ao mestre de canto, segundo a melodia \"Não destruas\". Hino de Davi, quando fugia de Saul, na caverna",
+              "title": "Ao mestre de canto, segundo a melodia “Não destruas”. Hino de Davi, quando fugia de Saul, na caverna",
               "startVerse": 1,
               "endVerse": 11,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -12377,10 +12384,10 @@
               "positionIndex": 0
             },
             {
-              "title": "Ao mestre de canto, segundo a melodia \"Não destruas\". Hino de Davi",
+              "title": "Ao mestre de canto, segundo a melodia “Não destruas”. Hino de Davi",
               "startVerse": 1,
               "endVerse": 11,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -12396,10 +12403,10 @@
               "positionIndex": 0
             },
             {
-              "title": "Ao mestre de canto, segundo a melodia \"Não destruas\". Hino de Davi, quando Saul mandou que lhe vigiassem a casa, para o matar",
+              "title": "Ao mestre de canto, segundo a melodia “Não destruas”. Hino de Davi, quando Saul mandou que lhe vigiassem a casa, para o matar",
               "startVerse": 1,
               "endVerse": 17,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -12415,10 +12422,10 @@
               "positionIndex": 0
             },
             {
-              "title": "Ao mestre de canto, segundo a melodia \"O lírio do testemunho\". Hino de Davi para ensinar. Quando lutou contra os sírios da Mesopotâmia e de Zobá, e quando Joabe, regressando, derrotou doze mil edomitas, no vale do Sal",
+              "title": "Ao mestre de canto, segundo a melodia “O lírio do testemunho”. Hino de Davi para ensinar. Quando lutou contra os sírios da Mesopotâmia e de Zobá, e quando Joabe, regressando, derrotou doze mil edomitas, no vale do Sal",
               "startVerse": 1,
               "endVerse": 12,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -12437,7 +12444,7 @@
               "title": "Ao mestre de canto. Com instrumentos de cordas. De Davi",
               "startVerse": 1,
               "endVerse": 8,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -12456,7 +12463,7 @@
               "title": "Ao mestre de canto, segundo a melodia de Jedutum. De Davi",
               "startVerse": 1,
               "endVerse": 12,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -12475,7 +12482,7 @@
               "title": "Salmo de Davi, quando estava no deserto de Judá",
               "startVerse": 1,
               "endVerse": 11,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -12494,7 +12501,7 @@
               "title": "Ao mestre de canto. Salmo de Davi",
               "startVerse": 1,
               "endVerse": 10,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -12510,10 +12517,10 @@
               "positionIndex": 0
             },
             {
-              "title": "Ao mestre de canto. De Davi. C��ntico",
+              "title": "Ao mestre de canto. De Davi. Cântico",
               "startVerse": 1,
               "endVerse": 13,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -12532,7 +12539,7 @@
               "title": "Ao mestre de canto. Cântico. Salmo",
               "startVerse": 1,
               "endVerse": 20,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -12551,7 +12558,7 @@
               "title": "Ao mestre de canto. Para instrumentos de cordas. Salmo. Cântico",
               "startVerse": 1,
               "endVerse": 7,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -12570,7 +12577,7 @@
               "title": "Ao mestre de canto. Salmo de Davi. Cântico",
               "startVerse": 1,
               "endVerse": 35,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -12586,10 +12593,10 @@
               "positionIndex": 0
             },
             {
-              "title": "Ao mestre de canto, segundo a melodia \"Os lírios\". De Davi",
+              "title": "Ao mestre de canto, segundo a melodia “Os lírios”. De Davi",
               "startVerse": 1,
               "endVerse": 36,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -12608,7 +12615,7 @@
               "title": "Ao mestre de canto. De Davi. Em memória",
               "startVerse": 1,
               "endVerse": 5,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -12639,7 +12646,7 @@
               "title": "Salmo de Salomão",
               "startVerse": 1,
               "endVerse": 20,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -12658,7 +12665,7 @@
               "title": "Salmo de Asafe",
               "startVerse": 1,
               "endVerse": 28,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -12677,7 +12684,7 @@
               "title": "Salmo didático de Asafe",
               "startVerse": 1,
               "endVerse": 23,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -12693,10 +12700,10 @@
               "positionIndex": 0
             },
             {
-              "title": "Ao mestre de canto, segundo a melodia \"Não destruas\". Salmo de Asafe. Cântico",
+              "title": "Ao mestre de canto, segundo a melodia “Não destruas”. Salmo de Asafe. Cântico",
               "startVerse": 1,
               "endVerse": 10,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -12715,7 +12722,7 @@
               "title": "Ao mestre de canto, com instrumentos de cordas. Salmo de Asafe. Cântico",
               "startVerse": 1,
               "endVerse": 12,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -12734,7 +12741,7 @@
               "title": "Ao mestre de canto, Jedutum. Salmo de Asafe",
               "startVerse": 1,
               "endVerse": 20,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -12753,7 +12760,7 @@
               "title": "Salmo didático de Asafe",
               "startVerse": 1,
               "endVerse": 72,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -12772,7 +12779,7 @@
               "title": "Salmo de Asafe",
               "startVerse": 1,
               "endVerse": 13,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -12788,10 +12795,10 @@
               "positionIndex": 0
             },
             {
-              "title": "Ao mestre de canto, segundo a melodia \"Os lírios\". Testemunho de Asafe. Salmo",
+              "title": "Ao mestre de canto, segundo a melodia “Os lírios”. Testemunho de Asafe. Salmo",
               "startVerse": 1,
               "endVerse": 19,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -12807,10 +12814,10 @@
               "positionIndex": 0
             },
             {
-              "title": "Ao mestre de canto, segundo a melodia \"Os lagares\". Salmo de Asafe",
+              "title": "Ao mestre de canto, segundo a melodia “Os lagares”. Salmo de Asafe",
               "startVerse": 1,
               "endVerse": 16,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -12829,7 +12836,7 @@
               "title": "Salmo de Asafe",
               "startVerse": 1,
               "endVerse": 8,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -12848,7 +12855,7 @@
               "title": "Cântico. Salmo de Asafe",
               "startVerse": 1,
               "endVerse": 18,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -12864,10 +12871,10 @@
               "positionIndex": 0
             },
             {
-              "title": "Ao mestre de canto, segundo a melodia \"Os lagares\". Salmo dos filhos de Corá",
+              "title": "Ao mestre de canto, segundo a melodia “Os lagares”. Salmo dos filhos de Corá",
               "startVerse": 1,
               "endVerse": 12,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -12886,7 +12893,7 @@
               "title": "Ao mestre de canto. Salmo dos filhos de Corá",
               "startVerse": 1,
               "endVerse": 13,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -12905,7 +12912,7 @@
               "title": "Oração de Davi",
               "startVerse": 1,
               "endVerse": 17,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -12924,7 +12931,7 @@
               "title": "Salmo dos filhos de Corá. Cântico",
               "startVerse": 1,
               "endVerse": 7,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -12943,7 +12950,7 @@
               "title": "Cântico. Salmo dos filhos de Corá. Ao mestre de canto. Para ser cantado com cítara. Salmo didático de Hemã, ezraíta",
               "startVerse": 1,
               "endVerse": 18,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -12962,7 +12969,7 @@
               "title": "Salmo didático de Etã, ezraíta",
               "startVerse": 1,
               "endVerse": 52,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -12981,7 +12988,7 @@
               "title": "Oração de Moisés, homem de Deus",
               "startVerse": 1,
               "endVerse": 17,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -13012,7 +13019,7 @@
               "title": "Salmo. Cântico para o dia de sábado",
               "startVerse": 1,
               "endVerse": 15,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -13091,7 +13098,7 @@
               "title": "Salmo",
               "startVerse": 1,
               "endVerse": 9,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -13122,7 +13129,7 @@
               "title": "Salmo de ações de graças",
               "startVerse": 1,
               "endVerse": 5,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -13141,7 +13148,7 @@
               "title": "Salmo de Davi",
               "startVerse": 1,
               "endVerse": 8,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -13160,7 +13167,7 @@
               "title": "Oração do aflito que, desfalecido, derrama a sua queixa diante do Senhor",
               "startVerse": 1,
               "endVerse": 28,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -13179,7 +13186,7 @@
               "title": "Salmo de Davi",
               "startVerse": 1,
               "endVerse": 22,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -13246,7 +13253,7 @@
               "title": "Cântico. Salmo de Davi",
               "startVerse": 1,
               "endVerse": 13,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -13265,7 +13272,7 @@
               "title": "Ao mestre de canto. Salmo de Davi",
               "startVerse": 1,
               "endVerse": 31,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -13284,7 +13291,7 @@
               "title": "Salmo de Davi",
               "startVerse": 1,
               "endVerse": 7,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -13411,7 +13418,7 @@
               "title": "Cântico de peregrinação",
               "startVerse": 1,
               "endVerse": 7,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -13430,7 +13437,7 @@
               "title": "Cântico de peregrinação",
               "startVerse": 1,
               "endVerse": 8,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -13449,7 +13456,7 @@
               "title": "Cântico de peregrinação. De Davi",
               "startVerse": 1,
               "endVerse": 9,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -13468,7 +13475,7 @@
               "title": "Cântico de peregrinação",
               "startVerse": 1,
               "endVerse": 4,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -13487,7 +13494,7 @@
               "title": "Cântico de peregrinação. De Davi",
               "startVerse": 1,
               "endVerse": 8,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -13506,7 +13513,7 @@
               "title": "Cântico de peregrinação",
               "startVerse": 1,
               "endVerse": 5,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -13525,7 +13532,7 @@
               "title": "Cântico de peregrinação",
               "startVerse": 1,
               "endVerse": 6,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -13544,7 +13551,7 @@
               "title": "Cântico de peregrinação. De Salomão",
               "startVerse": 1,
               "endVerse": 5,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -13563,7 +13570,7 @@
               "title": "Cântico de peregrinação",
               "startVerse": 1,
               "endVerse": 6,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -13582,7 +13589,7 @@
               "title": "Cântico de peregrinação",
               "startVerse": 1,
               "endVerse": 8,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -13601,7 +13608,7 @@
               "title": "Cântico de peregrinação",
               "startVerse": 1,
               "endVerse": 8,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -13620,7 +13627,7 @@
               "title": "Cântico de peregrinação. De Davi",
               "startVerse": 1,
               "endVerse": 3,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -13639,7 +13646,7 @@
               "title": "Cântico de peregrinação",
               "startVerse": 1,
               "endVerse": 18,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -13658,7 +13665,7 @@
               "title": "Cântico de peregrinação. De Davi",
               "startVerse": 1,
               "endVerse": 3,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -13677,7 +13684,7 @@
               "title": "Cântico de peregrinação",
               "startVerse": 1,
               "endVerse": 3,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -13732,7 +13739,7 @@
               "title": "Salmo de Davi",
               "startVerse": 1,
               "endVerse": 8,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -13751,7 +13758,7 @@
               "title": "Ao mestre de canto. Salmo de Davi",
               "startVerse": 1,
               "endVerse": 24,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -13770,7 +13777,7 @@
               "title": "Ao mestre de canto. Salmo de Davi",
               "startVerse": 1,
               "endVerse": 13,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -13789,7 +13796,7 @@
               "title": "Salmo de Davi",
               "startVerse": 1,
               "endVerse": 10,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -13808,7 +13815,7 @@
               "title": "Salmo didático de Davi. Oração que fez quando estava na caverna",
               "startVerse": 1,
               "endVerse": 7,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -13827,7 +13834,7 @@
               "title": "Salmo de Davi",
               "startVerse": 1,
               "endVerse": 12,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -13846,7 +13853,7 @@
               "title": "Salmo de Davi",
               "startVerse": 1,
               "endVerse": 15,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -13865,7 +13872,7 @@
               "title": "Louvores de Davi",
               "startVerse": 1,
               "endVerse": 21,
-              "type": "section",
+              "type": "description",
               "positionIndex": 0
             }
           ]
@@ -14111,7 +14118,7 @@
             {
               "title": "Trinta provérbios dos sábios",
               "startVerse": 17,
-              "endVerse": 29,
+              "endVerse": 21,
               "type": "subsection",
               "positionIndex": 0
             },
@@ -14119,35 +14126,35 @@
               "title": "— 1 —",
               "startVerse": 22,
               "endVerse": 23,
-              "type": "section",
+              "type": "subsection",
               "positionIndex": 0
             },
             {
               "title": "— 2 —",
               "startVerse": 24,
               "endVerse": 25,
-              "type": "section",
+              "type": "subsection",
               "positionIndex": 0
             },
             {
               "title": "— 3 —",
               "startVerse": 26,
               "endVerse": 27,
-              "type": "section",
+              "type": "subsection",
               "positionIndex": 0
             },
             {
               "title": "— 4 —",
               "startVerse": 28,
               "endVerse": 28,
-              "type": "section",
+              "type": "subsection",
               "positionIndex": 0
             },
             {
               "title": "— 5 —",
               "startVerse": 29,
               "endVerse": 29,
-              "type": "section",
+              "type": "subsection",
               "positionIndex": 0
             }
           ]
@@ -14159,91 +14166,91 @@
               "title": "— 6 —",
               "startVerse": 1,
               "endVerse": 3,
-              "type": "section",
+              "type": "subsection",
               "positionIndex": 0
             },
             {
               "title": "— 7 —",
               "startVerse": 4,
               "endVerse": 5,
-              "type": "section",
+              "type": "subsection",
               "positionIndex": 0
             },
             {
               "title": "— 8 —",
               "startVerse": 6,
               "endVerse": 8,
-              "type": "section",
+              "type": "subsection",
               "positionIndex": 0
             },
             {
               "title": "— 9 —",
               "startVerse": 9,
               "endVerse": 9,
-              "type": "section",
+              "type": "subsection",
               "positionIndex": 0
             },
             {
               "title": "— 10 —",
               "startVerse": 10,
               "endVerse": 11,
-              "type": "section",
+              "type": "subsection",
               "positionIndex": 0
             },
             {
               "title": "— 11 —",
               "startVerse": 12,
               "endVerse": 12,
-              "type": "section",
+              "type": "subsection",
               "positionIndex": 0
             },
             {
               "title": "— 12 —",
               "startVerse": 13,
               "endVerse": 14,
-              "type": "section",
+              "type": "subsection",
               "positionIndex": 0
             },
             {
               "title": "— 13 —",
               "startVerse": 15,
               "endVerse": 16,
-              "type": "section",
+              "type": "subsection",
               "positionIndex": 0
             },
             {
               "title": "— 14 —",
               "startVerse": 17,
               "endVerse": 18,
-              "type": "section",
+              "type": "subsection",
               "positionIndex": 0
             },
             {
               "title": "— 15 —",
               "startVerse": 19,
               "endVerse": 21,
-              "type": "section",
+              "type": "subsection",
               "positionIndex": 0
             },
             {
               "title": "— 16 —",
               "startVerse": 22,
               "endVerse": 25,
-              "type": "section",
+              "type": "subsection",
               "positionIndex": 0
             },
             {
               "title": "— 17 —",
               "startVerse": 26,
               "endVerse": 28,
-              "type": "section",
+              "type": "subsection",
               "positionIndex": 0
             },
             {
               "title": "— 18 —",
               "startVerse": 29,
               "endVerse": 35,
-              "type": "section",
+              "type": "subsection",
               "positionIndex": 0
             }
           ]
@@ -14255,84 +14262,84 @@
               "title": "— 19 —",
               "startVerse": 1,
               "endVerse": 2,
-              "type": "section",
+              "type": "subsection",
               "positionIndex": 0
             },
             {
               "title": "— 20 —",
               "startVerse": 3,
               "endVerse": 4,
-              "type": "section",
+              "type": "subsection",
               "positionIndex": 0
             },
             {
               "title": "— 21 —",
               "startVerse": 5,
               "endVerse": 6,
-              "type": "section",
+              "type": "subsection",
               "positionIndex": 0
             },
             {
               "title": "— 22 —",
               "startVerse": 7,
               "endVerse": 7,
-              "type": "section",
+              "type": "subsection",
               "positionIndex": 0
             },
             {
               "title": "— 23 —",
               "startVerse": 8,
               "endVerse": 9,
-              "type": "section",
+              "type": "subsection",
               "positionIndex": 0
             },
             {
               "title": "— 24 —",
               "startVerse": 10,
               "endVerse": 10,
-              "type": "section",
+              "type": "subsection",
               "positionIndex": 0
             },
             {
               "title": "— 25 —",
               "startVerse": 11,
               "endVerse": 12,
-              "type": "section",
+              "type": "subsection",
               "positionIndex": 0
             },
             {
               "title": "— 26 —",
               "startVerse": 13,
               "endVerse": 14,
-              "type": "section",
+              "type": "subsection",
               "positionIndex": 0
             },
             {
               "title": "— 27 —",
               "startVerse": 15,
               "endVerse": 16,
-              "type": "section",
+              "type": "subsection",
               "positionIndex": 0
             },
             {
               "title": "— 28 —",
               "startVerse": 17,
               "endVerse": 18,
-              "type": "section",
+              "type": "subsection",
               "positionIndex": 0
             },
             {
               "title": "— 29 —",
               "startVerse": 19,
               "endVerse": 20,
-              "type": "section",
+              "type": "subsection",
               "positionIndex": 0
             },
             {
               "title": "— 30 —",
               "startVerse": 21,
               "endVerse": 22,
-              "type": "section",
+              "type": "subsection",
               "positionIndex": 0
             },
             {
@@ -18933,7 +18940,7 @@
             {
               "title": "Ameaças contra diversas nações",
               "startVerse": 3,
-              "endVerse": 15,
+              "endVerse": 3,
               "type": "subsection",
               "positionIndex": 0
             },
@@ -20033,7 +20040,7 @@
             {
               "title": "O sermão do monte",
               "startVerse": 1,
-              "endVerse": 48,
+              "endVerse": 2,
               "type": "subsection",
               "positionIndex": 0
             },
@@ -20338,7 +20345,7 @@
             {
               "title": "Os doze apóstolos",
               "startVerse": 1,
-              "endVerse": 42,
+              "endVerse": 1,
               "type": "subsection",
               "positionIndex": 0
             },
@@ -20954,7 +20961,7 @@
             {
               "title": "O sermão profético",
               "startVerse": 1,
-              "endVerse": 51,
+              "endVerse": 1,
               "type": "subsection",
               "positionIndex": 0
             },
@@ -21794,7 +21801,7 @@
             {
               "title": "O sermão profético",
               "startVerse": 1,
-              "endVerse": 37,
+              "endVerse": 1,
               "type": "subsection",
               "positionIndex": 0
             },
@@ -21867,7 +21874,7 @@
               "positionIndex": 0
             },
             {
-              "title": "Os discípulos preparam a P��scoa",
+              "title": "Os discípulos preparam a Páscoa",
               "startVerse": 12,
               "endVerse": 16,
               "type": "subsection",
@@ -22793,7 +22800,7 @@
               "positionIndex": 0
             },
             {
-              "title": "As condições para ser seguidor de Jesus",
+              "title": "As condições para ser discípulo de Jesus",
               "startVerse": 25,
               "endVerse": 33,
               "type": "subsection",
@@ -23777,10 +23784,10 @@
           "titles": [
             {
               "title": "A obra do Espírito Santo",
-              "startVerse": 5,
+              "startVerse": 4,
               "endVerse": 15,
               "type": "subsection",
-              "positionIndex": 0
+              "positionIndex": 121
             },
             {
               "title": "A tristeza se transformará em alegria",
@@ -26272,7 +26279,7 @@
               "positionIndex": 0
             },
             {
-              "title": "A unidade cristã na luta",
+              "title": "A unidade cristã na luta pela fé do evangelho",
               "startVerse": 27,
               "endVerse": 30,
               "type": "subsection",
@@ -27348,7 +27355,7 @@
             {
               "title": "Exemplos de fé",
               "startVerse": 4,
-              "endVerse": 40,
+              "endVerse": 4,
               "type": "subsection",
               "positionIndex": 0
             },
@@ -28192,7 +28199,7 @@
             {
               "title": "O Cordeiro quebra os selos",
               "startVerse": 1,
-              "endVerse": 17,
+              "endVerse": 1,
               "type": "subsection",
               "positionIndex": 0
             },
@@ -28272,7 +28279,7 @@
             {
               "title": "As sete trombetas",
               "startVerse": 6,
-              "endVerse": 13,
+              "endVerse": 6,
               "type": "subsection",
               "positionIndex": 0
             },
