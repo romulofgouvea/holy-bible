@@ -117,16 +117,30 @@ async function main() {
           // 1. Achatar o DOM em uma sequência lógica
           const sequence: any[] = [];
 
-          chapterContainer.find('div[class*="__s"], div[class*="__sp"], span[data-usfm]').each((_, el) => {
+          chapterContainer.find('div[class*="__s"], div[class*="__d"], span[data-usfm]').each((_, el) => {
             const className = $(el).attr('class') || '';
 
             if ($(el).is('div')) {
-              if (className.includes('__s') && !className.includes('__sp') && !className.includes('__s-')) {
-                const heading = $(el).find('span[class*="__heading"]').text().trim() || $(el).text().trim();
-                if (heading) sequence.push({ type: 'title', kind: 'section', heading });
-              } else if (className.includes('__sp')) {
-                const heading = $(el).find('span[class*="__heading"]').text().trim() || $(el).text().trim();
-                if (heading) sequence.push({ type: 'title', kind: 'speech', heading });
+              let kind = '';
+              if (/__s(?:\s|$)/.test(className)) {
+                kind = 'section';
+              } else if (/__s\d+(?:\s|$)/.test(className)) {
+                kind = 'subsection';
+              } else if (/__sp(?:\s|$)/.test(className)) {
+                kind = 'speech';
+              } else if (/__d(?:\s|$)/.test(className)) {
+                kind = 'description';
+              }
+
+              if (kind) {
+                const clone = $(el).clone();
+                clone.find('span[class*="__hide"], span[class*="__x"], span[class*="__f"], span[class*="__note"]').remove();
+                
+                const heading = clone.find('span[class*="__heading"]').text().trim() || clone.text().trim();
+                // Limpar múltiplos espaços que podem sobrar ao remover tags do meio
+                const cleanHeading = heading.replace(/\s{2,}/g, ' ');
+                
+                if (cleanHeading) sequence.push({ type: 'title', kind, heading: cleanHeading });
               }
             } else if ($(el).is('span')) {
               const usfmAttr = $(el).attr('data-usfm');
@@ -204,7 +218,12 @@ async function main() {
           // 3. Ajustar o endVerse (Acorrentamento com o próximo título DO MESMO TIPO)
           for (let i = 0; i < chapterTitles.length; i++) {
             const current = chapterTitles[i];
-            const nextOfSameKind = chapterTitles.slice(i + 1).find(t => t.type === current.type);
+            const nextOfSameKind = chapterTitles.slice(i + 1).find(t => {
+              if (current.type === 'subsection') {
+                return t.type === 'section' || t.type === 'subsection';
+              }
+              return t.type === current.type;
+            });
 
             if (nextOfSameKind) {
               if (nextOfSameKind.positionIndex === 0) {
