@@ -1,7 +1,7 @@
 import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Animated, Modal, Platform, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { Animated, Modal, Platform, ScrollView, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { DRAWER_ITEMS } from '../constants/routes';
 import { useResponsive } from '../hooks/useResponsive';
@@ -208,9 +208,13 @@ export function BibleDrawerMenu(props: DrawerMenuProps) {
             </View>
           </View>
 
-          <View style={[styles.menuList, { paddingTop: ms(DESIGN.spacing.sm), paddingHorizontal: ms(DESIGN.spacing.sm), paddingBottom: Math.max(ms(DESIGN.spacing.lg), insets.bottom + ms(DESIGN.spacing.sm)) }]}>
+          <ScrollView 
+            style={styles.menuList} 
+            contentContainerStyle={{ paddingTop: ms(DESIGN.spacing.sm), paddingHorizontal: ms(DESIGN.spacing.sm), paddingBottom: Math.max(ms(DESIGN.spacing.lg), insets.bottom + ms(DESIGN.spacing.sm)) }}
+            showsVerticalScrollIndicator={false}
+          >
             {MENU_ITEMS.map(renderItem)}
-          </View>
+          </ScrollView>
         </Animated.View>
       </View>
     </Modal>

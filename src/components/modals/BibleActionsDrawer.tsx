@@ -1,6 +1,6 @@
 import { Feather } from '@expo/vector-icons';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Animated, Modal, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { Animated, Modal, ScrollView, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useResponsive } from '../../hooks/useResponsive';
 import { useTheme } from '../../hooks/useTheme';
@@ -172,9 +172,13 @@ export function BibleActionsDrawer({ visible, onClose, title = "Ações", items 
             </BibleText>
           </View>
 
-          <View style={[styles.menuList, { paddingTop: ms(DESIGN.spacing.md), paddingHorizontal: ms(DESIGN.spacing.sm) }]}>
+          <ScrollView 
+            style={styles.menuList} 
+            contentContainerStyle={{ paddingTop: ms(DESIGN.spacing.md), paddingHorizontal: ms(DESIGN.spacing.sm), paddingBottom: Math.max(ms(DESIGN.spacing.lg), insets.bottom + ms(DESIGN.spacing.sm)) }}
+            showsVerticalScrollIndicator={false}
+          >
             {items.map(renderItem)}
-          </View>
+          </ScrollView>
         </Animated.View>
       </View>
     </Modal>
