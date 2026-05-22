@@ -130,6 +130,35 @@ export function useBiblePlan() {
     }));
   }, [activePlans, persist]);
 
+  const toggleAllChaptersForDay = useCallback((planId: string, monthNumber: number, dayInfo: any, status: boolean) => {
+    persist(activePlans.map(p => {
+      if (p.id !== planId) return p;
+      const chapters = { ...(p.completedChapters || {}) };
+      
+      for (const book of dayInfo.books) {
+        const bookChapters = book.chapters ?? book.verses?.map((v: any) => v.chapter) ?? [];
+        for (const chap of bookChapters) {
+          const key = chapterKey(monthNumber, dayInfo.day, book.abbrev, chap);
+          if (status) {
+            chapters[key] = { isCompleted: true, completedAt: Date.now() };
+          } else {
+            delete chapters[key];
+          }
+        }
+      }
+      
+      const dKey = dayKey(monthNumber, dayInfo.day);
+      const days = { ...p.completedDays };
+      if (status) {
+        days[dKey] = { isCompleted: true, completedAt: Date.now() };
+      } else {
+        delete days[dKey];
+      }
+      
+      return { ...p, completedChapters: chapters, completedDays: days };
+    }));
+  }, [activePlans, persist]);
+
   const isChapterCompleted = useCallback((plan: ActiveBiblePlan, monthNumber: number, day: number, abbrev: string, chapter: number): boolean => {
     return !!plan.completedChapters?.[chapterKey(monthNumber, day, abbrev, chapter)]?.isCompleted;
   }, []);
@@ -187,6 +216,7 @@ export function useBiblePlan() {
     createBiblePlan,
     toggleDay,
     toggleChapter,
+    toggleAllChaptersForDay,
     isDayCompleted,
     isChapterCompleted,
     getDayCompletedAt,

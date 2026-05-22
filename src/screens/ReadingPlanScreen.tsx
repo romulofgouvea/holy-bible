@@ -1,7 +1,7 @@
 import { FlashList } from '@shopify/flash-list';
-import { useRouter, useFocusEffect } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { BackHandler, ScrollView, StyleSheet, TextInput, TouchableOpacity, View, Platform } from 'react-native';
+import { BackHandler, Platform, ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import { BibleDrawerMenu } from '../components/BibleDrawerMenu';
 import { BibleHeader } from '../components/BibleHeader';
 import { BibleIcon } from '../components/BibleIcon';
@@ -63,6 +63,7 @@ export default function ReadingPlanScreen() {
         createBiblePlan,
         toggleDay,
         toggleChapter,
+        toggleAllChaptersForDay,
         isDayCompleted,
         isChapterCompleted,
         getDayCompletedAt,
@@ -876,7 +877,7 @@ export default function ReadingPlanScreen() {
                             style={{ marginRight: ms(DESIGN.spacing.sm) }}
                         />
                         <BibleText style={{ flex: 1, fontSize: ms(DESIGN.fontSize.lg), fontWeight: '800', color: colors.primary }}>
-                            Capítulos - Dia {selectedDayInfo?.day}
+                            Dia {selectedDayInfo?.day}
                         </BibleText>
                         <BibleIcon
                             name="x"
@@ -886,6 +887,36 @@ export default function ReadingPlanScreen() {
                             style={{ marginLeft: 'auto' }}
                         />
                     </View>
+                }
+                footer={
+                    selectedDayInfo && selectedPlan ? (() => {
+                        const isAllCompleted = isDayCompleted(selectedPlan, selectedDayInfo.monthNumber, selectedDayInfo.day);
+                        return (
+                            <TouchableOpacity
+                                style={{
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    paddingVertical: ms(DESIGN.spacing.md),
+                                    backgroundColor: isAllCompleted ? colors.surface : colors.primary + '15',
+                                    borderWidth: 1,
+                                    borderColor: isAllCompleted ? colors.border : colors.primary + '30',
+                                    borderRadius: ms(DESIGN.borderRadius.md),
+                                    marginHorizontal: ms(DESIGN.spacing.sm),
+                                }}
+                                onPress={() => toggleAllChaptersForDay(selectedPlan.id, selectedDayInfo.monthNumber, selectedDayInfo, !isAllCompleted)}
+                                activeOpacity={0.7}
+                            >
+                                <BibleText style={{
+                                    color: isAllCompleted ? colors.textMuted : colors.primary,
+                                    fontWeight: '700',
+                                    fontSize: ms(DESIGN.fontSize.md)
+                                }}>
+                                    {isAllCompleted ? "Desmarcar todos" : "Marcar todos como lidos"}
+                                </BibleText>
+                            </TouchableOpacity>
+                        );
+                    })() : null
                 }
                 fullHeight={false}
             >
