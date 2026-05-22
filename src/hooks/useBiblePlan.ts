@@ -16,6 +16,10 @@ function dayKey(monthNumber: number, day: number): string {
   return `${monthNumber}-${day}`;
 }
 
+function chapterKey(monthNumber: number, day: number, abbrev: string, chapter: number): string {
+  return `${monthNumber}-${day}-${abbrev}-${chapter}`;
+}
+
 function parsePlans(raw: string | null): ActiveBiblePlan[] {
   if (!raw) return [];
   try {
@@ -62,6 +66,7 @@ export function useBiblePlan() {
       title: template.title,
       startedAt: Date.now(),
       completedDays: {},
+      completedChapters: {},
     };
     persist([...activePlans, newPlan]);
     return newPlan;
@@ -88,6 +93,45 @@ export function useBiblePlan() {
 
   const getDayCompletedAt = useCallback((plan: ActiveBiblePlan, monthNumber: number, day: number): number | undefined => {
     return plan.completedDays[dayKey(monthNumber, day)]?.completedAt;
+  }, []);
+
+  const toggleChapter = useCallback((planId: string, monthNumber: number, dayInfo: any, abbrev: string, chapter: number) => {
+    const key = chapterKey(monthNumber, dayInfo.day, abbrev, chapter);
+    persist(activePlans.map(p => {
+      if (p.id !== planId) return p;
+      const chapters = { ...(p.completedChapters || {}) };
+      if (chapters[key]?.isCompleted) {
+        delete chapters[key];
+      } else {
+        chapters[key] = { isCompleted: true, completedAt: Date.now() };
+      }
+      
+      // check if day is fully read
+      let isDayFullyRead = true;
+      for (const book of dayInfo.books) {
+        for (const chap of (book.chapters || [])) {
+          if (!chapters[chapterKey(monthNumber, dayInfo.day, book.abbrev, chap)]?.isCompleted) {
+            isDayFullyRead = false;
+            break;
+          }
+        }
+        if (!isDayFullyRead) break;
+      }
+      
+      const dKey = dayKey(monthNumber, dayInfo.day);
+      const days = { ...p.completedDays };
+      if (isDayFullyRead) {
+        days[dKey] = { isCompleted: true, completedAt: Date.now() };
+      } else {
+        delete days[dKey];
+      }
+      
+      return { ...p, completedChapters: chapters, completedDays: days };
+    }));
+  }, [activePlans, persist]);
+
+  const isChapterCompleted = useCallback((plan: ActiveBiblePlan, monthNumber: number, day: number, abbrev: string, chapter: number): boolean => {
+    return !!plan.completedChapters?.[chapterKey(monthNumber, day, abbrev, chapter)]?.isCompleted;
   }, []);
 
   const removeBiblePlan = useCallback((planId: string) => {
@@ -142,7 +186,9 @@ export function useBiblePlan() {
     isLoaded,
     createBiblePlan,
     toggleDay,
+    toggleChapter,
     isDayCompleted,
+    isChapterCompleted,
     getDayCompletedAt,
     removeBiblePlan,
     removeBiblePlans,

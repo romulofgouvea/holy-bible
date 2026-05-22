@@ -6,7 +6,7 @@
     "days": [
       {
         "day": 1,
-        "reading": "Gêne 1-2",
+        "reading": "Gênesis 1-2",
         "books": [
           {
             "abbrev": "Gn",
@@ -20,7 +20,7 @@
       },
       {
         "day": 2,
-        "reading": "Gêne 3-5",
+        "reading": "Gênesis 3-5",
         "books": [
           {
             "abbrev": "Gn",
@@ -35,7 +35,7 @@
       },
       {
         "day": 3,
-        "reading": "Gêne 6-8",
+        "reading": "Gênesis 6-8",
         "books": [
           {
             "abbrev": "Gn",
@@ -50,7 +50,7 @@
       },
       {
         "day": 4,
-        "reading": "Gêne 9-11",
+        "reading": "Gênesis 9-11",
         "books": [
           {
             "abbrev": "Gn",
@@ -65,7 +65,7 @@
       },
       {
         "day": 5,
-        "reading": "Gêne 12-14",
+        "reading": "Gênesis 12-14",
         "books": [
           {
             "abbrev": "Gn",
@@ -80,7 +80,7 @@
       },
       {
         "day": 6,
-        "reading": "Gêne 15-17",
+        "reading": "Gênesis 15-17",
         "books": [
           {
             "abbrev": "Gn",
@@ -95,7 +95,7 @@
       },
       {
         "day": 7,
-        "reading": "Gêne 18-19",
+        "reading": "Gênesis 18-19",
         "books": [
           {
             "abbrev": "Gn",
@@ -109,7 +109,7 @@
       },
       {
         "day": 8,
-        "reading": "Gêne 20-22",
+        "reading": "Gênesis 20-22",
         "books": [
           {
             "abbrev": "Gn",
@@ -124,7 +124,7 @@
       },
       {
         "day": 9,
-        "reading": "Gêne 23-24",
+        "reading": "Gênesis 23-24",
         "books": [
           {
             "abbrev": "Gn",
@@ -138,7 +138,7 @@
       },
       {
         "day": 10,
-        "reading": "Gêne 25",
+        "reading": "Gênesis 25",
         "books": [
           {
             "abbrev": "Gn",
@@ -151,7 +151,7 @@
       },
       {
         "day": 11,
-        "reading": "Gêne 26-27",
+        "reading": "Gênesis 26-27",
         "books": [
           {
             "abbrev": "Gn",
@@ -165,7 +165,7 @@
       },
       {
         "day": 12,
-        "reading": "Gêne 28-29",
+        "reading": "Gênesis 28-29",
         "books": [
           {
             "abbrev": "Gn",
@@ -179,7 +179,7 @@
       },
       {
         "day": 13,
-        "reading": "Gêne 30-31",
+        "reading": "Gênesis 30-31",
         "books": [
           {
             "abbrev": "Gn",
@@ -193,7 +193,7 @@
       },
       {
         "day": 14,
-        "reading": "Gêne 32-33",
+        "reading": "Gênesis 32-33",
         "books": [
           {
             "abbrev": "Gn",
@@ -207,7 +207,7 @@
       },
       {
         "day": 15,
-        "reading": "Gêne 34-35",
+        "reading": "Gênesis 34-35",
         "books": [
           {
             "abbrev": "Gn",
@@ -221,7 +221,7 @@
       },
       {
         "day": 16,
-        "reading": "Gêne 36-37",
+        "reading": "Gênesis 36-37",
         "books": [
           {
             "abbrev": "Gn",
@@ -235,7 +235,7 @@
       },
       {
         "day": 17,
-        "reading": "Gêne 38-39",
+        "reading": "Gênesis 38-39",
         "books": [
           {
             "abbrev": "Gn",
@@ -249,7 +249,7 @@
       },
       {
         "day": 18,
-        "reading": "Gêne 40-41",
+        "reading": "Gênesis 40-41",
         "books": [
           {
             "abbrev": "Gn",
@@ -263,7 +263,7 @@
       },
       {
         "day": 19,
-        "reading": "Gêne 42-43",
+        "reading": "Gênesis 42-43",
         "books": [
           {
             "abbrev": "Gn",
@@ -277,7 +277,7 @@
       },
       {
         "day": 20,
-        "reading": "Gêne 44-45",
+        "reading": "Gênesis 44-45",
         "books": [
           {
             "abbrev": "Gn",
@@ -291,7 +291,7 @@
       },
       {
         "day": 21,
-        "reading": "Gêne 46-47",
+        "reading": "Gênesis 46-47",
         "books": [
           {
             "abbrev": "Gn",
@@ -305,7 +305,7 @@
       },
       {
         "day": 22,
-        "reading": "Gêne 48-49",
+        "reading": "Gênesis 48-49",
         "books": [
           {
             "abbrev": "Gn",
@@ -319,7 +319,7 @@
       },
       {
         "day": 23,
-        "reading": "Gêne 50; Êxod 1-2",
+        "reading": "Gênesis 50; Êxodo 1-2",
         "books": [
           {
             "abbrev": "Gn",
@@ -340,7 +340,7 @@
       },
       {
         "day": 24,
-        "reading": "Êxod 3-4",
+        "reading": "Êxodo 3-4",
         "books": [
           {
             "abbrev": "Êx",
@@ -354,7 +354,7 @@
       },
       {
         "day": 25,
-        "reading": "Êxod 5-7",
+        "reading": "Êxodo 5-7",
         "books": [
           {
             "abbrev": "Êx",
@@ -369,7 +369,7 @@
       },
       {
         "day": 26,
-        "reading": "Êxod 8",
+        "reading": "Êxodo 8",
         "books": [
           {
             "abbrev": "Êx",
@@ -382,7 +382,7 @@
       },
       {
         "day": 27,
-        "reading": "Êxod 9-11",
+        "reading": "Êxodo 9-11",
         "books": [
           {
             "abbrev": "Êx",
@@ -397,7 +397,7 @@
       },
       {
         "day": 28,
-        "reading": "Êxod 12",
+        "reading": "Êxodo 12",
         "books": [
           {
             "abbrev": "Êx",
@@ -410,7 +410,7 @@
       },
       {
         "day": 29,
-        "reading": "Êxod 13-14",
+        "reading": "Êxodo 13-14",
         "books": [
           {
             "abbrev": "Êx",
@@ -424,7 +424,7 @@
       },
       {
         "day": 30,
-        "reading": "Êxod 15-16",
+        "reading": "Êxodo 15-16",
         "books": [
           {
             "abbrev": "Êx",
@@ -438,7 +438,7 @@
       },
       {
         "day": 31,
-        "reading": "Êxod 17-19",
+        "reading": "Êxodo 17-19",
         "books": [
           {
             "abbrev": "Êx",
@@ -453,7 +453,7 @@
       },
       {
         "day": 32,
-        "reading": "Êxod 20-21",
+        "reading": "Êxodo 20-21",
         "books": [
           {
             "abbrev": "Êx",
@@ -467,7 +467,7 @@
       },
       {
         "day": 33,
-        "reading": "Êxod 22-23",
+        "reading": "Êxodo 22-23",
         "books": [
           {
             "abbrev": "Êx",
@@ -481,7 +481,7 @@
       },
       {
         "day": 34,
-        "reading": "Êxod 24-26",
+        "reading": "Êxodo 24-26",
         "books": [
           {
             "abbrev": "Êx",
@@ -496,7 +496,7 @@
       },
       {
         "day": 35,
-        "reading": "Êxod 27-28",
+        "reading": "Êxodo 27-28",
         "books": [
           {
             "abbrev": "Êx",
@@ -510,7 +510,7 @@
       },
       {
         "day": 36,
-        "reading": "Êxod 29",
+        "reading": "Êxodo 29",
         "books": [
           {
             "abbrev": "Êx",
@@ -523,7 +523,7 @@
       },
       {
         "day": 37,
-        "reading": "Êxod 30-31",
+        "reading": "Êxodo 30-31",
         "books": [
           {
             "abbrev": "Êx",
@@ -537,7 +537,7 @@
       },
       {
         "day": 38,
-        "reading": "Êxod 32-33",
+        "reading": "Êxodo 32-33",
         "books": [
           {
             "abbrev": "Êx",
@@ -551,7 +551,7 @@
       },
       {
         "day": 39,
-        "reading": "Êxod 34-35",
+        "reading": "Êxodo 34-35",
         "books": [
           {
             "abbrev": "Êx",
@@ -565,7 +565,7 @@
       },
       {
         "day": 40,
-        "reading": "Êxod 36-37",
+        "reading": "Êxodo 36-37",
         "books": [
           {
             "abbrev": "Êx",
@@ -579,7 +579,7 @@
       },
       {
         "day": 41,
-        "reading": "Êxod 38-39",
+        "reading": "Êxodo 38-39",
         "books": [
           {
             "abbrev": "Êx",
@@ -593,7 +593,7 @@
       },
       {
         "day": 42,
-        "reading": "Êxod 40; Leví 1",
+        "reading": "Êxodo 40; Levítico 1",
         "books": [
           {
             "abbrev": "Êx",
@@ -613,7 +613,7 @@
       },
       {
         "day": 43,
-        "reading": "Leví 2-4",
+        "reading": "Levítico 2-4",
         "books": [
           {
             "abbrev": "Lv",
@@ -628,7 +628,7 @@
       },
       {
         "day": 44,
-        "reading": "Leví 5-6",
+        "reading": "Levítico 5-6",
         "books": [
           {
             "abbrev": "Lv",
@@ -642,7 +642,7 @@
       },
       {
         "day": 45,
-        "reading": "Leví 7-8",
+        "reading": "Levítico 7-8",
         "books": [
           {
             "abbrev": "Lv",
@@ -656,7 +656,7 @@
       },
       {
         "day": 46,
-        "reading": "Leví 9-10",
+        "reading": "Levítico 9-10",
         "books": [
           {
             "abbrev": "Lv",
@@ -670,7 +670,7 @@
       },
       {
         "day": 47,
-        "reading": "Leví 11-12",
+        "reading": "Levítico 11-12",
         "books": [
           {
             "abbrev": "Lv",
@@ -684,7 +684,7 @@
       },
       {
         "day": 48,
-        "reading": "Leví 13",
+        "reading": "Levítico 13",
         "books": [
           {
             "abbrev": "Lv",
@@ -697,7 +697,7 @@
       },
       {
         "day": 49,
-        "reading": "Leví 14",
+        "reading": "Levítico 14",
         "books": [
           {
             "abbrev": "Lv",
@@ -710,7 +710,7 @@
       },
       {
         "day": 50,
-        "reading": "Leví 15-16",
+        "reading": "Levítico 15-16",
         "books": [
           {
             "abbrev": "Lv",
@@ -724,7 +724,7 @@
       },
       {
         "day": 51,
-        "reading": "Leví 17-18",
+        "reading": "Levítico 17-18",
         "books": [
           {
             "abbrev": "Lv",
@@ -738,7 +738,7 @@
       },
       {
         "day": 52,
-        "reading": "Leví 19-20",
+        "reading": "Levítico 19-20",
         "books": [
           {
             "abbrev": "Lv",
@@ -752,7 +752,7 @@
       },
       {
         "day": 53,
-        "reading": "Leví 21-22",
+        "reading": "Levítico 21-22",
         "books": [
           {
             "abbrev": "Lv",
@@ -766,7 +766,7 @@
       },
       {
         "day": 54,
-        "reading": "Leví 23-24",
+        "reading": "Levítico 23-24",
         "books": [
           {
             "abbrev": "Lv",
@@ -780,7 +780,7 @@
       },
       {
         "day": 55,
-        "reading": "Leví 25",
+        "reading": "Levítico 25",
         "books": [
           {
             "abbrev": "Lv",
@@ -793,7 +793,7 @@
       },
       {
         "day": 56,
-        "reading": "Leví 26-27",
+        "reading": "Levítico 26-27",
         "books": [
           {
             "abbrev": "Lv",
@@ -807,7 +807,7 @@
       },
       {
         "day": 57,
-        "reading": "Núme 1",
+        "reading": "Números 1",
         "books": [
           {
             "abbrev": "Nm",
@@ -820,7 +820,7 @@
       },
       {
         "day": 58,
-        "reading": "Núme 2-3",
+        "reading": "Números 2-3",
         "books": [
           {
             "abbrev": "Nm",
@@ -834,7 +834,7 @@
       },
       {
         "day": 59,
-        "reading": "Núme 4",
+        "reading": "Números 4",
         "books": [
           {
             "abbrev": "Nm",
@@ -847,7 +847,7 @@
       },
       {
         "day": 60,
-        "reading": "Núme 5-6",
+        "reading": "Números 5-6",
         "books": [
           {
             "abbrev": "Nm",
@@ -861,7 +861,7 @@
       },
       {
         "day": 61,
-        "reading": "Núme 7",
+        "reading": "Números 7",
         "books": [
           {
             "abbrev": "Nm",
@@ -874,7 +874,7 @@
       },
       {
         "day": 62,
-        "reading": "Núme 8-9",
+        "reading": "Números 8-9",
         "books": [
           {
             "abbrev": "Nm",
@@ -888,7 +888,7 @@
       },
       {
         "day": 63,
-        "reading": "Núme 10-11",
+        "reading": "Números 10-11",
         "books": [
           {
             "abbrev": "Nm",
@@ -902,7 +902,7 @@
       },
       {
         "day": 64,
-        "reading": "Núme 12-13",
+        "reading": "Números 12-13",
         "books": [
           {
             "abbrev": "Nm",
@@ -916,7 +916,7 @@
       },
       {
         "day": 65,
-        "reading": "Núme 14-15",
+        "reading": "Números 14-15",
         "books": [
           {
             "abbrev": "Nm",
@@ -930,7 +930,7 @@
       },
       {
         "day": 66,
-        "reading": "Núme 16-17",
+        "reading": "Números 16-17",
         "books": [
           {
             "abbrev": "Nm",
@@ -944,7 +944,7 @@
       },
       {
         "day": 67,
-        "reading": "Núme 18-19",
+        "reading": "Números 18-19",
         "books": [
           {
             "abbrev": "Nm",
@@ -958,7 +958,7 @@
       },
       {
         "day": 68,
-        "reading": "Núme 20-21",
+        "reading": "Números 20-21",
         "books": [
           {
             "abbrev": "Nm",
@@ -972,7 +972,7 @@
       },
       {
         "day": 69,
-        "reading": "Núme 22",
+        "reading": "Números 22",
         "books": [
           {
             "abbrev": "Nm",
@@ -985,7 +985,7 @@
       },
       {
         "day": 70,
-        "reading": "Núme 23-25",
+        "reading": "Números 23-25",
         "books": [
           {
             "abbrev": "Nm",
@@ -1000,7 +1000,7 @@
       },
       {
         "day": 71,
-        "reading": "Núme 26-27",
+        "reading": "Números 26-27",
         "books": [
           {
             "abbrev": "Nm",
@@ -1014,7 +1014,7 @@
       },
       {
         "day": 72,
-        "reading": "Núme 28-29",
+        "reading": "Números 28-29",
         "books": [
           {
             "abbrev": "Nm",
@@ -1028,7 +1028,7 @@
       },
       {
         "day": 73,
-        "reading": "Núme 30-31",
+        "reading": "Números 30-31",
         "books": [
           {
             "abbrev": "Nm",
@@ -1042,7 +1042,7 @@
       },
       {
         "day": 74,
-        "reading": "Núme 32",
+        "reading": "Números 32",
         "books": [
           {
             "abbrev": "Nm",
@@ -1055,7 +1055,7 @@
       },
       {
         "day": 75,
-        "reading": "Núme 33-34",
+        "reading": "Números 33-34",
         "books": [
           {
             "abbrev": "Nm",
@@ -1069,7 +1069,7 @@
       },
       {
         "day": 76,
-        "reading": "Núme 35-36",
+        "reading": "Números 35-36",
         "books": [
           {
             "abbrev": "Nm",
@@ -1083,7 +1083,7 @@
       },
       {
         "day": 77,
-        "reading": "Deut 1-2",
+        "reading": "Deuteronômio 1-2",
         "books": [
           {
             "abbrev": "Dt",
@@ -1097,7 +1097,7 @@
       },
       {
         "day": 78,
-        "reading": "Deut 3-4",
+        "reading": "Deuteronômio 3-4",
         "books": [
           {
             "abbrev": "Dt",
@@ -1111,7 +1111,7 @@
       },
       {
         "day": 79,
-        "reading": "Deut 5",
+        "reading": "Deuteronômio 5",
         "books": [
           {
             "abbrev": "Dt",
@@ -1124,7 +1124,7 @@
       },
       {
         "day": 80,
-        "reading": "Deut 6-7",
+        "reading": "Deuteronômio 6-7",
         "books": [
           {
             "abbrev": "Dt",
@@ -1138,7 +1138,7 @@
       },
       {
         "day": 81,
-        "reading": "Deut 8-10",
+        "reading": "Deuteronômio 8-10",
         "books": [
           {
             "abbrev": "Dt",
@@ -1153,7 +1153,7 @@
       },
       {
         "day": 82,
-        "reading": "Deut 11",
+        "reading": "Deuteronômio 11",
         "books": [
           {
             "abbrev": "Dt",
@@ -1166,7 +1166,7 @@
       },
       {
         "day": 83,
-        "reading": "Deut 12-14",
+        "reading": "Deuteronômio 12-14",
         "books": [
           {
             "abbrev": "Dt",
@@ -1181,7 +1181,7 @@
       },
       {
         "day": 84,
-        "reading": "Deut 15-16",
+        "reading": "Deuteronômio 15-16",
         "books": [
           {
             "abbrev": "Dt",
@@ -1195,7 +1195,7 @@
       },
       {
         "day": 85,
-        "reading": "Deut 17-18",
+        "reading": "Deuteronômio 17-18",
         "books": [
           {
             "abbrev": "Dt",
@@ -1209,7 +1209,7 @@
       },
       {
         "day": 86,
-        "reading": "Deut 19-21",
+        "reading": "Deuteronômio 19-21",
         "books": [
           {
             "abbrev": "Dt",
@@ -1224,7 +1224,7 @@
       },
       {
         "day": 87,
-        "reading": "Deut 22-23",
+        "reading": "Deuteronômio 22-23",
         "books": [
           {
             "abbrev": "Dt",
@@ -1238,7 +1238,7 @@
       },
       {
         "day": 88,
-        "reading": "Deut 24-25",
+        "reading": "Deuteronômio 24-25",
         "books": [
           {
             "abbrev": "Dt",
@@ -1252,7 +1252,7 @@
       },
       {
         "day": 89,
-        "reading": "Deut 26-27",
+        "reading": "Deuteronômio 26-27",
         "books": [
           {
             "abbrev": "Dt",
@@ -1266,7 +1266,7 @@
       },
       {
         "day": 90,
-        "reading": "Deut 28",
+        "reading": "Deuteronômio 28",
         "books": [
           {
             "abbrev": "Dt",
@@ -1279,7 +1279,7 @@
       },
       {
         "day": 91,
-        "reading": "Deut 29-30",
+        "reading": "Deuteronômio 29-30",
         "books": [
           {
             "abbrev": "Dt",
@@ -1293,7 +1293,7 @@
       },
       {
         "day": 92,
-        "reading": "Deut 31-32",
+        "reading": "Deuteronômio 31-32",
         "books": [
           {
             "abbrev": "Dt",
@@ -1307,7 +1307,7 @@
       },
       {
         "day": 93,
-        "reading": "Deut 33-34",
+        "reading": "Deuteronômio 33-34",
         "books": [
           {
             "abbrev": "Dt",
@@ -1321,7 +1321,7 @@
       },
       {
         "day": 94,
-        "reading": "Josu 1-3",
+        "reading": "Josué 1-3",
         "books": [
           {
             "abbrev": "Js",
@@ -1336,7 +1336,7 @@
       },
       {
         "day": 95,
-        "reading": "Josu 4-6",
+        "reading": "Josué 4-6",
         "books": [
           {
             "abbrev": "Js",
@@ -1351,7 +1351,7 @@
       },
       {
         "day": 96,
-        "reading": "Josu 7",
+        "reading": "Josué 7",
         "books": [
           {
             "abbrev": "Js",
@@ -1364,7 +1364,7 @@
       },
       {
         "day": 97,
-        "reading": "Josu 8-9",
+        "reading": "Josué 8-9",
         "books": [
           {
             "abbrev": "Js",
@@ -1378,7 +1378,7 @@
       },
       {
         "day": 98,
-        "reading": "Josu 10",
+        "reading": "Josué 10",
         "books": [
           {
             "abbrev": "Js",
@@ -1391,7 +1391,7 @@
       },
       {
         "day": 99,
-        "reading": "Josu 11-13",
+        "reading": "Josué 11-13",
         "books": [
           {
             "abbrev": "Js",
@@ -1406,7 +1406,7 @@
       },
       {
         "day": 100,
-        "reading": "Josu 14-16",
+        "reading": "Josué 14-16",
         "books": [
           {
             "abbrev": "Js",
@@ -1421,7 +1421,7 @@
       },
       {
         "day": 101,
-        "reading": "Josu 17-18",
+        "reading": "Josué 17-18",
         "books": [
           {
             "abbrev": "Js",
@@ -1435,7 +1435,7 @@
       },
       {
         "day": 102,
-        "reading": "Josu 19-21",
+        "reading": "Josué 19-21",
         "books": [
           {
             "abbrev": "Js",
@@ -1450,7 +1450,7 @@
       },
       {
         "day": 103,
-        "reading": "Josu 22",
+        "reading": "Josué 22",
         "books": [
           {
             "abbrev": "Js",
@@ -1463,7 +1463,7 @@
       },
       {
         "day": 104,
-        "reading": "Josu 23-24",
+        "reading": "Josué 23-24",
         "books": [
           {
             "abbrev": "Js",
@@ -1477,7 +1477,7 @@
       },
       {
         "day": 105,
-        "reading": "Juíz 1-2",
+        "reading": "Juízes 1-2",
         "books": [
           {
             "abbrev": "Jz",
@@ -1491,7 +1491,7 @@
       },
       {
         "day": 106,
-        "reading": "Juíz 3-4",
+        "reading": "Juízes 3-4",
         "books": [
           {
             "abbrev": "Jz",
@@ -1505,7 +1505,7 @@
       },
       {
         "day": 107,
-        "reading": "Juíz 5-6",
+        "reading": "Juízes 5-6",
         "books": [
           {
             "abbrev": "Jz",
@@ -1519,7 +1519,7 @@
       },
       {
         "day": 108,
-        "reading": "Juíz 7-8",
+        "reading": "Juízes 7-8",
         "books": [
           {
             "abbrev": "Jz",
@@ -1533,7 +1533,7 @@
       },
       {
         "day": 109,
-        "reading": "Juíz 9",
+        "reading": "Juízes 9",
         "books": [
           {
             "abbrev": "Jz",
@@ -1546,7 +1546,7 @@
       },
       {
         "day": 110,
-        "reading": "Juíz 10-11",
+        "reading": "Juízes 10-11",
         "books": [
           {
             "abbrev": "Jz",
@@ -1560,7 +1560,7 @@
       },
       {
         "day": 111,
-        "reading": "Juíz 12-13",
+        "reading": "Juízes 12-13",
         "books": [
           {
             "abbrev": "Jz",
@@ -1574,7 +1574,7 @@
       },
       {
         "day": 112,
-        "reading": "Juíz 14-15",
+        "reading": "Juízes 14-15",
         "books": [
           {
             "abbrev": "Jz",
@@ -1588,7 +1588,7 @@
       },
       {
         "day": 113,
-        "reading": "Juíz 16-18",
+        "reading": "Juízes 16-18",
         "books": [
           {
             "abbrev": "Jz",
@@ -1603,7 +1603,7 @@
       },
       {
         "day": 114,
-        "reading": "Juíz 19",
+        "reading": "Juízes 19",
         "books": [
           {
             "abbrev": "Jz",
@@ -1616,7 +1616,7 @@
       },
       {
         "day": 115,
-        "reading": "Juíz 20",
+        "reading": "Juízes 20",
         "books": [
           {
             "abbrev": "Jz",
@@ -1629,7 +1629,7 @@
       },
       {
         "day": 116,
-        "reading": "Juíz 21; Rute 1-2",
+        "reading": "Juízes 21; Rute 1-2",
         "books": [
           {
             "abbrev": "Jz",
@@ -1664,7 +1664,7 @@
       },
       {
         "day": 118,
-        "reading": "1 Sa 1-2",
+        "reading": "1 Samuel 1-2",
         "books": [
           {
             "abbrev": "1Sm",
@@ -1678,7 +1678,7 @@
       },
       {
         "day": 119,
-        "reading": "1 Sa 3-5",
+        "reading": "1 Samuel 3-5",
         "books": [
           {
             "abbrev": "1Sm",
@@ -1693,7 +1693,7 @@
       },
       {
         "day": 120,
-        "reading": "1 Sa 6-8",
+        "reading": "1 Samuel 6-8",
         "books": [
           {
             "abbrev": "1Sm",
@@ -1708,7 +1708,7 @@
       },
       {
         "day": 121,
-        "reading": "1 Sa 9-10",
+        "reading": "1 Samuel 9-10",
         "books": [
           {
             "abbrev": "1Sm",
@@ -1722,7 +1722,7 @@
       },
       {
         "day": 122,
-        "reading": "1 Sa 11-12",
+        "reading": "1 Samuel 11-12",
         "books": [
           {
             "abbrev": "1Sm",
@@ -1736,7 +1736,7 @@
       },
       {
         "day": 123,
-        "reading": "1 Sa 13-14",
+        "reading": "1 Samuel 13-14",
         "books": [
           {
             "abbrev": "1Sm",
@@ -1750,7 +1750,7 @@
       },
       {
         "day": 124,
-        "reading": "1 Sa 15",
+        "reading": "1 Samuel 15",
         "books": [
           {
             "abbrev": "1Sm",
@@ -1763,7 +1763,7 @@
       },
       {
         "day": 125,
-        "reading": "1 Sa 16-17",
+        "reading": "1 Samuel 16-17",
         "books": [
           {
             "abbrev": "1Sm",
@@ -1777,7 +1777,7 @@
       },
       {
         "day": 126,
-        "reading": "1 Sa 18-19",
+        "reading": "1 Samuel 18-19",
         "books": [
           {
             "abbrev": "1Sm",
@@ -1791,7 +1791,7 @@
       },
       {
         "day": 127,
-        "reading": "1 Sa 20",
+        "reading": "1 Samuel 20",
         "books": [
           {
             "abbrev": "1Sm",
@@ -1804,7 +1804,7 @@
       },
       {
         "day": 128,
-        "reading": "1 Sa 21-23",
+        "reading": "1 Samuel 21-23",
         "books": [
           {
             "abbrev": "1Sm",
@@ -1819,7 +1819,7 @@
       },
       {
         "day": 129,
-        "reading": "1 Sa 24-25",
+        "reading": "1 Samuel 24-25",
         "books": [
           {
             "abbrev": "1Sm",
@@ -1833,7 +1833,7 @@
       },
       {
         "day": 130,
-        "reading": "1 Sa 26",
+        "reading": "1 Samuel 26",
         "books": [
           {
             "abbrev": "1Sm",
@@ -1846,7 +1846,7 @@
       },
       {
         "day": 131,
-        "reading": "1 Sa 27-29",
+        "reading": "1 Samuel 27-29",
         "books": [
           {
             "abbrev": "1Sm",
@@ -1861,7 +1861,7 @@
       },
       {
         "day": 132,
-        "reading": "1 Sa 30-31; 2 Sa 1",
+        "reading": "1 Samuel 30-31; 2 Samuel 1",
         "books": [
           {
             "abbrev": "1Sm",
@@ -1882,7 +1882,7 @@
       },
       {
         "day": 133,
-        "reading": "2 Sa 2-3",
+        "reading": "2 Samuel 2-3",
         "books": [
           {
             "abbrev": "2Sm",
@@ -1896,7 +1896,7 @@
       },
       {
         "day": 134,
-        "reading": "2 Sa 4-5",
+        "reading": "2 Samuel 4-5",
         "books": [
           {
             "abbrev": "2Sm",
@@ -1910,7 +1910,7 @@
       },
       {
         "day": 135,
-        "reading": "2 Sa 6-7",
+        "reading": "2 Samuel 6-7",
         "books": [
           {
             "abbrev": "2Sm",
@@ -1924,7 +1924,7 @@
       },
       {
         "day": 136,
-        "reading": "2 Sa 8-10",
+        "reading": "2 Samuel 8-10",
         "books": [
           {
             "abbrev": "2Sm",
@@ -1939,7 +1939,7 @@
       },
       {
         "day": 137,
-        "reading": "2 Sa 11-12",
+        "reading": "2 Samuel 11-12",
         "books": [
           {
             "abbrev": "2Sm",
@@ -1953,7 +1953,7 @@
       },
       {
         "day": 138,
-        "reading": "2 Sa 13-14",
+        "reading": "2 Samuel 13-14",
         "books": [
           {
             "abbrev": "2Sm",
@@ -1967,7 +1967,7 @@
       },
       {
         "day": 139,
-        "reading": "2 Sa 15",
+        "reading": "2 Samuel 15",
         "books": [
           {
             "abbrev": "2Sm",
@@ -1980,7 +1980,7 @@
       },
       {
         "day": 140,
-        "reading": "2 Sa 16-17",
+        "reading": "2 Samuel 16-17",
         "books": [
           {
             "abbrev": "2Sm",
@@ -1994,7 +1994,7 @@
       },
       {
         "day": 141,
-        "reading": "2 Sa 18-19",
+        "reading": "2 Samuel 18-19",
         "books": [
           {
             "abbrev": "2Sm",
@@ -2008,7 +2008,7 @@
       },
       {
         "day": 142,
-        "reading": "2 Sa 20",
+        "reading": "2 Samuel 20",
         "books": [
           {
             "abbrev": "2Sm",
@@ -2021,7 +2021,7 @@
       },
       {
         "day": 143,
-        "reading": "2 Sa 21-22",
+        "reading": "2 Samuel 21-22",
         "books": [
           {
             "abbrev": "2Sm",
@@ -2035,7 +2035,7 @@
       },
       {
         "day": 144,
-        "reading": "2 Sa 23-24",
+        "reading": "2 Samuel 23-24",
         "books": [
           {
             "abbrev": "2Sm",
@@ -2049,7 +2049,7 @@
       },
       {
         "day": 145,
-        "reading": "1 Re 1",
+        "reading": "1 Reis 1",
         "books": [
           {
             "abbrev": "1Rs",
@@ -2062,7 +2062,7 @@
       },
       {
         "day": 146,
-        "reading": "1 Re 2",
+        "reading": "1 Reis 2",
         "books": [
           {
             "abbrev": "1Rs",
@@ -2075,7 +2075,7 @@
       },
       {
         "day": 147,
-        "reading": "1 Re 3-5",
+        "reading": "1 Reis 3-5",
         "books": [
           {
             "abbrev": "1Rs",
@@ -2090,7 +2090,7 @@
       },
       {
         "day": 148,
-        "reading": "1 Re 6",
+        "reading": "1 Reis 6",
         "books": [
           {
             "abbrev": "1Rs",
@@ -2103,7 +2103,7 @@
       },
       {
         "day": 149,
-        "reading": "1 Re 7",
+        "reading": "1 Reis 7",
         "books": [
           {
             "abbrev": "1Rs",
@@ -2116,7 +2116,7 @@
       },
       {
         "day": 150,
-        "reading": "1 Re 8",
+        "reading": "1 Reis 8",
         "books": [
           {
             "abbrev": "1Rs",
@@ -2129,7 +2129,7 @@
       },
       {
         "day": 151,
-        "reading": "1 Re 9-10",
+        "reading": "1 Reis 9-10",
         "books": [
           {
             "abbrev": "1Rs",
@@ -2143,7 +2143,7 @@
       },
       {
         "day": 152,
-        "reading": "1 Re 11-12",
+        "reading": "1 Reis 11-12",
         "books": [
           {
             "abbrev": "1Rs",
@@ -2157,7 +2157,7 @@
       },
       {
         "day": 153,
-        "reading": "1 Re 13",
+        "reading": "1 Reis 13",
         "books": [
           {
             "abbrev": "1Rs",
@@ -2170,7 +2170,7 @@
       },
       {
         "day": 154,
-        "reading": "1 Re 14-15",
+        "reading": "1 Reis 14-15",
         "books": [
           {
             "abbrev": "1Rs",
@@ -2184,7 +2184,7 @@
       },
       {
         "day": 155,
-        "reading": "1 Re 16-17",
+        "reading": "1 Reis 16-17",
         "books": [
           {
             "abbrev": "1Rs",
@@ -2198,7 +2198,7 @@
       },
       {
         "day": 156,
-        "reading": "1 Re 18",
+        "reading": "1 Reis 18",
         "books": [
           {
             "abbrev": "1Rs",
@@ -2211,7 +2211,7 @@
       },
       {
         "day": 157,
-        "reading": "1 Re 19-20",
+        "reading": "1 Reis 19-20",
         "books": [
           {
             "abbrev": "1Rs",
@@ -2225,7 +2225,7 @@
       },
       {
         "day": 158,
-        "reading": "1 Re 21",
+        "reading": "1 Reis 21",
         "books": [
           {
             "abbrev": "1Rs",
@@ -2238,7 +2238,7 @@
       },
       {
         "day": 159,
-        "reading": "1 Re 22; 2 Re 1",
+        "reading": "1 Reis 22; 2 Reis 1",
         "books": [
           {
             "abbrev": "1Rs",
@@ -2258,7 +2258,7 @@
       },
       {
         "day": 160,
-        "reading": "2 Re 2-3",
+        "reading": "2 Reis 2-3",
         "books": [
           {
             "abbrev": "2Rs",
@@ -2272,7 +2272,7 @@
       },
       {
         "day": 161,
-        "reading": "2 Re 4",
+        "reading": "2 Reis 4",
         "books": [
           {
             "abbrev": "2Rs",
@@ -2285,7 +2285,7 @@
       },
       {
         "day": 162,
-        "reading": "2 Re 5-6",
+        "reading": "2 Reis 5-6",
         "books": [
           {
             "abbrev": "2Rs",
@@ -2299,7 +2299,7 @@
       },
       {
         "day": 163,
-        "reading": "2 Re 7-8",
+        "reading": "2 Reis 7-8",
         "books": [
           {
             "abbrev": "2Rs",
@@ -2313,7 +2313,7 @@
       },
       {
         "day": 164,
-        "reading": "2 Re 9",
+        "reading": "2 Reis 9",
         "books": [
           {
             "abbrev": "2Rs",
@@ -2326,7 +2326,7 @@
       },
       {
         "day": 165,
-        "reading": "2 Re 10-11",
+        "reading": "2 Reis 10-11",
         "books": [
           {
             "abbrev": "2Rs",
@@ -2340,7 +2340,7 @@
       },
       {
         "day": 166,
-        "reading": "2 Re 12-13",
+        "reading": "2 Reis 12-13",
         "books": [
           {
             "abbrev": "2Rs",
@@ -2354,7 +2354,7 @@
       },
       {
         "day": 167,
-        "reading": "2 Re 14-15",
+        "reading": "2 Reis 14-15",
         "books": [
           {
             "abbrev": "2Rs",
@@ -2368,7 +2368,7 @@
       },
       {
         "day": 168,
-        "reading": "2 Re 16-17",
+        "reading": "2 Reis 16-17",
         "books": [
           {
             "abbrev": "2Rs",
@@ -2382,7 +2382,7 @@
       },
       {
         "day": 169,
-        "reading": "2 Re 18",
+        "reading": "2 Reis 18",
         "books": [
           {
             "abbrev": "2Rs",
@@ -2395,7 +2395,7 @@
       },
       {
         "day": 170,
-        "reading": "2 Re 19-20",
+        "reading": "2 Reis 19-20",
         "books": [
           {
             "abbrev": "2Rs",
@@ -2409,7 +2409,7 @@
       },
       {
         "day": 171,
-        "reading": "2 Re 21-22",
+        "reading": "2 Reis 21-22",
         "books": [
           {
             "abbrev": "2Rs",
@@ -2423,7 +2423,7 @@
       },
       {
         "day": 172,
-        "reading": "2 Re 23-24",
+        "reading": "2 Reis 23-24",
         "books": [
           {
             "abbrev": "2Rs",
@@ -2437,7 +2437,7 @@
       },
       {
         "day": 173,
-        "reading": "2 Re 25; 1 Cr 1",
+        "reading": "2 Reis 25; 1 Crônicas 1",
         "books": [
           {
             "abbrev": "2Rs",
@@ -2457,7 +2457,7 @@
       },
       {
         "day": 174,
-        "reading": "1 Cr 2-3",
+        "reading": "1 Crônicas 2-3",
         "books": [
           {
             "abbrev": "1Cr",
@@ -2471,7 +2471,7 @@
       },
       {
         "day": 175,
-        "reading": "1 Cr 4-5",
+        "reading": "1 Crônicas 4-5",
         "books": [
           {
             "abbrev": "1Cr",
@@ -2485,7 +2485,7 @@
       },
       {
         "day": 176,
-        "reading": "1 Cr 6-7",
+        "reading": "1 Crônicas 6-7",
         "books": [
           {
             "abbrev": "1Cr",
@@ -2499,7 +2499,7 @@
       },
       {
         "day": 177,
-        "reading": "1 Cr 8-9",
+        "reading": "1 Crônicas 8-9",
         "books": [
           {
             "abbrev": "1Cr",
@@ -2513,7 +2513,7 @@
       },
       {
         "day": 178,
-        "reading": "1 Cr 10-11",
+        "reading": "1 Crônicas 10-11",
         "books": [
           {
             "abbrev": "1Cr",
@@ -2527,7 +2527,7 @@
       },
       {
         "day": 179,
-        "reading": "1 Cr 12-14",
+        "reading": "1 Crônicas 12-14",
         "books": [
           {
             "abbrev": "1Cr",
@@ -2542,7 +2542,7 @@
       },
       {
         "day": 180,
-        "reading": "1 Cr 15-16",
+        "reading": "1 Crônicas 15-16",
         "books": [
           {
             "abbrev": "1Cr",
@@ -2556,7 +2556,7 @@
       },
       {
         "day": 181,
-        "reading": "1 Cr 17-20",
+        "reading": "1 Crônicas 17-20",
         "books": [
           {
             "abbrev": "1Cr",
@@ -2572,7 +2572,7 @@
       },
       {
         "day": 182,
-        "reading": "1 Cr 21-22",
+        "reading": "1 Crônicas 21-22",
         "books": [
           {
             "abbrev": "1Cr",
@@ -2586,7 +2586,7 @@
       },
       {
         "day": 183,
-        "reading": "1 Cr 23-25",
+        "reading": "1 Crônicas 23-25",
         "books": [
           {
             "abbrev": "1Cr",
@@ -2601,7 +2601,7 @@
       },
       {
         "day": 184,
-        "reading": "1 Cr 26-27",
+        "reading": "1 Crônicas 26-27",
         "books": [
           {
             "abbrev": "1Cr",
@@ -2615,7 +2615,7 @@
       },
       {
         "day": 185,
-        "reading": "1 Cr 28-29",
+        "reading": "1 Crônicas 28-29",
         "books": [
           {
             "abbrev": "1Cr",
@@ -2629,7 +2629,7 @@
       },
       {
         "day": 186,
-        "reading": "2 Cr 1-3",
+        "reading": "2 Crônicas 1-3",
         "books": [
           {
             "abbrev": "2Cr",
@@ -2644,7 +2644,7 @@
       },
       {
         "day": 187,
-        "reading": "2 Cr 4-5",
+        "reading": "2 Crônicas 4-5",
         "books": [
           {
             "abbrev": "2Cr",
@@ -2658,7 +2658,7 @@
       },
       {
         "day": 188,
-        "reading": "2 Cr 6-7",
+        "reading": "2 Crônicas 6-7",
         "books": [
           {
             "abbrev": "2Cr",
@@ -2672,7 +2672,7 @@
       },
       {
         "day": 189,
-        "reading": "2 Cr 8-9",
+        "reading": "2 Crônicas 8-9",
         "books": [
           {
             "abbrev": "2Cr",
@@ -2686,7 +2686,7 @@
       },
       {
         "day": 190,
-        "reading": "2 Cr 10-13",
+        "reading": "2 Crônicas 10-13",
         "books": [
           {
             "abbrev": "2Cr",
@@ -2702,7 +2702,7 @@
       },
       {
         "day": 191,
-        "reading": "2 Cr 14-16",
+        "reading": "2 Crônicas 14-16",
         "books": [
           {
             "abbrev": "2Cr",
@@ -2717,7 +2717,7 @@
       },
       {
         "day": 192,
-        "reading": "2 Cr 17-18",
+        "reading": "2 Crônicas 17-18",
         "books": [
           {
             "abbrev": "2Cr",
@@ -2731,7 +2731,7 @@
       },
       {
         "day": 193,
-        "reading": "2 Cr 19-21",
+        "reading": "2 Crônicas 19-21",
         "books": [
           {
             "abbrev": "2Cr",
@@ -2746,7 +2746,7 @@
       },
       {
         "day": 194,
-        "reading": "2 Cr 22-23",
+        "reading": "2 Crônicas 22-23",
         "books": [
           {
             "abbrev": "2Cr",
@@ -2760,7 +2760,7 @@
       },
       {
         "day": 195,
-        "reading": "2 Cr 24-25",
+        "reading": "2 Crônicas 24-25",
         "books": [
           {
             "abbrev": "2Cr",
@@ -2774,7 +2774,7 @@
       },
       {
         "day": 196,
-        "reading": "2 Cr 26-28",
+        "reading": "2 Crônicas 26-28",
         "books": [
           {
             "abbrev": "2Cr",
@@ -2789,7 +2789,7 @@
       },
       {
         "day": 197,
-        "reading": "2 Cr 29",
+        "reading": "2 Crônicas 29",
         "books": [
           {
             "abbrev": "2Cr",
@@ -2802,7 +2802,7 @@
       },
       {
         "day": 198,
-        "reading": "2 Cr 30-31",
+        "reading": "2 Crônicas 30-31",
         "books": [
           {
             "abbrev": "2Cr",
@@ -2816,7 +2816,7 @@
       },
       {
         "day": 199,
-        "reading": "2 Cr 32-33",
+        "reading": "2 Crônicas 32-33",
         "books": [
           {
             "abbrev": "2Cr",
@@ -2830,7 +2830,7 @@
       },
       {
         "day": 200,
-        "reading": "2 Cr 34",
+        "reading": "2 Crônicas 34",
         "books": [
           {
             "abbrev": "2Cr",
@@ -2843,7 +2843,7 @@
       },
       {
         "day": 201,
-        "reading": "2 Cr 35-36; Esdr 1",
+        "reading": "2 Crônicas 35-36; Esdras 1",
         "books": [
           {
             "abbrev": "2Cr",
@@ -2864,7 +2864,7 @@
       },
       {
         "day": 202,
-        "reading": "Esdr 2-3",
+        "reading": "Esdras 2-3",
         "books": [
           {
             "abbrev": "Ed",
@@ -2878,7 +2878,7 @@
       },
       {
         "day": 203,
-        "reading": "Esdr 4-6",
+        "reading": "Esdras 4-6",
         "books": [
           {
             "abbrev": "Ed",
@@ -2893,7 +2893,7 @@
       },
       {
         "day": 204,
-        "reading": "Esdr 7",
+        "reading": "Esdras 7",
         "books": [
           {
             "abbrev": "Ed",
@@ -2906,7 +2906,7 @@
       },
       {
         "day": 205,
-        "reading": "Esdr 8-10",
+        "reading": "Esdras 8-10",
         "books": [
           {
             "abbrev": "Ed",
@@ -2921,7 +2921,7 @@
       },
       {
         "day": 206,
-        "reading": "Neem 1-2",
+        "reading": "Neemias 1-2",
         "books": [
           {
             "abbrev": "Ne",
@@ -2935,7 +2935,7 @@
       },
       {
         "day": 207,
-        "reading": "Neem 3-4",
+        "reading": "Neemias 3-4",
         "books": [
           {
             "abbrev": "Ne",
@@ -2949,7 +2949,7 @@
       },
       {
         "day": 208,
-        "reading": "Neem 5-7",
+        "reading": "Neemias 5-7",
         "books": [
           {
             "abbrev": "Ne",
@@ -2964,7 +2964,7 @@
       },
       {
         "day": 209,
-        "reading": "Neem 8",
+        "reading": "Neemias 8",
         "books": [
           {
             "abbrev": "Ne",
@@ -2977,7 +2977,7 @@
       },
       {
         "day": 210,
-        "reading": "Neem 9-10",
+        "reading": "Neemias 9-10",
         "books": [
           {
             "abbrev": "Ne",
@@ -2991,7 +2991,7 @@
       },
       {
         "day": 211,
-        "reading": "Neem 11-12",
+        "reading": "Neemias 11-12",
         "books": [
           {
             "abbrev": "Ne",
@@ -3005,7 +3005,7 @@
       },
       {
         "day": 212,
-        "reading": "Neem 13; Este 1",
+        "reading": "Neemias 13; Ester 1",
         "books": [
           {
             "abbrev": "Ne",
@@ -3025,7 +3025,7 @@
       },
       {
         "day": 213,
-        "reading": "Este 2-4",
+        "reading": "Ester 2-4",
         "books": [
           {
             "abbrev": "Et",
@@ -3040,7 +3040,7 @@
       },
       {
         "day": 214,
-        "reading": "Este 5-7",
+        "reading": "Ester 5-7",
         "books": [
           {
             "abbrev": "Et",
@@ -3055,7 +3055,7 @@
       },
       {
         "day": 215,
-        "reading": "Este 8-10",
+        "reading": "Ester 8-10",
         "books": [
           {
             "abbrev": "Et",
@@ -3228,7 +3228,7 @@
       },
       {
         "day": 226,
-        "reading": "Jó 39-42; Salm 1",
+        "reading": "Jó 39-42; Salmos 1",
         "books": [
           {
             "abbrev": "Jó",
@@ -3251,7 +3251,7 @@
       },
       {
         "day": 227,
-        "reading": "Salm 2-8",
+        "reading": "Salmos 2-8",
         "books": [
           {
             "abbrev": "Sl",
@@ -3270,7 +3270,7 @@
       },
       {
         "day": 228,
-        "reading": "Salm 9-17",
+        "reading": "Salmos 9-17",
         "books": [
           {
             "abbrev": "Sl",
@@ -3291,7 +3291,7 @@
       },
       {
         "day": 229,
-        "reading": "Salm 18-21",
+        "reading": "Salmos 18-21",
         "books": [
           {
             "abbrev": "Sl",
@@ -3307,7 +3307,7 @@
       },
       {
         "day": 230,
-        "reading": "Salm 22-27",
+        "reading": "Salmos 22-27",
         "books": [
           {
             "abbrev": "Sl",
@@ -3325,7 +3325,7 @@
       },
       {
         "day": 231,
-        "reading": "Salm 28-33",
+        "reading": "Salmos 28-33",
         "books": [
           {
             "abbrev": "Sl",
@@ -3343,7 +3343,7 @@
       },
       {
         "day": 232,
-        "reading": "Salm 34-37",
+        "reading": "Salmos 34-37",
         "books": [
           {
             "abbrev": "Sl",
@@ -3359,7 +3359,7 @@
       },
       {
         "day": 233,
-        "reading": "Salm 38-41",
+        "reading": "Salmos 38-41",
         "books": [
           {
             "abbrev": "Sl",
@@ -3375,7 +3375,7 @@
       },
       {
         "day": 234,
-        "reading": "Salm 42-48",
+        "reading": "Salmos 42-48",
         "books": [
           {
             "abbrev": "Sl",
@@ -3394,7 +3394,7 @@
       },
       {
         "day": 235,
-        "reading": "Salm 49-54",
+        "reading": "Salmos 49-54",
         "books": [
           {
             "abbrev": "Sl",
@@ -3412,7 +3412,7 @@
       },
       {
         "day": 236,
-        "reading": "Salm 55-60",
+        "reading": "Salmos 55-60",
         "books": [
           {
             "abbrev": "Sl",
@@ -3430,7 +3430,7 @@
       },
       {
         "day": 237,
-        "reading": "Salm 61-67",
+        "reading": "Salmos 61-67",
         "books": [
           {
             "abbrev": "Sl",
@@ -3449,7 +3449,7 @@
       },
       {
         "day": 238,
-        "reading": "Salm 68-71",
+        "reading": "Salmos 68-71",
         "books": [
           {
             "abbrev": "Sl",
@@ -3465,7 +3465,7 @@
       },
       {
         "day": 239,
-        "reading": "Salm 72-76",
+        "reading": "Salmos 72-76",
         "books": [
           {
             "abbrev": "Sl",
@@ -3482,7 +3482,7 @@
       },
       {
         "day": 240,
-        "reading": "Salm 77-78",
+        "reading": "Salmos 77-78",
         "books": [
           {
             "abbrev": "Sl",
@@ -3496,7 +3496,7 @@
       },
       {
         "day": 241,
-        "reading": "Salm 79-85",
+        "reading": "Salmos 79-85",
         "books": [
           {
             "abbrev": "Sl",
@@ -3515,7 +3515,7 @@
       },
       {
         "day": 242,
-        "reading": "Salm 86-89",
+        "reading": "Salmos 86-89",
         "books": [
           {
             "abbrev": "Sl",
@@ -3531,7 +3531,7 @@
       },
       {
         "day": 243,
-        "reading": "Salm 90-96",
+        "reading": "Salmos 90-96",
         "books": [
           {
             "abbrev": "Sl",
@@ -3550,7 +3550,7 @@
       },
       {
         "day": 244,
-        "reading": "Salm 97-103",
+        "reading": "Salmos 97-103",
         "books": [
           {
             "abbrev": "Sl",
@@ -3569,7 +3569,7 @@
       },
       {
         "day": 245,
-        "reading": "Salm 104-106",
+        "reading": "Salmos 104-106",
         "books": [
           {
             "abbrev": "Sl",
@@ -3584,7 +3584,7 @@
       },
       {
         "day": 246,
-        "reading": "Salm 107-109",
+        "reading": "Salmos 107-109",
         "books": [
           {
             "abbrev": "Sl",
@@ -3599,7 +3599,7 @@
       },
       {
         "day": 247,
-        "reading": "Salm 110-118",
+        "reading": "Salmos 110-118",
         "books": [
           {
             "abbrev": "Sl",
@@ -3620,7 +3620,7 @@
       },
       {
         "day": 248,
-        "reading": "Salm 119",
+        "reading": "Salmos 119",
         "books": [
           {
             "abbrev": "Sl",
@@ -3633,7 +3633,7 @@
       },
       {
         "day": 249,
-        "reading": "Salm 120-127",
+        "reading": "Salmos 120-127",
         "books": [
           {
             "abbrev": "Sl",
@@ -3653,7 +3653,7 @@
       },
       {
         "day": 250,
-        "reading": "Salm 128-137",
+        "reading": "Salmos 128-137",
         "books": [
           {
             "abbrev": "Sl",
@@ -3675,7 +3675,7 @@
       },
       {
         "day": 251,
-        "reading": "Salm 138-144",
+        "reading": "Salmos 138-144",
         "books": [
           {
             "abbrev": "Sl",
@@ -3694,7 +3694,7 @@
       },
       {
         "day": 252,
-        "reading": "Salm 145-150; Prov 1",
+        "reading": "Salmos 145-150; Provérbios 1",
         "books": [
           {
             "abbrev": "Sl",
@@ -3719,7 +3719,7 @@
       },
       {
         "day": 253,
-        "reading": "Prov 2-5",
+        "reading": "Provérbios 2-5",
         "books": [
           {
             "abbrev": "Pv",
@@ -3735,7 +3735,7 @@
       },
       {
         "day": 254,
-        "reading": "Prov 6-8",
+        "reading": "Provérbios 6-8",
         "books": [
           {
             "abbrev": "Pv",
@@ -3750,7 +3750,7 @@
       },
       {
         "day": 255,
-        "reading": "Prov 9-12",
+        "reading": "Provérbios 9-12",
         "books": [
           {
             "abbrev": "Pv",
@@ -3766,7 +3766,7 @@
       },
       {
         "day": 256,
-        "reading": "Prov 13-15",
+        "reading": "Provérbios 13-15",
         "books": [
           {
             "abbrev": "Pv",
@@ -3781,7 +3781,7 @@
       },
       {
         "day": 257,
-        "reading": "Prov 16-19",
+        "reading": "Provérbios 16-19",
         "books": [
           {
             "abbrev": "Pv",
@@ -3797,7 +3797,7 @@
       },
       {
         "day": 258,
-        "reading": "Prov 20-22",
+        "reading": "Provérbios 20-22",
         "books": [
           {
             "abbrev": "Pv",
@@ -3812,7 +3812,7 @@
       },
       {
         "day": 259,
-        "reading": "Prov 23-25",
+        "reading": "Provérbios 23-25",
         "books": [
           {
             "abbrev": "Pv",
@@ -3827,7 +3827,7 @@
       },
       {
         "day": 260,
-        "reading": "Prov 26-29",
+        "reading": "Provérbios 26-29",
         "books": [
           {
             "abbrev": "Pv",
@@ -3843,7 +3843,7 @@
       },
       {
         "day": 261,
-        "reading": "Prov 30-31; Ecle 1",
+        "reading": "Provérbios 30-31; Eclesiastes 1",
         "books": [
           {
             "abbrev": "Pv",
@@ -3864,7 +3864,7 @@
       },
       {
         "day": 262,
-        "reading": "Ecle 2-4",
+        "reading": "Eclesiastes 2-4",
         "books": [
           {
             "abbrev": "Ec",
@@ -3879,7 +3879,7 @@
       },
       {
         "day": 263,
-        "reading": "Ecle 5-7",
+        "reading": "Eclesiastes 5-7",
         "books": [
           {
             "abbrev": "Ec",
@@ -3894,7 +3894,7 @@
       },
       {
         "day": 264,
-        "reading": "Ecle 8-11",
+        "reading": "Eclesiastes 8-11",
         "books": [
           {
             "abbrev": "Ec",
@@ -3910,7 +3910,7 @@
       },
       {
         "day": 265,
-        "reading": "Ecle 12; Cânt 1-4",
+        "reading": "Eclesiastes 12; Cânticos 1-4",
         "books": [
           {
             "abbrev": "Ec",
@@ -3933,7 +3933,7 @@
       },
       {
         "day": 266,
-        "reading": "Cânt 5-8; Isaí 1",
+        "reading": "Cânticos 5-8; Isaías 1",
         "books": [
           {
             "abbrev": "Ct",
@@ -3956,7 +3956,7 @@
       },
       {
         "day": 267,
-        "reading": "Isaí 2-4",
+        "reading": "Isaías 2-4",
         "books": [
           {
             "abbrev": "Is",
@@ -3971,7 +3971,7 @@
       },
       {
         "day": 268,
-        "reading": "Isaí 5-7",
+        "reading": "Isaías 5-7",
         "books": [
           {
             "abbrev": "Is",
@@ -3986,7 +3986,7 @@
       },
       {
         "day": 269,
-        "reading": "Isaí 8-9",
+        "reading": "Isaías 8-9",
         "books": [
           {
             "abbrev": "Is",
@@ -4000,7 +4000,7 @@
       },
       {
         "day": 270,
-        "reading": "Isaí 10-13",
+        "reading": "Isaías 10-13",
         "books": [
           {
             "abbrev": "Is",
@@ -4016,7 +4016,7 @@
       },
       {
         "day": 271,
-        "reading": "Isaí 14-16",
+        "reading": "Isaías 14-16",
         "books": [
           {
             "abbrev": "Is",
@@ -4031,7 +4031,7 @@
       },
       {
         "day": 272,
-        "reading": "Isaí 17-20",
+        "reading": "Isaías 17-20",
         "books": [
           {
             "abbrev": "Is",
@@ -4047,7 +4047,7 @@
       },
       {
         "day": 273,
-        "reading": "Isaí 21-23",
+        "reading": "Isaías 21-23",
         "books": [
           {
             "abbrev": "Is",
@@ -4062,7 +4062,7 @@
       },
       {
         "day": 274,
-        "reading": "Isaí 24-27",
+        "reading": "Isaías 24-27",
         "books": [
           {
             "abbrev": "Is",
@@ -4078,7 +4078,7 @@
       },
       {
         "day": 275,
-        "reading": "Isaí 28-29",
+        "reading": "Isaías 28-29",
         "books": [
           {
             "abbrev": "Is",
@@ -4092,7 +4092,7 @@
       },
       {
         "day": 276,
-        "reading": "Isaí 30-32",
+        "reading": "Isaías 30-32",
         "books": [
           {
             "abbrev": "Is",
@@ -4107,7 +4107,7 @@
       },
       {
         "day": 277,
-        "reading": "Isaí 33-35",
+        "reading": "Isaías 33-35",
         "books": [
           {
             "abbrev": "Is",
@@ -4122,7 +4122,7 @@
       },
       {
         "day": 278,
-        "reading": "Isaí 36-37",
+        "reading": "Isaías 36-37",
         "books": [
           {
             "abbrev": "Is",
@@ -4136,7 +4136,7 @@
       },
       {
         "day": 279,
-        "reading": "Isaí 38-40",
+        "reading": "Isaías 38-40",
         "books": [
           {
             "abbrev": "Is",
@@ -4151,7 +4151,7 @@
       },
       {
         "day": 280,
-        "reading": "Isaí 41-43",
+        "reading": "Isaías 41-43",
         "books": [
           {
             "abbrev": "Is",
@@ -4166,7 +4166,7 @@
       },
       {
         "day": 281,
-        "reading": "Isaí 44-45",
+        "reading": "Isaías 44-45",
         "books": [
           {
             "abbrev": "Is",
@@ -4180,7 +4180,7 @@
       },
       {
         "day": 282,
-        "reading": "Isaí 46-48",
+        "reading": "Isaías 46-48",
         "books": [
           {
             "abbrev": "Is",
@@ -4195,7 +4195,7 @@
       },
       {
         "day": 283,
-        "reading": "Isaí 49-50",
+        "reading": "Isaías 49-50",
         "books": [
           {
             "abbrev": "Is",
@@ -4209,7 +4209,7 @@
       },
       {
         "day": 284,
-        "reading": "Isaí 51-54",
+        "reading": "Isaías 51-54",
         "books": [
           {
             "abbrev": "Is",
@@ -4225,7 +4225,7 @@
       },
       {
         "day": 285,
-        "reading": "Isaí 55-57",
+        "reading": "Isaías 55-57",
         "books": [
           {
             "abbrev": "Is",
@@ -4240,7 +4240,7 @@
       },
       {
         "day": 286,
-        "reading": "Isaí 58-60",
+        "reading": "Isaías 58-60",
         "books": [
           {
             "abbrev": "Is",
@@ -4255,7 +4255,7 @@
       },
       {
         "day": 287,
-        "reading": "Isaí 61-64",
+        "reading": "Isaías 61-64",
         "books": [
           {
             "abbrev": "Is",
@@ -4271,7 +4271,7 @@
       },
       {
         "day": 288,
-        "reading": "Isaí 65-66",
+        "reading": "Isaías 65-66",
         "books": [
           {
             "abbrev": "Is",
@@ -4285,7 +4285,7 @@
       },
       {
         "day": 289,
-        "reading": "Jere 1-2",
+        "reading": "Jeremias 1-2",
         "books": [
           {
             "abbrev": "Jr",
@@ -4299,7 +4299,7 @@
       },
       {
         "day": 290,
-        "reading": "Jere 3-4",
+        "reading": "Jeremias 3-4",
         "books": [
           {
             "abbrev": "Jr",
@@ -4313,7 +4313,7 @@
       },
       {
         "day": 291,
-        "reading": "Jere 5-6",
+        "reading": "Jeremias 5-6",
         "books": [
           {
             "abbrev": "Jr",
@@ -4327,7 +4327,7 @@
       },
       {
         "day": 292,
-        "reading": "Jere 7-8",
+        "reading": "Jeremias 7-8",
         "books": [
           {
             "abbrev": "Jr",
@@ -4341,7 +4341,7 @@
       },
       {
         "day": 293,
-        "reading": "Jere 9-10",
+        "reading": "Jeremias 9-10",
         "books": [
           {
             "abbrev": "Jr",
@@ -4355,7 +4355,7 @@
       },
       {
         "day": 294,
-        "reading": "Jere 11-13",
+        "reading": "Jeremias 11-13",
         "books": [
           {
             "abbrev": "Jr",
@@ -4370,7 +4370,7 @@
       },
       {
         "day": 295,
-        "reading": "Jere 14-15",
+        "reading": "Jeremias 14-15",
         "books": [
           {
             "abbrev": "Jr",
@@ -4384,7 +4384,7 @@
       },
       {
         "day": 296,
-        "reading": "Jere 16-17",
+        "reading": "Jeremias 16-17",
         "books": [
           {
             "abbrev": "Jr",
@@ -4398,7 +4398,7 @@
       },
       {
         "day": 297,
-        "reading": "Jere 18-20",
+        "reading": "Jeremias 18-20",
         "books": [
           {
             "abbrev": "Jr",
@@ -4413,7 +4413,7 @@
       },
       {
         "day": 298,
-        "reading": "Jere 21-22",
+        "reading": "Jeremias 21-22",
         "books": [
           {
             "abbrev": "Jr",
@@ -4427,7 +4427,7 @@
       },
       {
         "day": 299,
-        "reading": "Jere 23-25",
+        "reading": "Jeremias 23-25",
         "books": [
           {
             "abbrev": "Jr",
@@ -4442,7 +4442,7 @@
       },
       {
         "day": 300,
-        "reading": "Jere 26",
+        "reading": "Jeremias 26",
         "books": [
           {
             "abbrev": "Jr",
@@ -4455,7 +4455,7 @@
       },
       {
         "day": 301,
-        "reading": "Jere 27-29",
+        "reading": "Jeremias 27-29",
         "books": [
           {
             "abbrev": "Jr",
@@ -4470,7 +4470,7 @@
       },
       {
         "day": 302,
-        "reading": "Jere 30",
+        "reading": "Jeremias 30",
         "books": [
           {
             "abbrev": "Jr",
@@ -4483,7 +4483,7 @@
       },
       {
         "day": 303,
-        "reading": "Jere 31-32",
+        "reading": "Jeremias 31-32",
         "books": [
           {
             "abbrev": "Jr",
@@ -4497,7 +4497,7 @@
       },
       {
         "day": 304,
-        "reading": "Jere 33",
+        "reading": "Jeremias 33",
         "books": [
           {
             "abbrev": "Jr",
@@ -4510,7 +4510,7 @@
       },
       {
         "day": 305,
-        "reading": "Jere 34-35",
+        "reading": "Jeremias 34-35",
         "books": [
           {
             "abbrev": "Jr",
@@ -4524,7 +4524,7 @@
       },
       {
         "day": 306,
-        "reading": "Jere 36-37",
+        "reading": "Jeremias 36-37",
         "books": [
           {
             "abbrev": "Jr",
@@ -4538,7 +4538,7 @@
       },
       {
         "day": 307,
-        "reading": "Jere 38-40",
+        "reading": "Jeremias 38-40",
         "books": [
           {
             "abbrev": "Jr",
@@ -4553,7 +4553,7 @@
       },
       {
         "day": 308,
-        "reading": "Jere 41-42",
+        "reading": "Jeremias 41-42",
         "books": [
           {
             "abbrev": "Jr",
@@ -4567,7 +4567,7 @@
       },
       {
         "day": 309,
-        "reading": "Jere 43-44",
+        "reading": "Jeremias 43-44",
         "books": [
           {
             "abbrev": "Jr",
@@ -4581,7 +4581,7 @@
       },
       {
         "day": 310,
-        "reading": "Jere 45-47",
+        "reading": "Jeremias 45-47",
         "books": [
           {
             "abbrev": "Jr",
@@ -4596,7 +4596,7 @@
       },
       {
         "day": 311,
-        "reading": "Jere 48-49",
+        "reading": "Jeremias 48-49",
         "books": [
           {
             "abbrev": "Jr",
@@ -4610,7 +4610,7 @@
       },
       {
         "day": 312,
-        "reading": "Jere 50",
+        "reading": "Jeremias 50",
         "books": [
           {
             "abbrev": "Jr",
@@ -4623,7 +4623,7 @@
       },
       {
         "day": 313,
-        "reading": "Jere 51",
+        "reading": "Jeremias 51",
         "books": [
           {
             "abbrev": "Jr",
@@ -4636,7 +4636,7 @@
       },
       {
         "day": 314,
-        "reading": "Jere 52",
+        "reading": "Jeremias 52",
         "books": [
           {
             "abbrev": "Jr",
@@ -4649,7 +4649,7 @@
       },
       {
         "day": 315,
-        "reading": "Lame 1-2",
+        "reading": "Lamentações 1-2",
         "books": [
           {
             "abbrev": "Lm",
@@ -4663,7 +4663,7 @@
       },
       {
         "day": 316,
-        "reading": "Lame 3-5",
+        "reading": "Lamentações 3-5",
         "books": [
           {
             "abbrev": "Lm",
@@ -4678,7 +4678,7 @@
       },
       {
         "day": 317,
-        "reading": "Ezeq 1-3",
+        "reading": "Ezequiel 1-3",
         "books": [
           {
             "abbrev": "Ez",
@@ -4693,7 +4693,7 @@
       },
       {
         "day": 318,
-        "reading": "Ezeq 4-6",
+        "reading": "Ezequiel 4-6",
         "books": [
           {
             "abbrev": "Ez",
@@ -4708,7 +4708,7 @@
       },
       {
         "day": 319,
-        "reading": "Ezeq 7-8",
+        "reading": "Ezequiel 7-8",
         "books": [
           {
             "abbrev": "Ez",
@@ -4722,7 +4722,7 @@
       },
       {
         "day": 320,
-        "reading": "Ezeq 9-11",
+        "reading": "Ezequiel 9-11",
         "books": [
           {
             "abbrev": "Ez",
@@ -4737,7 +4737,7 @@
       },
       {
         "day": 321,
-        "reading": "Ezeq 12-13",
+        "reading": "Ezequiel 12-13",
         "books": [
           {
             "abbrev": "Ez",
@@ -4751,7 +4751,7 @@
       },
       {
         "day": 322,
-        "reading": "Ezeq 14-15",
+        "reading": "Ezequiel 14-15",
         "books": [
           {
             "abbrev": "Ez",
@@ -4765,7 +4765,7 @@
       },
       {
         "day": 323,
-        "reading": "Ezeq 16-17",
+        "reading": "Ezequiel 16-17",
         "books": [
           {
             "abbrev": "Ez",
@@ -4779,7 +4779,7 @@
       },
       {
         "day": 324,
-        "reading": "Ezeq 18-19",
+        "reading": "Ezequiel 18-19",
         "books": [
           {
             "abbrev": "Ez",
@@ -4793,7 +4793,7 @@
       },
       {
         "day": 325,
-        "reading": "Ezeq 20",
+        "reading": "Ezequiel 20",
         "books": [
           {
             "abbrev": "Ez",
@@ -4806,7 +4806,7 @@
       },
       {
         "day": 326,
-        "reading": "Ezeq 21-22",
+        "reading": "Ezequiel 21-22",
         "books": [
           {
             "abbrev": "Ez",
@@ -4820,7 +4820,7 @@
       },
       {
         "day": 327,
-        "reading": "Ezeq 23",
+        "reading": "Ezequiel 23",
         "books": [
           {
             "abbrev": "Ez",
@@ -4833,7 +4833,7 @@
       },
       {
         "day": 328,
-        "reading": "Ezeq 24-26",
+        "reading": "Ezequiel 24-26",
         "books": [
           {
             "abbrev": "Ez",
@@ -4848,7 +4848,7 @@
       },
       {
         "day": 329,
-        "reading": "Ezeq 27-28",
+        "reading": "Ezequiel 27-28",
         "books": [
           {
             "abbrev": "Ez",
@@ -4862,7 +4862,7 @@
       },
       {
         "day": 330,
-        "reading": "Ezeq 29-30",
+        "reading": "Ezequiel 29-30",
         "books": [
           {
             "abbrev": "Ez",
@@ -4876,7 +4876,7 @@
       },
       {
         "day": 331,
-        "reading": "Ezeq 31-32",
+        "reading": "Ezequiel 31-32",
         "books": [
           {
             "abbrev": "Ez",
@@ -4890,7 +4890,7 @@
       },
       {
         "day": 332,
-        "reading": "Ezeq 33",
+        "reading": "Ezequiel 33",
         "books": [
           {
             "abbrev": "Ez",
@@ -4903,7 +4903,7 @@
       },
       {
         "day": 333,
-        "reading": "Ezeq 34-36",
+        "reading": "Ezequiel 34-36",
         "books": [
           {
             "abbrev": "Ez",
@@ -4918,7 +4918,7 @@
       },
       {
         "day": 334,
-        "reading": "Ezeq 37",
+        "reading": "Ezequiel 37",
         "books": [
           {
             "abbrev": "Ez",
@@ -4931,7 +4931,7 @@
       },
       {
         "day": 335,
-        "reading": "Ezeq 38-39",
+        "reading": "Ezequiel 38-39",
         "books": [
           {
             "abbrev": "Ez",
@@ -4945,7 +4945,7 @@
       },
       {
         "day": 336,
-        "reading": "Ezeq 40",
+        "reading": "Ezequiel 40",
         "books": [
           {
             "abbrev": "Ez",
@@ -4958,7 +4958,7 @@
       },
       {
         "day": 337,
-        "reading": "Ezeq 41-43",
+        "reading": "Ezequiel 41-43",
         "books": [
           {
             "abbrev": "Ez",
@@ -4973,7 +4973,7 @@
       },
       {
         "day": 338,
-        "reading": "Ezeq 44",
+        "reading": "Ezequiel 44",
         "books": [
           {
             "abbrev": "Ez",
@@ -4986,7 +4986,7 @@
       },
       {
         "day": 339,
-        "reading": "Ezeq 45-46",
+        "reading": "Ezequiel 45-46",
         "books": [
           {
             "abbrev": "Ez",
@@ -5000,7 +5000,7 @@
       },
       {
         "day": 340,
-        "reading": "Ezeq 47-48",
+        "reading": "Ezequiel 47-48",
         "books": [
           {
             "abbrev": "Ez",
@@ -5014,7 +5014,7 @@
       },
       {
         "day": 341,
-        "reading": "Dani 1-2",
+        "reading": "Daniel 1-2",
         "books": [
           {
             "abbrev": "Dn",
@@ -5028,7 +5028,7 @@
       },
       {
         "day": 342,
-        "reading": "Dani 3",
+        "reading": "Daniel 3",
         "books": [
           {
             "abbrev": "Dn",
@@ -5041,7 +5041,7 @@
       },
       {
         "day": 343,
-        "reading": "Dani 4-5",
+        "reading": "Daniel 4-5",
         "books": [
           {
             "abbrev": "Dn",
@@ -5055,7 +5055,7 @@
       },
       {
         "day": 344,
-        "reading": "Dani 6",
+        "reading": "Daniel 6",
         "books": [
           {
             "abbrev": "Dn",
@@ -5068,7 +5068,7 @@
       },
       {
         "day": 345,
-        "reading": "Dani 7-8",
+        "reading": "Daniel 7-8",
         "books": [
           {
             "abbrev": "Dn",
@@ -5082,7 +5082,7 @@
       },
       {
         "day": 346,
-        "reading": "Dani 9-10",
+        "reading": "Daniel 9-10",
         "books": [
           {
             "abbrev": "Dn",
@@ -5096,7 +5096,7 @@
       },
       {
         "day": 347,
-        "reading": "Dani 11-12",
+        "reading": "Daniel 11-12",
         "books": [
           {
             "abbrev": "Dn",
@@ -5110,7 +5110,7 @@
       },
       {
         "day": 348,
-        "reading": "Osei 1-4",
+        "reading": "Oséias 1-4",
         "books": [
           {
             "abbrev": "Os",
@@ -5126,7 +5126,7 @@
       },
       {
         "day": 349,
-        "reading": "Osei 5-8",
+        "reading": "Oséias 5-8",
         "books": [
           {
             "abbrev": "Os",
@@ -5142,7 +5142,7 @@
       },
       {
         "day": 350,
-        "reading": "Osei 9-13",
+        "reading": "Oséias 9-13",
         "books": [
           {
             "abbrev": "Os",
@@ -5159,7 +5159,7 @@
       },
       {
         "day": 351,
-        "reading": "Osei 14; Joel 1-2",
+        "reading": "Oséias 14; Joel 1-2",
         "books": [
           {
             "abbrev": "Os",
@@ -5232,7 +5232,7 @@
       },
       {
         "day": 355,
-        "reading": "Obad; Jona 1-3",
+        "reading": "Obadias 1; Jonas 1-3",
         "books": [
           {
             "abbrev": "Ob",
@@ -5254,7 +5254,7 @@
       },
       {
         "day": 356,
-        "reading": "Jona 4; Miqu 1-4",
+        "reading": "Jonas 4; Miquéias 1-4",
         "books": [
           {
             "abbrev": "Jn",
@@ -5277,7 +5277,7 @@
       },
       {
         "day": 357,
-        "reading": "Miqu 5-7",
+        "reading": "Miquéias 5-7",
         "books": [
           {
             "abbrev": "Mq",
@@ -5292,7 +5292,7 @@
       },
       {
         "day": 358,
-        "reading": "Naum 1-3; Haba 1",
+        "reading": "Naum 1-3; Habacuque 1",
         "books": [
           {
             "abbrev": "Na",
@@ -5314,7 +5314,7 @@
       },
       {
         "day": 359,
-        "reading": "Haba 2-3; Sofo 1",
+        "reading": "Habacuque 2-3; Sofonias 1",
         "books": [
           {
             "abbrev": "Hc",
@@ -5335,7 +5335,7 @@
       },
       {
         "day": 360,
-        "reading": "Sofo 2-3; Ageu 1-2",
+        "reading": "Sofonias 2-3; Ageu 1-2",
         "books": [
           {
             "abbrev": "Sf",
@@ -5357,7 +5357,7 @@
       },
       {
         "day": 361,
-        "reading": "Zaca 1-3",
+        "reading": "Zacarias 1-3",
         "books": [
           {
             "abbrev": "Zc",
@@ -5372,7 +5372,7 @@
       },
       {
         "day": 362,
-        "reading": "Zaca 4-8",
+        "reading": "Zacarias 4-8",
         "books": [
           {
             "abbrev": "Zc",
@@ -5389,7 +5389,7 @@
       },
       {
         "day": 363,
-        "reading": "Zaca 9-11",
+        "reading": "Zacarias 9-11",
         "books": [
           {
             "abbrev": "Zc",
@@ -5404,7 +5404,7 @@
       },
       {
         "day": 364,
-        "reading": "Zaca 12-14",
+        "reading": "Zacarias 12-14",
         "books": [
           {
             "abbrev": "Zc",
@@ -5419,7 +5419,7 @@
       },
       {
         "day": 365,
-        "reading": "Mala 1-4",
+        "reading": "Malaquias 1-4",
         "books": [
           {
             "abbrev": "Ml",

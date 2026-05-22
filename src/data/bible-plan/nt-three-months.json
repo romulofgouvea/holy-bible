@@ -986,7 +986,7 @@
       },
       {
         "day": 67,
-        "reading": "Filipenses",
+        "reading": "Filipenses 1-4",
         "books": [
           {
             "abbrev": "Fp",
@@ -1002,7 +1002,7 @@
       },
       {
         "day": 68,
-        "reading": "Colossenses",
+        "reading": "Colossenses 1-4",
         "books": [
           {
             "abbrev": "Cl",
@@ -1018,7 +1018,7 @@
       },
       {
         "day": 69,
-        "reading": "1 Tessalonicenses",
+        "reading": "1 Tessalonicenses 1-5",
         "books": [
           {
             "abbrev": "1Ts",
@@ -1035,7 +1035,7 @@
       },
       {
         "day": 70,
-        "reading": "2 Tessalonicenses",
+        "reading": "2 Tessalonicenses 1-3",
         "books": [
           {
             "abbrev": "2Ts",
@@ -1080,7 +1080,7 @@
       },
       {
         "day": 73,
-        "reading": "2 Timóteo",
+        "reading": "2 Timóteo 1-4",
         "books": [
           {
             "abbrev": "2Tm",
@@ -1096,7 +1096,7 @@
       },
       {
         "day": 74,
-        "reading": "Tito e Filemom",
+        "reading": "Tito 1-3; Filemom 1",
         "books": [
           {
             "abbrev": "Tt",
@@ -1179,7 +1179,7 @@
       },
       {
         "day": 79,
-        "reading": "Tiago",
+        "reading": "Tiago 1-5",
         "books": [
           {
             "abbrev": "Tg",
@@ -1196,7 +1196,7 @@
       },
       {
         "day": 80,
-        "reading": "1 Pedro",
+        "reading": "1 Pedro 1-5",
         "books": [
           {
             "abbrev": "1Pe",
@@ -1213,7 +1213,7 @@
       },
       {
         "day": 81,
-        "reading": "2 Pedro",
+        "reading": "2 Pedro 1-3",
         "books": [
           {
             "abbrev": "2Pe",
@@ -1228,7 +1228,7 @@
       },
       {
         "day": 82,
-        "reading": "1 João",
+        "reading": "1 João 1-5",
         "books": [
           {
             "abbrev": "1Jo",
@@ -1245,7 +1245,7 @@
       },
       {
         "day": 83,
-        "reading": "2 e 3 João, Judas",
+        "reading": "2 João 1; 3 João 1; Judas 1",
         "books": [
           {
             "abbrev": "2Jo",

@@ -1,7 +1,7 @@
 import { FlashList } from '@shopify/flash-list';
 import { useRouter, useFocusEffect } from 'expo-router';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { Platform, StyleSheet, TextInput, TouchableOpacity, View, BackHandler } from 'react-native';
+import { BackHandler, ScrollView, StyleSheet, TextInput, TouchableOpacity, View, Platform } from 'react-native';
 import { BibleDrawerMenu } from '../components/BibleDrawerMenu';
 import { BibleHeader } from '../components/BibleHeader';
 import { BibleIcon } from '../components/BibleIcon';
@@ -62,7 +62,9 @@ export default function ReadingPlanScreen() {
         isLoaded,
         createBiblePlan,
         toggleDay,
+        toggleChapter,
         isDayCompleted,
+        isChapterCompleted,
         getDayCompletedAt,
         removeBiblePlan,
         removeBiblePlans,
@@ -83,6 +85,8 @@ export default function ReadingPlanScreen() {
     const [isStartDatePickerVisible, setIsStartDatePickerVisible] = useState(false);
     const [pendingStartDate, setPendingStartDate] = useState('');
     const [startDatePlanId, setStartDatePlanId] = useState<string | null>(null);
+    const [selectedDayInfo, setSelectedDayInfo] = useState<FlatDayItem | null>(null);
+    const [isChapterModalVisible, setIsChapterModalVisible] = useState(false);
     const listRef = useRef<any>(null);
     const hasScrolledRef = useRef(false);
 
@@ -234,8 +238,8 @@ export default function ReadingPlanScreen() {
             shadowRadius: ms(DESIGN.borderRadius.xs),
             flexDirection: 'row',
             alignItems: 'center',
-            paddingHorizontal: ms(DESIGN.spacing.sm),
-            paddingVertical: ms(DESIGN.spacing.sm),
+            paddingHorizontal: ms(DESIGN.spacing.lg),
+            paddingVertical: ms(DESIGN.spacing.md),
             gap: ms(DESIGN.spacing.md),
         },
         checkbox: {
@@ -301,10 +305,12 @@ export default function ReadingPlanScreen() {
     }, [activePlans, createBiblePlan, show]);
 
     const handleDayPress = useCallback((item: FlatDayItem) => {
-        if (item.books.length === 0) return;
-        const firstBook = item.books[0];
-        const firstChapter = firstBook.chapters?.[0] ?? firstBook.verses?.[0]?.chapter ?? 1;
+        setSelectedDayInfo(item);
+        setIsChapterModalVisible(true);
+    }, []);
 
+    const handleNavigateToChapter = useCallback((bookAbbrev: string, chapter: number, item: FlatDayItem) => {
+        setIsChapterModalVisible(false);
         const lastBook = item.books[item.books.length - 1];
         let lastChapter = 1;
         if (lastBook.chapters?.length) {
@@ -314,7 +320,7 @@ export default function ReadingPlanScreen() {
         }
 
         setReadingPlanGoal({ bookAbbrev: lastBook.abbrev, chapter: lastChapter });
-        navigateTo({ book: firstBook.abbrev, chapter: firstChapter, verse: 1 });
+        navigateTo({ book: bookAbbrev, chapter, verse: 1 });
         router.navigate(ROUTES.BIBLE as any);
     }, [navigateTo, setReadingPlanGoal, router]);
 
@@ -541,19 +547,6 @@ export default function ReadingPlanScreen() {
                     onPress={() => handleDayPress(item)}
                     activeOpacity={0.7}
                 >
-                    <TouchableOpacity
-                        style={[styles.checkbox, {
-                            borderColor: isCompleted ? colors.primary : colors.border,
-                            backgroundColor: isCompleted ? colors.primary : 'transparent',
-                        }]}
-                        onPress={() => handleToggleDay(selectedPlan.id, item.monthNumber, item.day)}
-                        hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                    >
-                        {isCompleted && (
-                            <BibleIcon name="check" size={ms(DESIGN.fontSize.md)} color={colors.onPrimary} />
-                        )}
-                    </TouchableOpacity>
-
                     <View style={{ flex: 1 }}>
                         <BibleText style={{
                             fontSize: ms(DESIGN.fontSize.sm),
@@ -868,6 +861,77 @@ export default function ReadingPlanScreen() {
                     contentContainerStyle={[styles.listContent, { paddingBottom: ms(DESIGN.spacing.lg) }]}
                     showsVerticalScrollIndicator={false}
                 />
+            </BiblePageModal>
+
+            <BiblePageModal
+                visible={isChapterModalVisible}
+                onClose={() => setIsChapterModalVisible(false)}
+                header={
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <BibleIcon
+                            name="book-open"
+                            size={ms(DESIGN.spacing.lg)}
+                            color={colors.primary}
+                            backgroundColor={colors.primary + '25'}
+                            style={{ marginRight: ms(DESIGN.spacing.sm) }}
+                        />
+                        <BibleText style={{ flex: 1, fontSize: ms(DESIGN.fontSize.lg), fontWeight: '800', color: colors.primary }}>
+                            Capítulos - Dia {selectedDayInfo?.day}
+                        </BibleText>
+                        <BibleIcon
+                            name="x"
+                            color={colors.error}
+                            backgroundColor={colors.error + '20'}
+                            onPress={() => setIsChapterModalVisible(false)}
+                            style={{ marginLeft: 'auto' }}
+                        />
+                    </View>
+                }
+                fullHeight={false}
+            >
+                <ScrollView contentContainerStyle={styles.listContent} showsVerticalScrollIndicator={false}>
+                    {selectedDayInfo && selectedDayInfo.books.map((book) => {
+                        const chapters = book.chapters ?? book.verses?.map(v => v.chapter) ?? [];
+                        return chapters.map((chapter) => {
+                            const isCompleted = selectedPlan ? isChapterCompleted(selectedPlan, selectedDayInfo.monthNumber, selectedDayInfo.day, book.abbrev, chapter) : false;
+                            return (
+                                <TouchableOpacity
+                                    key={`${book.abbrev}-${chapter}`}
+                                    style={[styles.dayCard, {
+                                        backgroundColor: colors.surface,
+                                        borderColor: colors.border,
+                                        shadowColor: colors.shadow,
+                                    }]}
+                                    onPress={() => handleNavigateToChapter(book.abbrev, chapter, selectedDayInfo)}
+                                    activeOpacity={0.7}
+                                >
+                                    <TouchableOpacity
+                                        style={[styles.checkbox, {
+                                            borderColor: isCompleted ? colors.primary : colors.border,
+                                            backgroundColor: isCompleted ? colors.primary : 'transparent',
+                                        }]}
+                                        onPress={() => {
+                                            if (selectedPlan) {
+                                                toggleChapter(selectedPlan.id, selectedDayInfo.monthNumber, selectedDayInfo, book.abbrev, chapter);
+                                            }
+                                        }}
+                                        hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                                    >
+                                        {isCompleted && (
+                                            <BibleIcon name="check" size={ms(DESIGN.fontSize.md)} color={colors.onPrimary} />
+                                        )}
+                                    </TouchableOpacity>
+                                    <View style={{ flex: 1 }}>
+                                        <BibleText style={{ fontSize: ms(DESIGN.fontSize.md), color: isCompleted ? colors.textMuted : colors.onSurface, fontWeight: '600' }}>
+                                            {book.name} {chapter}
+                                        </BibleText>
+                                    </View>
+                                    <BibleIcon name="chevron-right" color={colors.textMuted} size={ms(DESIGN.fontSize.xl)} />
+                                </TouchableOpacity>
+                            );
+                        });
+                    })}
+                </ScrollView>
             </BiblePageModal>
 
             <BibleToast opacity={opacity} toast={toast} />

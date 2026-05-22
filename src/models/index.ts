@@ -90,6 +90,7 @@ export type ActiveBiblePlan = {
   title: string;
   startedAt: number;
   completedDays: Record<string, ActiveBiblePlanDay>;
+  completedChapters?: Record<string, ActiveBiblePlanDay>;
 };
 
 // Reader Settings Domain Models
