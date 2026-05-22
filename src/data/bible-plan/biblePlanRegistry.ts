@@ -1,9 +1,9 @@
 import { BiblePlanMonth, BiblePlanTemplate } from '../../models/BiblePlanModels';
+import monthData from './classic-month.json';
+import sixMonthsData from './classic-six-months.json';
+import threeMonthsData from './classic-three-months.json';
+import yearData from './classic.json';
 import cronologicalData from './cronological-month.json';
-import sixMonthsData from './six-months.json';
-import threeMonthsData from './three-months.json';
-import monthData from './year-month.json';
-import yearData from './year.json';
 
 const cronologicalMonths = cronologicalData as BiblePlanMonth[];
 const monthPlan = monthData as BiblePlanMonth[];
