@@ -3,13 +3,13 @@ import * as fs from 'fs';
 import * as https from 'https';
 import * as path from 'path';
 
-const VERSIONS = [
-  { id: '1608', sigla: 'ara' },
-  // { id: '1840', sigla: 'naa' },
-  // { id: '4360', sigla: 'nvi' },
-  // { id: '1930', sigla: 'nvt' }
-];
-const BASE_URL = 'https://www.bible.com/pt/bible';
+const VERSIONS = ['ara']; // Rodando inicialmente apenas ARA para validação
+const BASE_URL = 'https://www.bible.com';
+
+// ID das versões no bible.com
+const VERSION_IDS: Record<string, string> = {
+  'ara': '1608'
+};
 
 const BIBLE_COM_MAPPING: Record<string, string> = {
   'gn': 'GEN', 'ex': 'EXO', 'êx': 'EXO', 'lv': 'LEV', 'nm': 'NUM', 'dt': 'DEU',
@@ -28,16 +28,18 @@ const BIBLE_COM_MAPPING: Record<string, string> = {
   'jd': 'JUD', 'ap': 'REV'
 };
 
-const BIBLE_DATA_PATH = path.join(process.cwd(), 'src/data/bible-version/ara.json');
-const OUTPUT_DIR = path.join(process.cwd(), 'src/data/bible-titles');
-
 async function fetchHtml(url: string): Promise<string> {
   return new Promise((resolve, reject) => {
-    https.get(url, { headers: { 'User-Agent': 'Mozilla/5.0' } }, (res) => {
+    https.get(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8'
+      }
+    }, (res) => {
       if ((res.statusCode === 301 || res.statusCode === 302 || res.statusCode === 308) && res.headers.location) {
         const loc = res.headers.location;
-        const redirectUrl = loc.startsWith('http') ? loc : `https://www.bible.com${loc}`;
-        return https.get(redirectUrl, { headers: { 'User-Agent': 'Mozilla/5.0' } }, (redirectRes) => {
+        const redirectUrl = loc.startsWith('http') ? loc : BASE_URL + loc;
+        return https.get(redirectUrl, (redirectRes) => {
           let data = '';
           redirectRes.on('data', chunk => data += chunk);
           redirectRes.on('end', () => resolve(data));
@@ -56,191 +58,194 @@ async function fetchHtml(url: string): Promise<string> {
 
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
+const OUTPUT_DIR = path.join(process.cwd(), 'src/data/bible-titles');
+if (!fs.existsSync(OUTPUT_DIR)) {
+  fs.mkdirSync(OUTPUT_DIR, { recursive: true });
+}
+
 async function main() {
-  const rawData = fs.readFileSync(BIBLE_DATA_PATH, 'utf8');
-  const araData = JSON.parse(rawData);
+  console.log(`Starting generation script...`);
 
-  const books = araData.map((b: any) => ({
-    abbrev: b.abbrev.toLowerCase(),
-    name: b.name,
-    chapters: b.chapters.length
-  }));
+  for (const version of VERSIONS) {
+    const versionId = VERSION_IDS[version];
+    if (!versionId) {
+      console.warn(`No version ID set for ${version.toUpperCase()}, skipping...`);
+      continue;
+    }
 
-  for (const { id: versionId, sigla: versionSigla } of VERSIONS) {
+    const localDataPath = path.join(process.cwd(), `src/data/bible-version/${version}.json`);
+    if (!fs.existsSync(localDataPath)) {
+      console.warn(`Local data for ${version} not found!`);
+      continue;
+    }
+
+    const localBibleData = JSON.parse(fs.readFileSync(localDataPath, 'utf8'));
     const versionBooks: any[] = [];
-    const outputPath = path.join(OUTPUT_DIR, `${versionSigla}-titles-biblecom.json`);
 
-    const versionDataPath = path.join(process.cwd(), `src/data/bible-version/${versionSigla.toUpperCase()}.json`);
-    let localBibleData: any[] = [];
-    if (fs.existsSync(versionDataPath)) {
-      localBibleData = JSON.parse(fs.readFileSync(versionDataPath, 'utf8'));
-    }
+    const outputPath = path.join(OUTPUT_DIR, `${version}-titles.json`);
 
-    const oldTitlesPath = path.join(process.cwd(), `src/data/bible-titles/${versionSigla}-titles.json`);
-    let oldTitlesData: any = null;
-    if (fs.existsSync(oldTitlesPath)) {
-      oldTitlesData = JSON.parse(fs.readFileSync(oldTitlesPath, 'utf8'));
-    }
+    // Descomente a linha abaixo para não refazer versões prontas
+    // if (fs.existsSync(outputPath)) continue;
 
-    for (const book of books) {
-      let bibleComAbbrev = BIBLE_COM_MAPPING[book.abbrev];
-      if (book.name === 'Jó') bibleComAbbrev = 'JOB';
-      if (book.name === 'João') bibleComAbbrev = 'JHN';
+    console.log(`\n--- Starting extraction for version ${version.toUpperCase()} ---`);
 
-      if (!bibleComAbbrev) {
-        console.log('Missing mapping for', book.abbrev);
+    for (const book of localBibleData) {
+      const localAbbrev = book.abbrev.toLowerCase();
+      const usfm = BIBLE_COM_MAPPING[localAbbrev];
+
+      if (!usfm) {
+        console.warn(`No bible.com mapping found for ${localAbbrev}`);
         continue;
       }
 
-      const bookTitle = {
+      const bookTitleData: any = {
         name: book.name,
         abbrev: book.abbrev,
-        chapters: [] as any[]
+        chapters: []
       };
 
-      const localBook = localBibleData.find(b => b.abbrev.toLowerCase() === book.abbrev);
-
-      for (let chapter = 1; chapter <= book.chapters; chapter++) {
-        const url = `${BASE_URL}/${versionId}/${bibleComAbbrev}.${chapter}.${versionSigla.toUpperCase()}`;
-
-        const oldBook = oldTitlesData?.books.find((b: any) => b.abbrev.toLowerCase() === book.abbrev.toLowerCase());
-        const oldChapter = oldBook?.chapters.find((c: any) => c.number === chapter);
-        const oldChapterTitles = oldChapter?.titles || [];
-
+      for (let chapter = 1; chapter <= book.chapters.length; chapter++) {
+        const url = `${BASE_URL}/pt/bible/${versionId}/${usfm}.${chapter}.${version.toUpperCase()}`;
         try {
           const html = await fetchHtml(url);
           const $ = cheerio.load(html);
-          const chapterVerses: any[] = [];
 
-          const elements = $('[class*="__s"], [class*="__sp"], [class*="__d"], span[data-usfm]');
+          let chapterContainer = $('div[class*="__chapter"]');
+          if (chapterContainer.length === 0) chapterContainer = $('div[class*="__reader"]');
+          if (chapterContainer.length === 0) continue;
 
-          let chapterTitles: any[] = [];
-          let pendingStartTitles: any[] = [];
-          let maxVerse = 0;
-          let positionIndex = 0;
+          // 1. Achatar o DOM em uma sequência lógica
+          const sequence: any[] = [];
 
-          elements.each((_, el) => {
+          chapterContainer.find('div[class*="__s"], div[class*="__sp"], span[data-usfm]').each((_, el) => {
             const className = $(el).attr('class') || '';
-            const isSection = /(^|\s)[a-zA-Z0-9_-]+__s(\s|$)/.test(className);
-            const isSubSection = /(^|\s)[a-zA-Z0-9_-]+__(s\d+|d\d*)(\s|$)/.test(className);
-            const isSpeech = /(^|\s)[a-zA-Z0-9_-]+__sp\d*(\s|$)/.test(className);
 
-            if (isSection || isSubSection || isSpeech) {
-              const titleText = $(el).text().trim();
-              if (!titleText) return;
+            if ($(el).is('div')) {
+              if (className.includes('__s') && !className.includes('__sp') && !className.includes('__s-')) {
+                const heading = $(el).find('span[class*="__heading"]').text().trim() || $(el).text().trim();
+                if (heading) sequence.push({ type: 'title', kind: 'section', heading });
+              } else if (className.includes('__sp')) {
+                const heading = $(el).find('span[class*="__heading"]').text().trim() || $(el).text().trim();
+                if (heading) sequence.push({ type: 'title', kind: 'speech', heading });
+              }
+            } else if ($(el).is('span')) {
+              const usfmAttr = $(el).attr('data-usfm');
+              if (usfmAttr) {
+                const vMatch = usfmAttr.split('.');
+                if (vMatch.length >= 3) {
+                  const verseNum = parseInt(vMatch[2], 10);
+                  if (!isNaN(verseNum)) {
+                    // Pega apenas o texto puro (sem notas de rodapé)
+                    let textFragment = '';
+                    $(el).find('span[class*="__content"]').each((_, c) => textFragment += $(c).text());
+                    textFragment = textFragment.trim().substring(0, 40);
 
-              let tType = 'section';
-              if (isSpeech) tType = 'speech';
-              else if (isSubSection) tType = 'subsection';
-
-              const newTitle = {
-                title: titleText,
-                startVerse: -1,
-                endVerse: -1,
-                type: tType,
-                positionIndex: 0,
-                _verseBefore: maxVerse
-              };
-              chapterTitles.push(newTitle);
-              pendingStartTitles.push(newTitle);
-            }
-
-            const usfm = $(el).attr('data-usfm');
-            if (usfm) {
-              const parts = usfm.split('.');
-              if (parts.length >= 3) {
-                const vBook = parts[0];
-                const vChap = parseInt(parts[1], 10);
-                const vVerse = parseInt(parts[2], 10);
-
-                // bibleComAbbrev is something like "GEN"
-                if (vBook === bibleComAbbrev && vChap === chapter && !isNaN(vVerse)) {
-                  pendingStartTitles.forEach(t => t.startVerse = vVerse);
-                  pendingStartTitles = [];
-
-                  if (vVerse > maxVerse) {
-                    maxVerse = vVerse;
+                    if (textFragment) {
+                      sequence.push({ type: 'verse', verseNum, text: textFragment });
+                    }
                   }
                 }
               }
             }
           });
 
-          // Fallback if some titles appeared after all verses
-          pendingStartTitles.forEach(t => t.startVerse = maxVerse);
+          // 2. Processar a sequência para montar os títulos com startVerse, endVerse e positionIndex
+          const chapterTitles: any[] = [];
+          for (let i = 0; i < sequence.length; i++) {
+            const item = sequence[i];
+            if (item.type === 'title') {
+              const lastVerseNode = [...sequence].slice(0, i).reverse().find(x => x.type === 'verse');
+              const nextVerseNode = sequence.slice(i + 1).find(x => x.type === 'verse');
 
-          // Calculate endVerses based on title type
-          for (let i = 0; i < chapterTitles.length; i++) {
-            let endV = maxVerse;
-            if (chapterTitles[i].type === 'section') {
-              // End at the verse before the NEXT section title
-              for (let j = i + 1; j < chapterTitles.length; j++) {
-                if (chapterTitles[j].type === 'section') {
-                  endV = chapterTitles[j]._verseBefore;
-                  break;
+              let startVerse = 1;
+              let positionIndex = 0;
+
+              if (lastVerseNode && nextVerseNode) {
+                if (lastVerseNode.verseNum === nextVerseNode.verseNum) {
+                  // Título no MEIO de um versículo (ex: Coro no meio do v4)
+                  startVerse = nextVerseNode.verseNum;
+                  const localVerseText = book.chapters[chapter - 1][startVerse - 1] || '';
+                  const idx = localVerseText.indexOf(nextVerseNode.text);
+                  if (idx !== -1) {
+                    positionIndex = idx;
+                  } else {
+                    // fallback
+                    const firstWord = nextVerseNode.text.split(' ')[0];
+                    const idx2 = localVerseText.indexOf(firstWord);
+                    positionIndex = idx2 !== -1 ? idx2 : 0;
+                  }
+                } else {
+                  // Título ENTRE dois versículos (ex: entre v1 e v2)
+                  // Pertence ao início do PRÓXIMO versículo (v2, pos 0)
+                  startVerse = nextVerseNode.verseNum;
+                  positionIndex = 0;
                 }
+              } else if (!lastVerseNode && nextVerseNode) {
+                // Começo do capítulo
+                startVerse = nextVerseNode.verseNum;
+                positionIndex = 0;
+              } else if (lastVerseNode && !nextVerseNode) {
+                // Final do capítulo
+                startVerse = lastVerseNode.verseNum;
+                const localVerseText = book.chapters[chapter - 1][startVerse - 1] || '';
+                positionIndex = localVerseText.length;
               }
-            } else if (chapterTitles[i].type === 'subsection') {
-              // End at the verse before the NEXT section or subsection
-              for (let j = i + 1; j < chapterTitles.length; j++) {
-                if (chapterTitles[j].type === 'section' || chapterTitles[j].type === 'subsection') {
-                  endV = chapterTitles[j]._verseBefore;
-                  break;
+
+              chapterTitles.push({
+                title: item.heading,
+                startVerse,
+                endVerse: startVerse, // Será ajustado no passo 3
+                type: item.kind,
+                positionIndex
+              });
+            }
+          }
+
+          // 3. Ajustar o endVerse (Acorrentamento com o próximo título DO MESMO TIPO)
+          for (let i = 0; i < chapterTitles.length; i++) {
+            const current = chapterTitles[i];
+            const nextOfSameKind = chapterTitles.slice(i + 1).find(t => t.type === current.type);
+
+            if (nextOfSameKind) {
+              if (nextOfSameKind.positionIndex === 0) {
+                current.endVerse = nextOfSameKind.startVerse - 1;
+                if (current.endVerse < current.startVerse) {
+                  current.endVerse = current.startVerse; // fallback safety
                 }
+              } else {
+                current.endVerse = nextOfSameKind.startVerse;
               }
             } else {
-              // End at the verse before the NEXT title (any type)
-              if (i < chapterTitles.length - 1) {
-                endV = chapterTitles[i + 1]._verseBefore;
-              }
-            }
-            chapterTitles[i].endVerse = Math.max(chapterTitles[i].startVerse, endV);
-            delete chapterTitles[i]._verseBefore;
-
-            // Inherit positionIndex from the old file
-            const oldT = oldChapterTitles.find((t: any) => t.title === chapterTitles[i].title);
-            if (oldT) {
-                if (oldT.startVerse === chapterTitles[i].startVerse) {
-                    chapterTitles[i].positionIndex = oldT.positionIndex;
-                } else if (oldT.startVerse === chapterTitles[i].startVerse + 1 && localBook && localBook.chapters[chapter - 1]) {
-                    const prevVerseText = localBook.chapters[chapter - 1][chapterTitles[i].startVerse - 1];
-                    if (prevVerseText) {
-                        chapterTitles[i].positionIndex = prevVerseText.length;
-                    }
-                }
+              current.endVerse = book.chapters[chapter - 1].length;
             }
           }
 
           if (chapterTitles.length > 0) {
-            for (const cv of chapterTitles) {
-              console.log(`${versionSigla.toUpperCase()}/${book.name}/${chapter}/${cv.startVerse}${cv.startVerse !== cv.endVerse ? '-' + cv.endVerse : ''} [${cv.type}, idx:${cv.positionIndex}]: ${cv.title}`);
-            }
-
-            bookTitle.chapters.push({
+            bookTitleData.chapters.push({
               number: chapter,
               titles: chapterTitles
             });
+            process.stdout.write(`\r[${version.toUpperCase()}] ${usfm} ${chapter} - ${chapterTitles.length} títulos gerados...     `);
           }
 
-        } catch (err: any) {
-          console.error(`Error ${url}: ${err.message}`);
+        } catch (error: any) {
+          console.error(`\nError fetching ${url}:`, error.message);
         }
-
-        await delay(50);
+        await delay(30);
       }
 
-      if (bookTitle.chapters.length > 0) {
-        versionBooks.push(bookTitle);
+      if (bookTitleData.chapters.length > 0) {
+        versionBooks.push(bookTitleData);
       }
     }
 
     const outputData = {
-      version: versionSigla.toUpperCase(),
+      version: version.toUpperCase(),
       books: versionBooks
     };
 
     fs.writeFileSync(outputPath, JSON.stringify(outputData, null, 2), 'utf8');
-    console.log(`Saved ${versionSigla} to ${outputPath}`);
+    console.log(`\nSaved ${version.toUpperCase()} titles to ${outputPath}`);
   }
 }
 
