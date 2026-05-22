@@ -1,6 +1,6 @@
 import { Feather } from '@expo/vector-icons';
 import React, { useEffect, useMemo, useRef } from 'react';
-import { Animated, Modal, Pressable, StyleSheet, View } from 'react-native';
+import { Animated, KeyboardAvoidingView, Modal, Platform, Pressable, StyleSheet, View } from 'react-native';
 import { useResponsive } from '../../hooks/useResponsive';
 import { useTheme } from '../../hooks/useTheme';
 import { BibleButton } from '../BibleButton';
@@ -98,10 +98,13 @@ export function BibleConfirmModal({
   }), [ms, DESIGN]);
 
   return (
-    <Modal visible={visible} transparent animationType="none" statusBarTranslucent>
-      <Animated.View style={[styles.backdrop, { opacity: fadeAnim, backgroundColor: colors.overlay }]}>
+    <Modal visible={visible} transparent animationType="none" statusBarTranslucent onRequestClose={onCancel}>
+      <Animated.View style={[StyleSheet.absoluteFill, { opacity: fadeAnim, backgroundColor: colors.overlay }]}>
         <Pressable style={StyleSheet.absoluteFill} onPress={onCancel} />
-        <Animated.View
+      </Animated.View>
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding" pointerEvents="box-none">
+        <View style={[styles.backdrop, { backgroundColor: 'transparent' }]} pointerEvents="box-none">
+          <Animated.View
           style={[
             styles.dialog,
             {
@@ -167,7 +170,8 @@ export function BibleConfirmModal({
             )}
           </View>
         </Animated.View>
-      </Animated.View>
+        </View>
+      </KeyboardAvoidingView>
     </Modal>
   );
 }

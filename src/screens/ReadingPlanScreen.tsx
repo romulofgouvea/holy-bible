@@ -154,10 +154,10 @@ export default function ReadingPlanScreen() {
             paddingBottom: ms(DESIGN.spacing.sm),
         },
         monthHeader: {
-            marginTop: ms(DESIGN.spacing.md),
-            marginBottom: ms(DESIGN.spacing.sm),
-            padding: ms(DESIGN.spacing.md),
-            borderRadius: ms(DESIGN.borderRadius.lg),
+            flexDirection: 'row',
+            alignItems: 'center',
+            marginVertical: ms(DESIGN.spacing.xl),
+            paddingHorizontal: ms(DESIGN.spacing.xs),
         },
         card: {
             borderWidth: 1,
@@ -180,8 +180,7 @@ export default function ReadingPlanScreen() {
         templateCardContent: {
             flexDirection: 'row',
             alignItems: 'center',
-            paddingHorizontal: ms(DESIGN.spacing.sm),
-            paddingVertical: ms(DESIGN.spacing.sm),
+            padding: ms(DESIGN.spacing.lg),
             gap: ms(DESIGN.spacing.md),
         },
         iconWrap: {
@@ -468,13 +467,24 @@ export default function ReadingPlanScreen() {
         return (
             <View>
                 {item.isFirstInMonth && (
-                    <View style={[styles.monthHeader, { backgroundColor: colors.primary + '10' }]}>
-                        <BibleText style={{ fontWeight: '800', fontSize: ms(DESIGN.fontSize.lg), color: colors.primary }}>
-                            {item.monthName}
-                        </BibleText>
-                        <BibleText style={{ fontSize: ms(DESIGN.fontSize.sm), color: colors.textMuted, marginTop: ms(2) }}>
-                            {item.monthTheme}
-                        </BibleText>
+                    <View style={styles.monthHeader}>
+                        <View style={{
+                            width: ms(DESIGN.spacing.xs),
+                            height: '100%',
+                            backgroundColor: colors.primary,
+                            borderRadius: ms(DESIGN.borderRadius.full),
+                            marginRight: ms(DESIGN.spacing.sm)
+                        }} />
+                        <View style={{ flex: 1 }}>
+                            <BibleText style={{ fontWeight: '800', fontSize: ms(DESIGN.fontSize.xxl), color: colors.onSurface, letterSpacing: 0.3 }}>
+                                {item.monthName}
+                            </BibleText>
+                            {!!item.monthTheme && (
+                                <BibleText style={{ fontSize: ms(DESIGN.fontSize.sm), color: colors.textMuted, marginTop: ms(2) }}>
+                                    {item.monthTheme}
+                                </BibleText>
+                            )}
+                        </View>
                     </View>
                 )}
                 <TouchableOpacity
@@ -758,8 +768,9 @@ export default function ReadingPlanScreen() {
 
             <BibleConfirmModal
                 visible={isStartDatePickerVisible}
-                title="Data de Início"
-                message="Informe a data de início do plano (DD/MM/AAAA):"
+                title="Início do plano"
+                icon="calendar"
+                message="Informe a data de início do plano:"
                 confirmText="Confirmar"
                 onConfirm={handleConfirmStartDate}
                 onCancel={() => { setIsStartDatePickerVisible(false); setStartDatePlanId(null); }}
@@ -809,7 +820,7 @@ export default function ReadingPlanScreen() {
                     // @ts-ignore
                     estimatedItemSize={ms(110)}
                     renderItem={renderTemplateItem}
-                    contentContainerStyle={styles.listContent}
+                    contentContainerStyle={[styles.listContent, { paddingBottom: ms(DESIGN.spacing.lg) }]}
                     showsVerticalScrollIndicator={false}
                     ListHeaderComponent={
                         <BibleText style={[styles.sectionLabel, { color: colors.textMuted, marginBottom: ms(DESIGN.spacing.sm) }]}>

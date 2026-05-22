@@ -69,8 +69,8 @@ export function BibleProvider({ children }: { children: React.ReactNode }) {
     const verses = currentBook.chapters[chapter - 1] || [];
     
     const versionTitles = getBibleTitles(version);
-    const bookTitles = versionTitles?.books.find(b => b.abbrev === currentBook.abbrev);
-    const chapterTitles = bookTitles?.chapters.find(c => c.number === chapter)?.titles || [];
+    const bookTitles = versionTitles?.books.find((b: any) => b.abbrev.toLowerCase() === currentBook.abbrev.toLowerCase());
+    const chapterTitles = bookTitles?.chapters.find((c: any) => c.number === chapter)?.titles || [];
 
     return [{
       title: `${currentBook.name} ${chapter}`,

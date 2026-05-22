@@ -131,16 +131,15 @@ export function BibleDrawerMenu(props: DrawerMenuProps) {
     }
   }, [visible]);
 
-  const MENU_ITEMS: MenuItem[] = DRAWER_ITEMS;
-
-  const BOTTOM_ITEMS: MenuItem[] = [
+  const MENU_ITEMS: MenuItem[] = [
+    ...DRAWER_ITEMS,
     {
       key: 'donate',
       label: 'Apoie o Projeto',
       icon: 'gift',
       tint: colors.primary,
       onPress: onOpenDonate,
-    },
+    }
   ];
 
   const handlePress = (item: MenuItem) => {
@@ -209,13 +208,8 @@ export function BibleDrawerMenu(props: DrawerMenuProps) {
             </View>
           </View>
 
-          <View style={[styles.menuList, { paddingTop: ms(DESIGN.spacing.sm), paddingHorizontal: ms(DESIGN.spacing.sm) }]}>
+          <View style={[styles.menuList, { paddingTop: ms(DESIGN.spacing.sm), paddingHorizontal: ms(DESIGN.spacing.sm), paddingBottom: Math.max(ms(DESIGN.spacing.lg), insets.bottom + ms(DESIGN.spacing.sm)) }]}>
             {MENU_ITEMS.map(renderItem)}
-          </View>
-
-          <View style={[styles.bottomSection, { paddingHorizontal: ms(DESIGN.spacing.sm), paddingBottom: Platform.OS === 'ios' ? Math.max(ms(DESIGN.spacing.lg), insets.bottom + ms(DESIGN.spacing.sm)) : 0 }]}>
-            <BibleDivider />
-            {BOTTOM_ITEMS.map(renderItem)}
           </View>
         </Animated.View>
       </View>

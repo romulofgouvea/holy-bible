@@ -1,4 +1,4 @@
-import { Slot, useGlobalSearchParams, usePathname, useRootNavigationState, useRouter } from 'expo-router';
+import { Stack, useGlobalSearchParams, usePathname, useRootNavigationState, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { Platform, View } from 'react-native';
@@ -47,7 +47,7 @@ function AppLayout() {
     <SafeAreaView style={{ flex: 1, backgroundColor: '#000000' }}>
       <StatusBar style="light" translucent backgroundColor="transparent" />
       <View style={{ flex: 1, backgroundColor: colors.background }}>
-        <Slot />
+        <Stack screenOptions={{ headerShown: false, animation: 'fade' }} />
       </View>
       <GlobalBibleModals />
     </SafeAreaView>

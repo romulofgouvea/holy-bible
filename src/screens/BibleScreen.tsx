@@ -1,6 +1,7 @@
 import { BibleVerseActionSheet } from '@/components/modals/BibleVerseActionSheet';
 import { ReaderSettingsModal } from '@/components/modals/ReaderSettingsModal';
 import { Book, SelectedVerse } from '@/models';
+import { MaterialIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -12,13 +13,12 @@ import { BibleSkeleton } from '../components/BibleSkeleton';
 import { BibleText } from '../components/BibleText';
 import { BibleToast } from '../components/BibleToast';
 import { BibleTopBar } from '../components/BibleTopBar';
-import { MaterialIcons } from '@expo/vector-icons';
 import { BibleVerseReader } from '../components/BibleVerseReader';
 import { BibleHistoryModal } from '../components/modals/BibleHistoryModal';
 import { DonateModal } from '../components/modals/DonateModal';
 import { STORAGE_KEYS } from '../constants/storage';
-import { getBibleData } from '../data/bible-version';
 import { getBibleTitles } from '../data/bible-titles';
+import { getBibleData } from '../data/bible-version';
 import { useBible } from '../hooks/useBible';
 import { useBibleModals } from '../hooks/useBibleModals';
 import { useReaderSettings } from '../hooks/useReaderSettings';
@@ -65,7 +65,7 @@ export default function BibleScreen() {
   const secondSectionData = useMemo(() => {
     const verses = secondCurrentBook.chapters[chapter - 1] || [];
     const versionTitles = getBibleTitles(secondVersion);
-    const bookTitles = versionTitles?.books.find((b: any) => b.abbrev === secondCurrentBook.abbrev);
+    const bookTitles = versionTitles?.books.find((b: any) => b.abbrev.toLowerCase() === secondCurrentBook.abbrev.toLowerCase());
     const chapterTitles = bookTitles?.chapters.find((c: any) => c.number === chapter)?.titles || [];
 
     return [{
@@ -299,8 +299,8 @@ export default function BibleScreen() {
       alignItems: 'center',
     },
     splitHandleBtn: {
-      width: ms(DESIGN.spacing.xxl - DESIGN.spacing.tiny),
-      height: ms(DESIGN.spacing.xxl - DESIGN.spacing.tiny),
+      width: ms(DESIGN.height.sm),
+      height: ms(DESIGN.height.sm),
       borderRadius: ms(DESIGN.borderRadius.sm),
       alignItems: 'center',
       justifyContent: 'center',
@@ -557,23 +557,23 @@ export default function BibleScreen() {
                   top: splitOrientation === 'vertical' ? '45%' : '50%',
                   width: controlGroupAnim.interpolate({
                     inputRange: [0, 1],
-                    outputRange: [ms(DESIGN.spacing.xxl), splitOrientation === 'horizontal' ? ms(DESIGN.height.sm) : ms(DESIGN.height.sm * 4 + DESIGN.spacing.sm * 3)],
+                    outputRange: [ms(DESIGN.spacing.xxl), splitOrientation === 'horizontal' ? ms(DESIGN.height.sm + DESIGN.spacing.sm) : ms(DESIGN.height.sm * 4 + DESIGN.spacing.sm * 4)],
                   }),
                   height: controlGroupAnim.interpolate({
                     inputRange: [0, 1],
-                    outputRange: [ms(DESIGN.spacing.xxl), splitOrientation === 'horizontal' ? ms(DESIGN.height.sm * 4 + DESIGN.spacing.sm * 3) : ms(DESIGN.height.sm)],
+                    outputRange: [ms(DESIGN.spacing.xxl), splitOrientation === 'horizontal' ? ms(DESIGN.height.sm * 4 + DESIGN.spacing.sm * 4) : ms(DESIGN.height.sm + DESIGN.spacing.sm)],
                   }),
                   transform: [
                     {
                       translateX: controlGroupAnim.interpolate({
                         inputRange: [0, 1],
-                        outputRange: [-ms(DESIGN.spacing.xxl) / 2, -(splitOrientation === 'horizontal' ? ms(DESIGN.height.sm) : ms(DESIGN.height.sm * 4 + DESIGN.spacing.sm * 3)) / 2],
+                        outputRange: [-ms(DESIGN.spacing.xxl) / 2, -(splitOrientation === 'horizontal' ? ms(DESIGN.height.sm + DESIGN.spacing.sm) : ms(DESIGN.height.sm * 4 + DESIGN.spacing.sm * 4)) / 2],
                       })
                     },
                     {
                       translateY: controlGroupAnim.interpolate({
                         inputRange: [0, 1],
-                        outputRange: [-ms(DESIGN.spacing.xxl) / 2, -(splitOrientation === 'horizontal' ? ms(DESIGN.height.sm * 4 + DESIGN.spacing.sm * 3) : ms(DESIGN.height.sm)) / 2],
+                        outputRange: [-ms(DESIGN.spacing.xxl) / 2, -(splitOrientation === 'horizontal' ? ms(DESIGN.height.sm * 4 + DESIGN.spacing.sm * 4) : ms(DESIGN.height.sm + DESIGN.spacing.sm)) / 2],
                       })
                     },
                   ],
