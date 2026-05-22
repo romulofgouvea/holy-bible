@@ -12,11 +12,13 @@ import { BibleSkeleton } from '../components/BibleSkeleton';
 import { BibleText } from '../components/BibleText';
 import { BibleToast } from '../components/BibleToast';
 import { BibleTopBar } from '../components/BibleTopBar';
+import { MaterialIcons } from '@expo/vector-icons';
 import { BibleVerseReader } from '../components/BibleVerseReader';
 import { BibleHistoryModal } from '../components/modals/BibleHistoryModal';
 import { DonateModal } from '../components/modals/DonateModal';
 import { STORAGE_KEYS } from '../constants/storage';
 import { getBibleData } from '../data/bible-version';
+import { getBibleTitles } from '../data/bible-titles';
 import { useBible } from '../hooks/useBible';
 import { useBibleModals } from '../hooks/useBibleModals';
 import { useReaderSettings } from '../hooks/useReaderSettings';
@@ -62,16 +64,26 @@ export default function BibleScreen() {
 
   const secondSectionData = useMemo(() => {
     const verses = secondCurrentBook.chapters[chapter - 1] || [];
+    const versionTitles = getBibleTitles(secondVersion);
+    const bookTitles = versionTitles?.books.find((b: any) => b.abbrev === secondCurrentBook.abbrev);
+    const chapterTitles = bookTitles?.chapters.find((c: any) => c.number === chapter)?.titles || [];
+
     return [{
       title: `${secondCurrentBook.name} ${chapter}`,
-      data: verses.map((text, i) => ({
-        bookAbbrev: secondCurrentBook.abbrev,
-        chapter,
-        verse: i + 1,
-        text
-      }))
+      data: verses.map((text: string, i: number) => {
+        const verseNum = i + 1;
+        const titlesForVerse = chapterTitles.filter((t: any) => t.startVerse === verseNum);
+
+        return {
+          bookAbbrev: secondCurrentBook.abbrev,
+          chapter,
+          verse: verseNum,
+          text,
+          titles: titlesForVerse
+        };
+      })
     }];
-  }, [secondCurrentBook, chapter]);
+  }, [secondCurrentBook, chapter, secondVersion]);
 
   const [splitOrientation, setSplitOrientation] = useState<'vertical' | 'horizontal'>('vertical');
   const [isControlGroupExpanded, setIsControlGroupExpanded] = useState(false);
@@ -214,6 +226,12 @@ export default function BibleScreen() {
     setIsControlGroupExpanded(false);
     controlGroupAnim.setValue(0);
   }, [controlGroupAnim]);
+
+  const handleSwapVersions = useCallback(() => {
+    const tempMain = version;
+    setVersion(secondVersion);
+    setSecondVersion(tempMain);
+  }, [version, secondVersion, setVersion]);
 
   const handleToggleControlGroup = useCallback(() => {
     const toValue = isControlGroupExpanded ? 0 : 1;
@@ -539,23 +557,23 @@ export default function BibleScreen() {
                   top: splitOrientation === 'vertical' ? '45%' : '50%',
                   width: controlGroupAnim.interpolate({
                     inputRange: [0, 1],
-                    outputRange: [ms(DESIGN.spacing.xxl), splitOrientation === 'horizontal' ? ms(DESIGN.height.sm) : ms(DESIGN.height.sm * 3 + DESIGN.spacing.sm * 2)],
+                    outputRange: [ms(DESIGN.spacing.xxl), splitOrientation === 'horizontal' ? ms(DESIGN.height.sm) : ms(DESIGN.height.sm * 4 + DESIGN.spacing.sm * 3)],
                   }),
                   height: controlGroupAnim.interpolate({
                     inputRange: [0, 1],
-                    outputRange: [ms(DESIGN.spacing.xxl), splitOrientation === 'horizontal' ? ms(DESIGN.height.sm * 3 + DESIGN.spacing.sm * 2) : ms(DESIGN.height.sm)],
+                    outputRange: [ms(DESIGN.spacing.xxl), splitOrientation === 'horizontal' ? ms(DESIGN.height.sm * 4 + DESIGN.spacing.sm * 3) : ms(DESIGN.height.sm)],
                   }),
                   transform: [
                     {
                       translateX: controlGroupAnim.interpolate({
                         inputRange: [0, 1],
-                        outputRange: [-ms(DESIGN.spacing.xxl) / 2, -(splitOrientation === 'horizontal' ? ms(DESIGN.height.sm) : ms(DESIGN.height.sm * 3 + DESIGN.spacing.sm * 2)) / 2],
+                        outputRange: [-ms(DESIGN.spacing.xxl) / 2, -(splitOrientation === 'horizontal' ? ms(DESIGN.height.sm) : ms(DESIGN.height.sm * 4 + DESIGN.spacing.sm * 3)) / 2],
                       })
                     },
                     {
                       translateY: controlGroupAnim.interpolate({
                         inputRange: [0, 1],
-                        outputRange: [-ms(DESIGN.spacing.xxl) / 2, -(splitOrientation === 'horizontal' ? ms(DESIGN.height.sm * 3 + DESIGN.spacing.sm * 2) : ms(DESIGN.height.sm)) / 2],
+                        outputRange: [-ms(DESIGN.spacing.xxl) / 2, -(splitOrientation === 'horizontal' ? ms(DESIGN.height.sm * 4 + DESIGN.spacing.sm * 3) : ms(DESIGN.height.sm)) / 2],
                       })
                     },
                   ],
@@ -575,6 +593,25 @@ export default function BibleScreen() {
                     >
                       <BibleIcon
                         name="columns"
+                        color={primaryColor}
+                        size={ms(DESIGN.icon.xs)}
+                      />
+                    </TouchableOpacity>
+
+                    <View style={{ [splitOrientation === 'horizontal' ? 'height' : 'width']: ms(DESIGN.spacing.sm) }} />
+
+                    <TouchableOpacity
+                      style={[styles.splitHandleBtn, { backgroundColor: primaryColor + '1F' }]}
+                      onPress={handleSwapVersions}
+                      hitSlop={{
+                        top: DESIGN.spacing.sm,
+                        bottom: DESIGN.spacing.sm,
+                        left: DESIGN.spacing.sm,
+                        right: DESIGN.spacing.sm
+                      }}
+                    >
+                      <MaterialIcons
+                        name={splitOrientation === 'vertical' ? 'swap-vert' : 'swap-horiz'}
                         color={primaryColor}
                         size={ms(DESIGN.icon.xs)}
                       />

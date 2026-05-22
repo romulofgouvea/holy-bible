@@ -84,7 +84,7 @@ async function main() {
     }
 
     console.log(`\n--- Starting scraper for version ${version.toUpperCase()} (${totalChapters} chapters) ---`);
-    
+
     // Load local version JSON to find exactly where the text matches
     const versionDataPath = path.join(process.cwd(), `src/data/bible-version/${version.toUpperCase()}.json`);
     let localBibleData: any[] = [];
@@ -105,7 +105,7 @@ async function main() {
       }
 
       const localBook = localBibleData.find(b => b.abbrev.toLowerCase() === abbrev);
-      
+
       const bookTitle: BookTitle = {
         name: book.name,
         abbrev: book.abbrev,
@@ -124,7 +124,7 @@ async function main() {
           $('div.s').each((_, el) => {
             const title = $(el).find('span.t').text().trim();
             const dataV = $(el).attr('data-v');
-            
+
             let type = 'section';
             if ($(el).hasClass('sp')) type = 'speech';
             else if ($(el).hasClass('l1') || $(el).hasClass('l2')) type = 'subsection';
@@ -168,7 +168,7 @@ async function main() {
                   type,
                   positionIndex
                 });
-                console.log(`${version.toUpperCase()}/${book.name}/${chapter}/${startVerse}-${endVerse} [${type}, idx:${positionIndex}]: ${title}`);
+                console.log(`\n${version.toUpperCase()}/${book.name}/${chapter}/${startVerse}-${endVerse} [${type}, idx:${positionIndex}]: ${title}`);
               }
             }
           });
@@ -181,14 +181,14 @@ async function main() {
           }
 
           processedChapters++;
-          process.stdout.write(`\rProgress [${version.toUpperCase()}]: ${processedChapters}/${totalChapters} (Book: ${book.name}, Chapter: ${chapter})`);
+          //process.stdout.write(`\rProgress [${version.toUpperCase()}]: ${processedChapters}/${totalChapters} (Book: ${book.name}, Chapter: ${chapter})`);
         } catch (error: any) {
           console.error(`\nError fetching ${url}:`, error.message);
         }
 
         await delay(30);
       }
-      
+
       if (bookTitle.chapters.length > 0) {
         versionBooks.push(bookTitle);
       }
