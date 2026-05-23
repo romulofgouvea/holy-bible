@@ -544,6 +544,7 @@ export default function ReadingPlanScreen() {
                         backgroundColor: colors.surface,
                         borderColor: colors.border,
                         shadowColor: colors.shadow,
+                        opacity: isCompleted ? 0.6 : 1,
                     }]}
                     onPress={() => handleDayPress(item)}
                     activeOpacity={0.7}
@@ -564,13 +565,23 @@ export default function ReadingPlanScreen() {
                         </BibleText>
                     </View>
 
-                    {isCompleted && completedAt ? (
-                        <BibleText style={{ fontSize: ms(DESIGN.fontSize.xs), color: colors.textMuted }}>
-                            {new Date(completedAt).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })}
-                        </BibleText>
-                    ) : (
-                        <BibleIcon name="chevron-right" color={colors.textMuted} size={ms(DESIGN.fontSize.xl)} />
-                    )}
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: ms(DESIGN.spacing.sm) }}>
+                        {isCompleted && completedAt && (
+                            <BibleText style={{ fontSize: ms(DESIGN.fontSize.xs), color: colors.textMuted }}>
+                                {new Date(completedAt).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })}
+                            </BibleText>
+                        )}
+                        {isCompleted ? (
+                            <View style={[styles.checkbox, {
+                                borderWidth: 0,
+                                backgroundColor: colors.primary,
+                            }]}>
+                                <BibleIcon name="check" size={ms(DESIGN.fontSize.md)} color={colors.onPrimary} />
+                            </View>
+                        ) : (
+                            <BibleIcon name="chevron-right" color={colors.textMuted} size={ms(DESIGN.fontSize.xl)} />
+                        )}
+                    </View>
                 </TouchableOpacity>
             </View>
         );
