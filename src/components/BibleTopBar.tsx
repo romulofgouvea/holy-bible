@@ -20,12 +20,13 @@ export type BibleTopBarProps = {
     onOpenSettings: () => void;
     onOpenSearch: () => void;
     onOpenHistory: () => void;
+    onOpenAudio: () => void;
     isSplitScreen?: boolean;
     onToggleCompare?: () => void;
 };
 
 export const BibleTopBar = React.memo((props: BibleTopBarProps) => {
-    const { bookName, currentChapter, onOpenBook, onOpenChapter, onPrevChapter, onNextChapter, onOpenMenu, onOpenSettings, onOpenSearch, onOpenHistory, isSplitScreen, onToggleCompare } = props;
+    const { bookName, currentChapter, onOpenBook, onOpenChapter, onPrevChapter, onNextChapter, onOpenMenu, onOpenSettings, onOpenSearch, onOpenHistory, onOpenAudio, isSplitScreen, onToggleCompare } = props;
     const { ms, DESIGN } = useResponsive();
     const { colors } = useTheme();
     const { readerColors, readerTheme } = useReaderSettings();
@@ -55,12 +56,20 @@ export const BibleTopBar = React.memo((props: BibleTopBarProps) => {
                     </View>
                 }
                 rightContent={
-                    <TouchableOpacity
-                        style={[styles.menuButton, { backgroundColor: 'transparent', width: ms(DESIGN.height.sm), height: ms(DESIGN.height.sm), borderRadius: ms(DESIGN.borderRadius.sm), marginLeft: ms(DESIGN.spacing.xs), alignItems: 'center', justifyContent: 'center' }]}
-                        onPress={() => setDotsMenuVisible(true)}
-                    >
-                        <BibleIcon name="more-vertical" size={ms(DESIGN.fontSize.xl)} color={headerContent} />
-                    </TouchableOpacity>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <TouchableOpacity
+                            style={[styles.menuButton, { backgroundColor: 'transparent', width: ms(DESIGN.height.sm), height: ms(DESIGN.height.sm), borderRadius: ms(DESIGN.borderRadius.sm), alignItems: 'center', justifyContent: 'center' }]}
+                            onPress={onOpenAudio}
+                        >
+                            <BibleIcon name="headphones" size={ms(DESIGN.fontSize.xl)} color={headerContent} />
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={[styles.menuButton, { backgroundColor: 'transparent', width: ms(DESIGN.height.sm), height: ms(DESIGN.height.sm), borderRadius: ms(DESIGN.borderRadius.sm), marginLeft: ms(DESIGN.spacing.xs), alignItems: 'center', justifyContent: 'center' }]}
+                            onPress={() => setDotsMenuVisible(true)}
+                        >
+                            <BibleIcon name="more-vertical" size={ms(DESIGN.fontSize.xl)} color={headerContent} />
+                        </TouchableOpacity>
+                    </View>
                 }
             />
 

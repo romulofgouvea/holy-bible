@@ -15,6 +15,7 @@ import { BibleToast } from '../components/BibleToast';
 import { BibleTopBar } from '../components/BibleTopBar';
 import { BibleVerseReader } from '../components/BibleVerseReader';
 import { BibleHistoryModal } from '../components/modals/BibleHistoryModal';
+import { BibleAudioModal } from '../components/modals/BibleAudioModal';
 import { DonateModal } from '../components/modals/DonateModal';
 import { BibleConfirmModal } from '../components/modals/BibleConfirmModal';
 import { STORAGE_KEYS } from '../constants/storage';
@@ -353,6 +354,7 @@ export default function BibleScreen() {
   const [isSettingsModalVisible, setIsSettingsModalVisible] = useState(false);
   const [isHistoryModalVisible, setIsHistoryModalVisible] = useState(false);
   const [isDonateVisible, setIsDonateVisible] = useState(false);
+  const [isAudioModalVisible, setIsAudioModalVisible] = useState(false);
 
   const navBg = readerTheme === 'sepia' ? readerColors.primary : colors.primary;
   const navBtnSize = ms(DESIGN.spacing.xxl);
@@ -498,6 +500,7 @@ export default function BibleScreen() {
         onOpenSettings={() => setIsSettingsModalVisible(true)}
         onOpenSearch={() => router.push('/search?from=bible')}
         onOpenHistory={() => setIsHistoryModalVisible(true)}
+        onOpenAudio={() => setIsAudioModalVisible(true)}
         isSplitScreen={isSplitScreen}
         onToggleCompare={() => {
           if (isSplitScreen) {
@@ -736,7 +739,7 @@ export default function BibleScreen() {
             </View>
           )}
 
-          {!isActionSheetVisible && (
+          {!isActionSheetVisible && !isAudioModalVisible && (
             <Animated.View
               pointerEvents={isNavInteractive ? 'box-none' : 'none'}
               style={[
@@ -778,6 +781,15 @@ export default function BibleScreen() {
           )}
         </View>
       </Animated.View>
+
+      <BibleAudioModal
+        visible={isAudioModalVisible}
+        version={version}
+        abbrev={currentBook.abbrev}
+        chapter={chapter}
+        onClose={() => setIsAudioModalVisible(false)}
+        onShowToast={(msg) => show(msg)}
+      />
 
       <BibleVerseActionSheet
         visible={isActionSheetVisible}

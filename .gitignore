@@ -57,3 +57,5 @@ local-builds/.env
 
 local-scripts/*
 scratch/*
+
+.env

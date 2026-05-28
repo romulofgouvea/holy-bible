@@ -29,7 +29,8 @@
     "@react-navigation/elements": "^2.9.10",
     "@react-navigation/native": "^7.1.33",
     "@shopify/flash-list": "^2.3.1",
-    "expo": "^54.0.33",
+    "expo": "^54.0.34",
+    "expo-audio": "~1.1.1",
     "expo-clipboard": "~8.0.8",
     "expo-constants": "~18.0.13",
     "expo-dev-client": "~6.0.20",
@@ -75,7 +76,8 @@
     "jest": "^30.4.2",
     "jest-expo": "^56.0.4",
     "jimp": "^0.16.13",
-    "react-test-renderer": "^19.2.6",
+    "prettier": "^3.8.3",
+    "react-test-renderer": "19.1.0",
     "typescript": "~5.9.2"
   },
   "private": true
