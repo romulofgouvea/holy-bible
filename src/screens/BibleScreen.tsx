@@ -489,7 +489,7 @@ export default function BibleScreen() {
             const nextV = s.version || version;
             const nextB = book;
             const nextC = s.chapter || chapter;
-            const nextVe = 1;
+            const nextVe = s.verse || 1;
             navigateTo({ version: nextV, book: nextB, chapter: nextC, verse: nextVe });
             setTimeout(() => scrollToVerse(nextVe, nextC), 300);
           }

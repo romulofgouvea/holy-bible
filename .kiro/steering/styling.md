@@ -1,0 +1,39 @@
+---
+inclusion: fileMatch
+fileMatchPattern: ['src/**/*.{tsx,ts}']
+---
+
+# Styling Rules
+
+## Mandatory useResponsive
+
+All spacing, sizing, typography, dimensions, and radius must use `useResponsive` via `ms()`. Never hardcode style values.
+
+## Forbidden
+
+```typescript
+// ❌ hardcoded
+padding: 12
+fontSize: 16
+
+// ❌ raw constants in styles
+padding: SPACING.md
+
+// ❌ empty styles
+container: {}
+```
+
+## Required Pattern
+
+```typescript
+const { ms, DESIGN } = useResponsive();
+
+padding: ms(DESIGN.spacing.md)
+fontSize: ms(DESIGN.fontSize.lg)
+borderRadius: ms(DESIGN.borderRadius.md)
+```
+
+## Design System
+
+- Tokens: `spacing`, `fontSize`, `borderRadius`, `icon`, `layout`, `button`.
+- Avoid inline styles when possible; no empty style objects.

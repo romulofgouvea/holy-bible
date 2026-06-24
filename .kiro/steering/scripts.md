@@ -1,0 +1,17 @@
+---
+inclusion: always
+---
+
+# Script Rules
+
+## Shared Scripts
+
+Reusable scripts go in `/scripts` (e.g. `build-app.ts`, `generate-icons.ts`).
+
+## Local Scripts
+
+Temporary or machine-only scripts go in `/local-scripts` (gitignored).
+
+## Naming
+
+- kebab-case, descriptive names (e.g. `reset-local-db.ts`, `local-api-test.ts`).
