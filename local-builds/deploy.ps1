@@ -2,7 +2,7 @@
 
 $ErrorActionPreference = "Stop"
 
-$PROJECT_PATH = "C:\workspace\holy-bible"
+$PROJECT_PATH = Split-Path $PSScriptRoot -Parent
 $LOCAL_BUILDS_PATH = Join-Path $PROJECT_PATH "local-builds\outputs"
 $SERVICE_ACCOUNT_KEY = Join-Path $PROJECT_PATH "local-builds\google-service-key.json"
 

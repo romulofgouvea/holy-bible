@@ -1,11 +1,11 @@
 $ErrorActionPreference = "Stop"
 
-$PROJECT_PATH = "C:\workspace\holy-bible"
-$KEYSTORE_PATH = "$PROJECT_PATH\local-builds\keystore.jks"
-$CREDENTIALS_FILE = "$PROJECT_PATH\local-builds\credentials.md"
-$STATE_FILE = "$PROJECT_PATH\local-builds\deploy-state.json"
-$APP_JSON_PATH = "$PROJECT_PATH\app.json"
+$PROJECT_PATH = Split-Path $PSScriptRoot -Parent
+$KEYSTORE_PATH = Join-Path $PROJECT_PATH "local-builds" "keystore.jks"
+$CREDENTIALS_FILE = Join-Path $PROJECT_PATH "local-builds" "credentials.md"
+$STATE_FILE = Join-Path $PROJECT_PATH "local-builds" "deploy-state.json"
 $KEYSTORE_FILE = "keystore.jks"
+$GRADLEW = if ($IsWindows) { ".\gradlew.bat" } else { "./gradlew" }
 
 Set-Location $PROJECT_PATH
 
@@ -76,16 +76,35 @@ $ErrorActionPreference = "Continue"
 npx expo prebuild --clean 2>&1 | Out-Null
 $ErrorActionPreference = "Stop"
 
-New-Item -ItemType Directory -Force -Path "android\app" | Out-Null
-Copy-Item $KEYSTORE_PATH "android\app\$KEYSTORE_FILE" -Force
+$androidAppDir = Join-Path $PROJECT_PATH "android" "app"
+New-Item -ItemType Directory -Force -Path $androidAppDir | Out-Null
+Copy-Item $KEYSTORE_PATH (Join-Path $androidAppDir $KEYSTORE_FILE) -Force
 
 Show-Step 2 3 "Compilando AAB..."
 
-$KEYSTORE_FULL = "$PROJECT_PATH\android\app\$KEYSTORE_FILE"
+# Resolver Android SDK
+$sdkPath = if ($env:ANDROID_HOME) {
+    $env:ANDROID_HOME
+} elseif ($IsWindows) {
+    Join-Path $env:LOCALAPPDATA "Android" "Sdk"
+} else {
+    Join-Path $HOME "Android" "Sdk"
+}
 
-Set-Location "$PROJECT_PATH\android"
+if (!(Test-Path $sdkPath)) {
+    Write-Host "Android SDK nao encontrado: $sdkPath" -ForegroundColor Red
+    exit 1
+}
 
-.\gradlew.bat bundleRelease --quiet `
+$env:ANDROID_HOME = $sdkPath
+$localProps = Join-Path $PROJECT_PATH "android" "local.properties"
+"sdk.dir=$sdkPath" | Set-Content $localProps -Encoding UTF8
+
+$KEYSTORE_FULL = Join-Path $PROJECT_PATH "android" "app" $KEYSTORE_FILE
+
+Set-Location (Join-Path $PROJECT_PATH "android")
+
+& $GRADLEW bundleRelease --quiet `
     "-Dorg.gradle.jvmargs=-Xmx8g -XX:MaxMetaspaceSize=512m" `
     "-Pandroid.injected.signing.store.file=$KEYSTORE_FULL" `
     "-Pandroid.injected.signing.store.password=$STORE_PASSWORD" `
@@ -100,24 +119,24 @@ if ($LASTEXITCODE -ne 0) {
 
 Set-Location $PROJECT_PATH
 
-$AAB_PATH = "$PROJECT_PATH\android\app\build\outputs\bundle\release\app-release.aab"
+$AAB_PATH = Join-Path $PROJECT_PATH "android" "app" "build" "outputs" "bundle" "release" "app-release.aab"
 if (!(Test-Path $AAB_PATH)) {
     Write-Host "AAB nao encontrado." -ForegroundColor Red
     exit 1
 }
 
 # Copiar para outputs
-$OUTPUT_DIR = "$PROJECT_PATH\local-builds\outputs"
+$OUTPUT_DIR = Join-Path $PROJECT_PATH "local-builds" "outputs"
 if (!(Test-Path $OUTPUT_DIR)) {
     New-Item -ItemType Directory -Force -Path $OUTPUT_DIR | Out-Null
 }
 
 $TIMESTAMP = Get-Date -Format "yyyy-MM-dd-HH-mm"
 $FILENAME = "$TIMESTAMP-holy-bible.aab"
-$DESTINATION = "$OUTPUT_DIR\$FILENAME"
+$DESTINATION = Join-Path $OUTPUT_DIR $FILENAME
 Copy-Item $AAB_PATH $DESTINATION -Force
 
 # Limpeza: manter apenas os 3 builds mais recentes (incluindo o atual)
-Get-ChildItem "$OUTPUT_DIR\*-holy-bible.aab" | Sort-Object LastWriteTime -Descending | Select-Object -Skip 3 | Remove-Item -Force
+Get-ChildItem -Path $OUTPUT_DIR -Filter "*-holy-bible.aab" | Sort-Object LastWriteTime -Descending | Select-Object -Skip 3 | Remove-Item -Force
 
 Show-Step 3 3 "Build pronto ($FILENAME). Iniciando envio..."

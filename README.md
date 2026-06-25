@@ -1,56 +1,39 @@
-# Welcome to your Expo app 👋
+# Bíblia Online
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Aplicativo de Bíblia para Android desenvolvido com **Expo / React Native**.
 
-## Get started
+## Funcionalidades
 
-1. Install dependencies
+- Leitura de 5 versões da Bíblia: ACF, ARA, NAA, NVI, NVT
+- Busca de versículos por palavra-chave
+- Destaques e histórico de leitura
+- Planos de leitura (clássico, cronológico, NT e AT em diferentes durações)
+- Áudio de capítulos por versão
+- Estudos bíblicos com editor próprio e gerenciamento de versículos
+- Comparação de versões em tela dupla com scroll sincronizado
+- Temas do leitor (claro, sépia, escuro) com controle de fonte e alinhamento
+- Backup e restauração do progresso do usuário
+- Suporte a haptics, modo escuro e temas de cor
 
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+## Primeiros passos
 
 ```bash
-npm run reset-project
+npm install
+expo start        # abre o Metro bundler; escaneie o QR no Expo Go
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Para rodar direto no dispositivo/emulador Android:
 
-### Other setup steps
+```bash
+expo run:android
+```
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+## Tecnologias principais
 
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+- [Expo](https://expo.dev) / React Native
+- [Expo Router](https://expo.github.io/router) — roteamento file-based
+- [@shopify/flash-list](https://shopify.github.io/flash-list/) — lista de versículos
+- [react-native-reanimated](https://docs.swmansion.com/react-native-reanimated/) — animações
+- [AsyncStorage](https://react-native-async-storage.github.io/async-storage/) — persistência local
+- expo-audio — reprodução de áudio
+- expo-haptics — feedback tátil
