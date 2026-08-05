@@ -28,6 +28,8 @@ export function ReaderSettingsModal({
     setReaderTheme,
     readerFont,
     setReaderFont,
+    shouldShowTitles,
+    setShouldShowTitles,
   } = useReaderSettings();
 
   const handleSetTheme = (theme: "light" | "dark" | "sepia") => {
@@ -316,7 +318,6 @@ export function ReaderSettingsModal({
             </View>
           </View>
 
-          {/* Font Family Section */}
           <View style={styles.section}>
             <BibleText
               style={[styles.sectionTitle, { color: colors.textMuted }]}
@@ -365,6 +366,56 @@ export function ReaderSettingsModal({
                         color={dividerColor}
                       />
                     )}
+                </React.Fragment>
+              ))}
+            </View>
+          </View>
+
+          <View style={styles.section}>
+            <BibleText
+              style={[styles.sectionTitle, { color: colors.textMuted }]}
+            >
+              Títulos dos Textos
+            </BibleText>
+            <View
+              style={[
+                styles.unifiedRow,
+                { backgroundColor: colors.surfaceHighlight },
+              ]}
+            >
+              {[
+                { label: "Ocultar", value: false },
+                { label: "Exibir", value: true },
+              ].map((item, index) => (
+                <React.Fragment key={item.label}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      selectionHaptic();
+                      setShouldShowTitles(item.value);
+                    }}
+                    style={[
+                      styles.segmentBtn,
+                      shouldShowTitles === item.value && {
+                        backgroundColor: colors.primary,
+                      },
+                    ]}
+                  >
+                    <BibleText
+                      style={{
+                        fontSize: ms(DESIGN.fontSize.md),
+                        fontWeight: "700",
+                        color:
+                          shouldShowTitles === item.value
+                            ? colors.onPrimary
+                            : colors.onBackground,
+                      }}
+                    >
+                      {item.label}
+                    </BibleText>
+                  </TouchableOpacity>
+                  {index === 0 && (
+                    <BibleDivider vertical height="60%" color={dividerColor} />
+                  )}
                 </React.Fragment>
               ))}
             </View>

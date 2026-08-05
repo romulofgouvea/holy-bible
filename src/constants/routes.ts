@@ -15,6 +15,7 @@ export const ROUTES = {
   TRASH: "/configuration/trash",
   STUDY_EDITOR: (id: string) => `/studies/study/${id}` as const,
   READING_PLAN: "/reading-plan",
+  NOTES: "/notes",
 } as const;
 
 export const ROUTE_LABELS: Record<string, string> = {
@@ -22,6 +23,7 @@ export const ROUTE_LABELS: Record<string, string> = {
   [ROUTES.BIBLE]: "Bíblia",
   [ROUTES.STUDIES]: "Estudos",
   [ROUTES.SEARCH]: "Pesquisar",
+  [ROUTES.NOTES]: "Anotações",
   [ROUTES.CONFIGURATION]: "Configurações",
   [ROUTES.TRASH]: "Lixeira de Estudos",
   [ROUTES.READING_PLAN]: "Plano de Leitura",
@@ -52,6 +54,12 @@ export const DRAWER_ITEMS: {
     label: ROUTE_LABELS[ROUTES.SEARCH],
     icon: "search",
     route: ROUTES.SEARCH,
+  },
+  {
+    key: "notes",
+    label: ROUTE_LABELS[ROUTES.NOTES],
+    icon: "file-text",
+    route: ROUTES.NOTES,
   },
   {
     key: "reading-plan",

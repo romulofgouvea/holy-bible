@@ -15,6 +15,7 @@ import { useTheme } from "../../hooks/useTheme";
 import { SelectedVerse } from "../../models";
 import { BibleIcon } from "../BibleIcon";
 import { BibleAddToStudyModal } from "./BibleAddToStudyModal";
+import { BibleNoteModal } from "./BibleNoteModal";
 
 type VerseActionSheetProps = {
   visible: boolean;
@@ -88,6 +89,7 @@ export function BibleVerseActionSheet(props: VerseActionSheetProps) {
   const hiddenY = ms(DESIGN.layout.settingsIconOffset * 3);
   const translateY = React.useRef(new Animated.Value(hiddenY)).current;
   const [studyModalVisible, setStudyModalVisible] = React.useState(false);
+  const [noteModalVisible, setNoteModalVisible] = React.useState(false);
 
   React.useEffect(() => {
     Animated.spring(translateY, {
@@ -279,6 +281,26 @@ export function BibleVerseActionSheet(props: VerseActionSheetProps) {
                 color={count === 0 ? colors.textMuted : colors.primary}
               />
             </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[
+                styles.iconBtn,
+                {
+                  backgroundColor:
+                    count === 0
+                      ? colors.surfaceHighlight
+                      : colors.primary + "25",
+                },
+              ]}
+              onPress={() => setNoteModalVisible(true)}
+              disabled={count === 0}
+            >
+              <BibleIcon
+                name="edit-2"
+                size={ms(DESIGN.spacing.lg)}
+                color={count === 0 ? colors.textMuted : colors.primary}
+              />
+            </TouchableOpacity>
           </View>
 
           <BibleIcon
@@ -335,6 +357,16 @@ export function BibleVerseActionSheet(props: VerseActionSheetProps) {
         visible={studyModalVisible}
         onClose={() => {
           setStudyModalVisible(false);
+          onClose();
+        }}
+        selectedVerses={selectedVerses}
+        onShowToast={props.onShowToast}
+      />
+
+      <BibleNoteModal
+        visible={noteModalVisible}
+        onClose={() => {
+          setNoteModalVisible(false);
           onClose();
         }}
         selectedVerses={selectedVerses}

@@ -23,6 +23,17 @@ export interface HighlightItem {
   verse: number;
 }
 
+export interface VerseNote {
+  id: string;
+  abbrev: string;
+  chapter: number;
+  verse: number;
+  verseEnd?: number;
+  text: string;
+  createdAt: number;
+  updatedAt: number;
+}
+
 export type SelectedVerse = {
   chapter: number;
   verse: number;

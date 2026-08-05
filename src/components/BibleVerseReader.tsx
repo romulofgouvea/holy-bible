@@ -7,6 +7,7 @@ import { useReaderSettings } from "../hooks/useReaderSettings";
 import { useResponsive } from "../hooks/useResponsive";
 import { useTheme } from "../hooks/useTheme";
 import { impactLight } from "../utils/haptics";
+import { BibleIcon } from "./BibleIcon";
 import { BibleText } from "./BibleText";
 
 import { VerseTitle } from "../models";
@@ -27,6 +28,7 @@ type VerseReaderProps = {
   sections: SectionType[];
   blinkingVerse: string | null;
   highlights: Record<string, any>;
+  notes: Record<string, any>;
   selectedKeys: Record<string, boolean>;
   bookAbbrev: string;
   version: string;
@@ -51,11 +53,13 @@ const VerseRow = React.memo(
     isSelected,
     isHighlighted,
     isBlinking,
+    hasNote,
     highlightColorHex,
     primaryColor,
     readerColors,
     fontSizeMultiplier,
     textAlign,
+    shouldShowTitles,
     ms,
     DESIGN,
     styles,
@@ -96,9 +100,13 @@ const VerseRow = React.memo(
     });
 
     const zeroIndexTitles =
-      item.titles?.filter((t: any) => t.positionIndex === 0) || [];
+      shouldShowTitles && item.titles
+        ? item.titles.filter((t: any) => t.positionIndex === 0)
+        : [];
     const midVerseTitles =
-      item.titles?.filter((t: any) => t.positionIndex > 0) || [];
+      shouldShowTitles && item.titles
+        ? item.titles.filter((t: any) => t.positionIndex > 0)
+        : [];
 
     const renderMidVerseTitlesAndText = () => {
       if (midVerseTitles.length === 0) {
@@ -210,6 +218,16 @@ const VerseRow = React.memo(
               {item.verse}
             </BibleText>
             {renderMidVerseTitlesAndText()}
+            {hasNote && (
+              <BibleText style={{ color: primaryColor, opacity: 0.8 }}>
+                {"  "}
+                <BibleIcon
+                  name="edit-2"
+                  size={ms(DESIGN.fontSize.md * fontSizeMultiplier)}
+                  color={primaryColor}
+                />
+              </BibleText>
+            )}
           </BibleText>
         </Animated.View>
       </TouchableOpacity>
@@ -219,10 +237,12 @@ const VerseRow = React.memo(
     return (
       prevProps.item === nextProps.item &&
       prevProps.isSelected === nextProps.isSelected &&
+      prevProps.hasNote === nextProps.hasNote &&
       prevProps.isHighlighted === nextProps.isHighlighted &&
       prevProps.isBlinking === nextProps.isBlinking &&
       prevProps.fontSizeMultiplier === nextProps.fontSizeMultiplier &&
       prevProps.textAlign === nextProps.textAlign &&
+      prevProps.shouldShowTitles === nextProps.shouldShowTitles &&
       prevProps.readerColors.background === nextProps.readerColors.background &&
       prevProps.primaryColor === nextProps.primaryColor &&
       prevProps.styles === nextProps.styles
@@ -235,6 +255,7 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
     sections,
     blinkingVerse,
     highlights,
+    notes,
     selectedKeys,
     bookAbbrev,
     version,
@@ -250,8 +271,13 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
   } = props;
   const { ms, DESIGN } = useResponsive();
   const { colors } = useTheme();
-  const { fontSizeMultiplier, textAlign, readerColors, readerTheme } =
-    useReaderSettings();
+  const {
+    fontSizeMultiplier,
+    textAlign,
+    readerColors,
+    readerTheme,
+    shouldShowTitles,
+  } = useReaderSettings();
 
   const styles = useMemo(
     () =>
@@ -413,6 +439,8 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
           }
 
           const isBlinking = blinkingVerse === `${item.chapter}-${item.verse}`;
+          const hasNote =
+            !!notes[`${bookAbbrev}-${item.chapter}-${item.verse}`];
           const highlight =
             highlights[`${bookAbbrev}-${item.chapter}-${item.verse}`];
           const highlightColorId = highlight
@@ -430,11 +458,13 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
               isSelected={isSelected}
               isHighlighted={!!highlightColorId}
               isBlinking={isBlinking}
+              hasNote={hasNote}
               highlightColorHex={highlightColorHex}
               primaryColor={primaryColor}
               readerColors={readerColors}
               fontSizeMultiplier={fontSizeMultiplier}
               textAlign={textAlign}
+              shouldShowTitles={shouldShowTitles}
               ms={ms}
               DESIGN={DESIGN}
               styles={styles}

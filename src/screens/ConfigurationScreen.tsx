@@ -128,7 +128,8 @@ export default function ConfigurationScreen() {
     [ms, colors, DESIGN],
   );
 
-  const { setReaderTheme } = useReaderSettings();
+  const { setReaderTheme, shouldShowTitles, setShouldShowTitles } =
+    useReaderSettings();
   const { clearHistory } = useHistory();
   const [isDrawerVisible, setIsDrawerVisible] = useState(false);
   const { importBulk, reloadFromStorage } = useStudies();
@@ -454,6 +455,48 @@ export default function ConfigurationScreen() {
                   Escolher
                 </BibleText>
               </View>
+            }
+          />
+        </View>
+
+        <BibleText
+          style={{
+            marginTop: ms(DESIGN.spacing.xl),
+            marginLeft: ms(DESIGN.spacing.sm),
+            marginBottom: ms(DESIGN.spacing.sm),
+            fontSize: ms(DESIGN.fontSize.md),
+            fontWeight: "700",
+            color: colors.textMuted,
+          }}
+        >
+          CONFIGURAÇÕES DA BÍBLIA
+        </BibleText>
+        <View
+          style={[
+            styles.card,
+            {
+              backgroundColor: colors.surface,
+              borderColor: colors.border,
+              shadowColor: colors.shadow,
+            },
+          ]}
+        >
+          <SettingsItem
+            label="Títulos dos Textos"
+            description="Exibir títulos e seções nos capítulos bíblicos"
+            icon="type"
+            onPress={() => {
+              impactLight();
+              setShouldShowTitles(!shouldShowTitles);
+            }}
+            rightElement={
+              <BibleSwitch
+                value={shouldShowTitles}
+                onValueChange={(val) => {
+                  impactLight();
+                  setShouldShowTitles(val);
+                }}
+              />
             }
           />
         </View>

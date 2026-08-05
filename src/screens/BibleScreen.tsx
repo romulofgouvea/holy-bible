@@ -33,6 +33,7 @@ import { getBibleTitles } from "../data/bible-titles";
 import { getBibleData } from "../data/bible-version";
 import { useBible } from "../hooks/useBible";
 import { useBibleModals } from "../hooks/useBibleModals";
+import { useNotes } from "../hooks/useNotes";
 import { useReaderSettings } from "../hooks/useReaderSettings";
 import { useResponsive } from "../hooks/useResponsive";
 import { useTheme } from "../hooks/useTheme";
@@ -71,6 +72,8 @@ export default function BibleScreen() {
     splitOrientation,
     setSplitOrientation,
   } = useBible();
+
+  const { notesMap } = useNotes();
 
   const router = useRouter();
 
@@ -684,6 +687,7 @@ export default function BibleScreen() {
                   sections={sectionData}
                   blinkingVerse={blinkingVerse}
                   highlights={highlights}
+                  notes={notesMap}
                   version={version}
                   selectedKeys={selectedVerses.reduce(
                     (acc, v) => {
@@ -942,6 +946,7 @@ export default function BibleScreen() {
                   sections={secondSectionData}
                   blinkingVerse={blinkingVerse}
                   highlights={highlights}
+                  notes={notesMap}
                   version={secondVersion}
                   selectedKeys={selectedVerses.reduce(
                     (acc, v) => {
@@ -976,6 +981,7 @@ export default function BibleScreen() {
                 sections={sectionData}
                 blinkingVerse={blinkingVerse}
                 highlights={highlights}
+                notes={notesMap}
                 version={version}
                 selectedKeys={selectedVerses.reduce(
                   (acc, v) => {

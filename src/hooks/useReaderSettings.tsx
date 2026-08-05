@@ -31,6 +31,8 @@ export type ReaderSettingsContextType = {
   setReaderFont: (val: ReaderFont) => void;
   readerFontFamily: string;
   readerColors: ThemeColors;
+  shouldShowTitles: boolean;
+  setShouldShowTitles: (val: boolean) => void;
 };
 
 const ReaderSettingsContext = createContext<ReaderSettingsContextType>(
@@ -48,22 +50,31 @@ export const ReaderSettingsProvider = ({
   const [textAlign, setTextAlignState] = useState<TextAlign>("left");
   const [readerTheme, setReaderThemeState] = useState<ReaderTheme>("light");
   const [readerFont, setReaderFontState] = useState<ReaderFont>("poppins");
+  const [shouldShowTitles, setShouldShowTitlesState] = useState(true);
 
   const loadReaderSettings = useCallback(async () => {
     try {
-      const [savedFontSize, savedAlign, savedTheme, savedFont] =
-        await Promise.all([
-          AsyncStorage.getItem(STORAGE_KEYS.FONT_SIZE),
-          AsyncStorage.getItem(STORAGE_KEYS.TEXT_ALIGN),
-          AsyncStorage.getItem(STORAGE_KEYS.READER_THEME),
-          AsyncStorage.getItem(STORAGE_KEYS.READER_FONT),
-        ]);
+      const [
+        savedFontSize,
+        savedAlign,
+        savedTheme,
+        savedFont,
+        savedShowTitles,
+      ] = await Promise.all([
+        AsyncStorage.getItem(STORAGE_KEYS.FONT_SIZE),
+        AsyncStorage.getItem(STORAGE_KEYS.TEXT_ALIGN),
+        AsyncStorage.getItem(STORAGE_KEYS.READER_THEME),
+        AsyncStorage.getItem(STORAGE_KEYS.READER_FONT),
+        AsyncStorage.getItem(STORAGE_KEYS.SHOW_TITLES),
+      ]);
 
       if (savedFontSize !== null)
         setFontSizeMultiplierState(Number(savedFontSize));
       if (savedAlign !== null) setTextAlignState(savedAlign as TextAlign);
       if (savedTheme !== null) setReaderThemeState(savedTheme as ReaderTheme);
       if (savedFont !== null) setReaderFontState(savedFont as ReaderFont);
+      if (savedShowTitles !== null)
+        setShouldShowTitlesState(savedShowTitles === "true");
     } catch (e) {}
     setIsLoaded(true);
   }, []);
@@ -105,6 +116,13 @@ export const ReaderSettingsProvider = ({
     } catch (e) {}
   }, []);
 
+  const setShouldShowTitles = useCallback(async (val: boolean) => {
+    setShouldShowTitlesState(val);
+    try {
+      await AsyncStorage.setItem(STORAGE_KEYS.SHOW_TITLES, String(val));
+    } catch (e) {}
+  }, []);
+
   const value = useMemo(() => {
     const activePalette =
       COLOR_THEMES[colorTheme as ColorThemeKey] || COLOR_THEMES.teal;
@@ -133,6 +151,8 @@ export const ReaderSettingsProvider = ({
       setReaderFont,
       readerFontFamily,
       readerColors,
+      shouldShowTitles,
+      setShouldShowTitles,
     };
   }, [
     colorTheme,
@@ -140,10 +160,12 @@ export const ReaderSettingsProvider = ({
     textAlign,
     readerTheme,
     readerFont,
+    shouldShowTitles,
     setFontSizeMultiplier,
     setTextAlign,
     setReaderTheme,
     setReaderFont,
+    setShouldShowTitles,
   ]);
 
   if (!isLoaded) return null;
