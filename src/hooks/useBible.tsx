@@ -63,6 +63,14 @@ type BibleContextType = {
   setReadingPlanGoal: (
     goal: { bookAbbrev: string; chapter: number } | null,
   ) => void;
+  isSplitScreen: boolean;
+  setIsSplitScreen: (v: boolean) => void;
+  secondVersion: string;
+  setSecondVersion: (v: string) => void;
+  splitOrientation: "vertical" | "horizontal";
+  setSplitOrientation: React.Dispatch<
+    React.SetStateAction<"vertical" | "horizontal">
+  >;
 };
 
 const BibleContext = createContext<BibleContextType | undefined>(undefined);
@@ -80,6 +88,11 @@ export function BibleProvider({ children }: { children: React.ReactNode }) {
   const [highlights, setHighlights] = useState<Record<string, HighlightItem>>(
     {},
   );
+  const [isSplitScreen, setIsSplitScreen] = useState(false);
+  const [secondVersion, setSecondVersion] = useState("ARA");
+  const [splitOrientation, setSplitOrientation] = useState<
+    "vertical" | "horizontal"
+  >("vertical");
   const [readingPlanGoal, setReadingPlanGoal] = useState<{
     bookAbbrev: string;
     chapter: number;
@@ -247,6 +260,29 @@ export function BibleProvider({ children }: { children: React.ReactNode }) {
         }
         setHighlights(normalized);
       }
+
+      const savedCompare = await AsyncStorage.getItem(
+        STORAGE_KEYS.BIBLE_COMPARE,
+      );
+      if (savedCompare) {
+        const parsed = JSON.parse(savedCompare);
+        if (parsed) {
+          if (typeof parsed.isSplitScreen === "boolean") {
+            setIsSplitScreen(parsed.isSplitScreen);
+          } else if (parsed.versionCompare) {
+            setIsSplitScreen(true);
+          }
+          if (parsed.versionCompare) {
+            setSecondVersion(parsed.versionCompare);
+          }
+          if (
+            parsed.splitOrientation === "vertical" ||
+            parsed.splitOrientation === "horizontal"
+          ) {
+            setSplitOrientation(parsed.splitOrientation);
+          }
+        }
+      }
     } catch (e) {
     } finally {
       setIsReady(true);
@@ -265,6 +301,28 @@ export function BibleProvider({ children }: { children: React.ReactNode }) {
     );
     return () => sub.remove();
   }, [loadState]);
+
+  useEffect(() => {
+    if (!isReady) return;
+    const saveCompare = async () => {
+      try {
+        if (isSplitScreen) {
+          await AsyncStorage.setItem(
+            STORAGE_KEYS.BIBLE_COMPARE,
+            JSON.stringify({
+              isSplitScreen: true,
+              versionCurrent: version,
+              versionCompare: secondVersion,
+              splitOrientation,
+            }),
+          );
+        } else {
+          await AsyncStorage.removeItem(STORAGE_KEYS.BIBLE_COMPARE);
+        }
+      } catch (e) {}
+    };
+    saveCompare();
+  }, [isReady, isSplitScreen, version, secondVersion, splitOrientation]);
 
   const setVersion = useCallback(
     (v: string) => {
@@ -463,6 +521,12 @@ export function BibleProvider({ children }: { children: React.ReactNode }) {
         addHistoryEntry,
         readingPlanGoal,
         setReadingPlanGoal,
+        isSplitScreen,
+        setIsSplitScreen,
+        secondVersion,
+        setSecondVersion,
+        splitOrientation,
+        setSplitOrientation,
       }}
     >
       {children}

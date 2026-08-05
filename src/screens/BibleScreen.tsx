@@ -2,7 +2,6 @@ import { BibleVerseActionSheet } from "@/components/modals/BibleVerseActionSheet
 import { ReaderSettingsModal } from "@/components/modals/ReaderSettingsModal";
 import { Book, SelectedVerse } from "@/models";
 import { MaterialIcons } from "@expo/vector-icons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter, useFocusEffect } from "expo-router";
 import React, {
   useCallback,
@@ -30,7 +29,6 @@ import { BibleHistoryModal } from "../components/modals/BibleHistoryModal";
 import { BibleAudioModal } from "../components/modals/BibleAudioModal";
 import { DonateModal } from "../components/modals/DonateModal";
 import { BibleConfirmModal } from "../components/modals/BibleConfirmModal";
-import { STORAGE_KEYS } from "../constants/storage";
 import { getBibleTitles } from "../data/bible-titles";
 import { getBibleData } from "../data/bible-version";
 import { useBible } from "../hooks/useBible";
@@ -66,6 +64,12 @@ export default function BibleScreen() {
     changeChapter,
     readingPlanGoal,
     isReady,
+    isSplitScreen,
+    setIsSplitScreen,
+    secondVersion,
+    setSecondVersion,
+    splitOrientation,
+    setSplitOrientation,
   } = useBible();
 
   const router = useRouter();
@@ -77,7 +81,6 @@ export default function BibleScreen() {
   const primaryColor =
     readerTheme === "sepia" ? readerColors.primary : colors.primary;
 
-  const [isSplitScreen, setIsSplitScreen] = useState(false);
   const [isExitConfirmVisible, setIsExitConfirmVisible] = useState(false);
 
   useFocusEffect(
@@ -97,9 +100,8 @@ export default function BibleScreen() {
       return () => subscription.remove();
     }, [router]),
   );
-  const [secondVersion, setSecondVersion] = useState("ARA");
+
   const secondSectionListRef = useRef<any>(null);
-  const containerRef = useRef<View>(null);
 
   const secondVersionBooks = useMemo(
     () => getBibleData(secondVersion),
@@ -150,54 +152,8 @@ export default function BibleScreen() {
     ];
   }, [secondCurrentBook, chapter, secondVersion]);
 
-  const [splitOrientation, setSplitOrientation] = useState<
-    "vertical" | "horizontal"
-  >("vertical");
   const [isControlGroupExpanded, setIsControlGroupExpanded] = useState(false);
   const controlGroupAnim = useRef(new Animated.Value(0)).current;
-  const hasRestored = useRef(false);
-
-  useEffect(() => {
-    if (!isReady || hasRestored.current) return;
-    const restoreCompare = async () => {
-      try {
-        const saved = await AsyncStorage.getItem(STORAGE_KEYS.BIBLE_COMPARE);
-        if (saved) {
-          const parsed = JSON.parse(saved);
-          if (parsed && parsed.versionCurrent && parsed.versionCompare) {
-            navigateTo({ version: parsed.versionCurrent });
-            setSecondVersion(parsed.versionCompare);
-            setIsSplitScreen(true);
-          }
-        }
-      } catch (e) {
-      } finally {
-        hasRestored.current = true;
-      }
-    };
-    restoreCompare();
-  }, [isReady, navigateTo]);
-
-  useEffect(() => {
-    if (!isReady || !hasRestored.current) return;
-    const syncStorage = async () => {
-      try {
-        if (isSplitScreen) {
-          const data = {
-            versionCurrent: version,
-            versionCompare: secondVersion,
-          };
-          await AsyncStorage.setItem(
-            STORAGE_KEYS.BIBLE_COMPARE,
-            JSON.stringify(data),
-          );
-        } else {
-          await AsyncStorage.removeItem(STORAGE_KEYS.BIBLE_COMPARE);
-        }
-      } catch (e) {}
-    };
-    syncStorage();
-  }, [isReady, isSplitScreen, version, secondVersion]);
 
   const isScrollingTop = useRef(false);
   const isScrollingBottom = useRef(false);
@@ -324,24 +280,26 @@ export default function BibleScreen() {
     );
     setIsControlGroupExpanded(false);
     controlGroupAnim.setValue(0);
-  }, [controlGroupAnim]);
+  }, [controlGroupAnim, setSplitOrientation]);
 
   const handleSwapVersions = useCallback(() => {
     const tempMain = version;
     setVersion(secondVersion);
     setSecondVersion(tempMain);
-  }, [version, secondVersion, setVersion]);
+  }, [version, secondVersion, setVersion, setSecondVersion]);
 
   const handleToggleControlGroup = useCallback(() => {
-    const toValue = isControlGroupExpanded ? 0 : 1;
-    setIsControlGroupExpanded(!isControlGroupExpanded);
-    Animated.spring(controlGroupAnim, {
-      toValue,
-      useNativeDriver: false,
-      friction: 8,
-      tension: 100,
-    }).start();
-  }, [isControlGroupExpanded, controlGroupAnim]);
+    setIsControlGroupExpanded((prev) => {
+      const next = !prev;
+      Animated.spring(controlGroupAnim, {
+        toValue: next ? 1 : 0,
+        useNativeDriver: false,
+        friction: 8,
+        tension: 100,
+      }).start();
+      return next;
+    });
+  }, [controlGroupAnim]);
 
   const styles = useMemo(
     () =>
