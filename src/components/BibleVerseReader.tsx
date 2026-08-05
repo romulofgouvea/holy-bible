@@ -68,6 +68,8 @@ type VerseReaderProps = {
   onScrollEndDrag?: (event: any) => void;
   onMomentumScrollEnd?: (event: any) => void;
   scrollEventThrottle?: number;
+  verseHeights?: Record<string, number>;
+  onVerseLayout?: (key: string, height: number) => void;
 };
 
 const VerseRow = React.memo(
@@ -87,6 +89,8 @@ const VerseRow = React.memo(
     DESIGN,
     styles,
     onVersePress,
+    minHeight,
+    onVerseLayout,
   }: any) => {
     const blinkAnim = useRef(new Animated.Value(0)).current;
 
@@ -197,8 +201,20 @@ const VerseRow = React.memo(
             styles.verseRow,
             { backgroundColor: animatedBackgroundColor },
             isSelected && { borderLeftColor: primaryColor },
+            minHeight ? { minHeight } : undefined,
           ]}
         >
+          <View
+            onLayout={
+              onVerseLayout
+                ? (e) =>
+                    onVerseLayout(
+                      `${item.chapter}-${item.verse}`,
+                      e.nativeEvent.layout.height,
+                    )
+                : undefined
+            }
+          >
           <BibleText
             variant="reading"
             style={[
@@ -236,6 +252,7 @@ const VerseRow = React.memo(
               </BibleText>
             )}
           </BibleText>
+          </View>
         </Animated.View>
       </TouchableOpacity>
     );
@@ -252,7 +269,8 @@ const VerseRow = React.memo(
       prevProps.shouldShowTitles === nextProps.shouldShowTitles &&
       prevProps.readerColors.background === nextProps.readerColors.background &&
       prevProps.primaryColor === nextProps.primaryColor &&
-      prevProps.styles === nextProps.styles
+      prevProps.styles === nextProps.styles &&
+      prevProps.minHeight === nextProps.minHeight
     );
   },
 );
@@ -275,6 +293,8 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
     onScrollEndDrag,
     onMomentumScrollEnd,
     scrollEventThrottle,
+    verseHeights,
+    onVerseLayout,
   } = props;
   const { ms, DESIGN } = useResponsive();
   const { colors } = useTheme();
@@ -525,6 +545,7 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
           const isSelected =
             selectedKeys[`${bookAbbrev}-${item.chapter}-${item.verse}`];
           const highlightColorHex = getHighlightColorValue(highlightColorId);
+          const verseKey = `${item.chapter}-${item.verse}`;
 
           return (
             <VerseRow
@@ -543,6 +564,8 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
               DESIGN={DESIGN}
               styles={styles}
               onVersePress={onVersePress}
+              minHeight={verseHeights?.[verseKey]}
+              onVerseLayout={onVerseLayout}
             />
           );
         }}

@@ -410,6 +410,22 @@ export default function BibleScreen() {
     setSelectedVerses([]);
   }, [chapter, book, version]);
 
+  const [verseHeights, setVerseHeights] = useState<Record<string, number>>(
+    {},
+  );
+
+  useEffect(() => {
+    setVerseHeights({});
+  }, [chapter, book, version, secondVersion]);
+
+  const reportVerseHeight = useCallback((key: string, height: number) => {
+    setVerseHeights((prev) => {
+      const current = prev[key] || 0;
+      if (height <= current) return prev;
+      return { ...prev, [key]: height };
+    });
+  }, []);
+
   const [isDrawerVisible, setIsDrawerVisible] = useState(false);
   const [isSettingsModalVisible, setIsSettingsModalVisible] = useState(false);
   const [isHistoryModalVisible, setIsHistoryModalVisible] = useState(false);
@@ -708,6 +724,8 @@ export default function BibleScreen() {
                   onVersePress={onVersePress}
                   onScroll={handleFirstScroll}
                   scrollEventThrottle={16}
+                  verseHeights={verseHeights}
+                  onVerseLayout={reportVerseHeight}
                 />
               </View>
 
@@ -967,6 +985,8 @@ export default function BibleScreen() {
                   onVersePress={onVersePress}
                   onScroll={handleSecondScroll}
                   scrollEventThrottle={16}
+                  verseHeights={verseHeights}
+                  onVerseLayout={reportVerseHeight}
                 />
               </View>
             </View>

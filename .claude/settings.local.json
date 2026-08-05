@@ -1,7 +1,21 @@
 {
   "permissions": {
     "allow": [
-      "PowerShell(npm *)"
+      "PowerShell(npm *)",
+      "PowerShell(npm *)",
+      "PowerShell(npx *)",
+      "PowerShell(git *)",
+      "PowerShell(docker *)",
+      "PowerShell(cd *)",
+      "PowerShell(ls *)",
+      "PowerShell(cat *)",
+      "Bash(npm *)",
+      "Bash(npx *)",
+      "Bash(git *)",
+      "Bash(docker *)",
+      "Bash(cd *)",
+      "Bash(ls *)",
+      "Bash(cat *)"
     ]
   }
 }
