@@ -1,6 +1,6 @@
 import { VERSE_HIGHLIGHTS } from "@/constants/colors";
 import { FlashList } from "@shopify/flash-list";
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useEffect, useImperativeHandle, useMemo, useRef } from "react";
 import { Animated, StyleSheet, TouchableOpacity, View } from "react-native";
 import { ALIASES } from "../data/bible-version";
 import { useReaderSettings } from "../hooks/useReaderSettings";
@@ -23,6 +23,29 @@ type SectionType = {
   title: string;
   data: VerseItem[];
 };
+
+type ListItem =
+  | { type: "header"; title: string }
+  | {
+      type: "sectionTitle";
+      title: string;
+      titleType: string;
+      chapter: number;
+      verse: number;
+      id: string;
+    }
+  | {
+      type: "verse";
+      chapter: number;
+      verse: number;
+      text: string;
+      titles?: VerseTitle[];
+    }
+  | {
+      type: "footer";
+      versionInfo: any;
+      copyright: string;
+    };
 
 type VerseReaderProps = {
   sections: SectionType[];
@@ -99,10 +122,6 @@ const VerseRow = React.memo(
       ],
     });
 
-    const zeroIndexTitles =
-      shouldShowTitles && item.titles
-        ? item.titles.filter((t: any) => t.positionIndex === 0)
-        : [];
     const midVerseTitles =
       shouldShowTitles && item.titles
         ? item.titles.filter((t: any) => t.positionIndex > 0)
@@ -180,29 +199,17 @@ const VerseRow = React.memo(
             isSelected && { borderLeftColor: primaryColor },
           ]}
         >
-          {zeroIndexTitles.map((t: any, i: number) => (
-            <BibleText
-              key={`zero-title-${i}`}
-              style={[
-                styles.sectionTitle,
-                {
-                  color: primaryColor,
-                  fontSize: ms(DESIGN.fontSize.xl * fontSizeMultiplier),
-                  fontStyle: t.type === "speech" ? "italic" : "normal",
-                },
-              ]}
-            >
-              {t.title}
-            </BibleText>
-          ))}
-
           <BibleText
             variant="reading"
             style={[
               styles.verseText,
               {
                 fontSize: ms(DESIGN.fontSize.xxl * fontSizeMultiplier),
-                lineHeight: ms(28 * fontSizeMultiplier),
+                lineHeight: ms(
+                  DESIGN.fontSize.xxl *
+                    fontSizeMultiplier *
+                    DESIGN.lineHeight.md,
+                ),
                 color: readerColors.onBackground,
                 textAlign: textAlign as any,
               },
@@ -220,9 +227,9 @@ const VerseRow = React.memo(
             {renderMidVerseTitlesAndText()}
             {hasNote && (
               <BibleText style={{ color: primaryColor, opacity: 0.8 }}>
-                {"  "}
+                {"\u00A0"}
                 <BibleIcon
-                  name="edit-2"
+                  name="edit-3"
                   size={ms(DESIGN.fontSize.md * fontSizeMultiplier)}
                   color={primaryColor}
                 />
@@ -279,6 +286,8 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
     shouldShowTitles,
   } = useReaderSettings();
 
+  const flashListRef = useRef<any>(null);
+
   const styles = useMemo(
     () =>
       StyleSheet.create({
@@ -296,9 +305,13 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
           fontWeight: "800",
           letterSpacing: 0.5,
         },
+        sectionTitleContainer: {
+          paddingHorizontal: ms(DESIGN.spacing.lg),
+          paddingTop: ms(DESIGN.spacing.lg),
+          paddingBottom: ms(DESIGN.spacing.xs),
+        },
         sectionTitle: {
           fontWeight: "700",
-          marginBottom: ms(DESIGN.spacing.md),
           letterSpacing: 0.3,
         },
         verseRow: {
@@ -345,10 +358,25 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
   };
 
   const flatData = useMemo(() => {
-    const data: any[] = [];
+    const data: ListItem[] = [];
     sections.forEach((sec) => {
       data.push({ type: "header", title: sec.title });
       sec.data.forEach((v) => {
+        if (shouldShowTitles && v.titles && v.titles.length > 0) {
+          const zeroIndexTitles = v.titles.filter(
+            (t: VerseTitle) => t.positionIndex === 0,
+          );
+          zeroIndexTitles.forEach((t: VerseTitle, idx: number) => {
+            data.push({
+              type: "sectionTitle",
+              title: t.title,
+              titleType: t.type,
+              chapter: v.chapter,
+              verse: v.verse,
+              id: `title-${v.chapter}-${v.verse}-${idx}`,
+            });
+          });
+        }
         data.push({ type: "verse", ...v });
       });
       const versionInfo = ALIASES.find((v) => v.sigla === version);
@@ -358,7 +386,33 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
       }
     });
     return data;
-  }, [sections, version]);
+  }, [sections, version, shouldShowTitles]);
+
+  useImperativeHandle(
+    listRef,
+    () => ({
+      scrollToVerse: (targetVerse: number) => {
+        const index = flatData.findIndex(
+          (item) => item.type === "verse" && item.verse === targetVerse,
+        );
+        if (index !== -1 && flashListRef.current) {
+          flashListRef.current.scrollToIndex({
+            index,
+            animated: false,
+            viewPosition: 0.05,
+            viewOffset: 0,
+          });
+        }
+      },
+      scrollToIndex: (params: any) => {
+        flashListRef.current?.scrollToIndex(params);
+      },
+      scrollToOffset: (params: any) => {
+        flashListRef.current?.scrollToOffset(params);
+      },
+    }),
+    [flatData, listRef],
+  );
 
   const primaryColor =
     readerTheme === "sepia" ? readerColors.primary : colors.primary;
@@ -369,15 +423,16 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
       testID="bible-verse-reader"
     >
       <FlashList
-        ref={listRef}
+        ref={flashListRef}
         data={flatData}
         getItemType={(item) => item.type}
-        // @ts-ignore - necessary for FlashList performance despite missing in updated types
+        // @ts-ignore
         estimatedItemSize={ms(
           DESIGN.layout.settingsIconOffset * fontSizeMultiplier,
         )}
         keyExtractor={(item, idx) => {
           if (item.type === "header") return `header-${item.title}`;
+          if (item.type === "sectionTitle") return item.id;
           if (item.type === "footer")
             return `footer-${item.versionInfo?.sigla}-${idx}`;
           return `verse-${item.chapter}-${item.verse}`;
@@ -399,6 +454,25 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
                         DESIGN.fontSize.display * 0.875 * fontSizeMultiplier,
                       ),
                       color: readerColors.onBackground,
+                    },
+                  ]}
+                >
+                  {item.title}
+                </BibleText>
+              </View>
+            );
+          }
+          if (item.type === "sectionTitle") {
+            return (
+              <View style={styles.sectionTitleContainer}>
+                <BibleText
+                  style={[
+                    styles.sectionTitle,
+                    {
+                      color: primaryColor,
+                      fontSize: ms(DESIGN.fontSize.xl * fontSizeMultiplier),
+                      fontStyle:
+                        item.titleType === "speech" ? "italic" : "normal",
                     },
                   ]}
                 >

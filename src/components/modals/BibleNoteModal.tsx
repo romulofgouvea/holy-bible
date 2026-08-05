@@ -92,7 +92,7 @@ export function BibleNoteModal({
                 fontSize: ms(DESIGN.fontSize.lg),
               }}
             >
-              Anotação
+              Anotações: {headerLabel}
             </BibleText>
           </View>
           <BibleIcon
@@ -121,23 +121,14 @@ export function BibleNoteModal({
       }
     >
       <View style={{ flex: 1, padding: ms(DESIGN.spacing.lg) }}>
-        <BibleText
-          style={{
-            fontWeight: "700",
-            color: colors.primary,
-            marginBottom: ms(DESIGN.spacing.md),
-          }}
-        >
-          {headerLabel}
-        </BibleText>
         <View
           style={{
             flex: 1,
             backgroundColor: colors.surfaceHighlight,
-            borderRadius: ms(DESIGN.borderRadius.md),
+            borderRadius: ms(DESIGN.borderRadius.lg),
             borderWidth: 1,
             borderColor: colors.border,
-            padding: ms(DESIGN.spacing.md),
+            padding: ms(DESIGN.spacing.lg),
           }}
         >
           <TextInput
@@ -146,6 +137,7 @@ export function BibleNoteModal({
               color: colors.onBackground,
               fontSize: ms(DESIGN.fontSize.md),
               textAlignVertical: "top",
+              outlineStyle: "none" as any,
             }}
             placeholder="Escreva sua anotação aqui..."
             placeholderTextColor={colors.textMuted}
@@ -153,6 +145,15 @@ export function BibleNoteModal({
             value={text}
             onChangeText={setText}
             autoFocus
+            onFocus={() => {
+              // Hack to force selection update
+              setText(text);
+            }}
+            selection={
+              text.length > 0
+                ? { start: text.length, end: text.length }
+                : undefined
+            }
           />
         </View>
       </View>

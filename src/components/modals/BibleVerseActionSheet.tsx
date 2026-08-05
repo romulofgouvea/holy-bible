@@ -8,7 +8,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { VERSE_HIGHLIGHTS as HIGHLIGHT_COLORS } from "../../constants/colors";
 import { useResponsive } from "../../hooks/useResponsive";
 import { useTheme } from "../../hooks/useTheme";
@@ -82,10 +81,9 @@ export function BibleVerseActionSheet(props: VerseActionSheetProps) {
           justifyContent: "center",
         },
       }),
-    [ms, colors, DESIGN],
+    [ms, DESIGN],
   );
 
-  const insets = useSafeAreaInsets();
   const hiddenY = ms(DESIGN.layout.settingsIconOffset * 3);
   const translateY = React.useRef(new Animated.Value(hiddenY)).current;
   const [studyModalVisible, setStudyModalVisible] = React.useState(false);
@@ -97,11 +95,42 @@ export function BibleVerseActionSheet(props: VerseActionSheetProps) {
       useNativeDriver: true,
       bounciness: 4,
     }).start();
-  }, [visible, hiddenY]);
-
-  if (!visible && selectedVerses.length === 0) return null;
+  }, [visible, hiddenY, translateY]);
 
   const count = selectedVerses.length;
+
+  const { hasHighlight, activeColorId } = useMemo(() => {
+    if (count === 0) {
+      return { hasHighlight: false, activeColorId: null };
+    }
+
+    const getVal = (key: string) => {
+      const h = highlights[key];
+      return h ? (typeof h === "string" ? h : h.color) : undefined;
+    };
+
+    let hasAny = false;
+    let firstColor: string | undefined;
+    let isAllSame = true;
+
+    selectedVerses.forEach((v, idx) => {
+      const key = `${v.bookAbbrev}-${v.chapter}-${v.verse}`;
+      const color = getVal(key);
+      if (color) {
+        hasAny = true;
+      }
+      if (idx === 0) {
+        firstColor = color;
+      } else if (color !== firstColor) {
+        isAllSame = false;
+      }
+    });
+
+    return {
+      hasHighlight: hasAny,
+      activeColorId: isAllSame ? firstColor || null : null,
+    };
+  }, [count, selectedVerses, highlights]);
 
   const buildFormattedRanges = (sorted: SelectedVerse[]) => {
     const sameChapter = sorted.every((v) => v.chapter === sorted[0].chapter);
@@ -168,7 +197,7 @@ export function BibleVerseActionSheet(props: VerseActionSheetProps) {
   const onShare = async () => {
     try {
       await Share.share({ message: buildText() });
-    } catch (e) {}
+    } catch {}
   };
 
   const onHighlight = (color: string | null) => {
@@ -182,28 +211,7 @@ export function BibleVerseActionSheet(props: VerseActionSheetProps) {
     onClose();
   };
 
-  let activeColorId: string | null = null;
-  if (count > 0) {
-    const getVal = (key: string) => {
-      const h = highlights[key];
-      return h ? (typeof h === "string" ? h : h.color) : undefined;
-    };
-    let firstColor = getVal(
-      `${selectedVerses[0].bookAbbrev}-${selectedVerses[0].chapter}-${selectedVerses[0].verse}`,
-    );
-    let allSame = true;
-    for (let i = 1; i < count; i++) {
-      if (
-        getVal(
-          `${selectedVerses[i].bookAbbrev}-${selectedVerses[i].chapter}-${selectedVerses[i].verse}`,
-        ) !== firstColor
-      ) {
-        allSame = false;
-        break;
-      }
-    }
-    if (allSame) activeColorId = firstColor || null;
-  }
+  if (!visible && selectedVerses.length === 0) return null;
 
   return (
     <>
@@ -219,7 +227,6 @@ export function BibleVerseActionSheet(props: VerseActionSheetProps) {
         ]}
         id="bible-verse-action-sheet"
       >
-        {/* Row 1: Actions */}
         <View style={styles.topRowContainer}>
           <View style={styles.topRow}>
             <TouchableOpacity
@@ -314,21 +321,22 @@ export function BibleVerseActionSheet(props: VerseActionSheetProps) {
           />
         </View>
 
-        {/* Row 2: Colors */}
         <View style={styles.bottomRow}>
-          <TouchableOpacity
-            style={{ paddingRight: ms(DESIGN.spacing.xs) }}
-            onPress={() => onHighlight(null)}
-          >
-            <View
-              style={[
-                styles.colorBox,
-                { backgroundColor: colors.surfaceHighlight },
-              ]}
+          {hasHighlight && (
+            <TouchableOpacity
+              style={{ paddingRight: ms(DESIGN.spacing.xs) }}
+              onPress={() => onHighlight(null)}
             >
-              <BibleIcon name="slash" color={colors.error} />
-            </View>
-          </TouchableOpacity>
+              <View
+                style={[
+                  styles.colorBox,
+                  { backgroundColor: colors.surfaceHighlight },
+                ]}
+              >
+                <BibleIcon name="slash" color={colors.error} />
+              </View>
+            </TouchableOpacity>
+          )}
 
           {HIGHLIGHT_COLORS.map((c) => {
             const isSelectedColor = activeColorId === c.id;

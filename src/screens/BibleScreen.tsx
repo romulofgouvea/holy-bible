@@ -432,21 +432,29 @@ export default function BibleScreen() {
       isAutoScrolling.current = true;
 
       if (sectionListRef.current) {
-        sectionListRef.current?.scrollToIndex({
-          index: targetVerse,
-          animated: false,
-          viewPosition: 0.05,
-          viewOffset: 0,
-        });
+        if (typeof sectionListRef.current.scrollToVerse === "function") {
+          sectionListRef.current.scrollToVerse(targetVerse);
+        } else {
+          sectionListRef.current?.scrollToIndex({
+            index: targetVerse,
+            animated: false,
+            viewPosition: 0.05,
+            viewOffset: 0,
+          });
+        }
       }
 
       if (secondSectionListRef.current) {
-        secondSectionListRef.current?.scrollToIndex({
-          index: targetVerse,
-          animated: false,
-          viewPosition: 0.05,
-          viewOffset: 0,
-        });
+        if (typeof secondSectionListRef.current.scrollToVerse === "function") {
+          secondSectionListRef.current.scrollToVerse(targetVerse);
+        } else {
+          secondSectionListRef.current?.scrollToIndex({
+            index: targetVerse,
+            animated: false,
+            viewPosition: 0.05,
+            viewOffset: 0,
+          });
+        }
       }
 
       setBlinkingVerse(`${targetChapter}-${targetVerse}`);
