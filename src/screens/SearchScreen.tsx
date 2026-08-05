@@ -31,6 +31,7 @@ import { DonateModal } from "../components/modals/DonateModal";
 import { ROUTES } from "../constants/routes";
 import { STORAGE_KEYS } from "../constants/storage";
 import { Book, getBibleData } from "../data/bible-version";
+import bibleBooks from "../data/bible-version/bible-books.json";
 import { useBible } from "../hooks/useBible";
 import { useBibleModals } from "../hooks/useBibleModals";
 import { useReaderSettings } from "../hooks/useReaderSettings";
@@ -38,6 +39,20 @@ import { useResponsive } from "../hooks/useResponsive";
 import { useTheme } from "../hooks/useTheme";
 import { impactLight, selectionHaptic } from "../utils/haptics";
 import { handleSmartBack } from "../utils/navigation";
+
+type Testament = "OT" | "NT" | null;
+
+const OT_ABBREVS = new Set(
+  (bibleBooks.oldTestament as { books: { abbrev: string }[] }[])
+    .flatMap((g) => g.books)
+    .map((b) => b.abbrev.toLowerCase()),
+);
+
+const NT_ABBREVS = new Set(
+  (bibleBooks.newTestament as { books: { abbrev: string }[] }[])
+    .flatMap((g) => g.books)
+    .map((b) => b.abbrev.toLowerCase()),
+);
 
 function removeAccents(str: string): string {
   return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
@@ -56,6 +71,7 @@ export type SearchFilter = {
   version: string;
   book?: string | null;
   chapter?: number | null;
+  testament?: Testament;
 };
 
 const MAX_HISTORY = 20;
@@ -396,6 +412,23 @@ export default function SearchScreen() {
           paddingVertical: ms(DESIGN.spacing.tiny),
           borderRadius: ms(DESIGN.borderRadius.sm),
         },
+        testamentDropdownRow: {
+          flexDirection: "row",
+          gap: ms(DESIGN.spacing.sm),
+          paddingBottom: ms(DESIGN.spacing.md),
+        },
+        testamentOption: {
+          flex: 1,
+          alignItems: "center",
+          justifyContent: "center",
+          paddingVertical: ms(DESIGN.spacing.sm),
+          borderRadius: ms(DESIGN.borderRadius.md),
+          borderWidth: 1,
+        },
+        testamentOptionText: {
+          fontWeight: "700",
+          fontSize: ms(DESIGN.fontSize.sm),
+        },
       }),
     [ms, colors, DESIGN],
   );
@@ -423,6 +456,7 @@ export default function SearchScreen() {
   // Local Filter State
   const [searchBook, setSearchBook] = useState<Book | null>(null);
   const [searchChapter, setSearchChapter] = useState<number | null>(null);
+  const [searchTestament, setSearchTestament] = useState<Testament>(null);
   const [isFilterModalVisible, setIsFilterModalVisible] = useState(false);
 
   const [isDrawerVisible, setIsDrawerVisible] = useState(false);
@@ -476,11 +510,14 @@ export default function SearchScreen() {
                 ) || null;
             }
             const restoredChapter = finalSearchState.chapter || null;
+            const restoredTestament: Testament =
+              finalSearchState.testament || null;
 
             setQuery(restoredQuery);
             setSearchVersion(restoredVersion);
             setSearchBook(restoredBook);
             setSearchChapter(restoredChapter);
+            setSearchTestament(restoredTestament);
 
             if (restoredQuery.trim().length >= 2) {
               setIsSearching(true);
@@ -492,12 +529,18 @@ export default function SearchScreen() {
                 ? "chapter"
                 : restoredBook
                   ? "book"
-                  : "bible";
+                  : restoredTestament
+                    ? "testament"
+                    : "bible";
               const booksToSearch =
-                scope === "bible"
-                  ? searchVersionBooks
-                  : restoredBook
-                    ? [restoredBook]
+                scope === "book" && restoredBook
+                  ? [restoredBook]
+                  : scope === "testament" && restoredTestament
+                    ? searchVersionBooks.filter((b) =>
+                        restoredTestament === "OT"
+                          ? OT_ABBREVS.has(b.abbrev.toLowerCase())
+                          : NT_ABBREVS.has(b.abbrev.toLowerCase()),
+                      )
                     : searchVersionBooks;
 
               if (booksToSearch) {
@@ -550,11 +593,17 @@ export default function SearchScreen() {
     saveSearchState({ query: q });
   };
 
-  const saveFilters = (v: string, b: string | null, c: number | null) => {
+  const saveFilters = (
+    v: string,
+    b: string | null,
+    c: number | null,
+    t: Testament,
+  ) => {
     saveSearchState({
       version: v,
       book: b,
       chapter: c,
+      testament: t,
     });
   };
 
@@ -595,16 +644,19 @@ export default function SearchScreen() {
   const scope = useMemo(() => {
     if (searchChapter) return "chapter";
     if (searchBook) return "book";
+    if (searchTestament) return "testament";
     return "bible";
-  }, [searchBook, searchChapter]);
+  }, [searchBook, searchChapter, searchTestament]);
 
   const filterLabelText = useMemo(() => {
     const v = searchVersion.toUpperCase();
     if (searchBook && searchChapter)
       return `${v} • ${searchBook.name} ${searchChapter}`;
     if (searchBook) return `${v} • ${searchBook.name}`;
+    if (searchTestament === "OT") return `${v} • Antigo Testamento`;
+    if (searchTestament === "NT") return `${v} • Novo Testamento`;
     return `${v} • Bíblia Toda`;
-  }, [searchBook, searchChapter, searchVersion]);
+  }, [searchBook, searchChapter, searchVersion, searchTestament]);
 
   const runSearch = useCallback(
     (q: string, immediate = false) => {
@@ -621,10 +673,14 @@ export default function SearchScreen() {
         const found: SearchResult[] = [];
 
         const booksToSearch =
-          scope === "bible"
-            ? searchVersionBooks
-            : searchBook
-              ? [searchBook]
+          scope === "book" && searchBook
+            ? [searchBook]
+            : scope === "testament" && searchTestament
+              ? searchVersionBooks?.filter((b) =>
+                  searchTestament === "OT"
+                    ? OT_ABBREVS.has(b.abbrev.toLowerCase())
+                    : NT_ABBREVS.has(b.abbrev.toLowerCase()),
+                )
               : searchVersionBooks;
 
         if (!booksToSearch) {
@@ -662,7 +718,7 @@ export default function SearchScreen() {
         setIsSearching(false);
       }, delay);
     },
-    [searchVersionBooks, searchBook, searchChapter, scope],
+    [searchVersionBooks, searchBook, searchChapter, searchTestament, scope],
   );
 
   const handleChangeQuery = (q: string) => {
@@ -713,6 +769,7 @@ export default function SearchScreen() {
   const handleResetFilters = () => {
     setSearchBook(null);
     setSearchChapter(null);
+    setSearchTestament(null);
   };
 
   const showHistory = query.trim().length === 0 && history.length > 0;
@@ -1016,6 +1073,7 @@ export default function SearchScreen() {
                   searchVersion,
                   searchBook?.abbrev || null,
                   searchChapter,
+                  searchTestament,
                 );
                 runSearch(query, true);
               }}
@@ -1069,6 +1127,65 @@ export default function SearchScreen() {
           </TouchableOpacity>
           <BibleDivider />
 
+          <View style={styles.filterModalItem}>
+            <BibleIcon
+              name="book-open"
+              color={colors.primary}
+              backgroundColor={colors.primary + "15"}
+              style={styles.filterModalItemIcon}
+            />
+            <View style={styles.filterModalLabelContainer}>
+              <BibleText
+                style={[styles.filterModalLabel, { color: colors.textMuted }]}
+              >
+                TESTAMENTO
+              </BibleText>
+            </View>
+          </View>
+          <View style={styles.testamentDropdownRow}>
+            {(
+              [
+                { value: null, label: "Todos" },
+                { value: "OT", label: "Antigo" },
+                { value: "NT", label: "Novo" },
+              ] as { value: Testament; label: string }[]
+            ).map((opt) => {
+              const isActive = searchTestament === opt.value;
+              return (
+                <TouchableOpacity
+                  key={String(opt.value)}
+                  style={[
+                    styles.testamentOption,
+                    {
+                      backgroundColor: isActive
+                        ? colors.primary
+                        : colors.surface,
+                      borderColor: isActive ? colors.primary : colors.border,
+                    },
+                  ]}
+                  onPress={() => {
+                    setSearchTestament(opt.value);
+                    setSearchBook(null);
+                    setSearchChapter(null);
+                  }}
+                  activeOpacity={0.75}
+                >
+                  <BibleText
+                    style={[
+                      styles.testamentOptionText,
+                      {
+                        color: isActive ? colors.onPrimary : colors.onSurface,
+                      },
+                    ]}
+                  >
+                    {opt.label}
+                  </BibleText>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+          <BibleDivider />
+
           <TouchableOpacity
             style={styles.filterModalItem}
             onPress={() =>
@@ -1082,6 +1199,7 @@ export default function SearchScreen() {
                   if (s.book) {
                     setSearchBook(s.book);
                     setSearchChapter(null);
+                    setSearchTestament(null);
                   }
                 },
               })

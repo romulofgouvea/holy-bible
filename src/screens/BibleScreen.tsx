@@ -443,6 +443,12 @@ export default function BibleScreen() {
 
   const [isActionSheetVisible, setIsActionSheetVisible] = useState(false);
   const [selectedVerses, setSelectedVerses] = useState<SelectedVerse[]>([]);
+
+  useEffect(() => {
+    setIsActionSheetVisible(false);
+    setSelectedVerses([]);
+  }, [chapter, book, version]);
+
   const [isDrawerVisible, setIsDrawerVisible] = useState(false);
   const [isSettingsModalVisible, setIsSettingsModalVisible] = useState(false);
   const [isHistoryModalVisible, setIsHistoryModalVisible] = useState(false);
@@ -514,6 +520,8 @@ export default function BibleScreen() {
 
   const handleNavigateChapter = useCallback(
     (delta: number) => {
+      setIsActionSheetVisible(false);
+      setSelectedVerses([]);
       changeChapter(delta, (newCh) => {
         setTimeout(() => scrollToVerse(1, newCh), 300);
       });
@@ -564,7 +572,11 @@ export default function BibleScreen() {
   const renderVersionBadge = (label: string, onPress: () => void) => (
     <TouchableOpacity
       style={styles.versionBadge}
-      onPress={onPress}
+      onPress={() => {
+        setIsActionSheetVisible(false);
+        setSelectedVerses([]);
+        onPress();
+      }}
       activeOpacity={0.8}
     >
       <BibleText style={[styles.versionBadgeText, { color: primaryColor }]}>
@@ -596,7 +608,9 @@ export default function BibleScreen() {
       <BibleTopBar
         bookName={currentBook.name}
         currentChapter={chapter}
-        onOpenBook={() =>
+        onOpenBook={() => {
+          setIsActionSheetVisible(false);
+          setSelectedVerses([]);
           openModal({
             initialStep: "book",
             onSelect: (s) => {
@@ -612,9 +626,11 @@ export default function BibleScreen() {
               });
               setTimeout(() => scrollToVerse(nextVe, nextC), 300);
             },
-          })
-        }
-        onOpenChapter={() =>
+          });
+        }}
+        onOpenChapter={() => {
+          setIsActionSheetVisible(false);
+          setSelectedVerses([]);
           openModal({
             initialStep: "chapter",
             onSelect: (s) => {
@@ -630,8 +646,8 @@ export default function BibleScreen() {
               });
               setTimeout(() => scrollToVerse(nextVe, nextC), 300);
             },
-          })
-        }
+          });
+        }}
         onPrevChapter={() => handleNavigateChapter(-1)}
         onNextChapter={() => handleNavigateChapter(1)}
         onOpenMenu={() => setIsDrawerVisible(true)}
@@ -644,6 +660,8 @@ export default function BibleScreen() {
           if (isSplitScreen) {
             setIsSplitScreen(false);
           } else {
+            setIsActionSheetVisible(false);
+            setSelectedVerses([]);
             openModal({
               initialStep: "version",
               target: "study",
@@ -662,6 +680,8 @@ export default function BibleScreen() {
         visible={isHistoryModalVisible}
         onClose={() => setIsHistoryModalVisible(false)}
         onSelect={(item) => {
+          setIsActionSheetVisible(false);
+          setSelectedVerses([]);
           navigateTo({
             version: item.version,
             book: item.bookAbbrev,
@@ -813,8 +833,12 @@ export default function BibleScreen() {
                         right: DESIGN.spacing.sm,
                       }}
                     >
-                      <BibleIcon
-                        name="columns"
+                      <MaterialIcons
+                        name={
+                          splitOrientation === "vertical"
+                            ? "vertical-split"
+                            : "horizontal-split"
+                        }
                         color={primaryColor}
                         size={ms(DESIGN.icon.xs)}
                       />
