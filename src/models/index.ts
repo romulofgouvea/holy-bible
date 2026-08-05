@@ -25,10 +25,7 @@ export interface HighlightItem {
 
 export interface VerseNote {
   id: string;
-  abbrev: string;
-  chapter: number;
-  verse: number;
-  verseEnd?: number;
+  selectedVerses: Omit<SelectedVerse, "text">[];
   text: string;
   createdAt: number;
   updatedAt: number;

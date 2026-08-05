@@ -133,6 +133,7 @@ export function BibleVerseActionSheet(props: VerseActionSheetProps) {
   }, [count, selectedVerses, highlights]);
 
   const buildFormattedRanges = (sorted: SelectedVerse[]) => {
+    if (sorted.length === 0) return { ranges: "", sameChapter: true };
     const sameChapter = sorted.every((v) => v.chapter === sorted[0].chapter);
     if (sameChapter) {
       const groups: string[] = [];

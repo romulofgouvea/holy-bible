@@ -27,7 +27,7 @@ export function BibleNoteModal({
   selectedVerses,
   onShowToast,
 }: BibleNoteModalProps) {
-  const { notesMap, saveNote } = useNotes();
+  const { notes, notesMap, saveNote } = useNotes();
   const { colors } = useTheme();
   const { ms, DESIGN } = useResponsive();
   const [text, setText] = useState("");
@@ -37,17 +37,25 @@ export function BibleNoteModal({
 
   useEffect(() => {
     if (visible && verse) {
-      const key = `${verse.bookAbbrev}-${verse.chapter}-${verse.verse}`;
-      setText(notesMap[key]?.text || "");
+      // Find note by checking the notesMap for any of the selected verses
+      let existingNoteText = "";
+      for (const v of selectedVerses) {
+        const key = `${v.bookAbbrev}-${v.chapter}-${v.verse}`;
+        if (notesMap[key]) {
+          existingNoteText = notesMap[key].text;
+          break;
+        }
+      }
+      setText(existingNoteText);
     }
-  }, [visible, verse, notesMap]);
+  }, [visible, verse, selectedVerses, notesMap]);
 
   if (!verse) return null;
 
   const handleSave = () => {
     Keyboard.dismiss();
-    const verseEnd = count > 1 ? selectedVerses[count - 1].verse : undefined;
-    saveNote(verse.bookAbbrev, verse.chapter, verse.verse, text, verseEnd);
+    const versesToSave = selectedVerses.map(({ text, ...rest }) => rest);
+    saveNote(versesToSave, text);
     onShowToast?.(
       text.trim() ? "Anotação salva" : "Anotação removida",
       "success",

@@ -2,7 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useCallback, useEffect, useState, useMemo } from "react";
 import { DeviceEventEmitter } from "react-native";
 import { STORAGE_KEYS } from "../constants/storage";
-import { VerseNote } from "../models";
+import { SelectedVerse, VerseNote } from "../models";
 import { BACKUP_RESTORED_EVENT, writeAutoBackupFile } from "../utils/backup";
 
 function makeId() {
@@ -12,6 +12,9 @@ function makeId() {
 export function useNotes() {
   const [notes, setNotes] = useState<VerseNote[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
+
+  // Unique ID for this instance to prevent redundant reloads
+  const hookInstanceId = useMemo(() => Math.random().toString(36).slice(2), []);
 
   const reloadFromStorage = useCallback(async () => {
     try {
@@ -31,16 +34,33 @@ export function useNotes() {
 
   useEffect(() => {
     reloadFromStorage();
-    const sub = DeviceEventEmitter.addListener(
+    const subBackup = DeviceEventEmitter.addListener(
       BACKUP_RESTORED_EVENT,
       reloadFromStorage,
     );
-    return () => sub.remove();
-  }, [reloadFromStorage]);
+
+    const subUpdate = DeviceEventEmitter.addListener(
+      "NOTES_UPDATED_EVENT",
+      (data?: { senderId?: string }) => {
+        // Only reload if the update came from another instance
+        if (data?.senderId !== hookInstanceId) {
+          reloadFromStorage();
+        }
+      },
+    );
+
+    return () => {
+      subBackup.remove();
+      subUpdate.remove();
+    };
+  }, [reloadFromStorage, hookInstanceId]);
 
   const persist = useCallback((updated: VerseNote[]) => {
     setNotes(updated);
-    AsyncStorage.setItem(STORAGE_KEYS.NOTES, JSON.stringify(updated)).catch(
+    AsyncStorage.setItem(STORAGE_KEYS.NOTES, JSON.stringify(updated)).then(() => {
+      // Notify other instances to reload
+      DeviceEventEmitter.emit("NOTES_UPDATED_EVENT", { senderId: hookInstanceId });
+    }).catch(
       () => {},
     );
 
@@ -49,49 +69,55 @@ export function useNotes() {
         if (val === "true") writeAutoBackupFile().catch(() => {});
       })
       .catch(() => {});
-  }, []);
+  }, [hookInstanceId]);
 
   const saveNote = useCallback(
     (
-      abbrev: string,
-      chapter: number,
-      verse: number,
+      verses: Omit<SelectedVerse, "text">[],
       text: string,
-      verseEnd?: number,
     ) => {
+      if (verses.length === 0) return;
+
       const trimmedText = text.trim();
-
-      // Find if we already have a note for this specific base verse
-      const existingIndex = notes.findIndex(
-        (n) =>
-          n.abbrev === abbrev && n.chapter === chapter && n.verse === verse,
-      );
-
       let updatedNotes = [...notes];
+
+      const newVerseKeys = new Set(verses.map(v => `${v.bookAbbrev}-${v.chapter}-${v.verse}`));
+
+      // Find any existing note that shares at least one verse with the new selection
+      const existingNoteIndex = updatedNotes.findIndex(note =>
+        note.selectedVerses && Array.isArray(note.selectedVerses) && note.selectedVerses.some(v => newVerseKeys.has(`${v.bookAbbrev}-${v.chapter}-${v.verse}`))
+      );
 
       if (!trimmedText) {
         // If text is empty, delete the note if it exists
-        if (existingIndex !== -1) {
-          updatedNotes.splice(existingIndex, 1);
+        if (existingNoteIndex !== -1) {
+          updatedNotes.splice(existingNoteIndex, 1);
         }
       } else {
         const now = Date.now();
-        if (existingIndex !== -1) {
-          // Update existing note
-          updatedNotes[existingIndex] = {
-            ...updatedNotes[existingIndex],
+        if (existingNoteIndex !== -1) {
+          // Merge with existing note
+          const existingNote = updatedNotes[existingNoteIndex];
+          const combinedVerses = [...existingNote.selectedVerses];
+          const existingKeys = new Set(existingNote.selectedVerses.map(v => `${v.bookAbbrev}-${v.chapter}-${v.verse}`));
+
+          verses.forEach(v => {
+            if (!existingKeys.has(`${v.bookAbbrev}-${v.chapter}-${v.verse}`)) {
+              combinedVerses.push(v);
+            }
+          });
+
+          updatedNotes[existingNoteIndex] = {
+            ...existingNote,
+            selectedVerses: combinedVerses.sort((a, b) => a.chapter !== b.chapter ? a.chapter - b.chapter : a.verse - b.verse),
             text: trimmedText,
-            verseEnd,
             updatedAt: now,
           };
         } else {
           // Create new note
           const newNote: VerseNote = {
             id: makeId(),
-            abbrev,
-            chapter,
-            verse,
-            verseEnd,
+            selectedVerses: verses.sort((a, b) => a.chapter !== b.chapter ? a.chapter - b.chapter : a.verse - b.verse),
             text: trimmedText,
             createdAt: now,
             updatedAt: now,
@@ -117,13 +143,11 @@ export function useNotes() {
   const notesMap = useMemo(() => {
     const map: Record<string, VerseNote> = {};
     notes.forEach((note) => {
-      const key = `${note.abbrev}-${note.chapter}-${note.verse}`;
-      map[key] = note;
-      // Also map verseEnd range if applicable so each verse in range highlights/resolves
-      if (note.verseEnd && note.verseEnd > note.verse) {
-        for (let v = note.verse + 1; v <= note.verseEnd; v++) {
-          map[`${note.abbrev}-${note.chapter}-${v}`] = note;
-        }
+      if (note.selectedVerses && Array.isArray(note.selectedVerses)) {
+        note.selectedVerses.forEach(v => {
+          const key = `${v.bookAbbrev}-${v.chapter}-${v.verse}`;
+          map[key] = note;
+        });
       }
     });
     return map;

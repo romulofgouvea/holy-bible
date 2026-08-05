@@ -42,17 +42,18 @@ export function BibleActionsSheet({ visible, onClose, items, title }: Props) {
         },
         sheetContainer: {
           flex: 1,
-          justifyContent: "flex-end",
+          justifyContent: "center",
+          alignItems: "center",
+          paddingHorizontal: ms(DESIGN.spacing.lg),
         },
         sheet: {
           width: "100%",
-          borderTopLeftRadius: ms(DESIGN.borderRadius.xl),
-          borderTopRightRadius: ms(DESIGN.borderRadius.xl),
+          borderRadius: ms(DESIGN.borderRadius.xl),
           paddingTop: ms(DESIGN.spacing.lg),
           paddingHorizontal: ms(DESIGN.spacing.lg),
           elevation: 24,
-          shadowOffset: { width: 0, height: ms(-DESIGN.spacing.xs) },
-          shadowOpacity: 0.15,
+          shadowOffset: { width: 0, height: ms(DESIGN.spacing.xs) },
+          shadowOpacity: 0.25,
           shadowRadius: ms(DESIGN.borderRadius.lg),
         },
         header: {
@@ -141,46 +142,24 @@ export function BibleActionsSheet({ visible, onClose, items, title }: Props) {
               transform: [{ translateY }],
               backgroundColor: colors.background,
               shadowColor: colors.shadow,
-              paddingBottom: Math.max(
-                ms(DESIGN.spacing.lg),
-                insets.bottom + ms(DESIGN.spacing.sm),
-              ),
+              paddingBottom: ms(DESIGN.spacing.lg),
             },
           ]}
         >
-          <View style={styles.header}>
-            <BibleIcon
-              name="menu"
-              color={colors.primary}
-              backgroundColor={colors.primary + "20"}
-              containerSize={DESIGN.icon.xl}
-              size={ms(DESIGN.spacing.lg)}
-              borderRadius={DESIGN.borderRadius.md}
-            />
-
+          <View style={[styles.header, { justifyContent: "center" }]}>
             <BibleText
               style={[
                 styles.title,
                 {
-                  fontSize: ms(DESIGN.fontSize.lg),
+                  fontSize: ms(DESIGN.fontSize.xl),
                   color: colors.primary,
                   fontWeight: "800",
-                  marginLeft: ms(DESIGN.spacing.md),
+                  textAlign: "center",
                 },
               ]}
             >
               {title || "Ações"}
             </BibleText>
-
-            <BibleIcon
-              name="x"
-              color={colors.error}
-              backgroundColor={colors.error + "20"}
-              onPress={onClose}
-              containerSize={DESIGN.icon.xl}
-              size={ms(DESIGN.spacing.lg)}
-              borderRadius={DESIGN.borderRadius.md}
-            />
           </View>
 
           <View>
