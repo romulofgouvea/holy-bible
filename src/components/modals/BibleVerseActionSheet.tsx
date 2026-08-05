@@ -12,6 +12,7 @@ import { VERSE_HIGHLIGHTS as HIGHLIGHT_COLORS } from "../../constants/colors";
 import { useResponsive } from "../../hooks/useResponsive";
 import { useTheme } from "../../hooks/useTheme";
 import { SelectedVerse } from "../../models";
+import { formatVerseRanges } from "../../utils/verseRange";
 import { BibleIcon } from "../BibleIcon";
 import { BibleAddToStudyModal } from "./BibleAddToStudyModal";
 import { BibleNoteModal } from "./BibleNoteModal";
@@ -132,38 +133,12 @@ export function BibleVerseActionSheet(props: VerseActionSheetProps) {
     };
   }, [count, selectedVerses, highlights]);
 
-  const buildFormattedRanges = (sorted: SelectedVerse[]) => {
-    if (sorted.length === 0) return { ranges: "", sameChapter: true };
-    const sameChapter = sorted.every((v) => v.chapter === sorted[0].chapter);
-    if (sameChapter) {
-      const groups: string[] = [];
-      let start = sorted[0].verse;
-      let end = sorted[0].verse;
-      for (let i = 1; i < sorted.length; i++) {
-        if (sorted[i].verse === end + 1) {
-          end = sorted[i].verse;
-        } else {
-          groups.push(start === end ? `${start}` : `${start}-${end}`);
-          start = sorted[i].verse;
-          end = sorted[i].verse;
-        }
-      }
-      groups.push(start === end ? `${start}` : `${start}-${end}`);
-      return { ranges: groups.join(", "), sameChapter };
-    }
-    const ranges =
-      sorted.length === 1
-        ? `${sorted[0].verse}`
-        : `${sorted[0].chapter}:${sorted[0].verse}–${sorted[sorted.length - 1].chapter}:${sorted[sorted.length - 1].verse}`;
-    return { ranges, sameChapter };
-  };
-
   const buildText = () => {
     if (count === 0) return "";
     const sorted = [...selectedVerses].sort((a, b) =>
       a.chapter !== b.chapter ? a.chapter - b.chapter : a.verse - b.verse,
     );
-    const { ranges, sameChapter } = buildFormattedRanges(sorted);
+    const { ranges, sameChapter } = formatVerseRanges(sorted);
 
     const header = sameChapter
       ? `${sorted[0].bookName} ${sorted[0].chapter}:${ranges}`
@@ -198,7 +173,7 @@ export function BibleVerseActionSheet(props: VerseActionSheetProps) {
   const onShare = async () => {
     try {
       await Share.share({ message: buildText() });
-    } catch {}
+    } catch { }
   };
 
   const onHighlight = (color: string | null) => {

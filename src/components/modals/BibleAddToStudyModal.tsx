@@ -13,6 +13,7 @@ import { useResponsive } from "../../hooks/useResponsive";
 import { useStudies } from "../../hooks/useStudies";
 import { useTheme } from "../../hooks/useTheme";
 import { SelectedVerse } from "../../models";
+import { formatVerseRanges } from "../../utils/verseRange";
 import { BibleIcon } from "../BibleIcon";
 import { BiblePageEmpty } from "../BiblePageEmpty";
 import { BibleText } from "../BibleText";
@@ -112,29 +113,13 @@ export function BibleAddToStudyModal({
       a.chapter !== b.chapter ? a.chapter - b.chapter : a.verse - b.verse,
     );
 
-    const sameChapter = sorted.every((v) => v.chapter === sorted[0].chapter);
     const bookName = sorted[0].bookName;
     const chapter = sorted[0].chapter;
 
-    let ref = "";
-    if (sameChapter) {
-      const groups: string[] = [];
-      let start = sorted[0].verse;
-      let end = sorted[0].verse;
-      for (let i = 1; i < sorted.length; i++) {
-        if (sorted[i].verse === end + 1) {
-          end = sorted[i].verse;
-        } else {
-          groups.push(start === end ? `${start}` : `${start}-${end}`);
-          start = sorted[i].verse;
-          end = sorted[i].verse;
-        }
-      }
-      groups.push(start === end ? `${start}` : `${start}-${end}`);
-      ref = `${bookName} ${chapter}:${groups.join(", ")}`;
-    } else {
-      ref = `${bookName} ${sorted[0].chapter}:${sorted[0].verse}–${sorted[sorted.length - 1].chapter}:${sorted[sorted.length - 1].verse}`;
-    }
+    const { ranges, sameChapter } = formatVerseRanges(sorted);
+    let ref = sameChapter
+      ? `${bookName} ${chapter}:${ranges}`
+      : `${bookName} ${ranges}`;
 
     const version = sorted[0].version;
 

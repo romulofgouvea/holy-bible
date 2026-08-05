@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { exportToPDF } from "../utils/export";
 import { handleSmartBack } from "../utils/navigation";
+import { formatVerseRanges } from "../utils/verseRange";
 
 import { BibleIcon } from "@/components/BibleIcon";
 import { BibleActionsDrawer } from "@/components/modals/BibleActionsDrawer";
@@ -104,7 +105,7 @@ export default function StudyEditorScreen() {
         if (stored) {
           setStudyPosition(JSON.parse(stored));
         }
-      } catch (e) {}
+      } catch (e) { }
     })();
   }, []);
 
@@ -120,7 +121,7 @@ export default function StudyEditorScreen() {
         currentPos = JSON.parse(stored);
         setStudyPosition(currentPos);
       }
-    } catch (e) {}
+    } catch (e) { }
 
     const books = getBibleData(currentPos.version);
     const foundBook =
@@ -148,7 +149,7 @@ export default function StudyEditorScreen() {
             STORAGE_KEYS.CURRENT_STUDY,
             JSON.stringify(nextPos),
           );
-        } catch (e) {}
+        } catch (e) { }
 
         onInsertVerseHtml(selection);
       },
@@ -159,22 +160,10 @@ export default function StudyEditorScreen() {
     const { verses, book, chapter, version, verseObjects } = selection;
     if (!book || !verses || verses.length === 0) return;
 
-    const groups: string[] = [];
-    let start = verses[0];
-    let end = verses[0];
-    for (let i = 1; i < verses.length; i++) {
-      if (verses[i] === end + 1) end = verses[i];
-      else {
-        groups.push(start === end ? `${start}` : `${start}-${end}`);
-        start = verses[i];
-        end = verses[i];
-      }
-    }
-    groups.push(start === end ? `${start}` : `${start}-${end}`);
-    const formattedRanges = groups.join(", ");
+    const { ranges } = formatVerseRanges(verses);
 
     const bookDisplayName = book.name || book.abbrev;
-    const ref = `${bookDisplayName} ${chapter}: ${formattedRanges} (${version.toUpperCase()})`;
+    const ref = `${bookDisplayName} ${chapter}:${ranges} (${version.toUpperCase()})`;
 
     const lines = verseObjects
       .map((v: any) => {

@@ -1,23 +1,24 @@
-import React, { useMemo, useState } from "react";
-import { View, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import { useRouter } from "expo-router";
+import React, { useMemo, useState } from "react";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { BibleDrawerMenu } from "../components/BibleDrawerMenu";
 import { BibleHeader } from "../components/BibleHeader";
+import { BibleIcon } from "../components/BibleIcon";
 import { BiblePageEmpty } from "../components/BiblePageEmpty";
 import { BibleText } from "../components/BibleText";
-import { BibleIcon } from "../components/BibleIcon";
-import { BibleDrawerMenu } from "../components/BibleDrawerMenu";
-import { DonateModal } from "../components/modals/DonateModal";
-import { BibleNoteModal } from "../components/modals/BibleNoteModal";
+import { BibleActionItem, BibleActionsSheet } from "../components/modals/BibleActionsSheet";
 import { BibleConfirmModal } from "../components/modals/BibleConfirmModal";
-import { BibleActionsSheet, BibleActionItem } from "../components/modals/BibleActionsSheet";
-import { useBible } from "../hooks/useBible";
-import { useNotes } from "../hooks/useNotes";
-import { useTheme } from "../hooks/useTheme";
-import { useResponsive } from "../hooks/useResponsive";
+import { BibleNoteModal } from "../components/modals/BibleNoteModal";
+import { DonateModal } from "../components/modals/DonateModal";
 import { ROUTES } from "../constants/routes";
 import { getBibleData } from "../data/bible-version";
-import { VerseNote, SelectedVerse } from "../models";
+import { useBible } from "../hooks/useBible";
+import { useNotes } from "../hooks/useNotes";
+import { useResponsive } from "../hooks/useResponsive";
+import { useTheme } from "../hooks/useTheme";
+import { SelectedVerse, VerseNote } from "../models";
+import { formatVerseRanges } from "../utils/verseRange";
 
 export default function NotesScreen() {
   const router = useRouter();
@@ -156,32 +157,6 @@ export default function NotesScreen() {
     ];
   }, [activeNote, colors, navigateTo, router]);
 
-  const buildFormattedRanges = (sorted: SelectedVerse[]) => {
-    if (sorted.length === 0) return { ranges: "", sameChapter: true };
-    const sameChapter = sorted.every((v) => v.chapter === sorted[0].chapter);
-    if (sameChapter) {
-      const groups: string[] = [];
-      let start = sorted[0].verse;
-      let end = sorted[0].verse;
-      for (let i = 1; i < sorted.length; i++) {
-        if (sorted[i].verse === end + 1) {
-          end = sorted[i].verse;
-        } else {
-          groups.push(start === end ? `${start}` : `${start}-${end}`);
-          start = sorted[i].verse;
-          end = sorted[i].verse;
-        }
-      }
-      groups.push(start === end ? `${start}` : `${start}-${end}`);
-      return { ranges: groups.join(", "), sameChapter };
-    }
-    const ranges =
-      sorted.length === 1
-        ? `${sorted[0].verse}`
-        : `${sorted[0].chapter}:${sorted[0].verse}–${sorted[sorted.length - 1].chapter}:${sorted[sorted.length - 1].verse}`;
-    return { ranges, sameChapter };
-  };
-
   const renderItem = ({ item }: { item: VerseNote }) => {
     if (!item.selectedVerses || item.selectedVerses.length === 0) {
       return null;
@@ -191,7 +166,7 @@ export default function NotesScreen() {
     const bookName = book?.name || firstVerseInfo.bookAbbrev;
     const dateStr = new Date(item.updatedAt).toLocaleDateString("pt-BR");
 
-    const { ranges } = buildFormattedRanges(item.selectedVerses as SelectedVerse[]);
+    const { ranges } = formatVerseRanges(item.selectedVerses as SelectedVerse[]);
 
     const firstVerseText = book?.chapters[firstVerseInfo.chapter - 1]?.[firstVerseInfo.verse - 1] || "";
 
@@ -272,7 +247,7 @@ export default function NotesScreen() {
         visible={isDrawerVisible}
         activeItem="notes"
         onClose={() => setIsDrawerVisible(false)}
-        onSelectItem={() => {}}
+        onSelectItem={() => { }}
         onOpenDonate={() => {
           setIsDrawerVisible(false);
           setTimeout(() => setIsDonateVisible(true), 250);

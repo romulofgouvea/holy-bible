@@ -1,18 +1,18 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
-  View,
+  Keyboard,
   TextInput,
   TouchableOpacity,
-  StyleSheet,
-  Keyboard,
+  View
 } from "react-native";
-import { SelectedVerse } from "../../models";
 import { useNotes } from "../../hooks/useNotes";
-import { useTheme } from "../../hooks/useTheme";
 import { useResponsive } from "../../hooks/useResponsive";
-import { BiblePageModal } from "./BiblePageModal";
-import { BibleText } from "../BibleText";
+import { useTheme } from "../../hooks/useTheme";
+import { SelectedVerse } from "../../models";
+import { formatVerseRanges } from "../../utils/verseRange";
 import { BibleIcon } from "../BibleIcon";
+import { BibleText } from "../BibleText";
+import { BiblePageModal } from "./BiblePageModal";
 
 type BibleNoteModalProps = {
   visible: boolean;
@@ -63,10 +63,15 @@ export function BibleNoteModal({
     onClose();
   };
 
-  const headerLabel =
-    count > 1
-      ? `${verse.bookName} ${verse.chapter}:${verse.verse}-${selectedVerses[count - 1].verse}`
-      : `${verse.bookName} ${verse.chapter}:${verse.verse}`;
+  const headerLabel = useMemo(() => {
+    const sorted = [...selectedVerses].sort((a, b) =>
+      a.chapter !== b.chapter ? a.chapter - b.chapter : a.verse - b.verse,
+    );
+    const { ranges, sameChapter } = formatVerseRanges(sorted);
+    return sameChapter
+      ? `${sorted[0].bookName} ${sorted[0].chapter}:${ranges}`
+      : `${sorted[0].bookName} ${ranges}`;
+  }, [selectedVerses]);
 
   return (
     <BiblePageModal
@@ -153,15 +158,6 @@ export function BibleNoteModal({
             value={text}
             onChangeText={setText}
             autoFocus
-            onFocus={() => {
-              // Hack to force selection update
-              setText(text);
-            }}
-            selection={
-              text.length > 0
-                ? { start: text.length, end: text.length }
-                : undefined
-            }
           />
         </View>
       </View>
