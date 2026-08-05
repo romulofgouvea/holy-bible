@@ -1,12 +1,20 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { DeviceEventEmitter } from 'react-native';
-import { STORAGE_KEYS } from '../constants/storage';
-import { availableVersions, getBibleData } from '../data/bible-version';
-import { getBibleTitles } from '../data/bible-titles';
-import { Book, HighlightItem } from '../models';
-import { BACKUP_RESTORED_EVENT } from '../utils/backup';
-import { useHistory } from './useHistory';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { DeviceEventEmitter } from "react-native";
+import { STORAGE_KEYS } from "../constants/storage";
+import { availableVersions, getBibleData } from "../data/bible-version";
+import { getBibleTitles } from "../data/bible-titles";
+import { Book, HighlightItem } from "../models";
+import { BACKUP_RESTORED_EVENT } from "../utils/backup";
+import { useHistory } from "./useHistory";
 
 type BibleContextType = {
   version: string;
@@ -29,76 +37,120 @@ type BibleContextType = {
   setBlinkingVerse: (v: string | null) => void;
   highlights: Record<string, HighlightItem>;
   toggleHighlight: (key: string, color: string) => void;
-  bulkToggleHighlight: (verses: { bookAbbrev: string; chapter: number; verse: number }[], color: string | null) => void;
+  bulkToggleHighlight: (
+    verses: { bookAbbrev: string; chapter: number; verse: number }[],
+    color: string | null,
+  ) => void;
   isReady: boolean;
-  navigateTo: (p: { version?: string; book?: string; chapter?: number; verse?: number }) => void;
-  changeChapter: (deltaOrValue: number, onComplete?: (newChapter: number) => void) => void;
-  addHistoryEntry: (entry: { version: string; bookAbbrev: string; bookName: string; chapter: number; verse: number }) => Promise<void>;
+  navigateTo: (p: {
+    version?: string;
+    book?: string;
+    chapter?: number;
+    verse?: number;
+  }) => void;
+  changeChapter: (
+    deltaOrValue: number,
+    onComplete?: (newChapter: number) => void,
+  ) => void;
+  addHistoryEntry: (entry: {
+    version: string;
+    bookAbbrev: string;
+    bookName: string;
+    chapter: number;
+    verse: number;
+  }) => Promise<void>;
   readingPlanGoal: { bookAbbrev: string; chapter: number } | null;
-  setReadingPlanGoal: (goal: { bookAbbrev: string; chapter: number } | null) => void;
+  setReadingPlanGoal: (
+    goal: { bookAbbrev: string; chapter: number } | null,
+  ) => void;
 };
 
 const BibleContext = createContext<BibleContextType | undefined>(undefined);
 
 export function BibleProvider({ children }: { children: React.ReactNode }) {
   const { addHistoryEntry } = useHistory();
-  const [version, setVersionState] = useState(availableVersions[0] || 'NAA');
-  const [book, setBookState] = useState('gn');
+  const [version, setVersionState] = useState(availableVersions[0] || "NAA");
+  const [book, setBookState] = useState("gn");
   const [chapter, setChapterState] = useState(1);
   const [verse, setVerseState] = useState(1);
 
   const [visibleChapter, setVisibleChapter] = useState(1);
   const [visibleVerse, setVisibleVerse] = useState(1);
   const [blinkingVerse, setBlinkingVerse] = useState<string | null>(null);
-  const [highlights, setHighlights] = useState<Record<string, HighlightItem>>({});
-  const [readingPlanGoal, setReadingPlanGoal] = useState<{ bookAbbrev: string; chapter: number } | null>(null);
+  const [highlights, setHighlights] = useState<Record<string, HighlightItem>>(
+    {},
+  );
+  const [readingPlanGoal, setReadingPlanGoal] = useState<{
+    bookAbbrev: string;
+    chapter: number;
+  } | null>(null);
   const [isReady, setIsReady] = useState(false);
   const isReadyRef = useRef(false);
 
   const versionBooks = useMemo(() => getBibleData(version), [version]);
 
   const currentBook = useMemo(() => {
-    return versionBooks.find((item: Book) => item.name === book || item.abbrev === book) ||
-      versionBooks[0] ||
-      { name: book, abbrev: book, chapters: [['Nenhum versículo disponível']] };
+    return (
+      versionBooks.find(
+        (item: Book) => item.name === book || item.abbrev === book,
+      ) ||
+      versionBooks[0] || {
+        name: book,
+        abbrev: book,
+        chapters: [["Nenhum versículo disponível"]],
+      }
+    );
   }, [versionBooks, book]);
 
   const chapterCount = currentBook.chapters.length;
 
   const sectionData = useMemo(() => {
     const verses = currentBook.chapters[chapter - 1] || [];
-    
-    const versionTitles = getBibleTitles(version);
-    const bookTitles = versionTitles?.books.find((b: any) => b.abbrev.toLowerCase() === currentBook.abbrev.toLowerCase());
-    const chapterTitles = bookTitles?.chapters.find((c: any) => c.number === chapter)?.titles || [];
 
-    return [{
-      title: `${currentBook.name} ${chapter}`,
-      data: verses.map((text, i) => {
-        const verseNum = i + 1;
-        const titlesForVerse = chapterTitles.filter(t => t.startVerse === verseNum);
-        
-        return {
-          bookAbbrev: currentBook.abbrev,
-          chapter,
-          verse: verseNum,
-          text,
-          titles: titlesForVerse
-        };
-      })
-    }];
+    const versionTitles = getBibleTitles(version);
+    const bookTitles = versionTitles?.books.find(
+      (b: any) => b.abbrev.toLowerCase() === currentBook.abbrev.toLowerCase(),
+    );
+    const chapterTitles =
+      bookTitles?.chapters.find((c: any) => c.number === chapter)?.titles || [];
+
+    return [
+      {
+        title: `${currentBook.name} ${chapter}`,
+        data: verses.map((text, i) => {
+          const verseNum = i + 1;
+          const titlesForVerse = chapterTitles.filter(
+            (t) => t.startVerse === verseNum,
+          );
+
+          return {
+            bookAbbrev: currentBook.abbrev,
+            chapter,
+            verse: verseNum,
+            text,
+            titles: titlesForVerse,
+          };
+        }),
+      },
+    ];
   }, [currentBook, chapter, version]);
 
-  const updateCurrentRead = useCallback(async (v: string, b: string, c: number, ve: number) => {
-    try {
-      await AsyncStorage.setItem(STORAGE_KEYS.CURRENT_READ, JSON.stringify({
-        version: v,
-        book: b,
-        chapter: c,
-        verse: ve
-      }));
-    } catch (e) { }
-  }, []);
+  const updateCurrentRead = useCallback(
+    async (v: string, b: string, c: number, ve: number) => {
+      try {
+        await AsyncStorage.setItem(
+          STORAGE_KEYS.CURRENT_READ,
+          JSON.stringify({
+            version: v,
+            book: b,
+            chapter: c,
+            verse: ve,
+          }),
+        );
+      } catch (e) {}
+    },
+    [],
+  );
 
   const loadState = useCallback(async () => {
     try {
@@ -117,9 +169,9 @@ export function BibleProvider({ children }: { children: React.ReactNode }) {
           setVisibleVerse(parsed.verse);
         }
       } else {
-        const firstVersion = availableVersions[0] || 'NAA';
+        const firstVersion = availableVersions[0] || "NAA";
         const firstData = getBibleData(firstVersion);
-        const firstBook = firstData[0]?.abbrev || 'gn';
+        const firstBook = firstData[0]?.abbrev || "gn";
 
         setVersionState(firstVersion);
         setBookState(firstBook);
@@ -129,7 +181,9 @@ export function BibleProvider({ children }: { children: React.ReactNode }) {
         await updateCurrentRead(firstVersion, firstBook, 1, 1);
       }
 
-      const savedHighlights = await AsyncStorage.getItem(STORAGE_KEYS.HIGHLIGHTS);
+      const savedHighlights = await AsyncStorage.getItem(
+        STORAGE_KEYS.HIGHLIGHTS,
+      );
       if (savedHighlights) {
         const parsed = JSON.parse(savedHighlights);
         const normalized: Record<string, HighlightItem> = {};
@@ -139,46 +193,54 @@ export function BibleProvider({ children }: { children: React.ReactNode }) {
             let abbrev = item.abbrev;
             if (!abbrev && item.book) {
               const books = getBibleData(version);
-              const foundBook = books.find(b => b.name.toLowerCase() === item.book.toLowerCase() || b.abbrev.toLowerCase() === item.book.toLowerCase());
+              const foundBook = books.find(
+                (b) =>
+                  b.name.toLowerCase() === item.book.toLowerCase() ||
+                  b.abbrev.toLowerCase() === item.book.toLowerCase(),
+              );
               abbrev = foundBook ? foundBook.abbrev : item.book;
             }
-            if (!abbrev) abbrev = 'gn';
+            if (!abbrev) abbrev = "gn";
 
             const key = `${abbrev}-${item.chapter}-${item.verse}`;
             normalized[key] = {
               color: item.color,
               abbrev,
               chapter: item.chapter,
-              verse: item.verse
+              verse: item.verse,
             };
           });
-        } else if (parsed && typeof parsed === 'object') {
-          Object.keys(parsed).forEach(key => {
+        } else if (parsed && typeof parsed === "object") {
+          Object.keys(parsed).forEach((key) => {
             const val = parsed[key];
-            if (typeof val === 'string') {
-              const parts = key.split('-');
-              const abbrev = parts[0] || 'gn';
+            if (typeof val === "string") {
+              const parts = key.split("-");
+              const abbrev = parts[0] || "gn";
               const chapter = parseInt(parts[1], 10) || 1;
               const verse = parseInt(parts[2], 10) || 1;
               normalized[key] = {
                 color: val,
                 abbrev,
                 chapter,
-                verse
+                verse,
               };
-            } else if (val && typeof val === 'object') {
+            } else if (val && typeof val === "object") {
               let abbrev = val.abbrev;
               if (!abbrev && val.book) {
                 const books = getBibleData(version);
-                const foundBook = books.find(b => b.name.toLowerCase() === val.book.toLowerCase() || b.abbrev.toLowerCase() === val.book.toLowerCase());
+                const foundBook = books.find(
+                  (b) =>
+                    b.name.toLowerCase() === val.book.toLowerCase() ||
+                    b.abbrev.toLowerCase() === val.book.toLowerCase(),
+                );
                 abbrev = foundBook ? foundBook.abbrev : val.book;
               }
-              if (!abbrev) abbrev = 'gn';
+              if (!abbrev) abbrev = "gn";
               normalized[key] = {
                 color: val.color,
                 abbrev,
                 chapter: val.chapter,
-                verse: val.verse
+                verse: val.verse,
               };
             }
           });
@@ -197,86 +259,117 @@ export function BibleProvider({ children }: { children: React.ReactNode }) {
   }, [loadState]);
 
   useEffect(() => {
-    const sub = DeviceEventEmitter.addListener(BACKUP_RESTORED_EVENT, loadState);
+    const sub = DeviceEventEmitter.addListener(
+      BACKUP_RESTORED_EVENT,
+      loadState,
+    );
     return () => sub.remove();
   }, [loadState]);
 
-  const setVersion = useCallback((v: string) => {
-    setVersionState(v);
-    updateCurrentRead(v, book, chapter, verse);
-    DeviceEventEmitter.emit('BibleVersionChanged', v);
-  }, [book, chapter, verse, updateCurrentRead]);
+  const setVersion = useCallback(
+    (v: string) => {
+      setVersionState(v);
+      updateCurrentRead(v, book, chapter, verse);
+      DeviceEventEmitter.emit("BibleVersionChanged", v);
+    },
+    [book, chapter, verse, updateCurrentRead],
+  );
 
-  const setBook = useCallback((b: string) => {
-    setBookState(b);
-    updateCurrentRead(version, b, chapter, verse);
-  }, [version, chapter, verse, updateCurrentRead]);
+  const setBook = useCallback(
+    (b: string) => {
+      setBookState(b);
+      updateCurrentRead(version, b, chapter, verse);
+    },
+    [version, chapter, verse, updateCurrentRead],
+  );
 
-  const setChapter = useCallback((c: number) => {
-    setChapterState(c);
-    updateCurrentRead(version, book, c, verse);
-  }, [version, book, verse, updateCurrentRead]);
+  const setChapter = useCallback(
+    (c: number) => {
+      setChapterState(c);
+      updateCurrentRead(version, book, c, verse);
+    },
+    [version, book, verse, updateCurrentRead],
+  );
 
-  const setVerse = useCallback((v: number) => {
-    setVerseState(v);
-    updateCurrentRead(version, book, chapter, v);
-  }, [version, book, chapter, updateCurrentRead]);
+  const setVerse = useCallback(
+    (v: number) => {
+      setVerseState(v);
+      updateCurrentRead(version, book, chapter, v);
+    },
+    [version, book, chapter, updateCurrentRead],
+  );
 
-  const navigateTo = useCallback((p: { version?: string; book?: string; chapter?: number; verse?: number }) => {
-    const nextV = p.version || version;
-    const nextB = p.book || book;
-    const nextC = p.chapter || chapter;
-    const nextVe = p.verse || verse;
+  const navigateTo = useCallback(
+    (p: {
+      version?: string;
+      book?: string;
+      chapter?: number;
+      verse?: number;
+    }) => {
+      const nextV = p.version || version;
+      const nextB = p.book || book;
+      const nextC = p.chapter || chapter;
+      const nextVe = p.verse || verse;
 
-    setVersionState(nextV);
-    setBookState(nextB);
-    setChapterState(nextC);
-    setVerseState(nextVe);
+      setVersionState(nextV);
+      setBookState(nextB);
+      setChapterState(nextC);
+      setVerseState(nextVe);
 
-    updateCurrentRead(nextV, nextB, nextC, nextVe);
-    if (p.version) DeviceEventEmitter.emit('BibleVersionChanged', p.version);
+      updateCurrentRead(nextV, nextB, nextC, nextVe);
+      if (p.version) DeviceEventEmitter.emit("BibleVersionChanged", p.version);
 
-    if (p.book || p.chapter || p.verse || p.version) {
-      const books = getBibleData(nextV);
-      const foundBook = books.find((b) => b.abbrev === nextB || b.name === nextB);
-      addHistoryEntry({
-        version: nextV,
-        bookAbbrev: nextB,
-        bookName: foundBook?.name || nextB,
-        chapter: nextC,
-        verse: nextVe
-      });
-    }
-  }, [version, book, chapter, verse, updateCurrentRead, addHistoryEntry]);
+      if (p.book || p.chapter || p.verse || p.version) {
+        const books = getBibleData(nextV);
+        const foundBook = books.find(
+          (b) => b.abbrev === nextB || b.name === nextB,
+        );
+        addHistoryEntry({
+          version: nextV,
+          bookAbbrev: nextB,
+          bookName: foundBook?.name || nextB,
+          chapter: nextC,
+          verse: nextVe,
+        });
+      }
+    },
+    [version, book, chapter, verse, updateCurrentRead, addHistoryEntry],
+  );
 
-  const changeChapter = useCallback((deltaOrValue: number, onComplete?: (newChapter: number) => void) => {
-    let nextChapter = chapter;
-    if (deltaOrValue === 1 || deltaOrValue === -1) {
-      nextChapter = chapter + deltaOrValue;
-    } else {
-      nextChapter = deltaOrValue;
-    }
+  const changeChapter = useCallback(
+    (deltaOrValue: number, onComplete?: (newChapter: number) => void) => {
+      let nextChapter = chapter;
+      if (deltaOrValue === 1 || deltaOrValue === -1) {
+        nextChapter = chapter + deltaOrValue;
+      } else {
+        nextChapter = deltaOrValue;
+      }
 
-    if (nextChapter < 1 || nextChapter > chapterCount) return;
+      if (nextChapter < 1 || nextChapter > chapterCount) return;
 
-    setChapterState(nextChapter);
-    setVerseState(1);
+      setChapterState(nextChapter);
+      setVerseState(1);
 
-    AsyncStorage.setItem(STORAGE_KEYS.CURRENT_READ, JSON.stringify({
-      version,
-      book,
-      chapter: nextChapter,
-      verse: 1
-    })).catch(() => { });
+      AsyncStorage.setItem(
+        STORAGE_KEYS.CURRENT_READ,
+        JSON.stringify({
+          version,
+          book,
+          chapter: nextChapter,
+          verse: 1,
+        }),
+      ).catch(() => {});
 
-    onComplete?.(nextChapter);
-  }, [chapter, chapterCount, version, book]);
+      onComplete?.(nextChapter);
+    },
+    [chapter, chapterCount, version, book],
+  );
 
   const toggleHighlight = useCallback((key: string, color: string) => {
-    setHighlights(prev => {
+    setHighlights((prev) => {
       const next = { ...prev };
-      const parts = key.split('-');
-      const bookAbbrev = parts[0] || 'gn';
+      const parts = key.split("-");
+      const bookAbbrev = parts[0] || "gn";
       const chapter = parseInt(parts[1], 10) || 1;
       const verse = parseInt(parts[2], 10) || 1;
 
@@ -287,58 +380,91 @@ export function BibleProvider({ children }: { children: React.ReactNode }) {
           color,
           abbrev: bookAbbrev,
           chapter,
-          verse
+          verse,
         };
       }
       const arrayToSave = Object.values(next);
-      AsyncStorage.setItem(STORAGE_KEYS.HIGHLIGHTS, JSON.stringify(arrayToSave)).catch(() => { });
+      AsyncStorage.setItem(
+        STORAGE_KEYS.HIGHLIGHTS,
+        JSON.stringify(arrayToSave),
+      ).catch(() => {});
       return next;
     });
   }, []);
 
-  const bulkToggleHighlight = useCallback((verses: { bookAbbrev: string; chapter: number; verse: number }[], color: string | null) => {
-    setHighlights(prev => {
-      const next = { ...prev };
-      verses.forEach(v => {
-        const key = `${v.bookAbbrev}-${v.chapter}-${v.verse}`;
-        if (!color || (next[key] && next[key].color === color)) {
-          delete next[key];
-        } else {
-          next[key] = {
-            color,
-            abbrev: v.bookAbbrev,
-            chapter: v.chapter,
-            verse: v.verse
-          };
-        }
+  const bulkToggleHighlight = useCallback(
+    (
+      verses: { bookAbbrev: string; chapter: number; verse: number }[],
+      color: string | null,
+    ) => {
+      setHighlights((prev) => {
+        const next = { ...prev };
+        verses.forEach((v) => {
+          const key = `${v.bookAbbrev}-${v.chapter}-${v.verse}`;
+          if (!color || (next[key] && next[key].color === color)) {
+            delete next[key];
+          } else {
+            next[key] = {
+              color,
+              abbrev: v.bookAbbrev,
+              chapter: v.chapter,
+              verse: v.verse,
+            };
+          }
+        });
+        const arrayToSave = Object.values(next);
+        AsyncStorage.setItem(
+          STORAGE_KEYS.HIGHLIGHTS,
+          JSON.stringify(arrayToSave),
+        ).catch(() => {});
+        return next;
       });
-      const arrayToSave = Object.values(next);
-      AsyncStorage.setItem(STORAGE_KEYS.HIGHLIGHTS, JSON.stringify(arrayToSave)).catch(() => { });
-      return next;
-    });
-  }, []);
+    },
+    [],
+  );
 
   useEffect(() => {
-    const sub = DeviceEventEmitter.addListener('BibleVersionChanged', (newV) => {
-      if (newV !== version) setVersionState(newV);
-    });
+    const sub = DeviceEventEmitter.addListener(
+      "BibleVersionChanged",
+      (newV) => {
+        if (newV !== version) setVersionState(newV);
+      },
+    );
     return () => sub.remove();
   }, [version]);
 
   return (
-    <BibleContext.Provider value={{
-      version, setVersion,
-      book, setBook,
-      chapter, setChapter,
-      verse, setVerse,
-      versionBooks, currentBook, chapterCount, sectionData,
-      visibleChapter, setVisibleChapter,
-      visibleVerse, setVisibleVerse,
-      blinkingVerse, setBlinkingVerse,
-      highlights, toggleHighlight, bulkToggleHighlight,
-      isReady, navigateTo, changeChapter, addHistoryEntry,
-      readingPlanGoal, setReadingPlanGoal
-    }}>
+    <BibleContext.Provider
+      value={{
+        version,
+        setVersion,
+        book,
+        setBook,
+        chapter,
+        setChapter,
+        verse,
+        setVerse,
+        versionBooks,
+        currentBook,
+        chapterCount,
+        sectionData,
+        visibleChapter,
+        setVisibleChapter,
+        visibleVerse,
+        setVisibleVerse,
+        blinkingVerse,
+        setBlinkingVerse,
+        highlights,
+        toggleHighlight,
+        bulkToggleHighlight,
+        isReady,
+        navigateTo,
+        changeChapter,
+        addHistoryEntry,
+        readingPlanGoal,
+        setReadingPlanGoal,
+      }}
+    >
       {children}
     </BibleContext.Provider>
   );
@@ -347,7 +473,7 @@ export function BibleProvider({ children }: { children: React.ReactNode }) {
 export function useBible() {
   const context = useContext(BibleContext);
   if (context === undefined) {
-    throw new Error('useBible must be used within a BibleProvider');
+    throw new Error("useBible must be used within a BibleProvider");
   }
   return context;
 }

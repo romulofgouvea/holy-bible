@@ -62,5 +62,5 @@ export const DESIGN = {
     sm: 400,
     md: 500,
     lg: 600,
-  }
+  },
 };

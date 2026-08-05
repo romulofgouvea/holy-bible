@@ -1,13 +1,20 @@
-import * as Clipboard from 'expo-clipboard';
-import React, { useMemo } from 'react';
-import { Animated, Platform, Share, StyleSheet, TouchableOpacity, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { VERSE_HIGHLIGHTS as HIGHLIGHT_COLORS } from '../../constants/colors';
-import { useResponsive } from '../../hooks/useResponsive';
-import { useTheme } from '../../hooks/useTheme';
-import { SelectedVerse } from '../../models';
-import { BibleIcon } from '../BibleIcon';
-import { BibleAddToStudyModal } from './BibleAddToStudyModal';
+import * as Clipboard from "expo-clipboard";
+import React, { useMemo } from "react";
+import {
+  Animated,
+  Platform,
+  Share,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { VERSE_HIGHLIGHTS as HIGHLIGHT_COLORS } from "../../constants/colors";
+import { useResponsive } from "../../hooks/useResponsive";
+import { useTheme } from "../../hooks/useTheme";
+import { SelectedVerse } from "../../models";
+import { BibleIcon } from "../BibleIcon";
+import { BibleAddToStudyModal } from "./BibleAddToStudyModal";
 
 type VerseActionSheetProps = {
   visible: boolean;
@@ -15,62 +22,67 @@ type VerseActionSheetProps = {
   highlights: Record<string, any>;
   onClose: () => void;
   onBulkHighlight: (verses: SelectedVerse[], color: string | null) => void;
-  onShowToast?: (msg: string, type?: 'success' | 'info' | 'warning') => void;
+  onShowToast?: (msg: string, type?: "success" | "info" | "warning") => void;
 };
 
 export function BibleVerseActionSheet(props: VerseActionSheetProps) {
-  const { visible, selectedVerses, highlights, onClose, onBulkHighlight } = props;
+  const { visible, selectedVerses, highlights, onClose, onBulkHighlight } =
+    props;
   const { ms, DESIGN } = useResponsive();
   const { colors } = useTheme();
 
-  const styles = useMemo(() => StyleSheet.create({
-    bar: {
-      position: 'absolute',
-      bottom: 0,
-      left: 0,
-      right: 0,
-      paddingHorizontal: ms(DESIGN.spacing.lg),
-      paddingTop: ms(DESIGN.spacing.md),
-      borderTopLeftRadius: ms(DESIGN.borderRadius.xl),
-      borderTopRightRadius: ms(DESIGN.borderRadius.xl),
-      borderWidth: 1,
-      elevation: 20,
-      shadowOffset: { width: 0, height: ms(-DESIGN.spacing.xs) },
-      shadowOpacity: 0.15,
-      shadowRadius: ms(DESIGN.spacing.md),
-    },
-    topRow: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      gap: ms(DESIGN.spacing.sm),
-    },
-    topRowContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      marginBottom: ms(DESIGN.spacing.lg),
-    },
-    bottomRow: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'flex-start',
-    },
-    iconBtn: {
-      width: ms(DESIGN.icon.xl),
-      height: ms(DESIGN.icon.xl),
-      borderRadius: ms(DESIGN.borderRadius.md),
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    colorBox: {
-      width: ms(DESIGN.icon.lg),
-      height: ms(DESIGN.icon.lg),
-      borderRadius: ms(DESIGN.borderRadius.sm),
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-  }), [ms, colors, DESIGN]);
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        bar: {
+          position: "absolute",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          paddingHorizontal: ms(DESIGN.spacing.lg),
+          paddingTop: ms(DESIGN.spacing.md),
+          borderTopLeftRadius: ms(DESIGN.borderRadius.xl),
+          borderTopRightRadius: ms(DESIGN.borderRadius.xl),
+          borderWidth: 1,
+          elevation: 20,
+          shadowOffset: { width: 0, height: ms(-DESIGN.spacing.xs) },
+          shadowOpacity: 0.15,
+          shadowRadius: ms(DESIGN.spacing.md),
+        },
+        topRow: {
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: ms(DESIGN.spacing.sm),
+        },
+        topRowContainer: {
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          marginBottom: ms(DESIGN.spacing.lg),
+        },
+        bottomRow: {
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "flex-start",
+        },
+        iconBtn: {
+          width: ms(DESIGN.icon.xl),
+          height: ms(DESIGN.icon.xl),
+          borderRadius: ms(DESIGN.borderRadius.md),
+          alignItems: "center",
+          justifyContent: "center",
+        },
+        colorBox: {
+          width: ms(DESIGN.icon.lg),
+          height: ms(DESIGN.icon.lg),
+          borderRadius: ms(DESIGN.borderRadius.sm),
+          alignItems: "center",
+          justifyContent: "center",
+        },
+      }),
+    [ms, colors, DESIGN],
+  );
 
   const insets = useSafeAreaInsets();
   const hiddenY = ms(DESIGN.layout.settingsIconOffset * 3);
@@ -105,17 +117,20 @@ export function BibleVerseActionSheet(props: VerseActionSheetProps) {
         }
       }
       groups.push(start === end ? `${start}` : `${start}-${end}`);
-      return { ranges: groups.join(', '), sameChapter };
+      return { ranges: groups.join(", "), sameChapter };
     }
-    const ranges = sorted.length === 1
-      ? `${sorted[0].verse}`
-      : `${sorted[0].chapter}:${sorted[0].verse}–${sorted[sorted.length - 1].chapter}:${sorted[sorted.length - 1].verse}`;
+    const ranges =
+      sorted.length === 1
+        ? `${sorted[0].verse}`
+        : `${sorted[0].chapter}:${sorted[0].verse}–${sorted[sorted.length - 1].chapter}:${sorted[sorted.length - 1].verse}`;
     return { ranges, sameChapter };
   };
 
   const buildText = () => {
-    if (count === 0) return '';
-    const sorted = [...selectedVerses].sort((a, b) => a.chapter !== b.chapter ? a.chapter - b.chapter : a.verse - b.verse);
+    if (count === 0) return "";
+    const sorted = [...selectedVerses].sort((a, b) =>
+      a.chapter !== b.chapter ? a.chapter - b.chapter : a.verse - b.verse,
+    );
     const { ranges, sameChapter } = buildFormattedRanges(sorted);
 
     const header = sameChapter
@@ -123,12 +138,17 @@ export function BibleVerseActionSheet(props: VerseActionSheetProps) {
       : `${sorted[0].bookName} ${ranges}`;
 
     const versionLabel = sorted[0].version.toUpperCase();
-    const body = sorted.map((v) => `${v.verse} ${v.text}`).join('\n');
+    const body = sorted.map((v) => `${v.verse} ${v.text}`).join("\n");
 
-    const hasCompare = sorted.some(v => v.compareText);
+    const hasCompare = sorted.some((v) => v.compareText);
     if (hasCompare) {
-      const compareVersionLabel = sorted.find(v => v.compareVersion)?.compareVersion?.toUpperCase() || '';
-      const compareBody = sorted.map((v) => v.compareText ? `${v.verse} ${v.compareText}` : '').filter(Boolean).join('\n');
+      const compareVersionLabel =
+        sorted.find((v) => v.compareVersion)?.compareVersion?.toUpperCase() ||
+        "";
+      const compareBody = sorted
+        .map((v) => (v.compareText ? `${v.verse} ${v.compareText}` : ""))
+        .filter(Boolean)
+        .join("\n");
       return `${header}\n\n${versionLabel}\n${body}\n\n${compareVersionLabel}\n${compareBody}`;
     }
 
@@ -137,22 +157,26 @@ export function BibleVerseActionSheet(props: VerseActionSheetProps) {
 
   const onCopy = async () => {
     await Clipboard.setStringAsync(buildText());
-    if (Platform.OS !== 'android') {
-      props.onShowToast?.('Copiado para a área de transferência', 'success');
+    if (Platform.OS !== "android") {
+      props.onShowToast?.("Copiado para a área de transferência", "success");
     }
     onClose();
   };
 
   const onShare = async () => {
-    try { await Share.share({ message: buildText() }); } catch (e) { }
+    try {
+      await Share.share({ message: buildText() });
+    } catch (e) {}
   };
-
 
   const onHighlight = (color: string | null) => {
     onBulkHighlight(selectedVerses, color);
     const isPlural = selectedVerses.length > 1;
-    const action = color ? 'marcado' : 'desmarcado';
-    props.onShowToast?.(`Versículo${isPlural ? 's' : ''} ${action}${isPlural ? 's' : ''}`, 'success');
+    const action = color ? "marcado" : "desmarcado";
+    props.onShowToast?.(
+      `Versículo${isPlural ? "s" : ""} ${action}${isPlural ? "s" : ""}`,
+      "success",
+    );
     onClose();
   };
 
@@ -160,12 +184,18 @@ export function BibleVerseActionSheet(props: VerseActionSheetProps) {
   if (count > 0) {
     const getVal = (key: string) => {
       const h = highlights[key];
-      return h ? (typeof h === 'string' ? h : h.color) : undefined;
+      return h ? (typeof h === "string" ? h : h.color) : undefined;
     };
-    let firstColor = getVal(`${selectedVerses[0].bookAbbrev}-${selectedVerses[0].chapter}-${selectedVerses[0].verse}`);
+    let firstColor = getVal(
+      `${selectedVerses[0].bookAbbrev}-${selectedVerses[0].chapter}-${selectedVerses[0].verse}`,
+    );
     let allSame = true;
     for (let i = 1; i < count; i++) {
-      if (getVal(`${selectedVerses[i].bookAbbrev}-${selectedVerses[i].chapter}-${selectedVerses[i].verse}`) !== firstColor) {
+      if (
+        getVal(
+          `${selectedVerses[i].bookAbbrev}-${selectedVerses[i].chapter}-${selectedVerses[i].verse}`,
+        ) !== firstColor
+      ) {
         allSame = false;
         break;
       }
@@ -175,46 +205,86 @@ export function BibleVerseActionSheet(props: VerseActionSheetProps) {
 
   return (
     <>
-      <Animated.View style={[styles.bar, {
-        transform: [{ translateY }],
-        backgroundColor: colors.background,
-        paddingBottom: ms(DESIGN.spacing.lg),
-        borderColor: colors.border
-      }]} id="bible-verse-action-sheet">
-
+      <Animated.View
+        style={[
+          styles.bar,
+          {
+            transform: [{ translateY }],
+            backgroundColor: colors.background,
+            paddingBottom: ms(DESIGN.spacing.lg),
+            borderColor: colors.border,
+          },
+        ]}
+        id="bible-verse-action-sheet"
+      >
         {/* Row 1: Actions */}
         <View style={styles.topRowContainer}>
           <View style={styles.topRow}>
             <TouchableOpacity
-              style={[styles.iconBtn, { backgroundColor: count === 0 ? colors.surfaceHighlight : colors.primary + '25' }]}
+              style={[
+                styles.iconBtn,
+                {
+                  backgroundColor:
+                    count === 0
+                      ? colors.surfaceHighlight
+                      : colors.primary + "25",
+                },
+              ]}
               onPress={onShare}
               disabled={count === 0}
             >
-              <BibleIcon name="share-2" size={ms(DESIGN.spacing.lg)} color={count === 0 ? colors.textMuted : colors.primary} />
+              <BibleIcon
+                name="share-2"
+                size={ms(DESIGN.spacing.lg)}
+                color={count === 0 ? colors.textMuted : colors.primary}
+              />
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.iconBtn, { backgroundColor: count === 0 ? colors.surfaceHighlight : colors.primary + '25' }]}
+              style={[
+                styles.iconBtn,
+                {
+                  backgroundColor:
+                    count === 0
+                      ? colors.surfaceHighlight
+                      : colors.primary + "25",
+                },
+              ]}
               onPress={onCopy}
               disabled={count === 0}
             >
-              <BibleIcon name="copy" size={ms(DESIGN.spacing.lg)} color={count === 0 ? colors.textMuted : colors.primary} />
+              <BibleIcon
+                name="copy"
+                size={ms(DESIGN.spacing.lg)}
+                color={count === 0 ? colors.textMuted : colors.primary}
+              />
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.iconBtn, { backgroundColor: count === 0 ? colors.surfaceHighlight : colors.primary + '25' }]}
+              style={[
+                styles.iconBtn,
+                {
+                  backgroundColor:
+                    count === 0
+                      ? colors.surfaceHighlight
+                      : colors.primary + "25",
+                },
+              ]}
               onPress={() => setStudyModalVisible(true)}
               disabled={count === 0}
             >
-              <BibleIcon name="book-open" size={ms(DESIGN.spacing.lg)} color={count === 0 ? colors.textMuted : colors.primary} />
+              <BibleIcon
+                name="book-open"
+                size={ms(DESIGN.spacing.lg)}
+                color={count === 0 ? colors.textMuted : colors.primary}
+              />
             </TouchableOpacity>
-
           </View>
 
           <BibleIcon
             name="x"
             color={colors.error}
-            backgroundColor={colors.error + '20'}
+            backgroundColor={colors.error + "20"}
             onPress={onClose}
             containerSize={DESIGN.icon.xl}
             size={ms(DESIGN.spacing.lg)}
@@ -224,19 +294,35 @@ export function BibleVerseActionSheet(props: VerseActionSheetProps) {
 
         {/* Row 2: Colors */}
         <View style={styles.bottomRow}>
-          <TouchableOpacity style={{ paddingRight: ms(DESIGN.spacing.xs) }} onPress={() => onHighlight(null)}>
-            <View style={[styles.colorBox, { backgroundColor: colors.surfaceHighlight }]}>
+          <TouchableOpacity
+            style={{ paddingRight: ms(DESIGN.spacing.xs) }}
+            onPress={() => onHighlight(null)}
+          >
+            <View
+              style={[
+                styles.colorBox,
+                { backgroundColor: colors.surfaceHighlight },
+              ]}
+            >
               <BibleIcon name="slash" color={colors.error} />
             </View>
           </TouchableOpacity>
 
-          {HIGHLIGHT_COLORS.map(c => {
+          {HIGHLIGHT_COLORS.map((c) => {
             const isSelectedColor = activeColorId === c.id;
             return (
-              <TouchableOpacity key={c.id} style={{ paddingHorizontal: ms(DESIGN.spacing.xs) }} onPress={() => onHighlight(c.id)}>
+              <TouchableOpacity
+                key={c.id}
+                style={{ paddingHorizontal: ms(DESIGN.spacing.xs) }}
+                onPress={() => onHighlight(c.id)}
+              >
                 <View style={[styles.colorBox, { backgroundColor: c.hex }]}>
                   {isSelectedColor && (
-                    <BibleIcon name="check" size={ms(DESIGN.spacing.lg)} color="#FFFFFF" />
+                    <BibleIcon
+                      name="check"
+                      size={ms(DESIGN.spacing.lg)}
+                      color="#FFFFFF"
+                    />
                   )}
                 </View>
               </TouchableOpacity>

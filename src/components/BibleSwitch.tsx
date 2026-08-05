@@ -1,8 +1,8 @@
-import React, { useEffect, useRef , useMemo } from 'react';
-import { Animated, StyleSheet, TouchableOpacity, View } from 'react-native';
-import { useTheme } from '../hooks/useTheme';
-import { useResponsive } from '../hooks/useResponsive';
-import { impactLight } from '../utils/haptics';
+import React, { useEffect, useRef, useMemo } from "react";
+import { Animated, StyleSheet, TouchableOpacity, View } from "react-native";
+import { useTheme } from "../hooks/useTheme";
+import { useResponsive } from "../hooks/useResponsive";
+import { impactLight } from "../utils/haptics";
 
 interface BibleSwitchProps {
   value: boolean;
@@ -12,17 +12,22 @@ interface BibleSwitchProps {
 export function BibleSwitch({ value, onValueChange }: BibleSwitchProps) {
   const { colors } = useTheme();
   const { ms, DESIGN } = useResponsive();
-  const styles = useMemo(() => StyleSheet.create({
-  track: {
-    justifyContent: 'center',
-  },
-  thumb: {
-    position: 'absolute',
-  },
-}), [ms, colors, DESIGN]);
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        track: {
+          justifyContent: "center",
+        },
+        thumb: {
+          position: "absolute",
+        },
+      }),
+    [ms, colors, DESIGN],
+  );
 
-  
-  const translateX = useRef(new Animated.Value(value ? ms(DESIGN.fontSize.xxl) : ms(2))).current;
+  const translateX = useRef(
+    new Animated.Value(value ? ms(DESIGN.fontSize.xxl) : ms(2)),
+  ).current;
 
   useEffect(() => {
     Animated.spring(translateX, {
@@ -33,41 +38,39 @@ export function BibleSwitch({ value, onValueChange }: BibleSwitchProps) {
   }, [value, ms]);
 
   return (
-    <TouchableOpacity 
-      activeOpacity={0.9} 
+    <TouchableOpacity
+      activeOpacity={0.9}
       onPress={() => {
         impactLight();
         onValueChange(!value);
       }}
       style={[
         styles.track,
-        { 
-          width: ms(44), 
-          height: ms(26), 
+        {
+          width: ms(44),
+          height: ms(26),
           borderRadius: ms(13),
           backgroundColor: value ? colors.primary : colors.border,
-        }
+        },
       ]}
     >
-      <Animated.View 
+      <Animated.View
         style={[
           styles.thumb,
           {
             width: ms(22),
             height: ms(22),
             borderRadius: ms(11),
-            backgroundColor: '#FFFFFF',
+            backgroundColor: "#FFFFFF",
             transform: [{ translateX }],
-            shadowColor: '#000',
+            shadowColor: "#000",
             shadowOffset: { width: 0, height: 1 },
             shadowOpacity: 0.2,
             shadowRadius: 1,
             elevation: 2,
-          }
+          },
         ]}
       />
     </TouchableOpacity>
   );
 }
-
-

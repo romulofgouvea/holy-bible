@@ -1,13 +1,13 @@
-import React, { useMemo } from 'react';
-import { Book, getBibleData } from '../../data/bible-version';
-import { useBible } from '../../hooks/useBible';
-import { useBibleModals } from '../../hooks/useBibleModals';
-import { useResponsive } from '../../hooks/useResponsive';
-import { selectionHaptic } from '../../utils/haptics';
-import { BibleBookModal } from './BibleBookModal';
-import { BibleNumberModal } from './BibleNumberModal';
-import { BibleVersionModal } from './BibleVersionModal';
-import { StudyVerseSelectModal } from './StudyVerseSelectModal';
+import React, { useMemo } from "react";
+import { Book, getBibleData } from "../../data/bible-version";
+import { useBible } from "../../hooks/useBible";
+import { useBibleModals } from "../../hooks/useBibleModals";
+import { useResponsive } from "../../hooks/useResponsive";
+import { selectionHaptic } from "../../utils/haptics";
+import { BibleBookModal } from "./BibleBookModal";
+import { BibleNumberModal } from "./BibleNumberModal";
+import { BibleVersionModal } from "./BibleVersionModal";
+import { StudyVerseSelectModal } from "./StudyVerseSelectModal";
 
 export function GlobalBibleModals() {
   const {
@@ -20,7 +20,7 @@ export function GlobalBibleModals() {
     navBook,
     setNavBook,
     navChapter,
-    setNavChapter
+    setNavChapter,
   } = useBibleModals();
 
   const {
@@ -33,7 +33,7 @@ export function GlobalBibleModals() {
     verse: globalVerse,
     setVerse: setGlobalVerse,
     versionBooks: globalVersionBooks,
-    currentBook: globalBook
+    currentBook: globalBook,
   } = useBible();
 
   const { ms } = useResponsive();
@@ -48,7 +48,7 @@ export function GlobalBibleModals() {
       }
     } else {
       // Clear navVersion when no modal is active so it resets cleanly for the next session
-      setNavVersion('');
+      setNavVersion("");
     }
   }, [activeModal, globalVersion, options.initialVersion, setNavVersion]);
 
@@ -61,7 +61,10 @@ export function GlobalBibleModals() {
 
   const activeBook = navBook || options.initialBook || globalBook;
   const activeChapterCount = activeBook?.chapters?.length || 0;
-  const activeChapterNumbers = useMemo(() => Array.from({ length: activeChapterCount }, (_, i) => i + 1), [activeChapterCount]);
+  const activeChapterNumbers = useMemo(
+    () => Array.from({ length: activeChapterCount }, (_, i) => i + 1),
+    [activeChapterCount],
+  );
 
   const activeVerses = useMemo(() => {
     const ch = navChapter || globalChapter;
@@ -70,23 +73,28 @@ export function GlobalBibleModals() {
     return versesInChapter.map((text, i) => ({ verse: i + 1, text }));
   }, [activeBook, navChapter, globalChapter]);
 
-  const activeVerseNumbers = useMemo(() => Array.from({ length: activeVerses.length }, (_, i) => i + 1), [activeVerses]);
+  const activeVerseNumbers = useMemo(
+    () => Array.from({ length: activeVerses.length }, (_, i) => i + 1),
+    [activeVerses],
+  );
 
-  const isShowingCurrentBook = !navBook || navBook.abbrev === globalBook?.abbrev;
+  const isShowingCurrentBook =
+    !navBook || navBook.abbrev === globalBook?.abbrev;
   const highlightedChapter = isShowingCurrentBook ? globalChapter : undefined;
-  const isShowingCurrentChapter = isShowingCurrentBook && (!navChapter || navChapter === globalChapter);
+  const isShowingCurrentChapter =
+    isShowingCurrentBook && (!navChapter || navChapter === globalChapter);
   const highlightedVerse = isShowingCurrentChapter ? globalVerse : undefined;
 
   return (
     <>
       <BibleVersionModal
-        visible={activeModal === 'version'}
+        visible={activeModal === "version"}
         currentVersionSigla={navVersion || globalVersion}
         onClose={closeAll}
         onSelect={(v) => {
           selectionHaptic();
           setNavVersion(v.sigla);
-          if (!options.target || options.target === 'read') {
+          if (!options.target || options.target === "read") {
             setGlobalVersion(v.sigla);
           }
           if (options.onSelect) {
@@ -94,11 +102,11 @@ export function GlobalBibleModals() {
           }
 
           // If we are in a flow (book/chapter selection) and change version, stay in the flow
-          if (options.initialStep && options.initialStep !== 'version') {
+          if (options.initialStep && options.initialStep !== "version") {
             setActiveModal(options.initialStep);
           } else if (!options.initialStep) {
             // Direct version-to-book flow (e.g. initial setup)
-            setActiveModal('book');
+            setActiveModal("book");
           } else {
             // Standalone version selection (e.g. from top bar)
             closeAll();
@@ -106,19 +114,29 @@ export function GlobalBibleModals() {
         }}
       />
       <BibleBookModal
-        visible={activeModal === 'book'}
+        visible={activeModal === "book"}
         onClose={closeAll}
         books={versionBooks}
-        currentBookAbbrev={options.initialBook?.abbrev || (isShowingCurrentBook ? globalBook?.abbrev : undefined)}
+        currentBookAbbrev={
+          options.initialBook?.abbrev ||
+          (isShowingCurrentBook ? globalBook?.abbrev : undefined)
+        }
         versionSigla={(navVersion || globalVersion).toUpperCase()}
         showVersionPill={!options.skipChapterSelection}
-        onVersionPress={() => setActiveModal('version')}
+        onVersionPress={() => setActiveModal("version")}
         onSelect={(bookNameOrAbbrev) => {
           selectionHaptic();
-          const selectedBookObj = versionBooks.find(b => b.abbrev === bookNameOrAbbrev || b.name === bookNameOrAbbrev) || null;
+          const selectedBookObj =
+            versionBooks.find(
+              (b) =>
+                b.abbrev === bookNameOrAbbrev || b.name === bookNameOrAbbrev,
+            ) || null;
           setNavBook(selectedBookObj);
           setNavChapter(1);
-          if (selectedBookObj && (!options.target || options.target === 'read')) {
+          if (
+            selectedBookObj &&
+            (!options.target || options.target === "read")
+          ) {
             setGlobalBook(selectedBookObj.abbrev);
             setGlobalChapter(1);
             setGlobalVerse(1);
@@ -129,20 +147,24 @@ export function GlobalBibleModals() {
               options.onSelect({
                 version: navVersion || globalVersion,
                 book: selectedBookObj as Book,
-                chapter: 1
+                chapter: 1,
               });
             }
             closeAll();
           } else {
-            setActiveModal('chapter');
+            setActiveModal("chapter");
           }
         }}
       />
       <BibleNumberModal
-        visible={activeModal === 'chapter'}
+        visible={activeModal === "chapter"}
         onClose={closeAll}
-        onBack={options.initialStep === 'chapter' ? undefined : () => setActiveModal('book')}
-        title={activeBook?.name || 'Capítulos'}
+        onBack={
+          options.initialStep === "chapter"
+            ? undefined
+            : () => setActiveModal("book")
+        }
+        title={activeBook?.name || "Capítulos"}
         footerText="capítulos"
         iconName="list"
         items={activeChapterNumbers}
@@ -150,7 +172,7 @@ export function GlobalBibleModals() {
         onSelect={(num) => {
           selectionHaptic();
           setNavChapter(num);
-          if (!options.target || options.target === 'read') {
+          if (!options.target || options.target === "read") {
             setGlobalChapter(num);
           }
           if (options.skipVerseSelection) {
@@ -158,29 +180,37 @@ export function GlobalBibleModals() {
               options.onSelect({
                 version: navVersion || globalVersion,
                 book: activeBook,
-                chapter: num
+                chapter: num,
               });
             }
             closeAll();
-          } else if (activeModal === 'chapter' && options.initialStep === 'book' && options.onConfirm) {
-            setActiveModal('verses');
+          } else if (
+            activeModal === "chapter" &&
+            options.initialStep === "book" &&
+            options.onConfirm
+          ) {
+            setActiveModal("verses");
           } else {
-            setActiveModal('verse');
+            setActiveModal("verse");
           }
         }}
       />
       <BibleNumberModal
-        visible={activeModal === 'verse'}
+        visible={activeModal === "verse"}
         onClose={closeAll}
-        onBack={() => setActiveModal('chapter')}
-        title={activeBook?.name ? `${activeBook.name} ${navChapter || globalChapter}` : 'Versículos'}
+        onBack={() => setActiveModal("chapter")}
+        title={
+          activeBook?.name
+            ? `${activeBook.name} ${navChapter || globalChapter}`
+            : "Versículos"
+        }
         footerText="versículos"
         iconName="hash"
         items={activeVerseNumbers}
         currentItem={highlightedVerse}
         onSelect={(num) => {
           selectionHaptic();
-          if (!options.target || options.target === 'read') {
+          if (!options.target || options.target === "read") {
             setGlobalVerse(num);
           }
           if (options.onSelect) {
@@ -188,28 +218,30 @@ export function GlobalBibleModals() {
               version: navVersion || globalVersion,
               book: activeBook,
               chapter: navChapter || globalChapter,
-              verse: num
+              verse: num,
             });
           }
           closeAll();
         }}
       />
       <StudyVerseSelectModal
-        visible={activeModal === 'verses'}
+        visible={activeModal === "verses"}
         onClose={closeAll}
-        onBack={() => setActiveModal('chapter')}
-        bookName={activeBook?.name || ''}
+        onBack={() => setActiveModal("chapter")}
+        bookName={activeBook?.name || ""}
         chapter={navChapter || globalChapter}
         verses={activeVerses}
         onConfirm={(verses) => {
           if (options.onConfirm) {
-            const verseObjects = verses.map(n => activeVerses.find(v => v.verse === n)!).filter(Boolean);
+            const verseObjects = verses
+              .map((n) => activeVerses.find((v) => v.verse === n)!)
+              .filter(Boolean);
             options.onConfirm({
               version: navVersion || globalVersion,
               book: activeBook,
               chapter: navChapter || globalChapter,
               verses,
-              verseObjects
+              verseObjects,
             });
           }
           closeAll();

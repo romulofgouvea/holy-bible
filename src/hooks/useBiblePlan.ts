@@ -1,12 +1,12 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useCallback, useEffect, useState } from 'react';
-import { DeviceEventEmitter } from 'react-native';
-import { STORAGE_KEYS } from '../constants/storage';
-import { ActiveBiblePlan } from '../models';
-import { BiblePlanMonth, BiblePlanTemplate } from '../models/BiblePlanModels';
-import { BACKUP_RESTORED_EVENT, writeAutoBackupFile } from '../utils/backup';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useCallback, useEffect, useState } from "react";
+import { DeviceEventEmitter } from "react-native";
+import { STORAGE_KEYS } from "../constants/storage";
+import { ActiveBiblePlan } from "../models";
+import { BiblePlanMonth, BiblePlanTemplate } from "../models/BiblePlanModels";
+import { BACKUP_RESTORED_EVENT, writeAutoBackupFile } from "../utils/backup";
 
-const BIBLE_PLANS_KEY = STORAGE_KEYS.READING_PLAN + '_bible_plans';
+const BIBLE_PLANS_KEY = STORAGE_KEYS.READING_PLAN + "_bible_plans";
 
 function makeId() {
   return Math.random().toString(36).slice(2) + Date.now().toString(36);
@@ -16,7 +16,12 @@ function dayKey(monthNumber: number, day: number): string {
   return `${monthNumber}-${day}`;
 }
 
-function chapterKey(monthNumber: number, day: number, abbrev: string, chapter: number): string {
+function chapterKey(
+  monthNumber: number,
+  day: number,
+  abbrev: string,
+  chapter: number,
+): string {
   return `${monthNumber}-${day}-${abbrev}-${chapter}`;
 }
 
@@ -47,168 +52,250 @@ export function useBiblePlan() {
 
   useEffect(() => {
     reloadFromStorage();
-    const sub = DeviceEventEmitter.addListener(BACKUP_RESTORED_EVENT, reloadFromStorage);
+    const sub = DeviceEventEmitter.addListener(
+      BACKUP_RESTORED_EVENT,
+      reloadFromStorage,
+    );
     return () => sub.remove();
   }, [reloadFromStorage]);
 
   const persist = useCallback((updated: ActiveBiblePlan[]) => {
     setActivePlans(updated);
-    AsyncStorage.setItem(BIBLE_PLANS_KEY, JSON.stringify(updated)).catch(() => {});
-    AsyncStorage.getItem(STORAGE_KEYS.AUTO_BACKUP).then(val => {
-      if (val === 'true') writeAutoBackupFile().catch(() => {});
-    }).catch(() => {});
+    AsyncStorage.setItem(BIBLE_PLANS_KEY, JSON.stringify(updated)).catch(
+      () => {},
+    );
+    AsyncStorage.getItem(STORAGE_KEYS.AUTO_BACKUP)
+      .then((val) => {
+        if (val === "true") writeAutoBackupFile().catch(() => {});
+      })
+      .catch(() => {});
   }, []);
 
-  const createBiblePlan = useCallback((template: BiblePlanTemplate): ActiveBiblePlan => {
-    const newPlan: ActiveBiblePlan = {
-      id: makeId(),
-      templateId: template.id,
-      title: template.title,
-      startedAt: Date.now(),
-      completedDays: {},
-      completedChapters: {},
-    };
-    persist([...activePlans, newPlan]);
-    return newPlan;
-  }, [activePlans, persist]);
+  const createBiblePlan = useCallback(
+    (template: BiblePlanTemplate): ActiveBiblePlan => {
+      const newPlan: ActiveBiblePlan = {
+        id: makeId(),
+        templateId: template.id,
+        title: template.title,
+        startedAt: Date.now(),
+        completedDays: {},
+        completedChapters: {},
+      };
+      persist([...activePlans, newPlan]);
+      return newPlan;
+    },
+    [activePlans, persist],
+  );
 
-  const toggleDay = useCallback((planId: string, monthNumber: number, day: number) => {
-    const key = dayKey(monthNumber, day);
-    persist(activePlans.map(p => {
-      if (p.id !== planId) return p;
-      const existing = p.completedDays[key];
-      const updated = { ...p.completedDays };
-      if (existing?.isCompleted) {
-        delete updated[key];
-      } else {
-        updated[key] = { isCompleted: true, completedAt: Date.now() };
-      }
-      return { ...p, completedDays: updated };
-    }));
-  }, [activePlans, persist]);
-
-  const isDayCompleted = useCallback((plan: ActiveBiblePlan, monthNumber: number, day: number): boolean => {
-    return !!plan.completedDays[dayKey(monthNumber, day)]?.isCompleted;
-  }, []);
-
-  const getDayCompletedAt = useCallback((plan: ActiveBiblePlan, monthNumber: number, day: number): number | undefined => {
-    return plan.completedDays[dayKey(monthNumber, day)]?.completedAt;
-  }, []);
-
-  const toggleChapter = useCallback((planId: string, monthNumber: number, dayInfo: any, abbrev: string, chapter: number) => {
-    const key = chapterKey(monthNumber, dayInfo.day, abbrev, chapter);
-    persist(activePlans.map(p => {
-      if (p.id !== planId) return p;
-      const chapters = { ...(p.completedChapters || {}) };
-      if (chapters[key]?.isCompleted) {
-        delete chapters[key];
-      } else {
-        chapters[key] = { isCompleted: true, completedAt: Date.now() };
-      }
-      
-      // check if day is fully read
-      let isDayFullyRead = true;
-      for (const book of dayInfo.books) {
-        for (const chap of (book.chapters || [])) {
-          if (!chapters[chapterKey(monthNumber, dayInfo.day, book.abbrev, chap)]?.isCompleted) {
-            isDayFullyRead = false;
-            break;
-          }
-        }
-        if (!isDayFullyRead) break;
-      }
-      
-      const dKey = dayKey(monthNumber, dayInfo.day);
-      const days = { ...p.completedDays };
-      if (isDayFullyRead) {
-        days[dKey] = { isCompleted: true, completedAt: Date.now() };
-      } else {
-        delete days[dKey];
-      }
-      
-      return { ...p, completedChapters: chapters, completedDays: days };
-    }));
-  }, [activePlans, persist]);
-
-  const toggleAllChaptersForDay = useCallback((planId: string, monthNumber: number, dayInfo: any, status: boolean) => {
-    persist(activePlans.map(p => {
-      if (p.id !== planId) return p;
-      const chapters = { ...(p.completedChapters || {}) };
-      
-      for (const book of dayInfo.books) {
-        const bookChapters = book.chapters ?? book.verses?.map((v: any) => v.chapter) ?? [];
-        for (const chap of bookChapters) {
-          const key = chapterKey(monthNumber, dayInfo.day, book.abbrev, chap);
-          if (status) {
-            chapters[key] = { isCompleted: true, completedAt: Date.now() };
+  const toggleDay = useCallback(
+    (planId: string, monthNumber: number, day: number) => {
+      const key = dayKey(monthNumber, day);
+      persist(
+        activePlans.map((p) => {
+          if (p.id !== planId) return p;
+          const existing = p.completedDays[key];
+          const updated = { ...p.completedDays };
+          if (existing?.isCompleted) {
+            delete updated[key];
           } else {
-            delete chapters[key];
+            updated[key] = { isCompleted: true, completedAt: Date.now() };
           }
-        }
-      }
-      
-      const dKey = dayKey(monthNumber, dayInfo.day);
-      const days = { ...p.completedDays };
-      if (status) {
-        days[dKey] = { isCompleted: true, completedAt: Date.now() };
-      } else {
-        delete days[dKey];
-      }
-      
-      return { ...p, completedChapters: chapters, completedDays: days };
-    }));
-  }, [activePlans, persist]);
+          return { ...p, completedDays: updated };
+        }),
+      );
+    },
+    [activePlans, persist],
+  );
 
-  const isChapterCompleted = useCallback((plan: ActiveBiblePlan, monthNumber: number, day: number, abbrev: string, chapter: number): boolean => {
-    return !!plan.completedChapters?.[chapterKey(monthNumber, day, abbrev, chapter)]?.isCompleted;
-  }, []);
+  const isDayCompleted = useCallback(
+    (plan: ActiveBiblePlan, monthNumber: number, day: number): boolean => {
+      return !!plan.completedDays[dayKey(monthNumber, day)]?.isCompleted;
+    },
+    [],
+  );
 
-  const removeBiblePlan = useCallback((planId: string) => {
-    persist(activePlans.filter(p => p.id !== planId));
-  }, [activePlans, persist]);
+  const getDayCompletedAt = useCallback(
+    (
+      plan: ActiveBiblePlan,
+      monthNumber: number,
+      day: number,
+    ): number | undefined => {
+      return plan.completedDays[dayKey(monthNumber, day)]?.completedAt;
+    },
+    [],
+  );
 
-  const removeBiblePlans = useCallback((planIds: string[]) => {
-    persist(activePlans.filter(p => !planIds.includes(p.id)));
-  }, [activePlans, persist]);
+  const toggleChapter = useCallback(
+    (
+      planId: string,
+      monthNumber: number,
+      dayInfo: any,
+      abbrev: string,
+      chapter: number,
+    ) => {
+      const key = chapterKey(monthNumber, dayInfo.day, abbrev, chapter);
+      persist(
+        activePlans.map((p) => {
+          if (p.id !== planId) return p;
+          const chapters = { ...(p.completedChapters || {}) };
+          if (chapters[key]?.isCompleted) {
+            delete chapters[key];
+          } else {
+            chapters[key] = { isCompleted: true, completedAt: Date.now() };
+          }
+
+          // check if day is fully read
+          let isDayFullyRead = true;
+          for (const book of dayInfo.books) {
+            for (const chap of book.chapters || []) {
+              if (
+                !chapters[
+                  chapterKey(monthNumber, dayInfo.day, book.abbrev, chap)
+                ]?.isCompleted
+              ) {
+                isDayFullyRead = false;
+                break;
+              }
+            }
+            if (!isDayFullyRead) break;
+          }
+
+          const dKey = dayKey(monthNumber, dayInfo.day);
+          const days = { ...p.completedDays };
+          if (isDayFullyRead) {
+            days[dKey] = { isCompleted: true, completedAt: Date.now() };
+          } else {
+            delete days[dKey];
+          }
+
+          return { ...p, completedChapters: chapters, completedDays: days };
+        }),
+      );
+    },
+    [activePlans, persist],
+  );
+
+  const toggleAllChaptersForDay = useCallback(
+    (planId: string, monthNumber: number, dayInfo: any, status: boolean) => {
+      persist(
+        activePlans.map((p) => {
+          if (p.id !== planId) return p;
+          const chapters = { ...(p.completedChapters || {}) };
+
+          for (const book of dayInfo.books) {
+            const bookChapters =
+              book.chapters ?? book.verses?.map((v: any) => v.chapter) ?? [];
+            for (const chap of bookChapters) {
+              const key = chapterKey(
+                monthNumber,
+                dayInfo.day,
+                book.abbrev,
+                chap,
+              );
+              if (status) {
+                chapters[key] = { isCompleted: true, completedAt: Date.now() };
+              } else {
+                delete chapters[key];
+              }
+            }
+          }
+
+          const dKey = dayKey(monthNumber, dayInfo.day);
+          const days = { ...p.completedDays };
+          if (status) {
+            days[dKey] = { isCompleted: true, completedAt: Date.now() };
+          } else {
+            delete days[dKey];
+          }
+
+          return { ...p, completedChapters: chapters, completedDays: days };
+        }),
+      );
+    },
+    [activePlans, persist],
+  );
+
+  const isChapterCompleted = useCallback(
+    (
+      plan: ActiveBiblePlan,
+      monthNumber: number,
+      day: number,
+      abbrev: string,
+      chapter: number,
+    ): boolean => {
+      return !!plan.completedChapters?.[
+        chapterKey(monthNumber, day, abbrev, chapter)
+      ]?.isCompleted;
+    },
+    [],
+  );
+
+  const removeBiblePlan = useCallback(
+    (planId: string) => {
+      persist(activePlans.filter((p) => p.id !== planId));
+    },
+    [activePlans, persist],
+  );
+
+  const removeBiblePlans = useCallback(
+    (planIds: string[]) => {
+      persist(activePlans.filter((p) => !planIds.includes(p.id)));
+    },
+    [activePlans, persist],
+  );
 
   const clearAllBiblePlans = useCallback(() => {
     persist([]);
   }, [persist]);
 
-  const updateStartDate = useCallback((planId: string, timestamp: number) => {
-    persist(activePlans.map(p =>
-      p.id !== planId ? p : { ...p, startedAt: timestamp }
-    ));
-  }, [activePlans, persist]);
+  const updateStartDate = useCallback(
+    (planId: string, timestamp: number) => {
+      persist(
+        activePlans.map((p) =>
+          p.id !== planId ? p : { ...p, startedAt: timestamp },
+        ),
+      );
+    },
+    [activePlans, persist],
+  );
 
-  const getBiblePlanStats = useCallback((plan: ActiveBiblePlan, months: BiblePlanMonth[]) => {
-    const totalDays = months.reduce((acc, m) => acc + m.days.length, 0);
-    const completedCount = Object.values(plan.completedDays).filter(d => d.isCompleted).length;
-    const progressPercent = totalDays > 0 ? Math.round((completedCount / totalDays) * 100) : 0;
-    
-    const startMidnight = new Date(plan.startedAt).setHours(0, 0, 0, 0);
-    const nowMidnight = new Date().setHours(0, 0, 0, 0);
-    const elapsedDays = Math.floor((nowMidnight - startMidnight) / (1000 * 60 * 60 * 24)) + 1;
-    
-    const differenceDays = completedCount - elapsedDays;
-    const delayDays = differenceDays < 0 ? Math.abs(differenceDays) : 0;
-    const aheadDays = differenceDays > 0 ? differenceDays : 0;
+  const getBiblePlanStats = useCallback(
+    (plan: ActiveBiblePlan, months: BiblePlanMonth[]) => {
+      const totalDays = months.reduce((acc, m) => acc + m.days.length, 0);
+      const completedCount = Object.values(plan.completedDays).filter(
+        (d) => d.isCompleted,
+      ).length;
+      const progressPercent =
+        totalDays > 0 ? Math.round((completedCount / totalDays) * 100) : 0;
 
-    const expectedEndMs = startMidnight + ((totalDays - 1) * 24 * 60 * 60 * 1000);
-    const estimatedEndMs = nowMidnight + ((totalDays - completedCount) * 24 * 60 * 60 * 1000);
+      const startMidnight = new Date(plan.startedAt).setHours(0, 0, 0, 0);
+      const nowMidnight = new Date().setHours(0, 0, 0, 0);
+      const elapsedDays =
+        Math.floor((nowMidnight - startMidnight) / (1000 * 60 * 60 * 24)) + 1;
 
-    return {
-      totalDays,
-      completedCount,
-      progressPercent,
-      elapsed: elapsedDays,
-      delayDays,
-      aheadDays,
-      expectedEndMs,
-      estimatedEndMs,
-      startedAt: plan.startedAt,
-    };
-  }, []);
+      const differenceDays = completedCount - elapsedDays;
+      const delayDays = differenceDays < 0 ? Math.abs(differenceDays) : 0;
+      const aheadDays = differenceDays > 0 ? differenceDays : 0;
+
+      const expectedEndMs =
+        startMidnight + (totalDays - 1) * 24 * 60 * 60 * 1000;
+      const estimatedEndMs =
+        nowMidnight + (totalDays - completedCount) * 24 * 60 * 60 * 1000;
+
+      return {
+        totalDays,
+        completedCount,
+        progressPercent,
+        elapsed: elapsedDays,
+        delayDays,
+        aheadDays,
+        expectedEndMs,
+        estimatedEndMs,
+        startedAt: plan.startedAt,
+      };
+    },
+    [],
+  );
 
   return {
     activePlans,

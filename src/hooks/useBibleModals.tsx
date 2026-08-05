@@ -1,7 +1,13 @@
-import React, { createContext, useCallback, useContext, useMemo, useState } from 'react';
-import { Book } from '../data/bible-version';
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+} from "react";
+import { Book } from "../data/bible-version";
 
-type ModalType = 'version' | 'book' | 'chapter' | 'verse' | 'verses' | null;
+type ModalType = "version" | "book" | "chapter" | "verse" | "verses" | null;
 
 interface SelectionData {
   version?: string;
@@ -21,7 +27,7 @@ interface BibleModalOptions {
   initialVersion?: string;
   initialBook?: Book;
   initialChapter?: number;
-  target?: 'read' | 'search' | 'study';
+  target?: "read" | "search" | "study";
 }
 
 interface BibleModalContextType {
@@ -40,19 +46,25 @@ interface BibleModalContextType {
   setNavChapter: (c: number | null) => void;
 }
 
-const BibleModalContext = createContext<BibleModalContextType | undefined>(undefined);
+const BibleModalContext = createContext<BibleModalContextType | undefined>(
+  undefined,
+);
 
-export function BibleModalProvider({ children }: { children: React.ReactNode }) {
+export function BibleModalProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [activeModal, setActiveModal] = useState<ModalType>(null);
   const [options, setOptions] = useState<BibleModalOptions>({});
 
-  const [navVersion, setNavVersion] = useState<string>('');
+  const [navVersion, setNavVersion] = useState<string>("");
   const [navBook, setNavBook] = useState<Book | null>(null);
   const [navChapter, setNavChapter] = useState<number | null>(null);
 
   const openModal = useCallback((newOptions: BibleModalOptions) => {
     setOptions(newOptions);
-    setActiveModal(newOptions.initialStep || 'book');
+    setActiveModal(newOptions.initialStep || "book");
   }, []);
 
   const closeAll = useCallback(() => {
@@ -61,19 +73,30 @@ export function BibleModalProvider({ children }: { children: React.ReactNode }) 
     setNavChapter(null);
   }, []);
 
-  const value = useMemo(() => ({
-    activeModal,
-    options,
-    openModal,
-    closeAll,
-    setActiveModal,
-    navVersion,
-    setNavVersion,
-    navBook,
-    setNavBook,
-    navChapter,
-    setNavChapter
-  }), [activeModal, options, openModal, closeAll, navVersion, navBook, navChapter]);
+  const value = useMemo(
+    () => ({
+      activeModal,
+      options,
+      openModal,
+      closeAll,
+      setActiveModal,
+      navVersion,
+      setNavVersion,
+      navBook,
+      setNavBook,
+      navChapter,
+      setNavChapter,
+    }),
+    [
+      activeModal,
+      options,
+      openModal,
+      closeAll,
+      navVersion,
+      navBook,
+      navChapter,
+    ],
+  );
 
   return (
     <BibleModalContext.Provider value={value}>
@@ -85,7 +108,7 @@ export function BibleModalProvider({ children }: { children: React.ReactNode }) 
 export function useBibleModals() {
   const context = useContext(BibleModalContext);
   if (!context) {
-    throw new Error('useBibleModals must be used within a BibleModalProvider');
+    throw new Error("useBibleModals must be used within a BibleModalProvider");
   }
   return context;
 }

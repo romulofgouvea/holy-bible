@@ -94,16 +94,16 @@ export type ActiveBiblePlan = {
 };
 
 // Reader Settings Domain Models
-export type ReaderTheme = 'light' | 'dark' | 'sepia';
-export type ReaderFont = 'poppins' | 'monospace';
-export type TextAlign = 'auto' | 'left' | 'right' | 'center' | 'justify';
+export type ReaderTheme = "light" | "dark" | "sepia";
+export type ReaderFont = "poppins" | "monospace";
+export type TextAlign = "auto" | "left" | "right" | "center" | "justify";
 
 // Bible Title Models
 export interface VerseTitle {
   title: string;
   startVerse: number;
   endVerse: number;
-  type: 'section' | 'subsection' | 'speech' | string;
+  type: "section" | "subsection" | "speech" | string;
   positionIndex: number;
 }
 

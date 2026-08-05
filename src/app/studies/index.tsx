@@ -1,2 +1,2 @@
-import StudiesScreen from '../../screens/StudiesScreen';
+import StudiesScreen from "../../screens/StudiesScreen";
 export default StudiesScreen;

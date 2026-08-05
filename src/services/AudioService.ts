@@ -1,7 +1,10 @@
-import { getBibleData } from '../data/bible-version';
-import { REF_AUDIO_B64, REF_AUDIO_TEXT } from '../data/bible-voice/voiceReference';
+import { getBibleData } from "../data/bible-version";
+import {
+  REF_AUDIO_B64,
+  REF_AUDIO_TEXT,
+} from "../data/bible-voice/voiceReference";
 
-export type RunpodStatus = 'IN_QUEUE' | 'IN_PROGRESS' | 'COMPLETED' | 'FAILED';
+export type RunpodStatus = "IN_QUEUE" | "IN_PROGRESS" | "COMPLETED" | "FAILED";
 
 interface AudioParams {
   version: string;
@@ -24,13 +27,21 @@ export class AudioService {
     if (this.R2_PUBLIC_URL) {
       return `${this.R2_PUBLIC_URL}`;
     }
-    if (this.R2_ACCOUNT_ID && !this.R2_ACCOUNT_ID.startsWith('http')) {
+    if (this.R2_ACCOUNT_ID && !this.R2_ACCOUNT_ID.startsWith("http")) {
       return `https://${this.R2_ACCOUNT_ID}.r2.cloudflarestorage.com/${this.R2_BUCKET_NAME}`;
     }
     return `${this.R2_ACCOUNT_ID}/${this.R2_BUCKET_NAME}`;
   }
 
-  static async getAudio({ version, abbrev, chapter, verse, text, verses, onGenerationStatus }: AudioParams): Promise<string[]> {
+  static async getAudio({
+    version,
+    abbrev,
+    chapter,
+    verse,
+    text,
+    verses,
+    onGenerationStatus,
+  }: AudioParams): Promise<string[]> {
     if (verse === undefined) {
       const fileName = `${version.toLowerCase()}-${abbrev.toLowerCase()}-${chapter}.mp3`;
       const r2Url = `${this.getR2BaseUrl()}/${fileName}`;
@@ -44,19 +55,23 @@ export class AudioService {
         let chapterVerses = verses;
         if (!chapterVerses || chapterVerses.length === 0) {
           const bibleData = getBibleData(version);
-          const bookData = bibleData.find(b => b.abbrev === abbrev);
+          const bookData = bibleData.find((b) => b.abbrev === abbrev);
           chapterVerses = bookData?.chapters[chapter - 1] || [];
         }
 
         if (chapterVerses && chapterVerses.length > 0) {
-          const chapterText = chapterVerses.join(' ');
-          const audioUrl = await this.generateOnRunpod(chapterText, fileName, onGenerationStatus);
+          const chapterText = chapterVerses.join(" ");
+          const audioUrl = await this.generateOnRunpod(
+            chapterText,
+            fileName,
+            onGenerationStatus,
+          );
           return [audioUrl ?? r2Url];
         }
 
         return [];
       } catch (error) {
-        console.error('Erro ao buscar/gerar áudio do capítulo:', error);
+        console.error("Erro ao buscar/gerar áudio do capítulo:", error);
         return [];
       }
     }
@@ -72,14 +87,18 @@ export class AudioService {
       }
 
       if (!text) {
-        throw new Error('Texto é obrigatório para gerar o áudio no Runpod.');
+        throw new Error("Texto é obrigatório para gerar o áudio no Runpod.");
       }
 
-      const audioUrl = await this.generateOnRunpod(text, fileName, onGenerationStatus);
+      const audioUrl = await this.generateOnRunpod(
+        text,
+        fileName,
+        onGenerationStatus,
+      );
 
       return [audioUrl ?? r2Url];
     } catch (error) {
-      console.error('Erro ao buscar/gerar áudio:', error);
+      console.error("Erro ao buscar/gerar áudio:", error);
       throw error;
     }
   }
@@ -88,7 +107,10 @@ export class AudioService {
     try {
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), 5000);
-      const response = await fetch(url, { method: 'GET', signal: controller.signal });
+      const response = await fetch(url, {
+        method: "GET",
+        signal: controller.signal,
+      });
       clearTimeout(timeout);
       return response.status === 200 || response.status === 206;
     } catch (e) {
@@ -102,16 +124,16 @@ export class AudioService {
     onStatus?: (status: RunpodStatus) => void,
   ): Promise<string | null> {
     const runResponse = await fetch(`${this.RUNPOD_ENDPOINT}/run`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         Authorization: `Bearer ${this.RUNPOD_API_KEY}`,
       },
       body: JSON.stringify({
         input: {
           text: text,
           file_name: fileName,
-          language: 'Auto',
+          language: "Auto",
           steps: 16,
           ref_audio_b64: REF_AUDIO_B64,
           ref_text: REF_AUDIO_TEXT,
@@ -129,20 +151,26 @@ export class AudioService {
     let statusData = runData;
     onStatus?.(statusData.status as RunpodStatus);
 
-    while (statusData.status !== 'COMPLETED' && statusData.status !== 'FAILED') {
-      await new Promise(resolve => setTimeout(resolve, 3000));
+    while (
+      statusData.status !== "COMPLETED" &&
+      statusData.status !== "FAILED"
+    ) {
+      await new Promise((resolve) => setTimeout(resolve, 3000));
 
-      const statusResponse = await fetch(`${this.RUNPOD_ENDPOINT}/status/${jobId}`, {
-        headers: {
-          Authorization: `Bearer ${this.RUNPOD_API_KEY}`,
+      const statusResponse = await fetch(
+        `${this.RUNPOD_ENDPOINT}/status/${jobId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${this.RUNPOD_API_KEY}`,
+          },
         },
-      });
+      );
 
       statusData = await statusResponse.json();
       onStatus?.(statusData.status as RunpodStatus);
 
-      if (statusData.status === 'FAILED') {
-        throw new Error('Erro na geração de áudio no Runpod.');
+      if (statusData.status === "FAILED") {
+        throw new Error("Erro na geração de áudio no Runpod.");
       }
     }
 

@@ -1,2 +1,2 @@
-import TrashScreen from '../../screens/TrashScreen';
+import TrashScreen from "../../screens/TrashScreen";
 export default TrashScreen;

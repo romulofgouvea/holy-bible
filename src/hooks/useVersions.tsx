@@ -1,22 +1,29 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useCallback, useMemo, useState } from 'react';
-import { STORAGE_KEYS } from '../constants/storage';
-import { availableVersions, getBibleData } from '../data/bible-version';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useCallback, useMemo, useState } from "react";
+import { STORAGE_KEYS } from "../constants/storage";
+import { availableVersions, getBibleData } from "../data/bible-version";
 
 export function useVersions() {
-  const [currentVersion, setCurrentVersionState] = useState(availableVersions[0] || 'NAA');
+  const [currentVersion, setCurrentVersionState] = useState(
+    availableVersions[0] || "NAA",
+  );
 
   const setVersion = useCallback(async (v: string) => {
     setCurrentVersionState(v);
     try {
       await AsyncStorage.setItem(STORAGE_KEYS.BIBLE_VERSION_GLOBAL, v);
-    } catch (e) { }
+    } catch (e) {}
   }, []);
 
   const versionOptions = useMemo(() => {
-    return availableVersions.map(v => ({
+    return availableVersions.map((v) => ({
       sigla: v,
-      nome: v === 'NVI' ? 'Nova Versão Internacional' : v === 'ARA' ? 'Almeida Revista e Atualizada' : 'Nova Almeida Atualizada'
+      nome:
+        v === "NVI"
+          ? "Nova Versão Internacional"
+          : v === "ARA"
+            ? "Almeida Revista e Atualizada"
+            : "Nova Almeida Atualizada",
     }));
   }, []);
 

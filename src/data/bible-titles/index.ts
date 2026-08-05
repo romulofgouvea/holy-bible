@@ -1,7 +1,9 @@
-import { VersionTitle } from '../../models';
+import { VersionTitle } from "../../models";
 
-// @ts-ignore
-const jsonContext = require.context('.', false, /\.json$/);
+const jsonContext =
+  typeof (require as any).context === "function"
+    ? (require as any).context(".", false, /\.json$/)
+    : null;
 
 const titlesDataFiles: Record<string, VersionTitle> = {};
 
@@ -10,14 +12,18 @@ export const getBibleTitles = (sigla: string): VersionTitle | null => {
     if (titlesDataFiles[sigla]) {
       return titlesDataFiles[sigla];
     }
-    
+
+    if (!jsonContext) {
+      return null;
+    }
+
     const data = jsonContext(`./${sigla.toLowerCase()}-titles.json`);
     if (data) {
       titlesDataFiles[sigla] = data as VersionTitle;
       return titlesDataFiles[sigla];
     }
     return null;
-  } catch (error) {
+  } catch {
     return null;
   }
 };

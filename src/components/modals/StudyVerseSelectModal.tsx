@@ -1,12 +1,12 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
-import { useResponsive } from '../../hooks/useResponsive';
-import { useTheme } from '../../hooks/useTheme';
-import { impactLight } from '../../utils/haptics';
-import { BibleCountPill } from '../BibleCountPill';
-import { BibleIcon } from '../BibleIcon';
-import { BibleText } from '../BibleText';
-import { BiblePageModal } from './BiblePageModal';
+import React, { useEffect, useMemo, useState } from "react";
+import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import { useResponsive } from "../../hooks/useResponsive";
+import { useTheme } from "../../hooks/useTheme";
+import { impactLight } from "../../utils/haptics";
+import { BibleCountPill } from "../BibleCountPill";
+import { BibleIcon } from "../BibleIcon";
+import { BibleText } from "../BibleText";
+import { BiblePageModal } from "./BiblePageModal";
 
 type StudyVerseSelectModalProps = {
   visible: boolean;
@@ -18,7 +18,15 @@ type StudyVerseSelectModalProps = {
   onConfirm: (selectedVerses: number[]) => void;
 };
 
-export function StudyVerseSelectModal({ visible, onClose, onBack, bookName, chapter, verses, onConfirm }: StudyVerseSelectModalProps) {
+export function StudyVerseSelectModal({
+  visible,
+  onClose,
+  onBack,
+  bookName,
+  chapter,
+  verses,
+  onConfirm,
+}: StudyVerseSelectModalProps) {
   const { ms, DESIGN } = useResponsive();
   const { colors } = useTheme();
   const [selectedNums, setSelectedNums] = useState<Set<number>>(new Set());
@@ -29,7 +37,7 @@ export function StudyVerseSelectModal({ visible, onClose, onBack, bookName, chap
 
   const toggleVerse = (num: number) => {
     impactLight();
-    setSelectedNums(prev => {
+    setSelectedNums((prev) => {
       const next = new Set(prev);
       next.has(num) ? next.delete(num) : next.add(num);
       return next;
@@ -41,39 +49,43 @@ export function StudyVerseSelectModal({ visible, onClose, onBack, bookName, chap
     onConfirm(sorted);
   };
 
-  const styles = useMemo(() => StyleSheet.create({
-    header: { flexDirection: 'row', alignItems: 'center' },
-    headerIconWrap: { marginRight: ms(DESIGN.spacing.sm) },
-    title: { flex: 1, fontWeight: '700' },
-    list: {
-      paddingBottom: ms(DESIGN.layout.listPaddingBottom),
-    },
-    verseRow: {
-      paddingVertical: ms(DESIGN.spacing.md),
-      paddingHorizontal: ms(DESIGN.spacing.lg),
-      borderLeftWidth: ms(4),
-      borderLeftColor: 'transparent',
-    },
-    verseText: {
-      flexWrap: 'wrap',
-      textAlignVertical: 'top',
-    },
-    footer: { flexDirection: 'row', alignItems: 'center', width: '100%' },
-    confirmBtn: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      paddingLeft: ms(DESIGN.spacing.md),
-      height: ms(40),
-      borderRadius: ms(DESIGN.borderRadius.md),
-      marginLeft: 'auto',
-    },
-    confirmBtnIcon: {
-      marginRight: ms(DESIGN.spacing.tiny || 4),
-    },
-    confirmBtnText: {
-      fontWeight: '800',
-    },
-  }), [ms, DESIGN]);
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        header: { flexDirection: "row", alignItems: "center" },
+        headerIconWrap: { marginRight: ms(DESIGN.spacing.sm) },
+        title: { flex: 1, fontWeight: "700" },
+        list: {
+          paddingBottom: ms(DESIGN.layout.listPaddingBottom),
+        },
+        verseRow: {
+          paddingVertical: ms(DESIGN.spacing.md),
+          paddingHorizontal: ms(DESIGN.spacing.lg),
+          borderLeftWidth: ms(4),
+          borderLeftColor: "transparent",
+        },
+        verseText: {
+          flexWrap: "wrap",
+          textAlignVertical: "top",
+        },
+        footer: { flexDirection: "row", alignItems: "center", width: "100%" },
+        confirmBtn: {
+          flexDirection: "row",
+          alignItems: "center",
+          paddingLeft: ms(DESIGN.spacing.md),
+          height: ms(40),
+          borderRadius: ms(DESIGN.borderRadius.md),
+          marginLeft: "auto",
+        },
+        confirmBtnIcon: {
+          marginRight: ms(DESIGN.spacing.tiny || 4),
+        },
+        confirmBtnText: {
+          fontWeight: "800",
+        },
+      }),
+    [ms, DESIGN],
+  );
 
   return (
     <BiblePageModal
@@ -85,15 +97,26 @@ export function StudyVerseSelectModal({ visible, onClose, onBack, bookName, chap
           <BibleIcon
             name="arrow-left"
             color={colors.primary}
-            backgroundColor={colors.primary + '20'}
+            backgroundColor={colors.primary + "20"}
             onPress={onBack}
             style={styles.headerIconWrap}
           />
-          <BibleText style={[styles.title, { fontSize: ms(DESIGN.fontSize.xl), color: colors.primary, fontWeight: '800' }]}>{bookName} {chapter}</BibleText>
+          <BibleText
+            style={[
+              styles.title,
+              {
+                fontSize: ms(DESIGN.fontSize.xl),
+                color: colors.primary,
+                fontWeight: "800",
+              },
+            ]}
+          >
+            {bookName} {chapter}
+          </BibleText>
           <BibleIcon
             name="x"
             color={colors.error}
-            backgroundColor={colors.error + '20'}
+            backgroundColor={colors.error + "20"}
             onPress={onClose}
           />
         </View>
@@ -111,7 +134,12 @@ export function StudyVerseSelectModal({ visible, onClose, onBack, bookName, chap
               onPress={handleConfirm}
               activeOpacity={0.8}
             >
-              <BibleText style={[styles.confirmBtnText, { color: colors.onPrimary, fontSize: ms(DESIGN.fontSize.md) }]}>
+              <BibleText
+                style={[
+                  styles.confirmBtnText,
+                  { color: colors.onPrimary, fontSize: ms(DESIGN.fontSize.md) },
+                ]}
+              >
                 Adicionar
               </BibleText>
               <BibleIcon
@@ -125,7 +153,13 @@ export function StudyVerseSelectModal({ visible, onClose, onBack, bookName, chap
         </View>
       }
     >
-      <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }} contentContainerStyle={styles.list} bounces={true} overScrollMode="always">
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        style={{ flex: 1 }}
+        contentContainerStyle={styles.list}
+        bounces={true}
+        overScrollMode="always"
+      >
         <View style={{ flex: 1 }}>
           {verses.map((v) => {
             const isSelected = selectedNums.has(v.verse);
@@ -135,25 +169,37 @@ export function StudyVerseSelectModal({ visible, onClose, onBack, bookName, chap
                 onPress={() => toggleVerse(v.verse)}
                 activeOpacity={0.7}
               >
-                <View style={[
-                  styles.verseRow,
-                  isSelected && {
-                    backgroundColor: colors.primary + '15',
-                    borderLeftColor: colors.primary,
-                  }
-                ]}>
+                <View
+                  style={[
+                    styles.verseRow,
+                    isSelected && {
+                      backgroundColor: colors.primary + "15",
+                      borderLeftColor: colors.primary,
+                    },
+                  ]}
+                >
                   <BibleText
                     variant="reading"
-                    style={[styles.verseText, {
-                      fontSize: ms(DESIGN.fontSize.xxl),
-                      lineHeight: ms(28),
-                      color: colors.onBackground,
-                    }]}
+                    style={[
+                      styles.verseText,
+                      {
+                        fontSize: ms(DESIGN.fontSize.xxl),
+                        lineHeight: ms(28),
+                        color: colors.onBackground,
+                      },
+                    ]}
                   >
-                    <BibleText style={{ color: colors.primary, fontWeight: '700', fontSize: ms(DESIGN.fontSize.lg) }}>
+                    <BibleText
+                      style={{
+                        color: colors.primary,
+                        fontWeight: "700",
+                        fontSize: ms(DESIGN.fontSize.lg),
+                      }}
+                    >
                       {v.verse}
                     </BibleText>
-                    {'\u00A0\u00A0'}{v.text}
+                    {"\u00A0\u00A0"}
+                    {v.text}
                   </BibleText>
                 </View>
               </TouchableOpacity>

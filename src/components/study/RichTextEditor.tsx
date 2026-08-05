@@ -1,14 +1,25 @@
-import { COLOR_THEMES, COMMON_COLORS, getSupportColors, VERSE_HIGHLIGHTS } from '@/constants/colors';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Platform, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
-import { WebView } from 'react-native-webview';
-import { useReaderSettings } from '../../hooks/useReaderSettings';
-import { useResponsive } from '../../hooks/useResponsive';
-import { useTheme } from '../../hooks/useTheme';
-import { impactLight, selectionHaptic } from '../../utils/haptics';
-import { BibleDivider } from '../BibleDivider';
-import { BibleIcon } from '../BibleIcon';
-import { BibleText } from '../BibleText';
+import {
+  COLOR_THEMES,
+  COMMON_COLORS,
+  getSupportColors,
+  VERSE_HIGHLIGHTS,
+} from "@/constants/colors";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import {
+  Platform,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { WebView } from "react-native-webview";
+import { useReaderSettings } from "../../hooks/useReaderSettings";
+import { useResponsive } from "../../hooks/useResponsive";
+import { useTheme } from "../../hooks/useTheme";
+import { impactLight, selectionHaptic } from "../../utils/haptics";
+import { BibleDivider } from "../BibleDivider";
+import { BibleIcon } from "../BibleIcon";
+import { BibleText } from "../BibleText";
 
 export type RichTextEditorRef = {
   insertVerseHtml: (html: string) => void;
@@ -23,134 +34,166 @@ type Props = {
   readonly?: boolean;
 };
 
-export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ initialHtml, onChange, onOpenVersePicker, showToolbar = true, readonly = false }, ref) => {
-  const webViewRef = useRef<WebView>(null);
-  const webIframeRef = useRef<any>(null);
-  const { colors: themeColors, colorTheme, isDarkMode, colors } = useTheme();
-  const { ms, DESIGN } = useResponsive();
-  const { readerColors, readerTheme, readerFontFamily } = useReaderSettings();
-
-  const styles = useMemo(() => StyleSheet.create({
-    toolbar: {
-      flexDirection: 'row',
-      height: ms(DESIGN.height.lg),
-      borderBottomWidth: 1,
-      zIndex: 5,
-      // Soft shadow for premium feel
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 1 },
-      shadowOpacity: 0.05,
-      shadowRadius: 2,
-      elevation: 2,
+export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(
+  (
+    {
+      initialHtml,
+      onChange,
+      onOpenVersePicker,
+      showToolbar = true,
+      readonly = false,
     },
-    rowGroup: {
-      flexDirection: 'row',
-      borderRadius: ms(DESIGN.borderRadius.md),
-      overflow: 'hidden',
-      borderWidth: 1,
-      marginVertical: ms(DESIGN.spacing.sm),
-    },
-    groupBtn: {
-      flexDirection: 'row',
-      paddingHorizontal: ms(DESIGN.spacing.md),
-      height: ms(DESIGN.height.sm),
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-  }), [ms, colors, DESIGN]);
+    ref,
+  ) => {
+    const webViewRef = useRef<WebView>(null);
+    const webIframeRef = useRef<any>(null);
+    const { colors: themeColors, colorTheme, isDarkMode, colors } = useTheme();
+    const { ms, DESIGN } = useResponsive();
+    const { readerColors, readerTheme, readerFontFamily } = useReaderSettings();
 
-  const editorColors = useMemo(() => {
-    if (readerTheme === 'sepia') {
-      const active = Object.entries(COLOR_THEMES).map(([key, value]) => ({ key, ...value }))
-        .find(t => t.key === colorTheme) ?? COLOR_THEMES.teal;
-      return {
-        ...active.light,
-        ...getSupportColors(active.light, false),
-        ...COMMON_COLORS
-      };
-    }
-    return themeColors;
-  }, [readerTheme, themeColors, colorTheme]);
+    const styles = useMemo(
+      () =>
+        StyleSheet.create({
+          toolbar: {
+            flexDirection: "row",
+            height: ms(DESIGN.height.lg),
+            borderBottomWidth: 1,
+            zIndex: 5,
+            // Soft shadow for premium feel
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 1 },
+            shadowOpacity: 0.05,
+            shadowRadius: 2,
+            elevation: 2,
+          },
+          rowGroup: {
+            flexDirection: "row",
+            borderRadius: ms(DESIGN.borderRadius.md),
+            overflow: "hidden",
+            borderWidth: 1,
+            marginVertical: ms(DESIGN.spacing.sm),
+          },
+          groupBtn: {
+            flexDirection: "row",
+            paddingHorizontal: ms(DESIGN.spacing.md),
+            height: ms(DESIGN.height.sm),
+            alignItems: "center",
+            justifyContent: "center",
+          },
+        }),
+      [ms, colors, DESIGN],
+    );
 
-  const [formatState, setFormatState] = useState<{
-    bold?: boolean; italic?: boolean; underline?: boolean;
-    justifyLeft?: boolean; justifyCenter?: boolean; justifyRight?: boolean; justifyFull?: boolean;
-    insertUnorderedList?: boolean; insertOrderedList?: boolean;
-    isTaskList?: boolean;
-    hiliteColor?: string;
-    fontSize?: string;
-  }>({});
-
-  const execDocumentCmd = (cmd: string, value?: string) => {
-    selectionHaptic();
-    injectToEditor(`window.execCmd('${cmd}', ${value ? `'${value}'` : 'null'}); true;`);
-  };
-
-  const changeFontSize = (delta: number) => {
-    impactLight();
-    injectToEditor(`window.changeFontSize(${delta}); true;`);
-  };
-
-  const applyHighlight = (color: string) => {
-    selectionHaptic();
-    execDocumentCmd('hiliteColor', color);
-  };
-
-  const injectToEditor = (script: string) => {
-    if (Platform.OS === 'web') {
-      if (webIframeRef.current?.contentWindow) {
-        webIframeRef.current.contentWindow.postMessage(JSON.stringify({ type: 'eval', code: script }), '*');
+    const editorColors = useMemo(() => {
+      if (readerTheme === "sepia") {
+        const active =
+          Object.entries(COLOR_THEMES)
+            .map(([key, value]) => ({ key, ...value }))
+            .find((t) => t.key === colorTheme) ?? COLOR_THEMES.teal;
+        return {
+          ...active.light,
+          ...getSupportColors(active.light, false),
+          ...COMMON_COLORS,
+        };
       }
-    } else {
-      webViewRef.current?.injectJavaScript(script);
-    }
-  };
+      return themeColors;
+    }, [readerTheme, themeColors, colorTheme]);
 
-  React.useImperativeHandle(ref, () => ({
-    insertVerseHtml: (html: string) => {
-      injectToEditor(`window.insertHtml(\`${html.replace(/`/g, '\\`')}\`); true;`);
-    },
-    blur: () => {
-      injectToEditor(`document.getElementById('editor').blur(); true;`);
-    }
-  }));
+    const [formatState, setFormatState] = useState<{
+      bold?: boolean;
+      italic?: boolean;
+      underline?: boolean;
+      justifyLeft?: boolean;
+      justifyCenter?: boolean;
+      justifyRight?: boolean;
+      justifyFull?: boolean;
+      insertUnorderedList?: boolean;
+      insertOrderedList?: boolean;
+      isTaskList?: boolean;
+      hiliteColor?: string;
+      fontSize?: string;
+    }>({});
 
-  useEffect(() => {
-    if (!webViewRef.current && Platform.OS !== 'web') return;
-    const js = `
+    const execDocumentCmd = (cmd: string, value?: string) => {
+      selectionHaptic();
+      injectToEditor(
+        `window.execCmd('${cmd}', ${value ? `'${value}'` : "null"}); true;`,
+      );
+    };
+
+    const changeFontSize = (delta: number) => {
+      impactLight();
+      injectToEditor(`window.changeFontSize(${delta}); true;`);
+    };
+
+    const applyHighlight = (color: string) => {
+      selectionHaptic();
+      execDocumentCmd("hiliteColor", color);
+    };
+
+    const injectToEditor = (script: string) => {
+      if (Platform.OS === "web") {
+        if (webIframeRef.current?.contentWindow) {
+          webIframeRef.current.contentWindow.postMessage(
+            JSON.stringify({ type: "eval", code: script }),
+            "*",
+          );
+        }
+      } else {
+        webViewRef.current?.injectJavaScript(script);
+      }
+    };
+
+    React.useImperativeHandle(ref, () => ({
+      insertVerseHtml: (html: string) => {
+        injectToEditor(
+          `window.insertHtml(\`${html.replace(/`/g, "\\`")}\`); true;`,
+        );
+      },
+      blur: () => {
+        injectToEditor(`document.getElementById('editor').blur(); true;`);
+      },
+    }));
+
+    useEffect(() => {
+      if (!webViewRef.current && Platform.OS !== "web") return;
+      const js = `
       (function() {
         document.body.style.backgroundColor = '${editorColors.background}';
         var editorEl = document.getElementById('editor');
         if (editorEl) {
           editorEl.style.color = '${readerColors.onBackground || editorColors.onBackground}';
           editorEl.style.backgroundColor = '${editorColors.background}';
-          editorEl.style.fontFamily = "${readerFontFamily === 'Poppins_400Regular' ? "'Poppins_400Regular', sans-serif" : readerFontFamily}";
+          editorEl.style.fontFamily = "${readerFontFamily === "Poppins_400Regular" ? "'Poppins_400Regular', sans-serif" : readerFontFamily}";
         }
       })();
       true;
     `;
-    injectToEditor(js);
-  }, [readerColors, editorColors, readerFontFamily]);
+      injectToEditor(js);
+    }, [readerColors, editorColors, readerFontFamily]);
 
-  const onMessage = (event: any) => {
-    try {
-      const { type, data } = JSON.parse(event.nativeEvent ? event.nativeEvent.data : event.data);
-      if (type === 'contentChanged') {
-        onChange(data);
-      } else if (type === 'formatState') {
-        setFormatState(data);
+    const onMessage = (event: any) => {
+      try {
+        const { type, data } = JSON.parse(
+          event.nativeEvent ? event.nativeEvent.data : event.data,
+        );
+        if (type === "contentChanged") {
+          onChange(data);
+        } else if (type === "formatState") {
+          setFormatState(data);
+        }
+      } catch (e) {}
+    };
+
+    useEffect(() => {
+      if (Platform.OS === "web") {
+        window.addEventListener("message", onMessage);
+        return () => window.removeEventListener("message", onMessage);
       }
-    } catch (e) { }
-  };
+    }, [onChange]);
 
-  useEffect(() => {
-    if (Platform.OS === 'web') {
-      window.addEventListener('message', onMessage);
-      return () => window.removeEventListener('message', onMessage);
-    }
-  }, [onChange]);
-
-  const editorHtml = useMemo(() => `
+    const editorHtml = useMemo(
+      () => `
     <!DOCTYPE html>
     <html>
     <head>
@@ -252,11 +295,11 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
         .verse-line { margin-bottom: ${ms(DESIGN.fontSize.xs)}px; display: flex; gap: ${ms(DESIGN.spacing.sm)}px; align-items: flex-start; }
         .verse-num { font-weight: 800; color: ${editorColors.primary}; font-size: 12px; margin-top: ${ms(DESIGN.spacing.tiny)}px; min-width: ${ms(DESIGN.spacing.xl)}px; text-align: right; flex-shrink: 0; white-space: nowrap; }
         .verse-text { font-style: italic; color: ${editorColors.onSurface}; flex: 1; }
-        ${readonly ? '.remove-verse-btn { display: none !important; }' : ''}
+        ${readonly ? ".remove-verse-btn { display: none !important; }" : ""}
       </style>
     </head>
     <body onclick="document.getElementById('editor').focus();">
-      <div id="editor" contenteditable="${readonly ? 'false' : 'true'}" placeholder="Comece a escrever seu estudo aqui...">${initialHtml}</div>
+      <div id="editor" contenteditable="${readonly ? "false" : "true"}" placeholder="Comece a escrever seu estudo aqui...">${initialHtml}</div>
       <script>
         const editor = document.getElementById('editor');
         let debounceTimer;
@@ -663,166 +706,544 @@ export const RichTextEditor = React.forwardRef<RichTextEditorRef, Props>(({ init
       </script>
     </body>
     </html>
-  `, [initialHtml, editorColors, readerColors, readerFontFamily, ms, DESIGN, readonly]);
+  `,
+      [
+        initialHtml,
+        editorColors,
+        readerColors,
+        readerFontFamily,
+        ms,
+        DESIGN,
+        readonly,
+      ],
+    );
 
-  return (
-    <View style={{ flex: 1 }}>
-      {showToolbar && !readonly && (
-        <View style={[styles.toolbar, { backgroundColor: colors.surface, borderBottomColor: colors.border }]}>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} keyboardShouldPersistTaps="always" style={{ flex: 1 }} contentContainerStyle={{ paddingLeft: ms(DESIGN.spacing.sm), paddingRight: ms(DESIGN.spacing.huge), alignItems: 'center' }}>
-            <View style={[styles.rowGroup, { backgroundColor: colors.surfaceHighlight, borderColor: colors.border }]}>
-              <TouchableOpacity
-                style={[styles.groupBtn, { backgroundColor: colors.primary }, Platform.select({ web: { outlineStyle: 'none' } as any, default: {} })]}
-                onPress={onOpenVersePicker}
-                activeOpacity={0.7}
+    return (
+      <View style={{ flex: 1 }}>
+        {showToolbar && !readonly && (
+          <View
+            style={[
+              styles.toolbar,
+              {
+                backgroundColor: colors.surface,
+                borderBottomColor: colors.border,
+              },
+            ]}
+          >
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              keyboardShouldPersistTaps="always"
+              style={{ flex: 1 }}
+              contentContainerStyle={{
+                paddingLeft: ms(DESIGN.spacing.sm),
+                paddingRight: ms(DESIGN.spacing.huge),
+                alignItems: "center",
+              }}
+            >
+              <View
+                style={[
+                  styles.rowGroup,
+                  {
+                    backgroundColor: colors.surfaceHighlight,
+                    borderColor: colors.border,
+                  },
+                ]}
               >
-                <BibleIcon name="book-open" color={colors.onPrimary} />
-              </TouchableOpacity>
-            </View>
+                <TouchableOpacity
+                  style={[
+                    styles.groupBtn,
+                    { backgroundColor: colors.primary },
+                    Platform.select({
+                      web: { outlineStyle: "none" } as any,
+                      default: {},
+                    }),
+                  ]}
+                  onPress={onOpenVersePicker}
+                  activeOpacity={0.7}
+                >
+                  <BibleIcon name="book-open" color={colors.onPrimary} />
+                </TouchableOpacity>
+              </View>
 
-            <BibleDivider vertical height={20} margin={ms(DESIGN.spacing.sm)} />
+              <BibleDivider
+                vertical
+                height={20}
+                margin={ms(DESIGN.spacing.sm)}
+              />
 
-            <View style={[styles.rowGroup, { backgroundColor: colors.surfaceHighlight, borderColor: colors.border }]}>
-              <TouchableOpacity style={styles.groupBtn} onPress={() => changeFontSize(1)}>
-                <BibleText style={{ fontWeight: '800', fontSize: ms(DESIGN.spacing.lg), color: colors.onSurface, marginRight: ms(DESIGN.spacing.tiny) }}>A</BibleText>
-                <BibleIcon name="plus" color={colors.onSurface} />
-              </TouchableOpacity>
-              <BibleDivider vertical height={"60%"} />
-              <TouchableOpacity style={styles.groupBtn} onPress={() => changeFontSize(-1)}>
-                <BibleText style={{ fontWeight: '800', fontSize: ms(DESIGN.spacing.md), color: colors.onSurface, marginRight: ms(DESIGN.spacing.tiny) }}>A</BibleText>
-                <BibleIcon name="minus" color={colors.onSurface} />
-              </TouchableOpacity>
-            </View>
-
-            <BibleDivider vertical height={20} margin={ms(DESIGN.spacing.sm)} />
-
-            <View style={[styles.rowGroup, { backgroundColor: colors.surfaceHighlight, borderColor: colors.border }]}>
-              <TouchableOpacity style={[styles.groupBtn, formatState.bold && { backgroundColor: colors.primary }]} onPress={() => execDocumentCmd('bold')}>
-                <BibleIcon name="bold" color={formatState.bold ? colors.onPrimary : colors.onSurface} />
-              </TouchableOpacity>
-              <BibleDivider vertical height={"60%"} />
-              <TouchableOpacity style={[styles.groupBtn, formatState.italic && { backgroundColor: colors.primary }]} onPress={() => execDocumentCmd('italic')}>
-                <BibleIcon name="italic" color={formatState.italic ? colors.onPrimary : colors.onSurface} />
-              </TouchableOpacity>
-              <BibleDivider vertical height={"60%"} />
-              <TouchableOpacity style={[styles.groupBtn, formatState.underline && { backgroundColor: colors.primary }]} onPress={() => execDocumentCmd('underline')}>
-                <BibleIcon name="underline" color={formatState.underline ? colors.onPrimary : colors.onSurface} />
-              </TouchableOpacity>
-            </View>
-
-            <BibleDivider vertical height={20} margin={ms(DESIGN.spacing.sm)} />
-
-            <View style={[styles.rowGroup, { backgroundColor: colors.surfaceHighlight, borderColor: colors.border }]}>
-              <TouchableOpacity style={[styles.groupBtn, formatState.insertUnorderedList && !formatState.isTaskList && { backgroundColor: colors.primary }]} onPress={() => execDocumentCmd('insertUnorderedList')}>
-                <BibleIcon name="list" color={formatState.insertUnorderedList && !formatState.isTaskList ? colors.onPrimary : colors.onSurface} />
-              </TouchableOpacity>
-              <BibleDivider vertical height={"60%"} />
-              <TouchableOpacity style={[styles.groupBtn, formatState.isTaskList && { backgroundColor: colors.primary }]} onPress={() => injectToEditor(`window.toggleTaskList(); true;`)}>
-                <BibleIcon name="check-square" color={formatState.isTaskList ? colors.onPrimary : colors.onSurface} />
-              </TouchableOpacity>
-              <BibleDivider vertical height={"60%"} />
-              <TouchableOpacity style={[styles.groupBtn, formatState.insertOrderedList && { backgroundColor: colors.primary }]} onPress={() => execDocumentCmd('insertOrderedList')}>
-                <BibleIcon name="list" color={formatState.insertOrderedList ? colors.onPrimary : colors.onSurface} />
-                <BibleText style={{ fontSize: ms(DESIGN.fontSize.xs), color: formatState.insertOrderedList ? colors.primary : colors.onSurface, position: 'absolute', right: ms(DESIGN.spacing.xs), bottom: ms(DESIGN.spacing.xs), fontWeight: '800' }}>1.</BibleText>
-              </TouchableOpacity>
-            </View>
-
-            <BibleDivider vertical height={20} margin={ms(DESIGN.spacing.sm)} />
-
-            <View style={[styles.rowGroup, { backgroundColor: colors.surfaceHighlight, borderColor: colors.border }]}>
-              <TouchableOpacity style={styles.groupBtn} onPress={() => execDocumentCmd('outdent')}>
-                <BibleIcon name="arrow-left" color={colors.onSurface} />
-              </TouchableOpacity>
-              <BibleDivider vertical height={"60%"} />
-              <TouchableOpacity style={styles.groupBtn} onPress={() => execDocumentCmd('indent')}>
-                <BibleIcon name="arrow-right" color={colors.onSurface} />
-              </TouchableOpacity>
-            </View>
-
-            <BibleDivider vertical height={20} margin={ms(DESIGN.spacing.sm)} />
-
-            <View style={[styles.rowGroup, { backgroundColor: colors.surfaceHighlight, borderColor: colors.border }]}>
-              <TouchableOpacity style={[styles.groupBtn, formatState.justifyLeft && { backgroundColor: colors.primary }]} onPress={() => execDocumentCmd('justifyLeft')}>
-                <BibleIcon name="align-left" color={formatState.justifyLeft ? colors.onPrimary : colors.onSurface} />
-              </TouchableOpacity>
-              <BibleDivider vertical height={"60%"} />
-              <TouchableOpacity style={[styles.groupBtn, formatState.justifyCenter && { backgroundColor: colors.primary }]} onPress={() => execDocumentCmd('justifyCenter')}>
-                <BibleIcon name="align-center" color={formatState.justifyCenter ? colors.onPrimary : colors.onSurface} />
-              </TouchableOpacity>
-              <BibleDivider vertical height={"60%"} />
-              <TouchableOpacity style={[styles.groupBtn, formatState.justifyRight && { backgroundColor: colors.primary }]} onPress={() => execDocumentCmd('justifyRight')}>
-                <BibleIcon name="align-right" color={formatState.justifyRight ? colors.onPrimary : colors.onSurface} />
-              </TouchableOpacity>
-              <BibleDivider vertical height={"60%"} />
-              <TouchableOpacity style={[styles.groupBtn, formatState.justifyFull && { backgroundColor: colors.primary }]} onPress={() => execDocumentCmd('justifyFull')}>
-                <BibleIcon name="align-justify" color={formatState.justifyFull ? colors.onPrimary : colors.onSurface} />
-              </TouchableOpacity>
-            </View>
-
-            <BibleDivider vertical height={20} margin={ms(DESIGN.spacing.sm)} />
-
-            <View style={[styles.rowGroup, { backgroundColor: colors.surfaceHighlight, borderColor: colors.border }]}>
-              {VERSE_HIGHLIGHTS.map((h, i) => (
-                <React.Fragment key={h.id}>
-                  <TouchableOpacity
-                    style={[styles.groupBtn, { width: ms(DESIGN.height.sm) }]}
-                    onPress={() => applyHighlight(h.hex)}
+              <View
+                style={[
+                  styles.rowGroup,
+                  {
+                    backgroundColor: colors.surfaceHighlight,
+                    borderColor: colors.border,
+                  },
+                ]}
+              >
+                <TouchableOpacity
+                  style={styles.groupBtn}
+                  onPress={() => changeFontSize(1)}
+                >
+                  <BibleText
+                    style={{
+                      fontWeight: "800",
+                      fontSize: ms(DESIGN.spacing.lg),
+                      color: colors.onSurface,
+                      marginRight: ms(DESIGN.spacing.tiny),
+                    }}
                   >
-                    <View style={{ width: ms(DESIGN.fontSize.xxl), height: ms(DESIGN.fontSize.xxl), borderRadius: ms(DESIGN.borderRadius.sm), backgroundColor: h.hex, borderWidth: 1, borderColor: colors.border }} />
-                  </TouchableOpacity>
-                  <BibleDivider vertical height={"60%"} />
-                </React.Fragment>
-              ))}
-              <TouchableOpacity
-                style={[styles.groupBtn, { width: ms(DESIGN.height.sm) }]}
-                onPress={() => applyHighlight('transparent')}
+                    A
+                  </BibleText>
+                  <BibleIcon name="plus" color={colors.onSurface} />
+                </TouchableOpacity>
+                <BibleDivider vertical height={"60%"} />
+                <TouchableOpacity
+                  style={styles.groupBtn}
+                  onPress={() => changeFontSize(-1)}
+                >
+                  <BibleText
+                    style={{
+                      fontWeight: "800",
+                      fontSize: ms(DESIGN.spacing.md),
+                      color: colors.onSurface,
+                      marginRight: ms(DESIGN.spacing.tiny),
+                    }}
+                  >
+                    A
+                  </BibleText>
+                  <BibleIcon name="minus" color={colors.onSurface} />
+                </TouchableOpacity>
+              </View>
+
+              <BibleDivider
+                vertical
+                height={20}
+                margin={ms(DESIGN.spacing.sm)}
+              />
+
+              <View
+                style={[
+                  styles.rowGroup,
+                  {
+                    backgroundColor: colors.surfaceHighlight,
+                    borderColor: colors.border,
+                  },
+                ]}
               >
-                <View style={{ width: ms(DESIGN.fontSize.xxl), height: ms(DESIGN.fontSize.xxl), borderRadius: ms(DESIGN.borderRadius.sm), borderWidth: 1.5, borderColor: colors.textMuted, alignItems: 'center', justifyContent: 'center' }}>
-                  <View style={{ width: ms(DESIGN.spacing.lg), height: 1.5, backgroundColor: colors.textMuted, transform: [{ rotate: '45deg' }] }} />
-                </View>
-              </TouchableOpacity>
+                <TouchableOpacity
+                  style={[
+                    styles.groupBtn,
+                    formatState.bold && { backgroundColor: colors.primary },
+                  ]}
+                  onPress={() => execDocumentCmd("bold")}
+                >
+                  <BibleIcon
+                    name="bold"
+                    color={
+                      formatState.bold ? colors.onPrimary : colors.onSurface
+                    }
+                  />
+                </TouchableOpacity>
+                <BibleDivider vertical height={"60%"} />
+                <TouchableOpacity
+                  style={[
+                    styles.groupBtn,
+                    formatState.italic && { backgroundColor: colors.primary },
+                  ]}
+                  onPress={() => execDocumentCmd("italic")}
+                >
+                  <BibleIcon
+                    name="italic"
+                    color={
+                      formatState.italic ? colors.onPrimary : colors.onSurface
+                    }
+                  />
+                </TouchableOpacity>
+                <BibleDivider vertical height={"60%"} />
+                <TouchableOpacity
+                  style={[
+                    styles.groupBtn,
+                    formatState.underline && {
+                      backgroundColor: colors.primary,
+                    },
+                  ]}
+                  onPress={() => execDocumentCmd("underline")}
+                >
+                  <BibleIcon
+                    name="underline"
+                    color={
+                      formatState.underline
+                        ? colors.onPrimary
+                        : colors.onSurface
+                    }
+                  />
+                </TouchableOpacity>
+              </View>
+
+              <BibleDivider
+                vertical
+                height={20}
+                margin={ms(DESIGN.spacing.sm)}
+              />
+
+              <View
+                style={[
+                  styles.rowGroup,
+                  {
+                    backgroundColor: colors.surfaceHighlight,
+                    borderColor: colors.border,
+                  },
+                ]}
+              >
+                <TouchableOpacity
+                  style={[
+                    styles.groupBtn,
+                    formatState.insertUnorderedList &&
+                      !formatState.isTaskList && {
+                        backgroundColor: colors.primary,
+                      },
+                  ]}
+                  onPress={() => execDocumentCmd("insertUnorderedList")}
+                >
+                  <BibleIcon
+                    name="list"
+                    color={
+                      formatState.insertUnorderedList && !formatState.isTaskList
+                        ? colors.onPrimary
+                        : colors.onSurface
+                    }
+                  />
+                </TouchableOpacity>
+                <BibleDivider vertical height={"60%"} />
+                <TouchableOpacity
+                  style={[
+                    styles.groupBtn,
+                    formatState.isTaskList && {
+                      backgroundColor: colors.primary,
+                    },
+                  ]}
+                  onPress={() =>
+                    injectToEditor(`window.toggleTaskList(); true;`)
+                  }
+                >
+                  <BibleIcon
+                    name="check-square"
+                    color={
+                      formatState.isTaskList
+                        ? colors.onPrimary
+                        : colors.onSurface
+                    }
+                  />
+                </TouchableOpacity>
+                <BibleDivider vertical height={"60%"} />
+                <TouchableOpacity
+                  style={[
+                    styles.groupBtn,
+                    formatState.insertOrderedList && {
+                      backgroundColor: colors.primary,
+                    },
+                  ]}
+                  onPress={() => execDocumentCmd("insertOrderedList")}
+                >
+                  <BibleIcon
+                    name="list"
+                    color={
+                      formatState.insertOrderedList
+                        ? colors.onPrimary
+                        : colors.onSurface
+                    }
+                  />
+                  <BibleText
+                    style={{
+                      fontSize: ms(DESIGN.fontSize.xs),
+                      color: formatState.insertOrderedList
+                        ? colors.primary
+                        : colors.onSurface,
+                      position: "absolute",
+                      right: ms(DESIGN.spacing.xs),
+                      bottom: ms(DESIGN.spacing.xs),
+                      fontWeight: "800",
+                    }}
+                  >
+                    1.
+                  </BibleText>
+                </TouchableOpacity>
+              </View>
+
+              <BibleDivider
+                vertical
+                height={20}
+                margin={ms(DESIGN.spacing.sm)}
+              />
+
+              <View
+                style={[
+                  styles.rowGroup,
+                  {
+                    backgroundColor: colors.surfaceHighlight,
+                    borderColor: colors.border,
+                  },
+                ]}
+              >
+                <TouchableOpacity
+                  style={styles.groupBtn}
+                  onPress={() => execDocumentCmd("outdent")}
+                >
+                  <BibleIcon name="arrow-left" color={colors.onSurface} />
+                </TouchableOpacity>
+                <BibleDivider vertical height={"60%"} />
+                <TouchableOpacity
+                  style={styles.groupBtn}
+                  onPress={() => execDocumentCmd("indent")}
+                >
+                  <BibleIcon name="arrow-right" color={colors.onSurface} />
+                </TouchableOpacity>
+              </View>
+
+              <BibleDivider
+                vertical
+                height={20}
+                margin={ms(DESIGN.spacing.sm)}
+              />
+
+              <View
+                style={[
+                  styles.rowGroup,
+                  {
+                    backgroundColor: colors.surfaceHighlight,
+                    borderColor: colors.border,
+                  },
+                ]}
+              >
+                <TouchableOpacity
+                  style={[
+                    styles.groupBtn,
+                    formatState.justifyLeft && {
+                      backgroundColor: colors.primary,
+                    },
+                  ]}
+                  onPress={() => execDocumentCmd("justifyLeft")}
+                >
+                  <BibleIcon
+                    name="align-left"
+                    color={
+                      formatState.justifyLeft
+                        ? colors.onPrimary
+                        : colors.onSurface
+                    }
+                  />
+                </TouchableOpacity>
+                <BibleDivider vertical height={"60%"} />
+                <TouchableOpacity
+                  style={[
+                    styles.groupBtn,
+                    formatState.justifyCenter && {
+                      backgroundColor: colors.primary,
+                    },
+                  ]}
+                  onPress={() => execDocumentCmd("justifyCenter")}
+                >
+                  <BibleIcon
+                    name="align-center"
+                    color={
+                      formatState.justifyCenter
+                        ? colors.onPrimary
+                        : colors.onSurface
+                    }
+                  />
+                </TouchableOpacity>
+                <BibleDivider vertical height={"60%"} />
+                <TouchableOpacity
+                  style={[
+                    styles.groupBtn,
+                    formatState.justifyRight && {
+                      backgroundColor: colors.primary,
+                    },
+                  ]}
+                  onPress={() => execDocumentCmd("justifyRight")}
+                >
+                  <BibleIcon
+                    name="align-right"
+                    color={
+                      formatState.justifyRight
+                        ? colors.onPrimary
+                        : colors.onSurface
+                    }
+                  />
+                </TouchableOpacity>
+                <BibleDivider vertical height={"60%"} />
+                <TouchableOpacity
+                  style={[
+                    styles.groupBtn,
+                    formatState.justifyFull && {
+                      backgroundColor: colors.primary,
+                    },
+                  ]}
+                  onPress={() => execDocumentCmd("justifyFull")}
+                >
+                  <BibleIcon
+                    name="align-justify"
+                    color={
+                      formatState.justifyFull
+                        ? colors.onPrimary
+                        : colors.onSurface
+                    }
+                  />
+                </TouchableOpacity>
+              </View>
+
+              <BibleDivider
+                vertical
+                height={20}
+                margin={ms(DESIGN.spacing.sm)}
+              />
+
+              <View
+                style={[
+                  styles.rowGroup,
+                  {
+                    backgroundColor: colors.surfaceHighlight,
+                    borderColor: colors.border,
+                  },
+                ]}
+              >
+                {VERSE_HIGHLIGHTS.map((h, i) => (
+                  <React.Fragment key={h.id}>
+                    <TouchableOpacity
+                      style={[styles.groupBtn, { width: ms(DESIGN.height.sm) }]}
+                      onPress={() => applyHighlight(h.hex)}
+                    >
+                      <View
+                        style={{
+                          width: ms(DESIGN.fontSize.xxl),
+                          height: ms(DESIGN.fontSize.xxl),
+                          borderRadius: ms(DESIGN.borderRadius.sm),
+                          backgroundColor: h.hex,
+                          borderWidth: 1,
+                          borderColor: colors.border,
+                        }}
+                      />
+                    </TouchableOpacity>
+                    <BibleDivider vertical height={"60%"} />
+                  </React.Fragment>
+                ))}
+                <TouchableOpacity
+                  style={[styles.groupBtn, { width: ms(DESIGN.height.sm) }]}
+                  onPress={() => applyHighlight("transparent")}
+                >
+                  <View
+                    style={{
+                      width: ms(DESIGN.fontSize.xxl),
+                      height: ms(DESIGN.fontSize.xxl),
+                      borderRadius: ms(DESIGN.borderRadius.sm),
+                      borderWidth: 1.5,
+                      borderColor: colors.textMuted,
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <View
+                      style={{
+                        width: ms(DESIGN.spacing.lg),
+                        height: 1.5,
+                        backgroundColor: colors.textMuted,
+                        transform: [{ rotate: "45deg" }],
+                      }}
+                    />
+                  </View>
+                </TouchableOpacity>
+              </View>
+
+              <BibleDivider
+                vertical
+                height={20}
+                margin={ms(DESIGN.spacing.sm)}
+              />
+
+              <View
+                style={[
+                  styles.rowGroup,
+                  {
+                    backgroundColor: colors.surfaceHighlight,
+                    borderColor: colors.border,
+                  },
+                ]}
+              >
+                <TouchableOpacity
+                  style={styles.groupBtn}
+                  onPress={() => execDocumentCmd("undo")}
+                >
+                  <BibleIcon name="rotate-ccw" color={colors.onSurface} />
+                </TouchableOpacity>
+                <BibleDivider vertical height={"60%"} />
+                <TouchableOpacity
+                  style={styles.groupBtn}
+                  onPress={() => execDocumentCmd("redo")}
+                >
+                  <BibleIcon name="rotate-cw" color={colors.onSurface} />
+                </TouchableOpacity>
+              </View>
+            </ScrollView>
+
+            <View
+              style={{
+                position: "absolute",
+                right: 0,
+                top: 0,
+                bottom: 0,
+                width: ms(DESIGN.icon.xl),
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+              pointerEvents="none"
+            >
+              <View
+                style={{
+                  position: "absolute",
+                  right: 0,
+                  top: 0,
+                  bottom: 0,
+                  left: 0,
+                  backgroundColor: colors.surface,
+                  opacity: 0.8,
+                }}
+              />
+              <BibleIcon
+                name="chevron-right"
+                color={colors.primary}
+                size={ms(DESIGN.fontSize.md)}
+              />
             </View>
-
-            <BibleDivider vertical height={20} margin={ms(DESIGN.spacing.sm)} />
-
-            <View style={[styles.rowGroup, { backgroundColor: colors.surfaceHighlight, borderColor: colors.border }]}>
-              <TouchableOpacity style={styles.groupBtn} onPress={() => execDocumentCmd('undo')}>
-                <BibleIcon name="rotate-ccw" color={colors.onSurface} />
-              </TouchableOpacity>
-              <BibleDivider vertical height={"60%"} />
-              <TouchableOpacity style={styles.groupBtn} onPress={() => execDocumentCmd('redo')}>
-                <BibleIcon name="rotate-cw" color={colors.onSurface} />
-              </TouchableOpacity>
-            </View>
-
-          </ScrollView>
-
-          <View style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: ms(DESIGN.icon.xl), justifyContent: 'center', alignItems: 'center' }} pointerEvents="none">
-            <View style={{ position: 'absolute', right: 0, top: 0, bottom: 0, left: 0, backgroundColor: colors.surface, opacity: 0.8 }} />
-            <BibleIcon name="chevron-right" color={colors.primary} size={ms(DESIGN.fontSize.md)} />
           </View>
-        </View>
-      )}
+        )}
 
-      {Platform.OS === 'web' ? (
-        <iframe
-          ref={webIframeRef}
-          srcDoc={editorHtml}
-          style={{ flex: 1, border: 'none', backgroundColor: colors.surface, width: '100%', minHeight: 600 }}
-          sandbox="allow-scripts allow-same-origin"
-        />
-      ) : (
-        <WebView
-          ref={webViewRef}
-          source={{ html: editorHtml }}
-          originWhitelist={['*']}
-          onMessage={onMessage}
-          style={{ flex: 1, backgroundColor: colors.surface }}
-          hideKeyboardAccessoryView={true}
-          keyboardDisplayRequiresUserAction={false}
-          bounces={false}
-        />
-      )}
-    </View>
-  );
-});
+        {Platform.OS === "web" ? (
+          <iframe
+            ref={webIframeRef}
+            srcDoc={editorHtml}
+            style={{
+              flex: 1,
+              border: "none",
+              backgroundColor: colors.surface,
+              width: "100%",
+              minHeight: 600,
+            }}
+            sandbox="allow-scripts allow-same-origin"
+          />
+        ) : (
+          <WebView
+            ref={webViewRef}
+            source={{ html: editorHtml }}
+            originWhitelist={["*"]}
+            onMessage={onMessage}
+            style={{ flex: 1, backgroundColor: colors.surface }}
+            hideKeyboardAccessoryView={true}
+            keyboardDisplayRequiresUserAction={false}
+            bounces={false}
+          />
+        )}
+      </View>
+    );
+  },
+);

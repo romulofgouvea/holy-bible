@@ -1,14 +1,20 @@
-import { Stack, useGlobalSearchParams, usePathname, useRootNavigationState, useRouter } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import { useEffect, useState } from 'react';
-import { Platform, View } from 'react-native';
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import * as SplashScreen from 'expo-splash-screen';
-import { ReaderSettingsProvider } from '../hooks/useReaderSettings';
-import { ThemeProvider, useTheme } from '../hooks/useTheme';
-import { BibleModalProvider } from '../hooks/useBibleModals';
-import { BibleProvider, useBible } from '../hooks/useBible';
-import { GlobalBibleModals } from '../components/modals/GlobalBibleModals';
+import {
+  Stack,
+  useGlobalSearchParams,
+  usePathname,
+  useRootNavigationState,
+  useRouter,
+} from "expo-router";
+import { StatusBar } from "expo-status-bar";
+import { useEffect, useState } from "react";
+import { Platform, View } from "react-native";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import * as SplashScreen from "expo-splash-screen";
+import { ReaderSettingsProvider } from "../hooks/useReaderSettings";
+import { ThemeProvider, useTheme } from "../hooks/useTheme";
+import { BibleModalProvider } from "../hooks/useBibleModals";
+import { BibleProvider, useBible } from "../hooks/useBible";
+import { GlobalBibleModals } from "../components/modals/GlobalBibleModals";
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
@@ -32,8 +38,8 @@ function AppLayout() {
   const isRestored = useRoutePersistence();
 
   useEffect(() => {
-    if (Platform.OS === 'web') {
-      document.title = 'Bíblia Online';
+    if (Platform.OS === "web") {
+      document.title = "Bíblia Online";
     }
   }, []);
 
@@ -44,10 +50,10 @@ function AppLayout() {
   }, [isReady, isRestored]);
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#000000' }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#000000" }}>
       <StatusBar style="light" translucent backgroundColor="transparent" />
       <View style={{ flex: 1, backgroundColor: colors.background }}>
-        <Stack screenOptions={{ headerShown: false, animation: 'fade' }} />
+        <Stack screenOptions={{ headerShown: false, animation: "fade" }} />
       </View>
       <GlobalBibleModals />
     </SafeAreaView>

@@ -1,2 +1,2 @@
-import BibleScreen from '../../screens/BibleScreen';
+import BibleScreen from "../../screens/BibleScreen";
 export default BibleScreen;

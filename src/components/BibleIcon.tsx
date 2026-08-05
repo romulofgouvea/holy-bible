@@ -1,8 +1,8 @@
-import { Feather } from '@expo/vector-icons';
-import React, { useMemo } from 'react';
-import { StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native';
-import { useResponsive } from '../hooks/useResponsive';
-import { useTheme } from '../hooks/useTheme';
+import { Feather } from "@expo/vector-icons";
+import React, { useMemo } from "react";
+import { StyleSheet, TouchableOpacity, View, ViewStyle } from "react-native";
+import { useResponsive } from "../hooks/useResponsive";
+import { useTheme } from "../hooks/useTheme";
 
 export type BibleIconProps = {
   name: keyof typeof Feather.glyphMap;
@@ -27,17 +27,20 @@ export function BibleIcon({
   onPress,
   style,
   activeOpacity = 0.7,
-  testID
+  testID,
 }: BibleIconProps) {
   const { ms, DESIGN } = useResponsive();
   const { colors } = useTheme();
-  const styles = useMemo(() => StyleSheet.create({
-  container: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-}), [ms, colors, DESIGN]);
-
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        container: {
+          alignItems: "center",
+          justifyContent: "center",
+        },
+      }),
+    [ms, colors, DESIGN],
+  );
 
   const Container = onPress ? TouchableOpacity : View;
 
@@ -55,9 +58,9 @@ export function BibleIcon({
           width: finalContainerSize,
           height: finalContainerSize,
           borderRadius: ms(borderRadius),
-          backgroundColor: backgroundColor || 'transparent',
+          backgroundColor: backgroundColor || "transparent",
         },
-        style
+        style,
       ]}
     >
       <Feather
@@ -68,5 +71,3 @@ export function BibleIcon({
     </Container>
   );
 }
-
-

@@ -1,10 +1,10 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { DeviceEventEmitter } from 'react-native';
-import { STORAGE_KEYS } from '../constants/storage';
-import { availableVersions, getBibleData } from '../data/bible-version';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { DeviceEventEmitter } from "react-native";
+import { STORAGE_KEYS } from "../constants/storage";
+import { availableVersions, getBibleData } from "../data/bible-version";
 
 export const BACKUP_FORMAT_VERSION = 2;
-export const BACKUP_RESTORED_EVENT = 'app-backup-restored';
+export const BACKUP_RESTORED_EVENT = "app-backup-restored";
 
 export type AppBackupPayload = {
   version: number;
@@ -21,7 +21,9 @@ export const BACKUP_STORAGE_KEYS = Object.values(STORAGE_KEYS).filter(
   (key) => !BACKUP_EXCLUDED_KEYS.includes(key),
 );
 
-export async function collectAppStorage(): Promise<Record<string, string | null>> {
+export async function collectAppStorage(): Promise<
+  Record<string, string | null>
+> {
   const pairs = await AsyncStorage.multiGet(BACKUP_STORAGE_KEYS);
   return Object.fromEntries(pairs.map(([key, value]) => [key, value]));
 }
@@ -39,14 +41,21 @@ export async function buildAppBackupJson(pretty = true): Promise<string> {
   return JSON.stringify(payload, null, pretty ? 2 : 0);
 }
 
-export function parseBackupRaw(raw: string): AppBackupPayload | { legacyStudies: unknown[] } {
+export function parseBackupRaw(
+  raw: string,
+): AppBackupPayload | { legacyStudies: unknown[] } {
   const parsed = JSON.parse(raw);
 
   if (Array.isArray(parsed)) {
     return { legacyStudies: parsed };
   }
 
-  if (parsed && typeof parsed === 'object' && parsed.storage && typeof parsed.storage === 'object') {
+  if (
+    parsed &&
+    typeof parsed === "object" &&
+    parsed.storage &&
+    typeof parsed.storage === "object"
+  ) {
     return {
       version: parsed.version ?? BACKUP_FORMAT_VERSION,
       exportedAt: parsed.exportedAt ?? new Date().toISOString(),
@@ -54,12 +63,17 @@ export function parseBackupRaw(raw: string): AppBackupPayload | { legacyStudies:
     };
   }
 
-  throw new Error('INVALID_BACKUP_FORMAT');
+  throw new Error("INVALID_BACKUP_FORMAT");
 }
 
-export async function restoreAppStorage(storage: Record<string, string | null>): Promise<number> {
+export async function restoreAppStorage(
+  storage: Record<string, string | null>,
+): Promise<number> {
   const entries = Object.entries(storage).filter(
-    ([key, value]) => BACKUP_STORAGE_KEYS.includes(key) && value !== null && value !== undefined,
+    ([key, value]) =>
+      BACKUP_STORAGE_KEYS.includes(key) &&
+      value !== null &&
+      value !== undefined,
   ) as [string, string][];
 
   if (entries.length === 0) return 0;
@@ -69,7 +83,9 @@ export async function restoreAppStorage(storage: Record<string, string | null>):
   return entries.length;
 }
 
-export function countRestoredStudies(storage: Record<string, string | null>): number {
+export function countRestoredStudies(
+  storage: Record<string, string | null>,
+): number {
   const raw = storage[STORAGE_KEYS.STUDIES];
   if (!raw) return 0;
   try {
@@ -81,27 +97,29 @@ export function countRestoredStudies(storage: Record<string, string | null>): nu
 }
 
 export async function writeAutoBackupFile(): Promise<void> {
-  const { Platform } = require('react-native');
-  if (Platform.OS === 'web') return;
+  const { Platform } = require("react-native");
+  if (Platform.OS === "web") return;
 
   const json = await buildAppBackupJson(true);
-  const FileSystem = require('expo-file-system/legacy');
+  const FileSystem = require("expo-file-system/legacy");
 
-  if (Platform.OS === 'android') {
-    const fileUri = await AsyncStorage.getItem(STORAGE_KEYS.AUTO_BACKUP_FILE_URI);
+  if (Platform.OS === "android") {
+    const fileUri = await AsyncStorage.getItem(
+      STORAGE_KEYS.AUTO_BACKUP_FILE_URI,
+    );
     if (fileUri) {
-      await FileSystem.writeAsStringAsync(fileUri, json).catch(() => { });
+      await FileSystem.writeAsStringAsync(fileUri, json).catch(() => {});
     }
     return;
   }
 
   const path = `${FileSystem.documentDirectory}backup_estudos_automatico.json`;
-  await FileSystem.writeAsStringAsync(path, json).catch(() => { });
+  await FileSystem.writeAsStringAsync(path, json).catch(() => {});
 }
 
 export async function clearAllAppStorage(): Promise<void> {
-  const firstVersion = availableVersions[0] || 'NAA';
-  const firstBook = getBibleData(firstVersion)[0]?.abbrev || 'gn';
+  const firstVersion = availableVersions[0] || "NAA";
+  const firstBook = getBibleData(firstVersion)[0]?.abbrev || "gn";
 
   await AsyncStorage.multiRemove(Object.values(STORAGE_KEYS));
   DeviceEventEmitter.emit(BACKUP_RESTORED_EVENT);

@@ -1,2 +1,2 @@
-import ReadingPlanScreen from '../../screens/ReadingPlanScreen';
+import ReadingPlanScreen from "../../screens/ReadingPlanScreen";
 export default ReadingPlanScreen;

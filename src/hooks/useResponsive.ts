@@ -1,11 +1,14 @@
-import { useWindowDimensions } from 'react-native';
-import { DESIGN } from '../constants/design';
+import { useWindowDimensions } from "react-native";
+import { DESIGN } from "../constants/design";
 
 export function useResponsive() {
   const { width, height } = useWindowDimensions();
 
   const guidelineBaseWidth = 375;
-  const isWeb = typeof window !== 'undefined' && window.navigator && window.navigator.userAgent;
+  const isWeb =
+    typeof window !== "undefined" &&
+    window.navigator &&
+    window.navigator.userAgent;
   const isTablet = width >= 768 || isWeb;
 
   const effectiveWidth = isTablet ? Math.min(width, 680) : Math.min(width, 500);

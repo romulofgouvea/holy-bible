@@ -1,2 +1,2 @@
-import ConfigurationScreen from '../../screens/ConfigurationScreen';
+import ConfigurationScreen from "../../screens/ConfigurationScreen";
 export default ConfigurationScreen;

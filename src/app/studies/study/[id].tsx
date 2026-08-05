@@ -1,2 +1,2 @@
-import StudyEditorScreen from '../../../screens/StudyEditorScreen';
+import StudyEditorScreen from "../../../screens/StudyEditorScreen";
 export default StudyEditorScreen;

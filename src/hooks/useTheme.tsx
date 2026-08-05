@@ -1,17 +1,23 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { DeviceEventEmitter } from 'react-native';
-import { STORAGE_KEYS } from '../constants/storage';
-import { BACKUP_RESTORED_EVENT } from '../utils/backup';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import { DeviceEventEmitter } from "react-native";
+import { STORAGE_KEYS } from "../constants/storage";
+import { BACKUP_RESTORED_EVENT } from "../utils/backup";
 
 import {
   COLOR_THEMES,
   ColorThemeKey,
   COMMON_COLORS,
   getSupportColors,
-  ThemeColors
-} from '../constants/colors';
-import { setHapticsGlobal } from '../utils/haptics';
+  ThemeColors,
+} from "../constants/colors";
+import { setHapticsGlobal } from "../utils/haptics";
 
 export { ColorThemeKey, ThemeColors };
 
@@ -37,7 +43,7 @@ const ThemeContext = createContext<ThemeContextType | null>(null);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [colorTheme, setColorThemeState] = useState<ColorThemeKey>('teal');
+  const [colorTheme, setColorThemeState] = useState<ColorThemeKey>("teal");
   const [hapticsEnabled, setHapticsEnabled] = useState(true);
 
   const loadThemeSettings = useCallback(async () => {
@@ -47,17 +53,20 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         AsyncStorage.getItem(STORAGE_KEYS.APP_COLOR_THEME),
         AsyncStorage.getItem(STORAGE_KEYS.HAPTICS_ENABLED),
       ]);
-      if (savedDark !== null) setIsDarkMode(savedDark === 'true');
-      if (savedHaptics !== null) setHapticsEnabled(savedHaptics === 'true');
+      if (savedDark !== null) setIsDarkMode(savedDark === "true");
+      if (savedHaptics !== null) setHapticsEnabled(savedHaptics === "true");
       if (savedTheme && Object.keys(COLOR_THEMES).includes(savedTheme)) {
         setColorThemeState(savedTheme as ColorThemeKey);
       }
-    } catch (e) { }
+    } catch (e) {}
   }, []);
 
   useEffect(() => {
     loadThemeSettings();
-    const sub = DeviceEventEmitter.addListener(BACKUP_RESTORED_EVENT, loadThemeSettings);
+    const sub = DeviceEventEmitter.addListener(
+      BACKUP_RESTORED_EVENT,
+      loadThemeSettings,
+    );
     return () => sub.remove();
   }, [loadThemeSettings]);
 
@@ -70,7 +79,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     setHapticsEnabled(nextVal);
     try {
       await AsyncStorage.setItem(STORAGE_KEYS.HAPTICS_ENABLED, String(nextVal));
-    } catch (e) { }
+    } catch (e) {}
   };
 
   const toggleDarkMode = async (value?: boolean) => {
@@ -78,14 +87,14 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     setIsDarkMode(nextVal);
     try {
       await AsyncStorage.setItem(STORAGE_KEYS.DARK_MODE, String(nextVal));
-    } catch (e) { }
+    } catch (e) {}
   };
 
   const setColorTheme = async (key: ColorThemeKey) => {
     setColorThemeState(key);
     try {
       await AsyncStorage.setItem(STORAGE_KEYS.APP_COLOR_THEME, key);
-    } catch (e) { }
+    } catch (e) {}
   };
 
   const activePalette = COLOR_THEMES[colorTheme] || COLOR_THEMES.teal;
@@ -97,15 +106,17 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <ThemeContext.Provider value={{
-      isDarkMode,
-      toggleDarkMode,
-      colors,
-      colorTheme,
-      setColorTheme,
-      hapticsEnabled,
-      toggleHaptics
-    }}>
+    <ThemeContext.Provider
+      value={{
+        isDarkMode,
+        toggleDarkMode,
+        colors,
+        colorTheme,
+        setColorTheme,
+        hapticsEnabled,
+        toggleHaptics,
+      }}
+    >
       {children}
     </ThemeContext.Provider>
   );
@@ -113,6 +124,6 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
 export function useTheme() {
   const ctx = useContext(ThemeContext);
-  if (!ctx) throw new Error('useTheme must be used within ThemeProvider');
+  if (!ctx) throw new Error("useTheme must be used within ThemeProvider");
   return ctx;
 }

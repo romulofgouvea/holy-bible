@@ -1,7 +1,7 @@
-import * as FileSystem from 'expo-file-system/legacy';
-import * as Print from 'expo-print';
-import * as Sharing from 'expo-sharing';
-import { Alert, Platform } from 'react-native';
+import * as FileSystem from "expo-file-system/legacy";
+import * as Print from "expo-print";
+import * as Sharing from "expo-sharing";
+import { Alert, Platform } from "react-native";
 
 const EXPORT_CSS = `
   @import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap');
@@ -62,32 +62,50 @@ const EXPORT_CSS = `
   ul, ol { padding-left: 20px; margin: 8px 0; }
 `;
 
-export async function exportToPDF(title: string, htmlContent: string, showTitle: boolean = true) {
+export async function exportToPDF(
+  title: string,
+  htmlContent: string,
+  showTitle: boolean = true,
+) {
   try {
     const htmlDocument = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${title}</title><style>${EXPORT_CSS}</style></head><body>
-      ${showTitle ? `<h1 class="main-title">${title}</h1>` : ''}
-      ${htmlContent.replace(/<p>\s*<br\s*\/?>\s*<\/p>/gi, '')}
+      ${showTitle ? `<h1 class="main-title">${title}</h1>` : ""}
+      ${htmlContent.replace(/<p>\s*<br\s*\/?>\s*<\/p>/gi, "")}
     </body></html>`;
 
-    if (Platform.OS === 'web') {
-      const htmlWithScript = htmlDocument.replace('</body>', '<script>setTimeout(()=>window.print(),500);</script></body>');
-      const blob = new Blob([htmlWithScript], { type: 'text/html;charset=utf-8' });
+    if (Platform.OS === "web") {
+      const htmlWithScript = htmlDocument.replace(
+        "</body>",
+        "<script>setTimeout(()=>window.print(),500);</script></body>",
+      );
+      const blob = new Blob([htmlWithScript], {
+        type: "text/html;charset=utf-8",
+      });
       const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = url;
-      a.target = '_blank';
+      a.target = "_blank";
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
     } else {
-      const { uri } = await Print.printToFileAsync({ html: htmlDocument, width: 612, height: 792 });
-      const safeTitle = title.replace(/[^a-z0-9]/gi, '_') || 'documento';
+      const { uri } = await Print.printToFileAsync({
+        html: htmlDocument,
+        width: 612,
+        height: 792,
+      });
+      const safeTitle = title.replace(/[^a-z0-9]/gi, "_") || "documento";
       const newUri = `${(FileSystem as any).documentDirectory}${safeTitle}.pdf`;
-      try { await FileSystem.deleteAsync(newUri, { idempotent: true }); } catch (e) { }
+      try {
+        await FileSystem.deleteAsync(newUri, { idempotent: true });
+      } catch (e) {}
       await FileSystem.copyAsync({ from: uri, to: newUri });
-      await Sharing.shareAsync(newUri, { mimeType: 'application/pdf', UTI: 'com.adobe.pdf' });
+      await Sharing.shareAsync(newUri, {
+        mimeType: "application/pdf",
+        UTI: "com.adobe.pdf",
+      });
     }
   } catch (e: any) {
-    Alert.alert('Erro na geração de PDF', String(e?.message || e));
+    Alert.alert("Erro na geração de PDF", String(e?.message || e));
   }
 }
