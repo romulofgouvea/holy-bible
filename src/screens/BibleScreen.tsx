@@ -16,6 +16,7 @@ import {
   TouchableOpacity,
   View,
   BackHandler,
+  useWindowDimensions,
 } from "react-native";
 import { BibleDivider } from "../components/BibleDivider";
 import { BibleDrawerMenu } from "../components/BibleDrawerMenu";
@@ -80,7 +81,8 @@ export default function BibleScreen() {
   const { ms, DESIGN } = useResponsive();
   const { toast, opacity, show } = useToast();
   const { colors } = useTheme();
-  const { readerTheme, readerColors } = useReaderSettings();
+  const { readerTheme, readerColors, fontSizeMultiplier } = useReaderSettings();
+  const { width: windowWidth } = useWindowDimensions();
   const primaryColor =
     readerTheme === "sepia" ? readerColors.primary : colors.primary;
 
@@ -410,21 +412,147 @@ export default function BibleScreen() {
     setSelectedVerses([]);
   }, [chapter, book, version]);
 
-  const [verseHeights, setVerseHeights] = useState<Record<string, number>>(
+  type VerseMetric = { text?: number; title?: number };
+  const [firstMetrics, setFirstMetrics] = useState<Record<string, VerseMetric>>(
     {},
   );
+  const [secondMetrics, setSecondMetrics] = useState<
+    Record<string, VerseMetric>
+  >({});
 
   useEffect(() => {
-    setVerseHeights({});
-  }, [chapter, book, version, secondVersion]);
+    setFirstMetrics({});
+    setSecondMetrics({});
+  }, [chapter, book, version, secondVersion, splitOrientation, isSplitScreen]);
 
-  const reportVerseHeight = useCallback((key: string, height: number) => {
-    setVerseHeights((prev) => {
-      const current = prev[key] || 0;
-      if (height <= current) return prev;
-      return { ...prev, [key]: height };
+  const reportFirstText = useCallback((verse: number, height: number) => {
+    setFirstMetrics((prev) => {
+      const key = `${verse}`;
+      if (prev[key]?.text === height) return prev;
+      return { ...prev, [key]: { ...prev[key], text: height } };
     });
   }, []);
+
+  const reportFirstTitle = useCallback((verse: number, height: number) => {
+    setFirstMetrics((prev) => {
+      const key = `${verse}`;
+      if (prev[key]?.title === height) return prev;
+      return { ...prev, [key]: { ...prev[key], title: height } };
+    });
+  }, []);
+
+  const reportSecondText = useCallback((verse: number, height: number) => {
+    setSecondMetrics((prev) => {
+      const key = `${verse}`;
+      if (prev[key]?.text === height) return prev;
+      return { ...prev, [key]: { ...prev[key], text: height } };
+    });
+  }, []);
+
+  const reportSecondTitle = useCallback((verse: number, height: number) => {
+    setSecondMetrics((prev) => {
+      const key = `${verse}`;
+      if (prev[key]?.title === height) return prev;
+      return { ...prev, [key]: { ...prev[key], title: height } };
+    });
+  }, []);
+
+  const rowSpacers = useMemo(() => {
+    const first: Record<string, { title?: number; bottom?: number }> = {};
+    const second: Record<string, { title?: number; bottom?: number }> = {};
+    if (!isSplitScreen) return { first, second };
+
+    const rowInsets = ms(DESIGN.spacing.lg) * 2 + ms(DESIGN.spacing.xs);
+    const paneWidth =
+      (splitOrientation === "horizontal" ? windowWidth / 2 : windowWidth) -
+      rowInsets;
+    const textFontSize = ms(DESIGN.fontSize.xxl * fontSizeMultiplier);
+    const titleFontSize = ms(DESIGN.fontSize.xl * fontSizeMultiplier);
+    const textLineHeight = textFontSize * DESIGN.lineHeight.md;
+    const titleLineHeight = titleFontSize * DESIGN.lineHeight.md;
+    const charWidthFactor = 0.52;
+    const charsPerLineText = Math.max(
+      8,
+      Math.floor(paneWidth / (textFontSize * charWidthFactor)),
+    );
+    const charsPerLineTitle = Math.max(
+      8,
+      Math.floor(paneWidth / (titleFontSize * charWidthFactor)),
+    );
+    const estimateLines = (text: string, charsPerLine: number) =>
+      text.length === 0
+        ? 0
+        : Math.max(1, Math.ceil(text.length / charsPerLine));
+    const estimateTextHeight = (text: string) =>
+      estimateLines(text, charsPerLineText) * textLineHeight;
+    const estimateTitleHeight = (title: string) =>
+      estimateLines(title, charsPerLineTitle) * titleLineHeight;
+
+    const dataA = new Map<string, any>(
+      (sectionData[0]?.data || []).map((v: any) => [`${v.verse}`, v]),
+    );
+    const dataB = new Map<string, any>(
+      (secondSectionData[0]?.data || []).map((v: any) => [`${v.verse}`, v]),
+    );
+    const keys = new Set<string>([...dataA.keys(), ...dataB.keys()]);
+
+    keys.forEach((key) => {
+      const vA: any = dataA.get(key);
+      const vB: any = dataB.get(key);
+      const metricA = firstMetrics[key];
+      const metricB = secondMetrics[key];
+
+      if (vA && vB) {
+        const textReady = metricA?.text != null && metricB?.text != null;
+        const textA: number = textReady
+          ? (metricA!.text as number)
+          : estimateTextHeight(vA.text);
+        const textB: number = textReady
+          ? (metricB!.text as number)
+          : estimateTextHeight(vB.text);
+        const diff = textB - textA;
+        if (diff > 0) first[key] = { ...first[key], bottom: diff };
+        else if (diff < 0) second[key] = { ...second[key], bottom: -diff };
+      }
+
+      const titleTextA = vA?.titles?.find(
+        (t: any) => t.positionIndex === 0,
+      )?.title;
+      const titleTextB = vB?.titles?.find(
+        (t: any) => t.positionIndex === 0,
+      )?.title;
+      if (titleTextA || titleTextB) {
+        const titleReady =
+          (!titleTextA || metricA?.title != null) &&
+          (!titleTextB || metricB?.title != null);
+        const titleA = titleTextA
+          ? titleReady
+            ? (metricA?.title ?? 0)
+            : estimateTitleHeight(titleTextA)
+          : 0;
+        const titleB = titleTextB
+          ? titleReady
+            ? (metricB?.title ?? 0)
+            : estimateTitleHeight(titleTextB)
+          : 0;
+        const diff = titleB - titleA;
+        if (diff > 0) first[key] = { ...first[key], title: diff };
+        else if (diff < 0) second[key] = { ...second[key], title: -diff };
+      }
+    });
+    return { first, second };
+  }, [
+    isSplitScreen,
+    firstMetrics,
+    secondMetrics,
+    sectionData,
+    secondSectionData,
+    splitOrientation,
+    windowWidth,
+    ms,
+    DESIGN,
+    fontSizeMultiplier,
+  ]);
 
   const [isDrawerVisible, setIsDrawerVisible] = useState(false);
   const [isSettingsModalVisible, setIsSettingsModalVisible] = useState(false);
@@ -724,8 +852,10 @@ export default function BibleScreen() {
                   onVersePress={onVersePress}
                   onScroll={handleFirstScroll}
                   scrollEventThrottle={16}
-                  verseHeights={verseHeights}
-                  onVerseLayout={reportVerseHeight}
+                  rowSpacers={rowSpacers.first}
+                  onTextLayout={reportFirstText}
+                  onTitleLayout={reportFirstTitle}
+                  splitMode
                 />
               </View>
 
@@ -985,8 +1115,10 @@ export default function BibleScreen() {
                   onVersePress={onVersePress}
                   onScroll={handleSecondScroll}
                   scrollEventThrottle={16}
-                  verseHeights={verseHeights}
-                  onVerseLayout={reportVerseHeight}
+                  rowSpacers={rowSpacers.second}
+                  onTextLayout={reportSecondText}
+                  onTitleLayout={reportSecondTitle}
+                  splitMode
                 />
               </View>
             </View>

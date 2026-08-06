@@ -68,8 +68,10 @@ type VerseReaderProps = {
   onScrollEndDrag?: (event: any) => void;
   onMomentumScrollEnd?: (event: any) => void;
   scrollEventThrottle?: number;
-  verseHeights?: Record<string, number>;
-  onVerseLayout?: (key: string, height: number) => void;
+  rowSpacers?: Record<string, { title?: number; bottom?: number }>;
+  onTextLayout?: (verse: number, height: number) => void;
+  onTitleLayout?: (verse: number, height: number) => void;
+  splitMode?: boolean;
 };
 
 const VerseRow = React.memo(
@@ -89,8 +91,11 @@ const VerseRow = React.memo(
     DESIGN,
     styles,
     onVersePress,
-    minHeight,
-    onVerseLayout,
+    titleSpacer,
+    bottomSpacer,
+    onTextLayout,
+    onTitleLayout,
+    splitMode,
   }: any) => {
     const blinkAnim = useRef(new Animated.Value(0)).current;
 
@@ -125,6 +130,11 @@ const VerseRow = React.memo(
         primaryLow,
       ],
     });
+
+    const leadingTitles =
+      splitMode && shouldShowTitles && item.titles
+        ? item.titles.filter((t: any) => t.positionIndex === 0)
+        : [];
 
     const midVerseTitles =
       shouldShowTitles && item.titles
@@ -201,58 +211,89 @@ const VerseRow = React.memo(
             styles.verseRow,
             { backgroundColor: animatedBackgroundColor },
             isSelected && { borderLeftColor: primaryColor },
-            minHeight ? { minHeight } : undefined,
           ]}
         >
+          {(leadingTitles.length > 0 || !!titleSpacer) && (
+            <View style={styles.leadingTitle}>
+              {leadingTitles.length > 0 ? (
+                <View
+                  key={`title-${item.chapter}-${item.verse}`}
+                  onLayout={
+                    onTitleLayout
+                      ? (e) =>
+                          onTitleLayout(item.verse, e.nativeEvent.layout.height)
+                      : undefined
+                  }
+                >
+                  {leadingTitles.map((t: any, idx: number) => (
+                    <BibleText
+                      key={`lead-title-${idx}`}
+                      style={[
+                        styles.leadingTitleText,
+                        {
+                          color: primaryColor,
+                          fontSize: ms(DESIGN.fontSize.xl * fontSizeMultiplier),
+                          fontWeight: t.type === "section" ? "700" : "500",
+                          fontStyle: t.type === "speech" ? "italic" : "normal",
+                        },
+                      ]}
+                    >
+                      {t.title}
+                    </BibleText>
+                  ))}
+                </View>
+              ) : (
+                <View style={{ height: titleSpacer }} />
+              )}
+            </View>
+          )}
           <View
+            key={`text-${item.chapter}-${item.verse}`}
             onLayout={
-              onVerseLayout
-                ? (e) =>
-                    onVerseLayout(
-                      `${item.chapter}-${item.verse}`,
-                      e.nativeEvent.layout.height,
-                    )
+              onTextLayout
+                ? (e) => onTextLayout(item.verse, e.nativeEvent.layout.height)
                 : undefined
             }
           >
-          <BibleText
-            variant="reading"
-            style={[
-              styles.verseText,
-              {
-                fontSize: ms(DESIGN.fontSize.xxl * fontSizeMultiplier),
-                lineHeight: ms(
-                  DESIGN.fontSize.xxl *
-                    fontSizeMultiplier *
-                    DESIGN.lineHeight.md,
-                ),
-                color: readerColors.onBackground,
-                textAlign: textAlign as any,
-              },
-            ]}
-          >
             <BibleText
-              style={{
-                color: primaryColor,
-                fontWeight: "700",
-                fontSize: ms(DESIGN.fontSize.lg * fontSizeMultiplier),
-              }}
+              variant="reading"
+              style={[
+                styles.verseText,
+                {
+                  fontSize: ms(DESIGN.fontSize.xxl * fontSizeMultiplier),
+                  lineHeight: ms(
+                    DESIGN.fontSize.xxl *
+                      fontSizeMultiplier *
+                      DESIGN.lineHeight.md,
+                  ),
+                  color: readerColors.onBackground,
+                  textAlign: textAlign as any,
+                },
+              ]}
             >
-              {item.verse}
-            </BibleText>
-            {renderMidVerseTitlesAndText()}
-            {hasNote && (
-              <BibleText style={{ color: primaryColor, opacity: 0.8 }}>
-                {"\u00A0"}
-                <BibleIcon
-                  name="edit-3"
-                  size={ms(DESIGN.fontSize.md * fontSizeMultiplier)}
-                  color={primaryColor}
-                />
+              <BibleText
+                style={{
+                  color: primaryColor,
+                  fontWeight: "700",
+                  fontSize: ms(DESIGN.fontSize.lg * fontSizeMultiplier),
+                }}
+              >
+                {item.verse}
               </BibleText>
-            )}
-          </BibleText>
+              {renderMidVerseTitlesAndText()}
+              {hasNote && (
+                <BibleText style={{ color: primaryColor, opacity: 0.8 }}>
+                  {"\u00A0"}
+                  <BibleIcon
+                    name="edit-3"
+                    size={ms(DESIGN.fontSize.md * fontSizeMultiplier)}
+                    color={primaryColor}
+                  />
+                </BibleText>
+              )}
+            </BibleText>
           </View>
+          {!!bottomSpacer && <View style={{ height: bottomSpacer }} />}
         </Animated.View>
       </TouchableOpacity>
     );
@@ -270,7 +311,11 @@ const VerseRow = React.memo(
       prevProps.readerColors.background === nextProps.readerColors.background &&
       prevProps.primaryColor === nextProps.primaryColor &&
       prevProps.styles === nextProps.styles &&
-      prevProps.minHeight === nextProps.minHeight
+      prevProps.titleSpacer === nextProps.titleSpacer &&
+      prevProps.bottomSpacer === nextProps.bottomSpacer &&
+      prevProps.splitMode === nextProps.splitMode &&
+      prevProps.onTextLayout === nextProps.onTextLayout &&
+      prevProps.onTitleLayout === nextProps.onTitleLayout
     );
   },
 );
@@ -293,8 +338,10 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
     onScrollEndDrag,
     onMomentumScrollEnd,
     scrollEventThrottle,
-    verseHeights,
-    onVerseLayout,
+    rowSpacers,
+    onTextLayout,
+    onTitleLayout,
+    splitMode,
   } = props;
   const { ms, DESIGN } = useResponsive();
   const { colors } = useTheme();
@@ -332,6 +379,12 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
         },
         sectionTitle: {
           fontWeight: "700",
+          letterSpacing: 0.3,
+        },
+        leadingTitle: {
+          paddingBottom: ms(DESIGN.spacing.xs),
+        },
+        leadingTitleText: {
           letterSpacing: 0.3,
         },
         verseRow: {
@@ -382,7 +435,7 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
     sections.forEach((sec) => {
       data.push({ type: "header", title: sec.title });
       sec.data.forEach((v) => {
-        if (shouldShowTitles && v.titles && v.titles.length > 0) {
+        if (!splitMode && shouldShowTitles && v.titles && v.titles.length > 0) {
           const zeroIndexTitles = v.titles.filter(
             (t: VerseTitle) => t.positionIndex === 0,
           );
@@ -406,7 +459,7 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
       }
     });
     return data;
-  }, [sections, version, shouldShowTitles]);
+  }, [sections, version, splitMode, shouldShowTitles]);
 
   useImperativeHandle(
     listRef,
@@ -545,7 +598,7 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
           const isSelected =
             selectedKeys[`${bookAbbrev}-${item.chapter}-${item.verse}`];
           const highlightColorHex = getHighlightColorValue(highlightColorId);
-          const verseKey = `${item.chapter}-${item.verse}`;
+          const spacer = rowSpacers?.[`${item.verse}`];
 
           return (
             <VerseRow
@@ -564,8 +617,11 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
               DESIGN={DESIGN}
               styles={styles}
               onVersePress={onVersePress}
-              minHeight={verseHeights?.[verseKey]}
-              onVerseLayout={onVerseLayout}
+              titleSpacer={spacer?.title}
+              bottomSpacer={spacer?.bottom}
+              onTextLayout={onTextLayout}
+              onTitleLayout={onTitleLayout}
+              splitMode={splitMode}
             />
           );
         }}

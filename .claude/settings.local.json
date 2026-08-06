@@ -15,7 +15,8 @@
       "Bash(docker *)",
       "Bash(cd *)",
       "Bash(ls *)",
-      "Bash(cat *)"
+      "Bash(cat *)",
+      "Bash(node -e ' *)"
     ]
   }
 }
