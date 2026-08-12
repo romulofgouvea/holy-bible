@@ -259,23 +259,67 @@ export function useBiblePlan() {
     [activePlans, persist],
   );
 
+  const pausePlan = useCallback(
+    (planId: string) => {
+      persist(
+        activePlans.map((p) =>
+          p.id !== planId || p.pausedAt ? p : { ...p, pausedAt: Date.now() },
+        ),
+      );
+    },
+    [activePlans, persist],
+  );
+
+  const resumePlan = useCallback(
+    (planId: string) => {
+      persist(
+        activePlans.map((p) => {
+          if (p.id !== planId || !p.pausedAt) return p;
+          const { pausedAt, ...rest } = p;
+          return {
+            ...rest,
+            pausedMs: (p.pausedMs ?? 0) + (Date.now() - pausedAt),
+          };
+        }),
+      );
+    },
+    [activePlans, persist],
+  );
+
   const getBiblePlanStats = useCallback(
     (plan: ActiveBiblePlan, months: BiblePlanMonth[]) => {
       const totalDays = months.reduce((acc, m) => acc + m.days.length, 0);
-      const completedCount = Object.values(plan.completedDays).filter(
+      const completedDaysList = Object.values(plan.completedDays).filter(
         (d) => d.isCompleted,
-      ).length;
+      );
+      const completedCount = completedDaysList.length;
       const progressPercent =
         totalDays > 0 ? Math.round((completedCount / totalDays) * 100) : 0;
+      const isPaused = !!plan.pausedAt;
+      const isCompleted = totalDays > 0 && completedCount === totalDays;
+      const completedAtMs = isCompleted
+        ? Math.max(...completedDaysList.map((d) => d.completedAt ?? 0))
+        : undefined;
 
       const startMidnight = new Date(plan.startedAt).setHours(0, 0, 0, 0);
-      const nowMidnight = new Date().setHours(0, 0, 0, 0);
+      const effectiveNowMs = plan.pausedAt ?? Date.now();
+      const pausedMs = plan.pausedMs ?? 0;
+      const nowMidnight = new Date(effectiveNowMs - pausedMs).setHours(
+        0,
+        0,
+        0,
+        0,
+      );
       const elapsedDays =
         Math.floor((nowMidnight - startMidnight) / (1000 * 60 * 60 * 24)) + 1;
 
       const differenceDays = completedCount - elapsedDays;
-      const delayDays = differenceDays < 0 ? Math.abs(differenceDays) : 0;
-      const aheadDays = differenceDays > 0 ? differenceDays : 0;
+      const delayDays =
+        !isPaused && !isCompleted && differenceDays < 0
+          ? Math.abs(differenceDays)
+          : 0;
+      const aheadDays =
+        !isPaused && !isCompleted && differenceDays > 0 ? differenceDays : 0;
 
       const expectedEndMs =
         startMidnight + (totalDays - 1) * 24 * 60 * 60 * 1000;
@@ -292,10 +336,36 @@ export function useBiblePlan() {
         expectedEndMs,
         estimatedEndMs,
         startedAt: plan.startedAt,
+        isPaused,
+        isCompleted,
+        completedAtMs,
       };
     },
     [],
   );
+
+  const getBiblePlanStreak = useCallback((plan: ActiveBiblePlan): number => {
+    const dayMs = 24 * 60 * 60 * 1000;
+    const completedDates = new Set(
+      Object.values(plan.completedDays)
+        .filter((d) => d.isCompleted && d.completedAt)
+        .map((d) => new Date(d.completedAt as number).setHours(0, 0, 0, 0)),
+    );
+    if (completedDates.size === 0) return 0;
+
+    let cursor = new Date(plan.pausedAt ?? Date.now()).setHours(0, 0, 0, 0);
+    if (!completedDates.has(cursor)) {
+      cursor -= dayMs;
+      if (!completedDates.has(cursor)) return 0;
+    }
+
+    let streak = 0;
+    while (completedDates.has(cursor)) {
+      streak++;
+      cursor -= dayMs;
+    }
+    return streak;
+  }, []);
 
   return {
     activePlans,
@@ -311,7 +381,10 @@ export function useBiblePlan() {
     removeBiblePlans,
     clearAllBiblePlans,
     updateStartDate,
+    pausePlan,
+    resumePlan,
     getBiblePlanStats,
+    getBiblePlanStreak,
     reloadFromStorage,
   };
 }

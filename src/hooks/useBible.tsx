@@ -61,10 +61,6 @@ type BibleContextType = {
     chapter: number;
     verse: number;
   }) => Promise<void>;
-  readingPlanGoal: { bookAbbrev: string; chapter: number } | null;
-  setReadingPlanGoal: (
-    goal: { bookAbbrev: string; chapter: number } | null,
-  ) => void;
   isSplitScreen: boolean;
   setIsSplitScreen: (v: boolean) => void;
   secondVersion: string;
@@ -95,10 +91,6 @@ export function BibleProvider({ children }: { children: React.ReactNode }) {
   const [splitOrientation, setSplitOrientation] = useState<
     "vertical" | "horizontal"
   >("vertical");
-  const [readingPlanGoal, setReadingPlanGoal] = useState<{
-    bookAbbrev: string;
-    chapter: number;
-  } | null>(null);
   const [isReady, setIsReady] = useState(false);
   const isReadyRef = useRef(false);
 
@@ -612,8 +604,6 @@ export function BibleProvider({ children }: { children: React.ReactNode }) {
         hasPrevChapter,
         hasNextChapter,
         addHistoryEntry,
-        readingPlanGoal,
-        setReadingPlanGoal,
         isSplitScreen,
         setIsSplitScreen,
         secondVersion,

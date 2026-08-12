@@ -14,6 +14,7 @@ import { BibleDrawerMenu } from "../components/BibleDrawerMenu";
 import { BibleHeader } from "../components/BibleHeader";
 import { BibleIcon } from "../components/BibleIcon";
 import { BiblePageEmpty } from "../components/BiblePageEmpty";
+import { BiblePlanStatusBadge } from "../components/BiblePlanStatusBadge";
 import { BibleText } from "../components/BibleText";
 import { BibleToast } from "../components/BibleToast";
 import { BibleActionsDrawer } from "../components/modals/BibleActionsDrawer";
@@ -23,6 +24,7 @@ import { ROUTE_LABELS, ROUTES } from "../constants/routes";
 import { BIBLE_PLAN_TEMPLATES } from "../data/bible-plan/biblePlanRegistry";
 import { useBible } from "../hooks/useBible";
 import { useBiblePlan } from "../hooks/useBiblePlan";
+import { useReadingPlanNotifications } from "../hooks/useReadingPlanNotifications";
 import { useResponsive } from "../hooks/useResponsive";
 import { useTheme } from "../hooks/useTheme";
 import { useToast } from "../hooks/useToast";
@@ -67,7 +69,7 @@ function flattenMonths(months: BiblePlanMonth[]): FlatDayItem[] {
 export default function ReadingPlanScreen() {
   const { ms, DESIGN } = useResponsive();
   const { colors } = useTheme();
-  const { navigateTo, setReadingPlanGoal } = useBible();
+  const { navigateTo } = useBible();
   const router = useRouter();
   const {
     activePlans,
@@ -82,8 +84,12 @@ export default function ReadingPlanScreen() {
     removeBiblePlan,
     removeBiblePlans,
     getBiblePlanStats,
+    getBiblePlanStreak,
     updateStartDate,
+    pausePlan,
+    resumePlan,
   } = useBiblePlan();
+  useReadingPlanNotifications();
   const { toast, opacity, show } = useToast();
 
   const [screenView, setScreenView] = useState<ScreenView>("list");
@@ -136,6 +142,25 @@ export default function ReadingPlanScreen() {
     }
     return lastIdx;
   }, [selectedPlan, flatDays, isDayCompleted]);
+
+  const selectedStats = useMemo(() => {
+    if (!selectedPlan || !selectedTemplate) return null;
+    return getBiblePlanStats(selectedPlan, selectedTemplate.months);
+  }, [selectedPlan, selectedTemplate, getBiblePlanStats]);
+
+  const selectedStreak = useMemo(() => {
+    if (!selectedPlan) return 0;
+    return getBiblePlanStreak(selectedPlan);
+  }, [selectedPlan, getBiblePlanStreak]);
+
+  const todayIndex = useMemo(() => {
+    if (!selectedStats || flatDays.length === 0) return -1;
+    if (selectedStats.isPaused || selectedStats.isCompleted) return -1;
+    return Math.min(
+      Math.max(selectedStats.elapsed - 1, 0),
+      flatDays.length - 1,
+    );
+  }, [selectedStats, flatDays.length]);
 
   // Auto-scroll remoted by user request
 
@@ -342,21 +367,12 @@ export default function ReadingPlanScreen() {
   }, []);
 
   const handleNavigateToChapter = useCallback(
-    (bookAbbrev: string, chapter: number, item: FlatDayItem) => {
+    (bookAbbrev: string, chapter: number) => {
       setIsChapterModalVisible(false);
-      const lastBook = item.books[item.books.length - 1];
-      let lastChapter = 1;
-      if (lastBook.chapters?.length) {
-        lastChapter = lastBook.chapters[lastBook.chapters.length - 1];
-      } else if (lastBook.verses?.length) {
-        lastChapter = lastBook.verses[lastBook.verses.length - 1].chapter;
-      }
-
-      setReadingPlanGoal({ bookAbbrev: lastBook.abbrev, chapter: lastChapter });
       navigateTo({ book: bookAbbrev, chapter, verse: 1 });
       router.navigate(ROUTES.BIBLE as any);
     },
-    [navigateTo, setReadingPlanGoal, router],
+    [navigateTo, router],
   );
 
   const handleToggleDay = useCallback(
@@ -427,14 +443,41 @@ export default function ReadingPlanScreen() {
 
   const detailActionsItems = useMemo(() => {
     if (!selectedPlanId) return [];
-    return [
+    const items: {
+      icon: React.ComponentProps<typeof BibleIcon>["name"];
+      label: string;
+      onPress: () => void;
+    }[] = [
       {
-        icon: "calendar" as const,
+        icon: "calendar",
         label: "Alterar Data de Início",
         onPress: () => handleSetStartDate(selectedPlanId),
       },
     ];
-  }, [selectedPlanId, handleSetStartDate]);
+    if (!selectedStats?.isCompleted) {
+      items.push(
+        selectedStats?.isPaused
+          ? {
+              icon: "play",
+              label: "Retomar Plano",
+              onPress: () => resumePlan(selectedPlanId),
+            }
+          : {
+              icon: "pause",
+              label: "Pausar Plano",
+              onPress: () => pausePlan(selectedPlanId),
+            },
+      );
+    }
+    return items;
+  }, [
+    selectedPlanId,
+    handleSetStartDate,
+    selectedStats?.isCompleted,
+    selectedStats?.isPaused,
+    pausePlan,
+    resumePlan,
+  ]);
 
   const renderPlanListItem = useCallback(
     ({ item }: { item: ActiveBiblePlan }) => {
@@ -448,6 +491,9 @@ export default function ReadingPlanScreen() {
         progressPercent,
         delayDays,
         aheadDays,
+        isPaused,
+        isCompleted,
+        completedAtMs,
       } = getBiblePlanStats(item, template.months);
       const isSelected = selectedDeleteIds.has(item.id);
 
@@ -532,29 +578,13 @@ export default function ReadingPlanScreen() {
                   >
                     {completedCount} de {totalDays} dias · {progressPercent}%
                   </BibleText>
-                  {(delayDays > 0 || aheadDays > 0) && (
-                    <View
-                      style={{
-                        backgroundColor:
-                          delayDays > 0 ? colors.error + "15" : "#1DB95415",
-                        paddingHorizontal: ms(6),
-                        paddingVertical: ms(2),
-                        borderRadius: ms(DESIGN.borderRadius.sm),
-                      }}
-                    >
-                      <BibleText
-                        style={{
-                          fontSize: ms(DESIGN.fontSize.xs),
-                          color: delayDays > 0 ? colors.error : "#1DB954",
-                          fontWeight: "700",
-                        }}
-                      >
-                        {delayDays > 0
-                          ? `Atrasado ${delayDays} ${delayDays === 1 ? "dia" : "dias"}`
-                          : `Adiantado ${aheadDays} ${aheadDays === 1 ? "dia" : "dias"}`}
-                      </BibleText>
-                    </View>
-                  )}
+                  <BiblePlanStatusBadge
+                    delayDays={delayDays}
+                    aheadDays={aheadDays}
+                    isPaused={isPaused}
+                    isCompleted={isCompleted}
+                    completedAtMs={completedAtMs}
+                  />
                 </View>
               </View>
               <View style={{ opacity: isSelectionMode ? 0.2 : 0.8 }}>
@@ -665,6 +695,15 @@ export default function ReadingPlanScreen() {
           activeOpacity={0.7}
         >
           <View style={styles.templateCardContent}>
+            <BibleIcon
+              name={
+                template.icon as React.ComponentProps<typeof BibleIcon>["name"]
+              }
+              color={colors.primary}
+              backgroundColor={colors.primary + "20"}
+              containerSize={ms(DESIGN.icon.lg)}
+              borderRadius={ms(DESIGN.borderRadius.md)}
+            />
             <View style={{ flex: 1 }}>
               <BibleText
                 style={{
@@ -729,6 +768,7 @@ export default function ReadingPlanScreen() {
         item.monthNumber,
         item.day,
       );
+      const isToday = !isCompleted && item.globalIndex === todayIndex;
 
       return (
         <View>
@@ -772,8 +812,11 @@ export default function ReadingPlanScreen() {
             style={[
               styles.dayCard,
               {
-                backgroundColor: colors.surface,
-                borderColor: colors.border,
+                backgroundColor: isToday
+                  ? colors.primary + "15"
+                  : colors.surface,
+                borderColor: isToday ? colors.primary : colors.border,
+                borderWidth: isToday ? ms(2) : 1,
                 shadowColor: colors.shadow,
                 opacity: isCompleted ? 0.6 : 1,
               },
@@ -782,15 +825,43 @@ export default function ReadingPlanScreen() {
             activeOpacity={0.7}
           >
             <View style={{ flex: 1 }}>
-              <BibleText
+              <View
                 style={{
-                  fontSize: ms(DESIGN.fontSize.sm),
-                  fontWeight: "700",
-                  color: colors.textMuted,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: ms(DESIGN.spacing.xs),
                 }}
               >
-                Dia {item.day}
-              </BibleText>
+                <BibleText
+                  style={{
+                    fontSize: ms(DESIGN.fontSize.sm),
+                    fontWeight: "700",
+                    color: isToday ? colors.primary : colors.textMuted,
+                  }}
+                >
+                  Dia {item.day}
+                </BibleText>
+                {isToday && (
+                  <View
+                    style={{
+                      backgroundColor: colors.primary,
+                      paddingHorizontal: ms(6),
+                      paddingVertical: ms(1),
+                      borderRadius: ms(DESIGN.borderRadius.sm),
+                    }}
+                  >
+                    <BibleText
+                      style={{
+                        fontSize: ms(DESIGN.fontSize.xs),
+                        fontWeight: "800",
+                        color: colors.onPrimary,
+                      }}
+                    >
+                      Hoje
+                    </BibleText>
+                  </View>
+                )}
+              </View>
               <BibleText
                 style={{
                   fontSize: ms(DESIGN.fontSize.md),
@@ -860,11 +931,12 @@ export default function ReadingPlanScreen() {
       getDayCompletedAt,
       handleDayPress,
       handleToggleDay,
+      todayIndex,
     ],
   );
 
   const detailHeader = useMemo(() => {
-    if (!selectedPlan || !selectedTemplate) return null;
+    if (!selectedPlan || !selectedTemplate || !selectedStats) return null;
     const {
       completedCount,
       totalDays,
@@ -874,8 +946,14 @@ export default function ReadingPlanScreen() {
       startedAt,
       expectedEndMs,
       estimatedEndMs,
-    } = getBiblePlanStats(selectedPlan, selectedTemplate.months);
+      isPaused,
+      isCompleted,
+      completedAtMs,
+    } = selectedStats;
     const startDateText = new Date(startedAt).toLocaleDateString("pt-BR");
+    const showGoToToday = !isPaused && todayIndex >= 0;
+    const showGoToLast =
+      !isPaused && lastCompletedIndex >= 0 && lastCompletedIndex !== todayIndex;
 
     return (
       <View>
@@ -891,35 +969,22 @@ export default function ReadingPlanScreen() {
             },
           ]}
         >
-          {(delayDays > 0 || aheadDays > 0) && (
-            <View
-              style={{
-                position: "absolute",
-                top: ms(DESIGN.spacing.sm),
-                right: ms(DESIGN.spacing.sm),
-                backgroundColor:
-                  delayDays > 0 ? colors.error + "15" : "#1DB95415",
-                paddingHorizontal: ms(8),
-                paddingVertical: ms(4),
-                borderRadius: ms(DESIGN.borderRadius.sm),
-                borderWidth: 1,
-                borderColor: delayDays > 0 ? colors.error + "30" : "#1DB95430",
-                zIndex: 1,
-              }}
-            >
-              <BibleText
-                style={{
-                  fontSize: ms(DESIGN.fontSize.xs),
-                  color: delayDays > 0 ? colors.error : "#1DB954",
-                  fontWeight: "700",
-                }}
-              >
-                {delayDays > 0
-                  ? `Atrasado ${delayDays} ${delayDays === 1 ? "dia" : "dias"}`
-                  : `Adiantado ${aheadDays} ${aheadDays === 1 ? "dia" : "dias"}`}
-              </BibleText>
-            </View>
-          )}
+          <View
+            style={{
+              position: "absolute",
+              top: ms(DESIGN.spacing.sm),
+              right: ms(DESIGN.spacing.sm),
+              zIndex: 1,
+            }}
+          >
+            <BiblePlanStatusBadge
+              delayDays={delayDays}
+              aheadDays={aheadDays}
+              isPaused={isPaused}
+              isCompleted={isCompleted}
+              completedAtMs={completedAtMs}
+            />
+          </View>
 
           <View style={styles.planCardContent}>
             <BibleText
@@ -932,6 +997,33 @@ export default function ReadingPlanScreen() {
             >
               {selectedPlan.title}
             </BibleText>
+
+            {selectedStreak > 0 && (
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: ms(DESIGN.spacing.xs),
+                  marginTop: ms(DESIGN.spacing.sm),
+                }}
+              >
+                <BibleIcon
+                  name="zap"
+                  color={colors.primary}
+                  size={ms(DESIGN.fontSize.lg)}
+                />
+                <BibleText
+                  style={{
+                    fontSize: ms(DESIGN.fontSize.sm),
+                    color: colors.onSurface,
+                    fontWeight: "700",
+                  }}
+                >
+                  {selectedStreak} {selectedStreak === 1 ? "dia" : "dias"}{" "}
+                  seguidos
+                </BibleText>
+              </View>
+            )}
 
             <View style={{ marginTop: ms(16), marginBottom: ms(16) }}>
               <View
@@ -967,38 +1059,40 @@ export default function ReadingPlanScreen() {
                   <BibleText
                     style={{
                       fontSize: ms(DESIGN.fontSize.xs),
-                      color: colors.textMuted,
+                      color: isCompleted ? colors.success : colors.textMuted,
                       textTransform: "uppercase",
                       fontWeight: "800",
                     }}
                   >
-                    Fim previsto
+                    {isCompleted ? "Concluído em" : "Fim previsto"}
                   </BibleText>
                   <BibleText
                     style={{
                       fontSize: ms(DESIGN.fontSize.sm),
-                      color: colors.onSurface,
+                      color: isCompleted ? colors.success : colors.onSurface,
                       fontWeight: "600",
                       marginTop: ms(2),
                     }}
                   >
-                    {new Date(expectedEndMs).toLocaleDateString("pt-BR")}
+                    {isCompleted && completedAtMs
+                      ? new Date(completedAtMs).toLocaleDateString("pt-BR")
+                      : new Date(expectedEndMs).toLocaleDateString("pt-BR")}
                   </BibleText>
                 </View>
               </View>
 
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                }}
-              >
-                {(delayDays > 0 || aheadDays > 0) && (
+              {!isCompleted && (delayDays > 0 || aheadDays > 0) && (
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                  }}
+                >
                   <View style={{ flex: 1 }}>
                     <BibleText
                       style={{
                         fontSize: ms(DESIGN.fontSize.xs),
-                        color: delayDays > 0 ? colors.error : "#1DB954",
+                        color: delayDays > 0 ? colors.error : colors.success,
                         textTransform: "uppercase",
                         fontWeight: "800",
                       }}
@@ -1008,7 +1102,7 @@ export default function ReadingPlanScreen() {
                     <BibleText
                       style={{
                         fontSize: ms(DESIGN.fontSize.sm),
-                        color: delayDays > 0 ? colors.error : "#1DB954",
+                        color: delayDays > 0 ? colors.error : colors.success,
                         fontWeight: "700",
                         marginTop: ms(2),
                       }}
@@ -1016,12 +1110,9 @@ export default function ReadingPlanScreen() {
                       {new Date(estimatedEndMs).toLocaleDateString("pt-BR")}
                     </BibleText>
                   </View>
-                )}
-                {!(delayDays > 0 || aheadDays > 0) && (
                   <View style={{ flex: 1 }} />
-                )}
-                <View style={{ flex: 1 }} />
-              </View>
+                </View>
+              )}
             </View>
 
             <View>
@@ -1064,7 +1155,9 @@ export default function ReadingPlanScreen() {
                     styles.progressBarFill,
                     {
                       width: `${progressPercent}%`,
-                      backgroundColor: colors.primary,
+                      backgroundColor: isCompleted
+                        ? colors.success
+                        : colors.primary,
                     },
                   ]}
                 />
@@ -1072,7 +1165,46 @@ export default function ReadingPlanScreen() {
             </View>
           </View>
         </View>
-        {lastCompletedIndex >= 0 && (
+        {showGoToToday && (
+          <TouchableOpacity
+            style={{
+              backgroundColor: colors.primary + "15",
+              padding: ms(DESIGN.spacing.md),
+              borderRadius: ms(DESIGN.borderRadius.md),
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+              marginBottom: ms(DESIGN.spacing.md),
+              gap: ms(8),
+              borderWidth: 1,
+              borderColor: colors.primary + "30",
+            }}
+            onPress={() => {
+              listRef.current?.scrollToIndex({
+                index: Math.min(todayIndex, flatDays.length - 1),
+                animated: true,
+                viewPosition: 0,
+              });
+            }}
+            activeOpacity={0.7}
+          >
+            <BibleIcon
+              name="calendar"
+              color={colors.primary}
+              size={ms(DESIGN.icon.sm)}
+            />
+            <BibleText
+              style={{
+                color: colors.primary,
+                fontWeight: "700",
+                fontSize: ms(DESIGN.fontSize.md),
+              }}
+            >
+              Ir para leitura de hoje
+            </BibleText>
+          </TouchableOpacity>
+        )}
+        {showGoToLast && (
           <TouchableOpacity
             style={{
               backgroundColor: colors.primary + "15",
@@ -1116,12 +1248,14 @@ export default function ReadingPlanScreen() {
   }, [
     selectedPlan,
     selectedTemplate,
-    getBiblePlanStats,
+    selectedStats,
+    selectedStreak,
     styles,
     colors,
     ms,
     DESIGN,
     lastCompletedIndex,
+    todayIndex,
     flatDays.length,
   ]);
 
@@ -1449,11 +1583,7 @@ export default function ReadingPlanScreen() {
                       },
                     ]}
                     onPress={() =>
-                      handleNavigateToChapter(
-                        book.abbrev,
-                        chapter,
-                        selectedDayInfo,
-                      )
+                      handleNavigateToChapter(book.abbrev, chapter)
                     }
                     activeOpacity={0.7}
                   >

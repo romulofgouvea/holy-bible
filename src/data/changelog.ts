@@ -1,14 +1,17 @@
 export type ChangelogItem = {
   version: string;
-  date: string;
   highlights: string[];
 };
 
 export const CHANGELOG_DATA: ChangelogItem[] = [
   {
     version: "1.4.0",
-    date: "12/08/2026",
     highlights: [
+      "Lembretes diários para o plano de leitura, com horário configurável",
+      "Pausar e retomar planos de leitura sem perder o progresso",
+      "Sequência de dias seguidos de leitura (streak) no plano ativo",
+      "Indicadores visuais de status do plano: atrasado, adiantado, pausado ou concluído",
+      "Atalho para ir direto à leitura do dia no plano ativo",
       "Melhoria na acessibilidade da comparação de versões bíblicas em tela dividida",
       "Novo recurso de anotações vinculadas a versículos",
       "Melhoria na configuração do leitor permitindo mostrar ou não o título dos capítulos",
@@ -18,7 +21,6 @@ export const CHANGELOG_DATA: ChangelogItem[] = [
   },
   {
     version: "1.3.0",
-    date: "05/08/2026",
     highlights: [
       "Planos de leitura com acompanhamento de progresso",
       "Títulos de seções e capítulos bíblicos integrados",
@@ -27,7 +29,6 @@ export const CHANGELOG_DATA: ChangelogItem[] = [
   },
   {
     version: "1.2.0",
-    date: "28/07/2026",
     highlights: [
       "Seleção múltipla de versículos e menu de ações",
       "Melhorias na marcação colorida de versículos (destaques)",
@@ -37,7 +38,6 @@ export const CHANGELOG_DATA: ChangelogItem[] = [
   },
   {
     version: "1.1.0",
-    date: "15/07/2026",
     highlights: [
       "Busca na Bíblia com destaque de termos",
       "Seleção ágil de livros e capítulos",
@@ -46,7 +46,6 @@ export const CHANGELOG_DATA: ChangelogItem[] = [
   },
   {
     version: "1.0.0",
-    date: "01/07/2026",
     highlights: [
       "Lançamento inicial da Bíblia Sagrada",
       "Leitura offline com múltiplas versões",

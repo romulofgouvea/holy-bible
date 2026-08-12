@@ -16,7 +16,7 @@
     },
     "android": {
       "package": "br.com.stevanini.holybible",
-      "versionCode": 31,
+      "versionCode": 32,
       "adaptiveIcon": {
         "backgroundColor": "#008080",
         "foregroundImage": "./assets/images/adaptive-icon.png"
@@ -44,7 +44,9 @@
         }
       ],
       "expo-audio",
-      "expo-asset"
+      "expo-asset",
+      "expo-notifications",
+      "@react-native-community/datetimepicker"
     ],
     "experiments": {
       "typedRoutes": true,

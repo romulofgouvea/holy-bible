@@ -63,30 +63,6 @@ export type Study = {
 };
 
 // Reading Plan Domain Models
-export type ReadingPlanEntry = {
-  bookAbbrev: string;
-  chapter: number;
-};
-
-export type ReadingPlanDay = {
-  day: number;
-  entries: ReadingPlanEntry[];
-  isCompleted: boolean;
-  completedAt?: number;
-  group?: string;
-  label?: string;
-  reading?: string;
-};
-
-export type ReadingPlan = {
-  id: string;
-  templateId: string;
-  title: string;
-  totalDays: number;
-  startedAt: number;
-  days: ReadingPlanDay[];
-};
-
 export type ActiveBiblePlanDay = {
   isCompleted: boolean;
   completedAt?: number;
@@ -99,6 +75,8 @@ export type ActiveBiblePlan = {
   startedAt: number;
   completedDays: Record<string, ActiveBiblePlanDay>;
   completedChapters?: Record<string, ActiveBiblePlanDay>;
+  pausedAt?: number;
+  pausedMs?: number;
 };
 
 // Reader Settings Domain Models

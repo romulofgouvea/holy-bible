@@ -38,6 +38,8 @@ export const getSupportColors = (colors: ThemeColors, isDarkMode: boolean) => ({
   overlay: "rgba(0,0,0,0.7)",
   textMuted: isDarkMode ? "rgba(255,255,255,0.62)" : "rgba(0,0,0,0.55)",
   surfaceHighlight: isDarkMode ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.04)",
+  success: isDarkMode ? "#32D76E" : "#1DB954",
+  onSuccess: "#FFFFFF",
 });
 
 const DARK_BASE = {

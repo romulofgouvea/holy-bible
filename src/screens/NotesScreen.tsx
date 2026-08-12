@@ -43,6 +43,10 @@ export default function NotesScreen() {
 
   const versionBooks = useMemo(() => getBibleData(version), [version]);
 
+  const validNotes = useMemo(() => {
+    return notes.filter(n => n && n.selectedVerses && n.selectedVerses.length > 0);
+  }, [notes]);
+
   const styles = useMemo(
     () =>
       StyleSheet.create({
@@ -236,15 +240,17 @@ export default function NotesScreen() {
         onMenuPress={() => setIsDrawerVisible(true)}
       />
 
-      {notes.length === 0 ? (
+      {validNotes.length === 0 ? (
         <BiblePageEmpty
           title="Anotações"
-          description="Você ainda não possui nenhuma anotação."
+          description="Você ainda não possui nenhuma anotação. Para criar uma, selecione um ou mais versículos na tela de leitura."
           icon="file-text"
+          actionLabel="Ir para a Bíblia"
+          onAction={() => router.navigate(ROUTES.BIBLE as any)}
         />
       ) : (
         <FlashList
-          data={notes}
+          data={validNotes}
           keyExtractor={(item) => item.id}
           renderItem={renderItem}
           // @ts-ignore

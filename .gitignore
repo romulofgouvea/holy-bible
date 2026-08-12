@@ -50,7 +50,7 @@ scripts/scrapper_progress_*.json
 
 local-builds/outputs/*
 local-builds/*.json
-local-builds/*.jks
+local-builds/*.jks*
 local-builds/credentials.md
 local-builds/.env
 

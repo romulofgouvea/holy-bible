@@ -3,6 +3,9 @@ import { BibleIcon } from "@/components/BibleIcon";
 import { BibleConfirmModal } from "@/components/modals/BibleConfirmModal";
 import { COLOR_THEMES, ColorThemeKey } from "@/constants/colors";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import DateTimePicker, {
+  DateTimePickerEvent,
+} from "@react-native-community/datetimepicker";
 import * as DocumentPicker from "expo-document-picker";
 import * as FileSystem from "expo-file-system/legacy";
 import { useRouter } from "expo-router";
@@ -12,6 +15,7 @@ import {
   Platform,
   ScrollView,
   StyleSheet,
+  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -28,6 +32,7 @@ import { STORAGE_KEYS } from "../constants/storage";
 import { useBiblePlan } from "../hooks/useBiblePlan";
 import { useHistory } from "../hooks/useHistory";
 import { useReaderSettings } from "../hooks/useReaderSettings";
+import { useReadingPlanNotifications } from "../hooks/useReadingPlanNotifications";
 import { useResponsive } from "../hooks/useResponsive";
 import { useStudies } from "../hooks/useStudies";
 import { useTheme } from "../hooks/useTheme";
@@ -48,6 +53,18 @@ const COLOR_THEME_OPTIONS = Object.entries(COLOR_THEMES).map(
   }),
 );
 
+function parseTimeToDate(time: string): Date {
+  const [hh, mm] = time.split(":").map((v) => parseInt(v, 10));
+  const date = new Date();
+  date.setHours(
+    Number.isFinite(hh) ? hh : 8,
+    Number.isFinite(mm) ? mm : 0,
+    0,
+    0,
+  );
+  return date;
+}
+
 export default function ConfigurationScreen() {
   const { ms, DESIGN } = useResponsive();
   const {
@@ -59,6 +76,12 @@ export default function ConfigurationScreen() {
     hapticsEnabled,
     toggleHaptics,
   } = useTheme();
+  const {
+    enabled: isReadingPlanNotificationsEnabled,
+    time: readingPlanNotificationTime,
+    setEnabled: setReadingPlanNotificationsEnabled,
+    setTime: setReadingPlanNotificationTime,
+  } = useReadingPlanNotifications();
 
   const styles = useMemo(
     () =>
@@ -125,6 +148,23 @@ export default function ConfigurationScreen() {
         },
         modalHeader: { flexDirection: "row", alignItems: "center" },
         modalTitle: { fontWeight: "800" },
+        subItem: {
+          flexDirection: "row",
+          alignItems: "center",
+          gap: ms(DESIGN.spacing.sm),
+          marginHorizontal: ms(DESIGN.spacing.lg),
+          marginBottom: ms(DESIGN.spacing.md),
+          marginTop: -ms(DESIGN.spacing.xs),
+          paddingVertical: ms(DESIGN.spacing.sm),
+          paddingHorizontal: ms(DESIGN.spacing.md),
+          borderRadius: ms(DESIGN.borderRadius.md),
+        },
+        subItemTimeButton: {
+          borderWidth: 1,
+          borderRadius: ms(DESIGN.borderRadius.sm),
+          paddingHorizontal: ms(DESIGN.spacing.md),
+          paddingVertical: ms(DESIGN.spacing.xs),
+        },
       }),
     [ms, colors, DESIGN],
   );
@@ -153,6 +193,28 @@ export default function ConfigurationScreen() {
     useState(false);
   const [isClearPlanConfirmVisible, setIsClearPlanConfirmVisible] =
     useState(false);
+  const [isReminderTimePickerVisible, setIsReminderTimePickerVisible] =
+    useState(false);
+
+  const handleToggleReadingPlanNotifications = (value: boolean) => {
+    if (value && Platform.OS !== "web") {
+      setIsReminderTimePickerVisible(true);
+    } else {
+      setReadingPlanNotificationsEnabled(value);
+    }
+  };
+
+  const handleReminderTimeChange = (
+    event: DateTimePickerEvent,
+    selectedDate?: Date,
+  ) => {
+    setIsReminderTimePickerVisible(false);
+    if (event.type !== "set" || !selectedDate) return;
+    const hh = String(selectedDate.getHours()).padStart(2, "0");
+    const mm = String(selectedDate.getMinutes()).padStart(2, "0");
+    setReadingPlanNotificationTime(`${hh}:${mm}`);
+    setReadingPlanNotificationsEnabled(true);
+  };
 
   const handleClearCache = async () => {
     try {
@@ -224,7 +286,7 @@ export default function ConfigurationScreen() {
 
           try {
             await writeAutoBackupFile();
-          } catch (e) { }
+          } catch (e) {}
           setAlertInfo({
             title: "Sucesso",
             message: "Backup automático configurado para a pasta escolhida!",
@@ -248,7 +310,7 @@ export default function ConfigurationScreen() {
       if (Platform.OS !== "web") {
         try {
           await writeAutoBackupFile();
-        } catch (e) { }
+        } catch (e) {}
       }
     }
   };
@@ -518,6 +580,80 @@ export default function ConfigurationScreen() {
               />
             }
           />
+          <BibleDivider
+            style={{ marginLeft: ms(DESIGN.layout.settingsIconOffset) }}
+          />
+          <SettingsItem
+            label="Lembrete de leitura"
+            description="Receba uma notificação para não perder o dia"
+            icon="bell"
+            onPress={() =>
+              handleToggleReadingPlanNotifications(
+                !isReadingPlanNotificationsEnabled,
+              )
+            }
+            rightElement={
+              <BibleSwitch
+                value={isReadingPlanNotificationsEnabled}
+                onValueChange={handleToggleReadingPlanNotifications}
+              />
+            }
+          />
+          {isReadingPlanNotificationsEnabled && (
+            <View
+              style={[
+                styles.subItem,
+                {
+                  backgroundColor: colors.primary + "12",
+                  borderLeftWidth: ms(3),
+                  borderLeftColor: colors.primary,
+                },
+              ]}
+            >
+              <BibleIcon
+                name="corner-down-right"
+                color={colors.primary}
+                size={ms(DESIGN.icon.xs)}
+              />
+              <BibleText
+                style={{
+                  flex: 1,
+                  fontSize: ms(DESIGN.fontSize.md),
+                  color: colors.textMuted,
+                  fontWeight: "600",
+                }}
+              >
+                Horário do lembrete
+              </BibleText>
+              {Platform.OS === "web" ? (
+                <TimeInputField
+                  value={readingPlanNotificationTime}
+                  onChangeText={setReadingPlanNotificationTime}
+                  colors={colors}
+                  ms={ms}
+                  DESIGN={DESIGN}
+                />
+              ) : (
+                <TouchableOpacity
+                  onPress={() => setIsReminderTimePickerVisible(true)}
+                  style={[
+                    styles.subItemTimeButton,
+                    { borderColor: colors.border },
+                  ]}
+                >
+                  <BibleText
+                    style={{
+                      fontSize: ms(DESIGN.fontSize.md),
+                      color: colors.primary,
+                      fontWeight: "700",
+                    }}
+                  >
+                    {readingPlanNotificationTime}
+                  </BibleText>
+                </TouchableOpacity>
+              )}
+            </View>
+          )}
         </View>
 
         <BibleText
@@ -656,7 +792,7 @@ export default function ConfigurationScreen() {
         visible={isDrawerVisible}
         activeItem="configuration"
         onClose={() => setIsDrawerVisible(false)}
-        onSelectItem={() => { }}
+        onSelectItem={() => {}}
         onOpenDonate={() => {
           setIsDrawerVisible(false);
           setTimeout(() => setIsDonateVisible(true), 250);
@@ -802,6 +938,64 @@ export default function ConfigurationScreen() {
         visible={isChangelogVisible}
         onClose={() => setIsChangelogVisible(false)}
       />
+
+      {Platform.OS !== "web" && isReminderTimePickerVisible && (
+        <DateTimePicker
+          value={parseTimeToDate(readingPlanNotificationTime)}
+          mode="time"
+          is24Hour
+          display="default"
+          onChange={handleReminderTimeChange}
+        />
+      )}
     </View>
+  );
+}
+
+function TimeInputField({
+  value,
+  onChangeText,
+  colors,
+  ms,
+  DESIGN,
+}: {
+  value: string;
+  onChangeText: (t: string) => void;
+  colors: any;
+  ms: (v: number) => number;
+  DESIGN: any;
+}) {
+  const handleChange = (text: string) => {
+    const cleaned = text.replace(/\D/g, "");
+    let formatted = "";
+    if (cleaned.length <= 2) {
+      formatted = cleaned;
+    } else {
+      formatted = `${cleaned.slice(0, 2)}:${cleaned.slice(2, 4)}`;
+    }
+    onChangeText(formatted);
+  };
+
+  return (
+    <TextInput
+      value={value}
+      onChangeText={handleChange}
+      placeholder="HH:mm"
+      placeholderTextColor={colors.textMuted}
+      keyboardType="default"
+      maxLength={5}
+      style={{
+        width: ms(64),
+        borderWidth: 1,
+        borderColor: colors.border,
+        borderRadius: ms(DESIGN.borderRadius.md),
+        paddingHorizontal: ms(DESIGN.spacing.sm),
+        paddingVertical: ms(DESIGN.spacing.sm),
+        fontSize: ms(DESIGN.fontSize.lg),
+        textAlign: "center",
+        color: colors.onSurface,
+        ...({ outlineStyle: "none" } as any),
+      }}
+    />
   );
 }

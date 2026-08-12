@@ -160,17 +160,6 @@ export function BibleChangelogModal({
                   v{item.version}
                 </BibleText>
               </View>
-              <BibleText
-                style={[
-                  styles.dateText,
-                  {
-                    fontSize: ms(DESIGN.fontSize.xs),
-                    color: colors.textMuted,
-                  },
-                ]}
-              >
-                {item.date}
-              </BibleText>
             </View>
 
             <BibleDivider style={{ marginVertical: ms(DESIGN.spacing.tiny) }} />

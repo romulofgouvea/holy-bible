@@ -26,4 +26,7 @@ export const STORAGE_KEYS = {
   BIBLE_HISTORY: "bible_history",
   BIBLE_COMPARE: "bible_compare",
   READING_PLAN: "bible_reading_plan",
+  READING_PLAN_NOTIFICATIONS_ENABLED:
+    "bible_reading_plan_notifications_enabled",
+  READING_PLAN_NOTIFICATION_TIME: "bible_reading_plan_notification_time",
 };
