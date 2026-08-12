@@ -98,11 +98,16 @@ if (!(Test-Path $sdkPath)) {
 
 $env:ANDROID_HOME = $sdkPath
 $localProps = Join-Path $PROJECT_PATH "android" "local.properties"
-"sdk.dir=$sdkPath" | Set-Content $localProps -Encoding UTF8
+$sdkPathEscaped = $sdkPath.Replace('\', '/')
+"sdk.dir=$sdkPathEscaped" | Set-Content $localProps -Encoding UTF8
 
 $KEYSTORE_FULL = Join-Path $PROJECT_PATH "android" "app" $KEYSTORE_FILE
 
 Set-Location (Join-Path $PROJECT_PATH "android")
+
+if (-not $IsWindows) {
+    chmod +x ./gradlew
+}
 
 & $GRADLEW bundleRelease --quiet `
     "-Dorg.gradle.jvmargs=-Xmx8g -XX:MaxMetaspaceSize=512m" `

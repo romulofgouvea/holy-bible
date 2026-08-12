@@ -1,8 +1,8 @@
 $ErrorActionPreference = "Stop"
 
 $PROJECT_PATH = Split-Path $PSScriptRoot -Parent
-$LOCAL_BUILDS_PATH = Join-Path $PROJECT_PATH "local-builds\outputs"
-$SERVICE_ACCOUNT_KEY = Join-Path $PROJECT_PATH "local-builds\google-service-key.json"
+$LOCAL_BUILDS_PATH = Join-Path $PROJECT_PATH "local-builds" "outputs"
+$SERVICE_ACCOUNT_KEY = Join-Path $PROJECT_PATH "local-builds" "google-service-key.json"
 
 Write-Host ""
 Write-Host "Google Play Store Deployment" -ForegroundColor Cyan
@@ -31,7 +31,7 @@ if (!$PACKAGE_NAME) {
 }
 
 # 3. Executar o Upload via Script Oficial (Node.js + Google SDK)
-node ./local-builds/google-play-deploy.js `
+node (Join-Path $PROJECT_PATH "local-builds" "google-play-deploy.js") `
     "$PACKAGE_NAME" `
     "$SERVICE_ACCOUNT_KEY" `
     "$latestAab" `
