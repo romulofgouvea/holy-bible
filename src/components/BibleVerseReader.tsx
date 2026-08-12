@@ -555,7 +555,11 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
                   <BibleText
                     style={[styles.copyrightTitle, { color: primaryColor }]}
                   >
-                    {item.versionInfo?.name} ({item.versionInfo?.sigla})
+                    {item.versionInfo?.name} ({item.versionInfo?.sigla}
+                    {item.versionInfo?.year
+                      ? ` - ${item.versionInfo.year}`
+                      : ""}
+                    )
                   </BibleText>
                   <BibleText
                     style={[

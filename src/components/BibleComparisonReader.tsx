@@ -496,6 +496,10 @@ export const BibleComparisonReader = React.memo(
             borderRadius: ms(DESIGN.borderRadius.md),
             borderLeftWidth: ms(DESIGN.spacing.xs),
           },
+          emptyCopyrightCard: {
+            flex: 1,
+            marginHorizontal: ms(DESIGN.spacing.xs),
+          },
           copyrightTitle: {
             fontSize: ms(DESIGN.fontSize.sm),
             fontWeight: "700",
@@ -714,7 +718,11 @@ export const BibleComparisonReader = React.memo(
                         style={[styles.copyrightTitle, { color: primaryColor }]}
                       >
                         {item.primaryVersionInfo?.name} (
-                        {item.primaryVersionInfo?.sigla})
+                        {item.primaryVersionInfo?.sigla}
+                        {item.primaryVersionInfo?.year
+                          ? ` - ${item.primaryVersionInfo.year}`
+                          : ""}
+                        )
                       </BibleText>
                       <BibleText
                         style={[
@@ -726,7 +734,7 @@ export const BibleComparisonReader = React.memo(
                       </BibleText>
                     </View>
                   ) : (
-                    <View style={styles.copyrightCard} />
+                    <View style={styles.emptyCopyrightCard} />
                   )}
 
                   {item.secondCopyright ? (
@@ -743,7 +751,11 @@ export const BibleComparisonReader = React.memo(
                         style={[styles.copyrightTitle, { color: primaryColor }]}
                       >
                         {item.secondVersionInfo?.name} (
-                        {item.secondVersionInfo?.sigla})
+                        {item.secondVersionInfo?.sigla}
+                        {item.secondVersionInfo?.year
+                          ? ` - ${item.secondVersionInfo.year}`
+                          : ""}
+                        )
                       </BibleText>
                       <BibleText
                         style={[
@@ -755,7 +767,7 @@ export const BibleComparisonReader = React.memo(
                       </BibleText>
                     </View>
                   ) : (
-                    <View style={styles.copyrightCard} />
+                    <View style={styles.emptyCopyrightCard} />
                   )}
                 </View>
               );
