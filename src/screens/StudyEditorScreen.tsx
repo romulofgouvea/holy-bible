@@ -105,7 +105,7 @@ export default function StudyEditorScreen() {
         if (stored) {
           setStudyPosition(JSON.parse(stored));
         }
-      } catch (e) { }
+      } catch (e) {}
     })();
   }, []);
 
@@ -121,7 +121,7 @@ export default function StudyEditorScreen() {
         currentPos = JSON.parse(stored);
         setStudyPosition(currentPos);
       }
-    } catch (e) { }
+    } catch (e) {}
 
     const books = getBibleData(currentPos.version);
     const foundBook =
@@ -149,7 +149,7 @@ export default function StudyEditorScreen() {
             STORAGE_KEYS.CURRENT_STUDY,
             JSON.stringify(nextPos),
           );
-        } catch (e) { }
+        } catch (e) {}
 
         onInsertVerseHtml(selection);
       },

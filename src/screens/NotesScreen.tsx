@@ -7,7 +7,10 @@ import { BibleHeader } from "../components/BibleHeader";
 import { BibleIcon } from "../components/BibleIcon";
 import { BiblePageEmpty } from "../components/BiblePageEmpty";
 import { BibleText } from "../components/BibleText";
-import { BibleActionItem, BibleActionsSheet } from "../components/modals/BibleActionsSheet";
+import {
+  BibleActionItem,
+  BibleActionsSheet,
+} from "../components/modals/BibleActionsSheet";
 import { BibleConfirmModal } from "../components/modals/BibleConfirmModal";
 import { BibleNoteModal } from "../components/modals/BibleNoteModal";
 import { DonateModal } from "../components/modals/DonateModal";
@@ -97,18 +100,20 @@ export default function NotesScreen() {
   };
 
   const handleEditNote = (item: VerseNote) => {
-    const book = versionBooks.find((b) => b.abbrev === item.selectedVerses[0].bookAbbrev);
+    const book = versionBooks.find(
+      (b) => b.abbrev === item.selectedVerses[0].bookAbbrev,
+    );
     const bookName = book?.name || item.selectedVerses[0].bookAbbrev;
 
     // Reconstruct SelectedVerse array with full text for the modal
-    const verses: SelectedVerse[] = item.selectedVerses.map(v => {
+    const verses: SelectedVerse[] = item.selectedVerses.map((v) => {
       const verseText = book?.chapters[v.chapter - 1]?.[v.verse - 1] || "";
       return {
         ...v,
         bookName,
         text: verseText,
         version: version,
-      }
+      };
     });
 
     setSelectedNoteVerses(verses);
@@ -162,13 +167,19 @@ export default function NotesScreen() {
       return null;
     }
     const firstVerseInfo = item.selectedVerses[0];
-    const book = versionBooks.find((b) => b.abbrev === firstVerseInfo.bookAbbrev);
+    const book = versionBooks.find(
+      (b) => b.abbrev === firstVerseInfo.bookAbbrev,
+    );
     const bookName = book?.name || firstVerseInfo.bookAbbrev;
     const dateStr = new Date(item.updatedAt).toLocaleDateString("pt-BR");
 
-    const { ranges } = formatVerseRanges(item.selectedVerses as SelectedVerse[]);
+    const { ranges } = formatVerseRanges(
+      item.selectedVerses as SelectedVerse[],
+    );
 
-    const firstVerseText = book?.chapters[firstVerseInfo.chapter - 1]?.[firstVerseInfo.verse - 1] || "";
+    const firstVerseText =
+      book?.chapters[firstVerseInfo.chapter - 1]?.[firstVerseInfo.verse - 1] ||
+      "";
 
     return (
       <View style={styles.card}>
@@ -247,7 +258,7 @@ export default function NotesScreen() {
         visible={isDrawerVisible}
         activeItem="notes"
         onClose={() => setIsDrawerVisible(false)}
-        onSelectItem={() => { }}
+        onSelectItem={() => {}}
         onOpenDonate={() => {
           setIsDrawerVisible(false);
           setTimeout(() => setIsDonateVisible(true), 250);

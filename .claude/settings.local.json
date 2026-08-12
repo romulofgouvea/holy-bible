@@ -2,7 +2,6 @@
   "permissions": {
     "allow": [
       "PowerShell(npm *)",
-      "PowerShell(npm *)",
       "PowerShell(npx *)",
       "PowerShell(git *)",
       "PowerShell(docker *)",
@@ -16,7 +15,10 @@
       "Bash(cd *)",
       "Bash(ls *)",
       "Bash(cat *)",
-      "Bash(node -e ' *)"
+      "Bash(node -e ' *)",
+      "Bash(python3 *)"
     ]
-  }
+  },
+  "model": "sonnet",
+  "hasCompletedOnboarding": true
 }

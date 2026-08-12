@@ -173,7 +173,7 @@ export function BibleVerseActionSheet(props: VerseActionSheetProps) {
   const onShare = async () => {
     try {
       await Share.share({ message: buildText() });
-    } catch { }
+    } catch {}
   };
 
   const onHighlight = (color: string | null) => {

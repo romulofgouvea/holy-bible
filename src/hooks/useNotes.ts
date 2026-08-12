@@ -55,37 +55,46 @@ export function useNotes() {
     };
   }, [reloadFromStorage, hookInstanceId]);
 
-  const persist = useCallback((updated: VerseNote[]) => {
-    setNotes(updated);
-    AsyncStorage.setItem(STORAGE_KEYS.NOTES, JSON.stringify(updated)).then(() => {
-      // Notify other instances to reload
-      DeviceEventEmitter.emit("NOTES_UPDATED_EVENT", { senderId: hookInstanceId });
-    }).catch(
-      () => {},
-    );
+  const persist = useCallback(
+    (updated: VerseNote[]) => {
+      setNotes(updated);
+      AsyncStorage.setItem(STORAGE_KEYS.NOTES, JSON.stringify(updated))
+        .then(() => {
+          // Notify other instances to reload
+          DeviceEventEmitter.emit("NOTES_UPDATED_EVENT", {
+            senderId: hookInstanceId,
+          });
+        })
+        .catch(() => {});
 
-    AsyncStorage.getItem(STORAGE_KEYS.AUTO_BACKUP)
-      .then((val) => {
-        if (val === "true") writeAutoBackupFile().catch(() => {});
-      })
-      .catch(() => {});
-  }, [hookInstanceId]);
+      AsyncStorage.getItem(STORAGE_KEYS.AUTO_BACKUP)
+        .then((val) => {
+          if (val === "true") writeAutoBackupFile().catch(() => {});
+        })
+        .catch(() => {});
+    },
+    [hookInstanceId],
+  );
 
   const saveNote = useCallback(
-    (
-      verses: Omit<SelectedVerse, "text">[],
-      text: string,
-    ) => {
+    (verses: Omit<SelectedVerse, "text">[], text: string) => {
       if (verses.length === 0) return;
 
       const trimmedText = text.trim();
       let updatedNotes = [...notes];
 
-      const newVerseKeys = new Set(verses.map(v => `${v.bookAbbrev}-${v.chapter}-${v.verse}`));
+      const newVerseKeys = new Set(
+        verses.map((v) => `${v.bookAbbrev}-${v.chapter}-${v.verse}`),
+      );
 
       // Find any existing note that shares at least one verse with the new selection
-      const existingNoteIndex = updatedNotes.findIndex(note =>
-        note.selectedVerses && Array.isArray(note.selectedVerses) && note.selectedVerses.some(v => newVerseKeys.has(`${v.bookAbbrev}-${v.chapter}-${v.verse}`))
+      const existingNoteIndex = updatedNotes.findIndex(
+        (note) =>
+          note.selectedVerses &&
+          Array.isArray(note.selectedVerses) &&
+          note.selectedVerses.some((v) =>
+            newVerseKeys.has(`${v.bookAbbrev}-${v.chapter}-${v.verse}`),
+          ),
       );
 
       if (!trimmedText) {
@@ -99,9 +108,13 @@ export function useNotes() {
           // Merge with existing note
           const existingNote = updatedNotes[existingNoteIndex];
           const combinedVerses = [...existingNote.selectedVerses];
-          const existingKeys = new Set(existingNote.selectedVerses.map(v => `${v.bookAbbrev}-${v.chapter}-${v.verse}`));
+          const existingKeys = new Set(
+            existingNote.selectedVerses.map(
+              (v) => `${v.bookAbbrev}-${v.chapter}-${v.verse}`,
+            ),
+          );
 
-          verses.forEach(v => {
+          verses.forEach((v) => {
             if (!existingKeys.has(`${v.bookAbbrev}-${v.chapter}-${v.verse}`)) {
               combinedVerses.push(v);
             }
@@ -109,7 +122,11 @@ export function useNotes() {
 
           updatedNotes[existingNoteIndex] = {
             ...existingNote,
-            selectedVerses: combinedVerses.sort((a, b) => a.chapter !== b.chapter ? a.chapter - b.chapter : a.verse - b.verse),
+            selectedVerses: combinedVerses.sort((a, b) =>
+              a.chapter !== b.chapter
+                ? a.chapter - b.chapter
+                : a.verse - b.verse,
+            ),
             text: trimmedText,
             updatedAt: now,
           };
@@ -117,7 +134,11 @@ export function useNotes() {
           // Create new note
           const newNote: VerseNote = {
             id: makeId(),
-            selectedVerses: verses.sort((a, b) => a.chapter !== b.chapter ? a.chapter - b.chapter : a.verse - b.verse),
+            selectedVerses: verses.sort((a, b) =>
+              a.chapter !== b.chapter
+                ? a.chapter - b.chapter
+                : a.verse - b.verse,
+            ),
             text: trimmedText,
             createdAt: now,
             updatedAt: now,
@@ -144,7 +165,7 @@ export function useNotes() {
     const map: Record<string, VerseNote> = {};
     notes.forEach((note) => {
       if (note.selectedVerses && Array.isArray(note.selectedVerses)) {
-        note.selectedVerses.forEach(v => {
+        note.selectedVerses.forEach((v) => {
           const key = `${v.bookAbbrev}-${v.chapter}-${v.verse}`;
           map[key] = note;
         });

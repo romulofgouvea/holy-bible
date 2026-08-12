@@ -68,9 +68,6 @@ type VerseReaderProps = {
   onScrollEndDrag?: (event: any) => void;
   onMomentumScrollEnd?: (event: any) => void;
   scrollEventThrottle?: number;
-  rowSpacers?: Record<string, { title?: number; bottom?: number }>;
-  onTextLayout?: (verse: number, height: number) => void;
-  onTitleLayout?: (verse: number, height: number) => void;
   splitMode?: boolean;
 };
 
@@ -91,10 +88,6 @@ const VerseRow = React.memo(
     DESIGN,
     styles,
     onVersePress,
-    titleSpacer,
-    bottomSpacer,
-    onTextLayout,
-    onTitleLayout,
     splitMode,
   }: any) => {
     const blinkAnim = useRef(new Animated.Value(0)).current;
@@ -176,7 +169,7 @@ const VerseRow = React.memo(
             key={`title-${index}`}
             style={{
               color: primaryColor,
-              fontWeight: t.type === "section" ? "700" : "500",
+              fontWeight: t.type === "speech" ? "500" : "700",
               fontStyle: t.type === "speech" ? "italic" : "normal",
             }}
           >
@@ -199,61 +192,40 @@ const VerseRow = React.memo(
     };
 
     return (
-      <TouchableOpacity
-        onPress={() => {
-          impactLight();
-          onVersePress(item);
-        }}
-        activeOpacity={0.7}
-      >
-        <Animated.View
-          style={[
-            styles.verseRow,
-            { backgroundColor: animatedBackgroundColor },
-            isSelected && { borderLeftColor: primaryColor },
-          ]}
+      <View>
+        {leadingTitles.length > 0 && (
+          <View style={styles.leadingTitleContainer}>
+            {leadingTitles.map((t: any, idx: number) => (
+              <BibleText
+                key={`lead-title-${idx}`}
+                style={[
+                  styles.leadingTitleText,
+                  {
+                    color: primaryColor,
+                    fontSize: ms(DESIGN.fontSize.xl * fontSizeMultiplier),
+                    fontWeight: t.type === "speech" ? "500" : "700",
+                    fontStyle: t.type === "speech" ? "italic" : "normal",
+                  },
+                ]}
+              >
+                {t.title}
+              </BibleText>
+            ))}
+          </View>
+        )}
+        <TouchableOpacity
+          onPress={() => {
+            impactLight();
+            onVersePress(item);
+          }}
+          activeOpacity={0.7}
         >
-          {(leadingTitles.length > 0 || !!titleSpacer) && (
-            <View style={styles.leadingTitle}>
-              {leadingTitles.length > 0 ? (
-                <View
-                  key={`title-${item.chapter}-${item.verse}`}
-                  onLayout={
-                    onTitleLayout
-                      ? (e) =>
-                          onTitleLayout(item.verse, e.nativeEvent.layout.height)
-                      : undefined
-                  }
-                >
-                  {leadingTitles.map((t: any, idx: number) => (
-                    <BibleText
-                      key={`lead-title-${idx}`}
-                      style={[
-                        styles.leadingTitleText,
-                        {
-                          color: primaryColor,
-                          fontSize: ms(DESIGN.fontSize.xl * fontSizeMultiplier),
-                          fontWeight: t.type === "section" ? "700" : "500",
-                          fontStyle: t.type === "speech" ? "italic" : "normal",
-                        },
-                      ]}
-                    >
-                      {t.title}
-                    </BibleText>
-                  ))}
-                </View>
-              ) : (
-                <View style={{ height: titleSpacer }} />
-              )}
-            </View>
-          )}
-          <View
-            key={`text-${item.chapter}-${item.verse}`}
-            onLayout={
-              onTextLayout
-                ? (e) => onTextLayout(item.verse, e.nativeEvent.layout.height)
-                : undefined
-            }
+          <Animated.View
+            style={[
+              styles.verseRow,
+              { backgroundColor: animatedBackgroundColor },
+              isSelected && { borderLeftColor: primaryColor },
+            ]}
           >
             <BibleText
               variant="reading"
@@ -292,10 +264,9 @@ const VerseRow = React.memo(
                 </BibleText>
               )}
             </BibleText>
-          </View>
-          {!!bottomSpacer && <View style={{ height: bottomSpacer }} />}
-        </Animated.View>
-      </TouchableOpacity>
+          </Animated.View>
+        </TouchableOpacity>
+      </View>
     );
   },
   (prevProps, nextProps) => {
@@ -311,11 +282,7 @@ const VerseRow = React.memo(
       prevProps.readerColors.background === nextProps.readerColors.background &&
       prevProps.primaryColor === nextProps.primaryColor &&
       prevProps.styles === nextProps.styles &&
-      prevProps.titleSpacer === nextProps.titleSpacer &&
-      prevProps.bottomSpacer === nextProps.bottomSpacer &&
-      prevProps.splitMode === nextProps.splitMode &&
-      prevProps.onTextLayout === nextProps.onTextLayout &&
-      prevProps.onTitleLayout === nextProps.onTitleLayout
+      prevProps.splitMode === nextProps.splitMode
     );
   },
 );
@@ -338,9 +305,6 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
     onScrollEndDrag,
     onMomentumScrollEnd,
     scrollEventThrottle,
-    rowSpacers,
-    onTextLayout,
-    onTitleLayout,
     splitMode,
   } = props;
   const { ms, DESIGN } = useResponsive();
@@ -381,17 +345,20 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
           fontWeight: "700",
           letterSpacing: 0.3,
         },
-        leadingTitle: {
+        leadingTitleContainer: {
+          paddingTop: ms(DESIGN.spacing.md),
+          paddingHorizontal: ms(DESIGN.spacing.lg),
           paddingBottom: ms(DESIGN.spacing.xs),
         },
         leadingTitleText: {
+          fontWeight: "700",
           letterSpacing: 0.3,
         },
         verseRow: {
           paddingVertical: ms(DESIGN.spacing.md),
           paddingHorizontal: ms(DESIGN.spacing.lg),
-          borderRadius: 0,
-          marginHorizontal: 0,
+          borderRadius: ms(DESIGN.borderRadius.none),
+          marginHorizontal: ms(DESIGN.spacing.none),
           borderLeftWidth: ms(DESIGN.spacing.xs),
           borderLeftColor: "transparent",
         },
@@ -484,11 +451,32 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
         flashListRef.current?.scrollToOffset(params);
       },
     }),
-    [flatData, listRef],
+    [flatData],
   );
 
   const primaryColor =
     readerTheme === "sepia" ? readerColors.primary : colors.primary;
+
+  const getVerseMeta = (item: Extract<ListItem, { type: "verse" }>) => {
+    const isBlinking = blinkingVerse === `${item.chapter}-${item.verse}`;
+    const hasNote = !!notes[`${bookAbbrev}-${item.chapter}-${item.verse}`];
+    const highlight = highlights[`${bookAbbrev}-${item.chapter}-${item.verse}`];
+    const highlightColorId = highlight
+      ? typeof highlight === "string"
+        ? highlight
+        : highlight.color
+      : undefined;
+    const isSelected =
+      selectedKeys[`${bookAbbrev}-${item.chapter}-${item.verse}`];
+    const highlightColorHex = getHighlightColorValue(highlightColorId);
+    return {
+      isBlinking,
+      hasNote,
+      highlightColorId,
+      isSelected,
+      highlightColorHex,
+    };
+  };
 
   return (
     <View
@@ -499,16 +487,12 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
         ref={flashListRef}
         data={flatData}
         getItemType={(item) => item.type}
-        // @ts-ignore
-        estimatedItemSize={ms(
-          DESIGN.layout.settingsIconOffset * fontSizeMultiplier,
-        )}
         keyExtractor={(item, idx) => {
           if (item.type === "header") return `header-${item.title}`;
           if (item.type === "sectionTitle") return item.id;
           if (item.type === "footer")
             return `footer-${item.versionInfo?.sigla}-${idx}`;
-          return `verse-${item.chapter}-${item.verse}`;
+          return `verse-${version}-${item.chapter}-${item.verse}`;
         }}
         renderItem={({ item }) => {
           if (item.type === "header") {
@@ -544,6 +528,7 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
                     {
                       color: primaryColor,
                       fontSize: ms(DESIGN.fontSize.xl * fontSizeMultiplier),
+                      fontWeight: item.titleType === "speech" ? "500" : "700",
                       fontStyle:
                         item.titleType === "speech" ? "italic" : "normal",
                     },
@@ -585,29 +570,16 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
             );
           }
 
-          const isBlinking = blinkingVerse === `${item.chapter}-${item.verse}`;
-          const hasNote =
-            !!notes[`${bookAbbrev}-${item.chapter}-${item.verse}`];
-          const highlight =
-            highlights[`${bookAbbrev}-${item.chapter}-${item.verse}`];
-          const highlightColorId = highlight
-            ? typeof highlight === "string"
-              ? highlight
-              : highlight.color
-            : undefined;
-          const isSelected =
-            selectedKeys[`${bookAbbrev}-${item.chapter}-${item.verse}`];
-          const highlightColorHex = getHighlightColorValue(highlightColorId);
-          const spacer = rowSpacers?.[`${item.verse}`];
+          const meta = getVerseMeta(item);
 
           return (
             <VerseRow
               item={item}
-              isSelected={isSelected}
-              isHighlighted={!!highlightColorId}
-              isBlinking={isBlinking}
-              hasNote={hasNote}
-              highlightColorHex={highlightColorHex}
+              isSelected={meta.isSelected}
+              isHighlighted={!!meta.highlightColorId}
+              isBlinking={meta.isBlinking}
+              hasNote={meta.hasNote}
+              highlightColorHex={meta.highlightColorHex}
               primaryColor={primaryColor}
               readerColors={readerColors}
               fontSizeMultiplier={fontSizeMultiplier}
@@ -617,10 +589,6 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
               DESIGN={DESIGN}
               styles={styles}
               onVersePress={onVersePress}
-              titleSpacer={spacer?.title}
-              bottomSpacer={spacer?.bottom}
-              onTextLayout={onTextLayout}
-              onTitleLayout={onTitleLayout}
               splitMode={splitMode}
             />
           );

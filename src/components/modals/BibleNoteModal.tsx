@@ -1,10 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import {
-  Keyboard,
-  TextInput,
-  TouchableOpacity,
-  View
-} from "react-native";
+import { Keyboard, TextInput, TouchableOpacity, View } from "react-native";
 import { useNotes } from "../../hooks/useNotes";
 import { useResponsive } from "../../hooks/useResponsive";
 import { useTheme } from "../../hooks/useTheme";
@@ -50,20 +45,8 @@ export function BibleNoteModal({
     }
   }, [visible, verse, selectedVerses, notesMap]);
 
-  if (!verse) return null;
-
-  const handleSave = () => {
-    Keyboard.dismiss();
-    const versesToSave = selectedVerses.map(({ text, ...rest }) => rest);
-    saveNote(versesToSave, text);
-    onShowToast?.(
-      text.trim() ? "Anotação salva" : "Anotação removida",
-      "success",
-    );
-    onClose();
-  };
-
   const headerLabel = useMemo(() => {
+    if (!verse || selectedVerses.length === 0) return "";
     const sorted = [...selectedVerses].sort((a, b) =>
       a.chapter !== b.chapter ? a.chapter - b.chapter : a.verse - b.verse,
     );
@@ -71,7 +54,20 @@ export function BibleNoteModal({
     return sameChapter
       ? `${sorted[0].bookName} ${sorted[0].chapter}:${ranges}`
       : `${sorted[0].bookName} ${ranges}`;
-  }, [selectedVerses]);
+  }, [verse, selectedVerses]);
+
+  if (!verse) return null;
+
+  const handleSave = () => {
+    Keyboard.dismiss();
+    const versesToSave = selectedVerses.map(({ text: _t, ...rest }) => rest);
+    saveNote(versesToSave, text);
+    onShowToast?.(
+      text.trim() ? "Anotação salva" : "Anotação removida",
+      "success",
+    );
+    onClose();
+  };
 
   return (
     <BiblePageModal
