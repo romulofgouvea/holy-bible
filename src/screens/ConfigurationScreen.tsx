@@ -7,7 +7,7 @@ import * as DocumentPicker from "expo-document-picker";
 import * as FileSystem from "expo-file-system/legacy";
 import { useRouter } from "expo-router";
 import * as Sharing from "expo-sharing";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   Platform,
   ScrollView,
@@ -19,6 +19,7 @@ import { BibleDrawerMenu } from "../components/BibleDrawerMenu";
 import { BibleHeader } from "../components/BibleHeader";
 import { BibleSwitch } from "../components/BibleSwitch";
 import { BibleText } from "../components/BibleText";
+import { BibleChangelogModal } from "../components/modals/BibleChangelogModal";
 import { BiblePageModal } from "../components/modals/BiblePageModal";
 import { DonateModal } from "../components/modals/DonateModal";
 import { SettingsItem } from "../components/SettingsItem";
@@ -137,6 +138,9 @@ export default function ConfigurationScreen() {
   const router = useRouter();
   const [isAutoBackupEnabled, setIsAutoBackupEnabled] = useState(false);
   const [isDonateVisible, setIsDonateVisible] = useState(false);
+  const [isChangelogVisible, setIsChangelogVisible] = useState(false);
+  const versionTapCountRef = useRef(0);
+  const lastVersionTapTimeRef = useRef(0);
   const [isThemeModalVisible, setIsThemeModalVisible] = useState(false);
   const [alertInfo, setAlertInfo] = useState<{
     title: string;
@@ -220,7 +224,7 @@ export default function ConfigurationScreen() {
 
           try {
             await writeAutoBackupFile();
-          } catch (e) {}
+          } catch (e) { }
           setAlertInfo({
             title: "Sucesso",
             message: "Backup automático configurado para a pasta escolhida!",
@@ -244,7 +248,7 @@ export default function ConfigurationScreen() {
       if (Platform.OS !== "web") {
         try {
           await writeAutoBackupFile();
-        } catch (e) {}
+        } catch (e) { }
       }
     }
   };
@@ -363,6 +367,21 @@ export default function ConfigurationScreen() {
     const nextDark = !isDarkMode;
     toggleDarkMode(nextDark);
     setReaderTheme(nextDark ? "dark" : "light");
+  };
+
+  const handleVersionTap = () => {
+    const now = Date.now();
+    if (now - lastVersionTapTimeRef.current < 1500) {
+      versionTapCountRef.current += 1;
+    } else {
+      versionTapCountRef.current = 1;
+    }
+    lastVersionTapTimeRef.current = now;
+
+    if (versionTapCountRef.current >= 5) {
+      versionTapCountRef.current = 0;
+      setIsChangelogVisible(true);
+    }
   };
 
   return (
@@ -611,13 +630,33 @@ export default function ConfigurationScreen() {
             onPress={handleImport}
           />
         </View>
+
+        <TouchableOpacity
+          activeOpacity={0.7}
+          onPress={handleVersionTap}
+          style={{
+            alignItems: "center",
+            marginTop: ms(DESIGN.spacing.xl),
+            paddingVertical: ms(DESIGN.spacing.md),
+          }}
+        >
+          <BibleText
+            style={{
+              fontSize: ms(DESIGN.fontSize.sm),
+              color: colors.textMuted,
+              fontWeight: "600",
+            }}
+          >
+            Bíblia Sagrada v1.4.0
+          </BibleText>
+        </TouchableOpacity>
       </ScrollView>
 
       <BibleDrawerMenu
         visible={isDrawerVisible}
         activeItem="configuration"
         onClose={() => setIsDrawerVisible(false)}
-        onSelectItem={() => {}}
+        onSelectItem={() => { }}
         onOpenDonate={() => {
           setIsDrawerVisible(false);
           setTimeout(() => setIsDonateVisible(true), 250);
@@ -758,6 +797,11 @@ export default function ConfigurationScreen() {
           })}
         </View>
       </BiblePageModal>
+
+      <BibleChangelogModal
+        visible={isChangelogVisible}
+        onClose={() => setIsChangelogVisible(false)}
+      />
     </View>
   );
 }

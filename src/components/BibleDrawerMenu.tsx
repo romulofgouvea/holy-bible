@@ -4,20 +4,19 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   Animated,
   Modal,
-  Platform,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
   TouchableWithoutFeedback,
-  View,
+  View
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DRAWER_ITEMS } from "../constants/routes";
 import { useResponsive } from "../hooks/useResponsive";
 import { useTheme } from "../hooks/useTheme";
-import { BibleDivider } from "./BibleDivider";
 import { BibleIcon } from "./BibleIcon";
 import { BibleText } from "./BibleText";
+import { BibleChangelogModal } from "./modals/BibleChangelogModal";
 
 type MenuItem = {
   key: string;
@@ -97,6 +96,9 @@ export function BibleDrawerMenu(props: DrawerMenuProps) {
   );
 
   const [isModalVisible, setIsModalVisible] = useState(visible);
+  const [isChangelogVisible, setIsChangelogVisible] = useState(false);
+  const versionTapCountRef = useRef(0);
+  const lastVersionTapTimeRef = useRef(0);
   const router = useRouter();
   const insets = useSafeAreaInsets();
 
@@ -219,101 +221,129 @@ export function BibleDrawerMenu(props: DrawerMenuProps) {
     );
   };
 
+  const handleVersionTap = () => {
+    const now = Date.now();
+    if (now - lastVersionTapTimeRef.current < 1500) {
+      versionTapCountRef.current += 1;
+    } else {
+      versionTapCountRef.current = 1;
+    }
+    lastVersionTapTimeRef.current = now;
+
+    if (versionTapCountRef.current >= 5) {
+      versionTapCountRef.current = 0;
+      onClose();
+      setTimeout(() => setIsChangelogVisible(true), 250);
+    }
+  };
+
   return (
-    <Modal
-      visible={isModalVisible}
-      transparent
-      animationType="none"
-      onRequestClose={onClose}
-    >
-      <View style={StyleSheet.absoluteFill}>
-        <TouchableWithoutFeedback onPress={onClose}>
+    <>
+      <Modal
+        visible={isModalVisible}
+        transparent
+        animationType="none"
+        onRequestClose={onClose}
+      >
+        <View style={StyleSheet.absoluteFill}>
+          <TouchableWithoutFeedback onPress={onClose}>
+            <Animated.View
+              style={[
+                styles.backdrop,
+                { opacity: backdropOpacity, backgroundColor: colors.overlay },
+              ]}
+            />
+          </TouchableWithoutFeedback>
+
           <Animated.View
             style={[
-              styles.backdrop,
-              { opacity: backdropOpacity, backgroundColor: colors.overlay },
-            ]}
-          />
-        </TouchableWithoutFeedback>
-
-        <Animated.View
-          style={[
-            styles.drawer,
-            {
-              width: drawerWidth,
-              transform: [{ translateX }],
-              backgroundColor: colors.surface,
-              shadowColor: colors.shadow,
-            },
-          ]}
-        >
-          <View
-            style={[
-              styles.drawerHeader,
+              styles.drawer,
               {
-                backgroundColor: colors.primary,
-                paddingTop: Math.max(
-                  ms(DESIGN.fontSize.xxl),
-                  insets.top + ms(DESIGN.spacing.lg),
-                ),
-                paddingBottom: ms(DESIGN.fontSize.xxl),
-                paddingHorizontal: ms(DESIGN.spacing.lg),
+                width: drawerWidth,
+                transform: [{ translateX }],
+                backgroundColor: colors.surface,
+                shadowColor: colors.shadow,
               },
             ]}
           >
             <View
               style={[
-                styles.drawerLogo,
+                styles.drawerHeader,
                 {
-                  width: ms(44),
-                  height: ms(44),
-                  borderRadius: ms(DESIGN.borderRadius.md),
-                  marginRight: ms(DESIGN.spacing.md),
-                  backgroundColor: colors.onPrimary + "25",
+                  backgroundColor: colors.primary,
+                  paddingTop: Math.max(
+                    ms(DESIGN.fontSize.xxl),
+                    insets.top + ms(DESIGN.spacing.lg),
+                  ),
+                  paddingBottom: ms(DESIGN.fontSize.xxl),
+                  paddingHorizontal: ms(DESIGN.spacing.lg),
                 },
               ]}
             >
-              <BibleIcon name="book" size={ms(21)} color={colors.onPrimary} />
-            </View>
-            <View style={{ flex: 1, justifyContent: "center" }}>
-              <BibleText
+              <View
                 style={[
-                  styles.drawerTitle,
-                  { fontSize: ms(17), color: colors.onPrimary },
+                  styles.drawerLogo,
+                  {
+                    width: ms(44),
+                    height: ms(44),
+                    borderRadius: ms(DESIGN.borderRadius.md),
+                    marginRight: ms(DESIGN.spacing.md),
+                    backgroundColor: colors.onPrimary + "25",
+                  },
                 ]}
-                numberOfLines={1}
               >
-                Bíblia Sagrada
-              </BibleText>
-              <BibleText
-                style={{
-                  fontSize: ms(DESIGN.spacing.md),
-                  color: colors.onPrimary,
-                  opacity: 0.75,
-                  marginTop: ms(2),
-                }}
-              >
-                v{require("../../app.json").expo.version}
-              </BibleText>
+                <BibleIcon name="book" size={ms(21)} color={colors.onPrimary} />
+              </View>
+              <View style={{ flex: 1, justifyContent: "center" }}>
+                <BibleText
+                  style={[
+                    styles.drawerTitle,
+                    { fontSize: ms(17), color: colors.onPrimary },
+                  ]}
+                  numberOfLines={1}
+                >
+                  Bíblia Sagrada
+                </BibleText>
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  onPress={handleVersionTap}
+                >
+                  <BibleText
+                    style={{
+                      fontSize: ms(DESIGN.spacing.md),
+                      color: colors.onPrimary,
+                      opacity: 0.75,
+                      marginTop: ms(2),
+                    }}
+                  >
+                    v{require("../../app.json").expo.version}
+                  </BibleText>
+                </TouchableOpacity>
+              </View>
             </View>
-          </View>
 
-          <ScrollView
-            style={styles.menuList}
-            contentContainerStyle={{
-              paddingTop: ms(DESIGN.spacing.sm),
-              paddingHorizontal: ms(DESIGN.spacing.sm),
-              paddingBottom: Math.max(
-                ms(DESIGN.spacing.lg),
-                insets.bottom + ms(DESIGN.spacing.sm),
-              ),
-            }}
-            showsVerticalScrollIndicator={false}
-          >
-            {MENU_ITEMS.map(renderItem)}
-          </ScrollView>
-        </Animated.View>
-      </View>
-    </Modal>
+            <ScrollView
+              style={styles.menuList}
+              contentContainerStyle={{
+                paddingTop: ms(DESIGN.spacing.sm),
+                paddingHorizontal: ms(DESIGN.spacing.sm),
+                paddingBottom: Math.max(
+                  ms(DESIGN.spacing.lg),
+                  insets.bottom + ms(DESIGN.spacing.sm),
+                ),
+              }}
+              showsVerticalScrollIndicator={false}
+            >
+              {MENU_ITEMS.map(renderItem)}
+            </ScrollView>
+          </Animated.View>
+        </View>
+      </Modal>
+
+      <BibleChangelogModal
+        visible={isChangelogVisible}
+        onClose={() => setIsChangelogVisible(false)}
+      />
+    </>
   );
 }
