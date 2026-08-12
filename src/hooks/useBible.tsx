@@ -41,6 +41,8 @@ type BibleContextType = {
     verses: { bookAbbrev: string; chapter: number; verse: number }[],
     color: string | null,
   ) => void;
+  hasPrevChapter: boolean;
+  hasNextChapter: boolean;
   isReady: boolean;
   navigateTo: (p: {
     version?: string;
@@ -116,6 +118,25 @@ export function BibleProvider({ children }: { children: React.ReactNode }) {
   }, [versionBooks, book]);
 
   const chapterCount = currentBook.chapters.length;
+
+  const currentBookIndex = useMemo(() => {
+    return versionBooks.findIndex(
+      (item: Book) =>
+        item.abbrev.toLowerCase() === currentBook.abbrev.toLowerCase() ||
+        item.name.toLowerCase() === currentBook.name.toLowerCase(),
+    );
+  }, [versionBooks, currentBook]);
+
+  const hasPrevChapter = useMemo(() => {
+    return chapter > 1 || currentBookIndex > 0;
+  }, [chapter, currentBookIndex]);
+
+  const hasNextChapter = useMemo(() => {
+    return (
+      chapter < chapterCount ||
+      (currentBookIndex !== -1 && currentBookIndex < versionBooks.length - 1)
+    );
+  }, [chapter, chapterCount, currentBookIndex, versionBooks.length]);
 
   const sectionData = useMemo(() => {
     const verses = currentBook.chapters[chapter - 1] || [];
@@ -396,31 +417,101 @@ export function BibleProvider({ children }: { children: React.ReactNode }) {
 
   const changeChapter = useCallback(
     (deltaOrValue: number, onComplete?: (newChapter: number) => void) => {
-      let nextChapter = chapter;
-      if (deltaOrValue === 1 || deltaOrValue === -1) {
-        nextChapter = chapter + deltaOrValue;
-      } else {
-        nextChapter = deltaOrValue;
+      if (deltaOrValue === -1) {
+        if (chapter > 1) {
+          const nextChapter = chapter - 1;
+          setChapterState(nextChapter);
+          setVerseState(1);
+          updateCurrentRead(version, book, nextChapter, 1);
+          addHistoryEntry({
+            version,
+            bookAbbrev: currentBook.abbrev,
+            bookName: currentBook.name,
+            chapter: nextChapter,
+            verse: 1,
+          });
+          onComplete?.(nextChapter);
+        } else if (currentBookIndex > 0) {
+          const prevBook = versionBooks[currentBookIndex - 1];
+          const nextChapter = prevBook.chapters.length;
+          setBookState(prevBook.abbrev);
+          setChapterState(nextChapter);
+          setVerseState(1);
+          updateCurrentRead(version, prevBook.abbrev, nextChapter, 1);
+          addHistoryEntry({
+            version,
+            bookAbbrev: prevBook.abbrev,
+            bookName: prevBook.name,
+            chapter: nextChapter,
+            verse: 1,
+          });
+          onComplete?.(nextChapter);
+        }
+        return;
       }
 
+      if (deltaOrValue === 1) {
+        if (chapter < chapterCount) {
+          const nextChapter = chapter + 1;
+          setChapterState(nextChapter);
+          setVerseState(1);
+          updateCurrentRead(version, book, nextChapter, 1);
+          addHistoryEntry({
+            version,
+            bookAbbrev: currentBook.abbrev,
+            bookName: currentBook.name,
+            chapter: nextChapter,
+            verse: 1,
+          });
+          onComplete?.(nextChapter);
+        } else if (
+          currentBookIndex !== -1 &&
+          currentBookIndex < versionBooks.length - 1
+        ) {
+          const nextBook = versionBooks[currentBookIndex + 1];
+          const nextChapter = 1;
+          setBookState(nextBook.abbrev);
+          setChapterState(nextChapter);
+          setVerseState(1);
+          updateCurrentRead(version, nextBook.abbrev, nextChapter, 1);
+          addHistoryEntry({
+            version,
+            bookAbbrev: nextBook.abbrev,
+            bookName: nextBook.name,
+            chapter: nextChapter,
+            verse: 1,
+          });
+          onComplete?.(nextChapter);
+        }
+        return;
+      }
+
+      const nextChapter = deltaOrValue;
       if (nextChapter < 1 || nextChapter > chapterCount) return;
 
       setChapterState(nextChapter);
       setVerseState(1);
-
-      AsyncStorage.setItem(
-        STORAGE_KEYS.CURRENT_READ,
-        JSON.stringify({
-          version,
-          book,
-          chapter: nextChapter,
-          verse: 1,
-        }),
-      ).catch(() => {});
-
+      updateCurrentRead(version, book, nextChapter, 1);
+      addHistoryEntry({
+        version,
+        bookAbbrev: currentBook.abbrev,
+        bookName: currentBook.name,
+        chapter: nextChapter,
+        verse: 1,
+      });
       onComplete?.(nextChapter);
     },
-    [chapter, chapterCount, version, book],
+    [
+      chapter,
+      chapterCount,
+      currentBookIndex,
+      versionBooks,
+      currentBook,
+      version,
+      book,
+      updateCurrentRead,
+      addHistoryEntry,
+    ],
   );
 
   const toggleHighlight = useCallback((key: string, color: string) => {
@@ -518,6 +609,8 @@ export function BibleProvider({ children }: { children: React.ReactNode }) {
         isReady,
         navigateTo,
         changeChapter,
+        hasPrevChapter,
+        hasNextChapter,
         addHistoryEntry,
         readingPlanGoal,
         setReadingPlanGoal,

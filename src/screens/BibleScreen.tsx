@@ -55,6 +55,8 @@ export default function BibleScreen() {
     bulkToggleHighlight,
     navigateTo,
     changeChapter,
+    hasPrevChapter,
+    hasNextChapter,
     isReady,
     isSplitScreen,
     setIsSplitScreen,
@@ -1182,41 +1184,61 @@ export default function BibleScreen() {
                 },
               ]}
             >
-              <BibleIcon
-                name="chevron-left"
-                size={navIconSize}
-                containerSize={navBtnSize}
-                color={navIcon}
-                backgroundColor={navBg}
-                borderRadius={ms(DESIGN.borderRadius.md)}
-                onPress={() => handleNavigateChapter(-1)}
-                activeOpacity={0.8}
-                style={{
-                  elevation: 4,
-                  shadowColor: colors.shadow,
-                  shadowOffset: { width: 0, height: ms(DESIGN.spacing.tiny) },
-                  shadowOpacity: 0.25,
-                  shadowRadius: ms(DESIGN.spacing.xs),
-                }}
-              />
+              {hasPrevChapter ? (
+                <BibleIcon
+                  name="chevron-left"
+                  size={navIconSize}
+                  containerSize={navBtnSize}
+                  color={navIcon}
+                  backgroundColor={navBg}
+                  borderRadius={ms(DESIGN.borderRadius.md)}
+                  onPress={() => handleNavigateChapter(-1)}
+                  activeOpacity={0.8}
+                  style={{
+                    elevation: 4,
+                    shadowColor: colors.shadow,
+                    shadowOffset: { width: 0, height: ms(DESIGN.spacing.tiny) },
+                    shadowOpacity: 0.25,
+                    shadowRadius: ms(DESIGN.spacing.xs),
+                  }}
+                />
+              ) : (
+                <View
+                  style={{
+                    width: navBtnSize,
+                    height: navBtnSize,
+                  }}
+                  pointerEvents="none"
+                />
+              )}
 
-              <BibleIcon
-                name="chevron-right"
-                size={navIconSize}
-                containerSize={navBtnSize}
-                color={navIcon}
-                backgroundColor={navBg}
-                borderRadius={ms(DESIGN.borderRadius.md)}
-                onPress={() => handleNavigateChapter(1)}
-                activeOpacity={0.8}
-                style={{
-                  elevation: 4,
-                  shadowColor: colors.shadow,
-                  shadowOffset: { width: 0, height: ms(DESIGN.spacing.tiny) },
-                  shadowOpacity: 0.25,
-                  shadowRadius: ms(DESIGN.spacing.xs),
-                }}
-              />
+              {hasNextChapter ? (
+                <BibleIcon
+                  name="chevron-right"
+                  size={navIconSize}
+                  containerSize={navBtnSize}
+                  color={navIcon}
+                  backgroundColor={navBg}
+                  borderRadius={ms(DESIGN.borderRadius.md)}
+                  onPress={() => handleNavigateChapter(1)}
+                  activeOpacity={0.8}
+                  style={{
+                    elevation: 4,
+                    shadowColor: colors.shadow,
+                    shadowOffset: { width: 0, height: ms(DESIGN.spacing.tiny) },
+                    shadowOpacity: 0.25,
+                    shadowRadius: ms(DESIGN.spacing.xs),
+                  }}
+                />
+              ) : (
+                <View
+                  style={{
+                    width: navBtnSize,
+                    height: navBtnSize,
+                  }}
+                  pointerEvents="none"
+                />
+              )}
             </Animated.View>
           )}
         </View>
