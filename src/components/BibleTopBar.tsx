@@ -113,12 +113,26 @@ export const BibleTopBar = React.memo((props: BibleTopBarProps) => {
         }
         rightContent={
           <View style={{ flexDirection: "row", alignItems: "center" }}>
-            {/* <TouchableOpacity
-                            style={[styles.menuButton, { backgroundColor: 'transparent', width: ms(DESIGN.height.sm), height: ms(DESIGN.height.sm), borderRadius: ms(DESIGN.borderRadius.sm), alignItems: 'center', justifyContent: 'center' }]}
-                            onPress={onOpenAudio}
-                        >
-                            <BibleIcon name="headphones" size={ms(DESIGN.fontSize.xl)} color={headerContent} />
-                        </TouchableOpacity> */}
+            {/* {<TouchableOpacity
+              style={[
+                styles.menuButton,
+                {
+                  backgroundColor: "transparent",
+                  width: ms(DESIGN.height.sm),
+                  height: ms(DESIGN.height.sm),
+                  borderRadius: ms(DESIGN.borderRadius.sm),
+                  alignItems: "center",
+                  justifyContent: "center",
+                },
+              ]}
+              onPress={onOpenAudio}
+            >
+              <BibleIcon
+                name="headphones"
+                size={ms(DESIGN.fontSize.xl)}
+                color={headerContent}
+              />
+            </TouchableOpacity>} */}
             <TouchableOpacity
               style={[
                 styles.menuButton,

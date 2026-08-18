@@ -29,4 +29,5 @@ export const STORAGE_KEYS = {
   READING_PLAN_NOTIFICATIONS_ENABLED:
     "bible_reading_plan_notifications_enabled",
   READING_PLAN_NOTIFICATION_TIME: "bible_reading_plan_notification_time",
+  AUDIO_VOICE: "bible_audio_voice",
 };

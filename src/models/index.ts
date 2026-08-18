@@ -108,3 +108,17 @@ export interface VersionTitle {
   version: string;
   books: BookTitle[];
 }
+
+// Bible Audio Models
+export interface VerseAudioTiming {
+  verse: number;
+  start: number;
+}
+
+export interface ChapterAudioManifest {
+  version: string;
+  abbrev: string;
+  chapter: number;
+  duration: number;
+  verses: VerseAudioTiming[];
+}

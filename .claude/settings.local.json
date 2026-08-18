@@ -20,5 +20,9 @@
     ]
   },
   "model": "sonnet",
-  "hasCompletedOnboarding": true
+  "enabledMcpjsonServers": [
+    "voicebox"
+  ],
+  "hasCompletedOnboarding": true,
+  "enableAllProjectMcpServers": true
 }

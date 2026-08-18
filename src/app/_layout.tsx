@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import { Platform, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import * as SplashScreen from "expo-splash-screen";
+import { AudioSettingsProvider } from "../hooks/useAudioSettings";
 import { ReaderSettingsProvider } from "../hooks/useReaderSettings";
 import { ThemeProvider, useTheme } from "../hooks/useTheme";
 import { BibleModalProvider } from "../hooks/useBibleModals";
@@ -65,11 +66,13 @@ export default function RootLayout() {
     <SafeAreaProvider>
       <ThemeProvider>
         <ReaderSettingsProvider>
-          <BibleProvider>
-            <BibleModalProvider>
-              <AppLayout />
-            </BibleModalProvider>
-          </BibleProvider>
+          <AudioSettingsProvider>
+            <BibleProvider>
+              <BibleModalProvider>
+                <AppLayout />
+              </BibleModalProvider>
+            </BibleProvider>
+          </AudioSettingsProvider>
         </ReaderSettingsProvider>
       </ThemeProvider>
     </SafeAreaProvider>

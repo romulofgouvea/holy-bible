@@ -4,7 +4,14 @@ import {
   useAudioPlayerStatus,
 } from "expo-audio";
 import * as FileSystem from "expo-file-system/legacy";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   Animated,
   GestureResponderEvent,
@@ -16,7 +23,8 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useResponsive } from "../../hooks/useResponsive";
 import { useTheme } from "../../hooks/useTheme";
-import { AudioService, RunpodStatus } from "../../services/AudioService";
+import { ChapterAudioManifest } from "../../models";
+import { AudioService } from "../../services/AudioService";
 import { BibleIcon } from "../BibleIcon";
 import { BibleText } from "../BibleText";
 
@@ -25,16 +33,28 @@ type BibleAudioModalProps = {
   version: string;
   abbrev: string;
   chapter: number;
+  voice: string;
   onClose: () => void;
   onShowToast?: (msg: string, type?: "success" | "info" | "warning") => void;
+  onVerseChange?: (verse: number | null) => void;
+  onOpenSettings?: () => void;
 };
 
-const GENERATION_LABELS: Record<RunpodStatus, string> = {
-  IN_QUEUE: "Na fila de geração...",
-  IN_PROGRESS: "Gerando áudio...",
-  COMPLETED: "Carregando...",
-  FAILED: "Falha ao gerar.",
+export type BibleAudioModalHandle = {
+  seekToVerse: (verse: number) => void;
 };
+
+function verseAtTime(
+  manifest: ChapterAudioManifest,
+  time: number,
+): number | null {
+  let current: number | null = null;
+  for (const v of manifest.verses) {
+    if (v.start <= time) current = v.verse;
+    else break;
+  }
+  return current;
+}
 
 const SPEED_OPTIONS = [1, 1.25, 1.5, 1.75, 2] as const;
 type SpeedOption = (typeof SPEED_OPTIONS)[number];
@@ -46,20 +66,25 @@ function formatTime(seconds: number): string {
   return `${m}:${s.toString().padStart(2, "0")}`;
 }
 
-export function BibleAudioModal(props: BibleAudioModalProps) {
-  const { visible, version, abbrev, chapter, onClose } = props;
+export const BibleAudioModal = forwardRef<
+  BibleAudioModalHandle,
+  BibleAudioModalProps
+>(function BibleAudioModal(props, ref) {
+  const { visible, version, abbrev, chapter, voice, onClose } = props;
   const { ms, DESIGN } = useResponsive();
   const { colors } = useTheme();
 
   const [isLoading, setIsLoading] = useState(false);
-  const [generationStatus, setGenerationStatus] = useState<RunpodStatus | null>(
+  const [audioUrls, setAudioUrls] = useState<string[]>([]);
+  const [verseTimings, setVerseTimings] = useState<ChapterAudioManifest | null>(
     null,
   );
-  const [audioUrls, setAudioUrls] = useState<string[]>([]);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentVerseIndex, setCurrentVerseIndex] = useState(0);
   const [speed, setSpeed] = useState<SpeedOption>(1);
   const [trackWidth, setTrackWidth] = useState(0);
+
+  const hasLoadedAudio = audioUrls.length > 0;
 
   const player = useAudioPlayer();
   const status = useAudioPlayerStatus(player);
@@ -160,38 +185,68 @@ export function BibleAudioModal(props: BibleAudioModalProps) {
 
   const loadAudio = async () => {
     setIsLoading(true);
-    setGenerationStatus(null);
     try {
-      const urls = await AudioService.getAudio({
-        version,
-        abbrev,
-        chapter,
-        onGenerationStatus: (s) => setGenerationStatus(s),
-      });
+      const [urls, manifest] = await Promise.all([
+        AudioService.getAudio({
+          version,
+          abbrev,
+          chapter,
+          voice,
+        }),
+        AudioService.getVerseTimings(version, abbrev, chapter, voice),
+      ]);
       if (Array.isArray(urls) && urls.length > 0) {
+        if (manifest) setVerseTimings(manifest);
         setAudioUrls(urls);
         setIsPlaying(true);
         playVerse(0, urls);
+      } else {
+        props.onShowToast?.("Áudio não disponível nessa voz ainda.", "info");
       }
     } catch {
       props.onShowToast?.("Erro ao buscar o áudio.", "warning");
     } finally {
       setIsLoading(false);
-      setGenerationStatus(null);
     }
   };
 
   useEffect(() => {
+    if (!verseTimings) return;
+    const verse = verseAtTime(verseTimings, status.currentTime ?? 0);
+    props.onVerseChange?.(verse);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [verseTimings, status.currentTime]);
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      seekToVerse: (verse: number) => {
+        if (!verseTimings) return;
+        const timing = verseTimings.verses.find((v) => v.verse === verse);
+        if (!timing) return;
+        player.seekTo(timing.start);
+        if (!isPlaying) {
+          setIsPlaying(true);
+          player.play();
+        }
+      },
+    }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [verseTimings, isPlaying],
+  );
+
+  useEffect(() => {
     setAudioUrls([]);
+    setVerseTimings(null);
+    props.onVerseChange?.(null);
     setCurrentVerseIndex(0);
     setIsPlaying(false);
-    setGenerationStatus(null);
     player.pause();
-  }, [version, abbrev, chapter]);
+  }, [version, abbrev, chapter, voice]);
 
   const handlePlayPause = () => {
     if (isLoading) return;
-    if (audioUrls.length === 0) {
+    if (!hasLoadedAudio) {
       loadAudio();
     } else if (isPlaying) {
       player.pause();
@@ -208,7 +263,7 @@ export function BibleAudioModal(props: BibleAudioModalProps) {
     }
   };
 
-  const hasProgress = audioUrls.length > 0 && duration > 0;
+  const hasProgress = hasLoadedAudio && duration > 0;
 
   const ICON_SIZE = ms(DESIGN.icon.xl);
 
@@ -281,7 +336,7 @@ export function BibleAudioModal(props: BibleAudioModalProps) {
     [ms, colors, DESIGN, ICON_SIZE],
   );
 
-  if (!visible && audioUrls.length === 0 && !isLoading) return null;
+  if (!visible && !hasLoadedAudio && !isLoading) return null;
 
   return (
     <Animated.View
@@ -329,6 +384,27 @@ export function BibleAudioModal(props: BibleAudioModalProps) {
           <BibleText style={styles.speedText}>{speed}x</BibleText>
         </TouchableOpacity>
 
+        {props.onOpenSettings && (
+          <TouchableOpacity
+            style={[
+              styles.iconBtn,
+              {
+                backgroundColor: colors.surfaceHighlight,
+                borderWidth: 1,
+                borderColor: colors.border,
+              },
+            ]}
+            onPress={props.onOpenSettings}
+            activeOpacity={0.7}
+          >
+            <BibleIcon
+              name="settings"
+              size={ms(DESIGN.fontSize.lg)}
+              color={colors.onBackground}
+            />
+          </TouchableOpacity>
+        )}
+
         <View
           style={styles.progressWrap}
           onLayout={(e: LayoutChangeEvent) =>
@@ -374,10 +450,11 @@ export function BibleAudioModal(props: BibleAudioModalProps) {
           onPress={() => {
             player.pause();
             setIsPlaying(false);
+            props.onVerseChange?.(null);
             onClose();
           }}
         />
       </View>
     </Animated.View>
   );
-}
+});

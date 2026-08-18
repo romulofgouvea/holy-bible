@@ -6,7 +6,7 @@ import { ALIASES } from "../data/bible-version";
 import { useReaderSettings } from "../hooks/useReaderSettings";
 import { useResponsive } from "../hooks/useResponsive";
 import { useTheme } from "../hooks/useTheme";
-import { impactLight } from "../utils/haptics";
+import { impactLight, impactMedium } from "../utils/haptics";
 import { BibleIcon } from "./BibleIcon";
 import { BibleText } from "./BibleText";
 
@@ -50,12 +50,14 @@ type ListItem =
 type VerseReaderProps = {
   sections: SectionType[];
   blinkingVerse: string | null;
+  playingVerseKey?: string | null;
   highlights: Record<string, any>;
   notes: Record<string, any>;
   selectedKeys: Record<string, boolean>;
   bookAbbrev: string;
   version: string;
   onVersePress: (item: VerseItem) => void;
+  onVerseLongPress?: (item: VerseItem) => void;
   onViewableItemsChanged?: ({
     viewableItems,
   }: {
@@ -77,6 +79,7 @@ const VerseRow = React.memo(
     isSelected,
     isHighlighted,
     isBlinking,
+    isPlaying,
     hasNote,
     highlightColorHex,
     primaryColor,
@@ -88,6 +91,7 @@ const VerseRow = React.memo(
     DESIGN,
     styles,
     onVersePress,
+    onVerseLongPress,
     splitMode,
   }: any) => {
     const blinkAnim = useRef(new Animated.Value(0)).current;
@@ -117,7 +121,7 @@ const VerseRow = React.memo(
       outputRange: [
         isHighlighted
           ? highlightColorHex
-          : isSelected
+          : isSelected || isPlaying
             ? primaryLow
             : "transparent",
         primaryLow,
@@ -218,6 +222,11 @@ const VerseRow = React.memo(
             impactLight();
             onVersePress(item);
           }}
+          onLongPress={() => {
+            if (!onVerseLongPress) return;
+            impactMedium();
+            onVerseLongPress(item);
+          }}
           activeOpacity={0.7}
         >
           <Animated.View
@@ -276,6 +285,7 @@ const VerseRow = React.memo(
       prevProps.hasNote === nextProps.hasNote &&
       prevProps.isHighlighted === nextProps.isHighlighted &&
       prevProps.isBlinking === nextProps.isBlinking &&
+      prevProps.isPlaying === nextProps.isPlaying &&
       prevProps.fontSizeMultiplier === nextProps.fontSizeMultiplier &&
       prevProps.textAlign === nextProps.textAlign &&
       prevProps.shouldShowTitles === nextProps.shouldShowTitles &&
@@ -291,12 +301,14 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
   const {
     sections,
     blinkingVerse,
+    playingVerseKey,
     highlights,
     notes,
     selectedKeys,
     bookAbbrev,
     version,
     onVersePress,
+    onVerseLongPress,
     onViewableItemsChanged,
     viewabilityConfig,
     listRef,
@@ -431,14 +443,17 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
   useImperativeHandle(
     listRef,
     () => ({
-      scrollToVerse: (targetVerse: number) => {
+      scrollToVerse: (
+        targetVerse: number,
+        options?: { animated?: boolean },
+      ) => {
         const index = flatData.findIndex(
           (item) => item.type === "verse" && item.verse === targetVerse,
         );
         if (index !== -1 && flashListRef.current) {
           flashListRef.current.scrollToIndex({
             index,
-            animated: false,
+            animated: options?.animated ?? false,
             viewPosition: 0.05,
             viewOffset: 0,
           });
@@ -459,6 +474,7 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
 
   const getVerseMeta = (item: Extract<ListItem, { type: "verse" }>) => {
     const isBlinking = blinkingVerse === `${item.chapter}-${item.verse}`;
+    const isPlaying = playingVerseKey === `${item.chapter}-${item.verse}`;
     const hasNote = !!notes[`${bookAbbrev}-${item.chapter}-${item.verse}`];
     const highlight = highlights[`${bookAbbrev}-${item.chapter}-${item.verse}`];
     const highlightColorId = highlight
@@ -471,6 +487,7 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
     const highlightColorHex = getHighlightColorValue(highlightColorId);
     return {
       isBlinking,
+      isPlaying,
       hasNote,
       highlightColorId,
       isSelected,
@@ -582,6 +599,7 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
               isSelected={meta.isSelected}
               isHighlighted={!!meta.highlightColorId}
               isBlinking={meta.isBlinking}
+              isPlaying={meta.isPlaying}
               hasNote={meta.hasNote}
               highlightColorHex={meta.highlightColorHex}
               primaryColor={primaryColor}
@@ -593,6 +611,7 @@ export const BibleVerseReader = React.memo((props: VerseReaderProps) => {
               DESIGN={DESIGN}
               styles={styles}
               onVersePress={onVersePress}
+              onVerseLongPress={onVerseLongPress}
               splitMode={splitMode}
             />
           );

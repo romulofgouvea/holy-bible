@@ -1,8 +1,9 @@
+import { AudioSettingsModal } from "@/components/modals/AudioSettingsModal";
 import { BibleVerseActionSheet } from "@/components/modals/BibleVerseActionSheet";
 import { ReaderSettingsModal } from "@/components/modals/ReaderSettingsModal";
 import { Book, SelectedVerse } from "@/models";
 import { MaterialIcons } from "@expo/vector-icons";
-import { useRouter, useFocusEffect } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import React, {
   useCallback,
   useEffect,
@@ -12,11 +13,12 @@ import React, {
 } from "react";
 import {
   Animated,
+  BackHandler,
   StyleSheet,
   TouchableOpacity,
   View,
-  BackHandler,
 } from "react-native";
+import { BibleComparisonReader } from "../components/BibleComparisonReader";
 import { BibleDivider } from "../components/BibleDivider";
 import { BibleDrawerMenu } from "../components/BibleDrawerMenu";
 import { BibleIcon } from "../components/BibleIcon";
@@ -25,13 +27,16 @@ import { BibleText } from "../components/BibleText";
 import { BibleToast } from "../components/BibleToast";
 import { BibleTopBar } from "../components/BibleTopBar";
 import { BibleVerseReader } from "../components/BibleVerseReader";
-import { BibleComparisonReader } from "../components/BibleComparisonReader";
-import { BibleHistoryModal } from "../components/modals/BibleHistoryModal";
-import { BibleAudioModal } from "../components/modals/BibleAudioModal";
-import { DonateModal } from "../components/modals/DonateModal";
+import {
+  BibleAudioModal,
+  BibleAudioModalHandle,
+} from "../components/modals/BibleAudioModal";
 import { BibleConfirmModal } from "../components/modals/BibleConfirmModal";
+import { BibleHistoryModal } from "../components/modals/BibleHistoryModal";
+import { DonateModal } from "../components/modals/DonateModal";
 import { getBibleTitles } from "../data/bible-titles";
 import { getBibleData } from "../data/bible-version";
+import { useAudioSettings } from "../hooks/useAudioSettings";
 import { useBible } from "../hooks/useBible";
 import { useBibleModals } from "../hooks/useBibleModals";
 import { useNotes } from "../hooks/useNotes";
@@ -190,7 +195,7 @@ export default function BibleScreen() {
       return (
         notScrollable ||
         contentOffset.y + layoutMeasurement.height >=
-          contentSize.height - threshold
+        contentSize.height - threshold
       );
     },
     [ms, DESIGN],
@@ -398,6 +403,12 @@ export default function BibleScreen() {
   const [isHistoryModalVisible, setIsHistoryModalVisible] = useState(false);
   const [isDonateVisible, setIsDonateVisible] = useState(false);
   const [isAudioModalVisible, setIsAudioModalVisible] = useState(false);
+  const [isAudioSettingsVisible, setIsAudioSettingsVisible] = useState(false);
+  const [playingVerse, setPlayingVerse] = useState<number | null>(null);
+  const audioModalRef = useRef<BibleAudioModalHandle>(null);
+  const { selectedVoice } = useAudioSettings();
+  const playingVerseKey =
+    playingVerse !== null ? `${chapter}-${playingVerse}` : null;
 
   const navBg = readerTheme === "sepia" ? readerColors.primary : colors.primary;
   const navBtnSize = ms(DESIGN.spacing.xxl);
@@ -420,27 +431,37 @@ export default function BibleScreen() {
     [],
   );
 
+  const visibleVersesRef = useRef<Set<number>>(new Set());
+
   const handleFirstViewableItemsChanged = useCallback(
     ({ viewableItems }: { viewableItems: any[] }) => {
       const verseItem = viewableItems.find(
         (v) => v.isViewable && v.item?.type === "verse",
       );
       if (verseItem) topVisibleVerseRef.current = verseItem.item.verse;
+
+      const visible = new Set<number>();
+      for (const v of viewableItems) {
+        if (v.isViewable && v.item?.type === "verse") {
+          visible.add(v.item.verse);
+        }
+      }
+      visibleVersesRef.current = visible;
     },
     [],
   );
 
   const scrollToVerse = useCallback(
-    (targetVerse: number, targetChapter: number) => {
+    (targetVerse: number, targetChapter: number, animated = false) => {
       isAutoScrolling.current = true;
 
       if (sectionListRef.current) {
         if (typeof sectionListRef.current.scrollToVerse === "function") {
-          sectionListRef.current.scrollToVerse(targetVerse);
+          sectionListRef.current.scrollToVerse(targetVerse, { animated });
         } else {
           sectionListRef.current?.scrollToIndex({
             index: targetVerse,
-            animated: false,
+            animated,
             viewPosition: 0.05,
             viewOffset: 0,
           });
@@ -453,11 +474,13 @@ export default function BibleScreen() {
         secondSectionListRef.current
       ) {
         if (typeof secondSectionListRef.current.scrollToVerse === "function") {
-          secondSectionListRef.current.scrollToVerse(targetVerse);
+          secondSectionListRef.current.scrollToVerse(targetVerse, {
+            animated,
+          });
         } else {
           secondSectionListRef.current?.scrollToIndex({
             index: targetVerse,
-            animated: false,
+            animated,
             viewPosition: 0.05,
             viewOffset: 0,
           });
@@ -466,12 +489,22 @@ export default function BibleScreen() {
 
       setBlinkingVerse(`${targetChapter}-${targetVerse}`);
       setTimeout(() => setBlinkingVerse(null), 1000);
-      setTimeout(() => {
-        isAutoScrolling.current = false;
-      }, 500);
+      setTimeout(
+        () => {
+          isAutoScrolling.current = false;
+        },
+        animated ? 700 : 500,
+      );
     },
     [setBlinkingVerse, isSplitScreen, splitOrientation],
   );
+
+  useEffect(() => {
+    if (playingVerse === null) return;
+    if (visibleVersesRef.current.has(playingVerse)) return;
+    scrollToVerse(playingVerse, chapter, true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [playingVerse]);
 
   const handleToggleOrientation = useCallback(() => {
     setSplitOrientation((prev) =>
@@ -513,7 +546,7 @@ export default function BibleScreen() {
     [changeChapter, scrollToVerse],
   );
 
-  const onVersePress = (item: any) => {
+  const selectVerseForActions = (item: any) => {
     const verseText =
       sectionData[0]?.data.find((v: any) => v.verse === item.verse)?.text || "";
 
@@ -545,6 +578,27 @@ export default function BibleScreen() {
       return next;
     });
   };
+
+  const selectVerseForActionsRef = useRef(selectVerseForActions);
+  selectVerseForActionsRef.current = selectVerseForActions;
+
+  const isAudioModalVisibleRef = useRef(isAudioModalVisible);
+  isAudioModalVisibleRef.current = isAudioModalVisible;
+
+  const onVersePress = useCallback((item: any) => {
+    if (isAudioModalVisibleRef.current) {
+      audioModalRef.current?.seekToVerse(item.verse);
+      return;
+    }
+
+    selectVerseForActionsRef.current(item);
+  }, []);
+
+  const onVerseLongPress = useCallback((item: any) => {
+    if (!isAudioModalVisibleRef.current) return;
+
+    selectVerseForActionsRef.current(item);
+  }, []);
 
   const onActionSheetClose = () => {
     setIsActionSheetVisible(false);
@@ -909,6 +963,7 @@ export default function BibleScreen() {
                     listRef={sectionListRef}
                     sections={sectionData}
                     blinkingVerse={blinkingVerse}
+                    playingVerseKey={playingVerseKey}
                     highlights={highlights}
                     notes={notesMap}
                     version={version}
@@ -921,6 +976,7 @@ export default function BibleScreen() {
                     )}
                     bookAbbrev={currentBook.abbrev}
                     onVersePress={onVersePress}
+                    onVerseLongPress={onVerseLongPress}
                     onScroll={handleFirstScroll}
                     scrollEventThrottle={16}
                     onViewableItemsChanged={handleFirstViewableItemsChanged}
@@ -1111,6 +1167,7 @@ export default function BibleScreen() {
                     listRef={secondSectionListRef}
                     sections={secondSectionData}
                     blinkingVerse={blinkingVerse}
+                    playingVerseKey={playingVerseKey}
                     highlights={highlights}
                     notes={notesMap}
                     version={secondVersion}
@@ -1123,6 +1180,7 @@ export default function BibleScreen() {
                     )}
                     bookAbbrev={currentBook.abbrev}
                     onVersePress={onVersePress}
+                    onVerseLongPress={onVerseLongPress}
                     onScroll={handleSecondScroll}
                     scrollEventThrottle={16}
                     splitMode
@@ -1148,6 +1206,7 @@ export default function BibleScreen() {
                 listRef={sectionListRef}
                 sections={sectionData}
                 blinkingVerse={blinkingVerse}
+                playingVerseKey={playingVerseKey}
                 highlights={highlights}
                 notes={notesMap}
                 version={version}
@@ -1160,8 +1219,11 @@ export default function BibleScreen() {
                 )}
                 bookAbbrev={currentBook.abbrev}
                 onVersePress={onVersePress}
+                onVerseLongPress={onVerseLongPress}
                 onScroll={handleReaderScroll}
                 scrollEventThrottle={16}
+                onViewableItemsChanged={handleFirstViewableItemsChanged}
+                viewabilityConfig={viewabilityConfig}
               />
             </View>
           )}
@@ -1245,12 +1307,21 @@ export default function BibleScreen() {
       </Animated.View>
 
       <BibleAudioModal
+        ref={audioModalRef}
         visible={isAudioModalVisible}
         version={version}
         abbrev={currentBook.abbrev}
         chapter={chapter}
+        voice={selectedVoice}
+        onVerseChange={setPlayingVerse}
         onClose={() => setIsAudioModalVisible(false)}
         onShowToast={(msg) => show(msg)}
+        onOpenSettings={() => setIsAudioSettingsVisible(true)}
+      />
+
+      <AudioSettingsModal
+        visible={isAudioSettingsVisible}
+        onClose={() => setIsAudioSettingsVisible(false)}
       />
 
       <BibleVerseActionSheet
