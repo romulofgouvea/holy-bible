@@ -156,9 +156,21 @@ export const BibleAudioModal = forwardRef<
           url.split("?")[0].split("/").pop() || `audio-${index}.mp3`;
         const localUri = `${FileSystem.documentDirectory}${filename}`;
         const fileInfo = await FileSystem.getInfoAsync(localUri);
-        if (fileInfo.exists) {
+
+        const headResponse = await fetch(url, { method: "HEAD" });
+        const remoteSize = Number(
+          headResponse.headers.get("content-length") ?? NaN,
+        );
+
+        if (
+          fileInfo.exists &&
+          (!Number.isFinite(remoteSize) || fileInfo.size === remoteSize)
+        ) {
           playUri = localUri;
         } else {
+          if (fileInfo.exists) {
+            await FileSystem.deleteAsync(localUri, { idempotent: true });
+          }
           await FileSystem.downloadAsync(url, localUri);
           playUri = localUri;
         }

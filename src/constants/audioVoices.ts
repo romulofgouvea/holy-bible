@@ -4,8 +4,7 @@ export type AudioVoice = {
 };
 
 export const AUDIO_VOICES: AudioVoice[] = [
-  { id: "person1", name: "Person 1" },
-  { id: "alex", name: "Alex" },
+  { id: "pray-more-voice", name: "Narrador 1" },
 ];
 
-export const DEFAULT_VOICE_ID = "person1";
+export const DEFAULT_VOICE_ID = "pray-more-voice";

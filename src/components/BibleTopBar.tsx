@@ -113,7 +113,7 @@ export const BibleTopBar = React.memo((props: BibleTopBarProps) => {
         }
         rightContent={
           <View style={{ flexDirection: "row", alignItems: "center" }}>
-            {/* {<TouchableOpacity
+            <TouchableOpacity
               style={[
                 styles.menuButton,
                 {
@@ -132,7 +132,7 @@ export const BibleTopBar = React.memo((props: BibleTopBarProps) => {
                 size={ms(DESIGN.fontSize.xl)}
                 color={headerContent}
               />
-            </TouchableOpacity>} */}
+            </TouchableOpacity>
             <TouchableOpacity
               style={[
                 styles.menuButton,

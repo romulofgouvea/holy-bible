@@ -4,8 +4,8 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const VOICEBOX_URL = "http://127.0.0.1:17493";
-const VERSION = "NAA";
-const ABBREV = "Gn";
+const VERSION = "ARA";
+const ABBREV = "Sl";
 const PROFILE_NAME = "Ha momentos";
 const VOICE_ID = "person1";
 const LANGUAGE = "pt";
