@@ -7,7 +7,7 @@ const VOICEBOX_URL = "http://127.0.0.1:17493";
 const VERSION = "ARA";
 const ABBREV = "Sl";
 const PROFILE_NAME = "Ha momentos";
-const VOICE_ID = "person1";
+const VOICE_ID = "pray-more-voice";
 const LANGUAGE = "pt";
 const ONLY_CHAPTER = null;
 
