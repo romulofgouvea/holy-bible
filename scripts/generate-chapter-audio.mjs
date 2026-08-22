@@ -58,7 +58,7 @@ function getChapterPaths(chapter) {
   const r2FileBase = `${ABBREV.toLowerCase()}-${chapter}`;
   const outDir = path.join(
     repoRoot,
-    "local-scripts",
+    "scripts",
     "bible-voice-output",
     ...r2RelativeDir.split("/"),
   );

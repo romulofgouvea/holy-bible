@@ -13,6 +13,9 @@ export const ROUTES = {
   SEARCH: "/search",
   CONFIGURATION: "/configuration",
   TRASH: "/configuration/trash",
+  DOWNLOADS: "/configuration/downloads",
+  DOWNLOADS_BOOKS: (version: string) =>
+    `/configuration/downloads/${version}` as const,
   STUDY_EDITOR: (id: string) => `/studies/study/${id}` as const,
   READING_PLAN: "/reading-plan",
   NOTES: "/notes",
@@ -26,6 +29,7 @@ export const ROUTE_LABELS: Record<string, string> = {
   [ROUTES.NOTES]: "Anotações",
   [ROUTES.CONFIGURATION]: "Configurações",
   [ROUTES.TRASH]: "Lixeira de Estudos",
+  [ROUTES.DOWNLOADS]: "Downloads",
   [ROUTES.READING_PLAN]: "Plano de Leitura",
   APPEARANCE: "Aparência (Aa)",
   HISTORY: "Histórico",

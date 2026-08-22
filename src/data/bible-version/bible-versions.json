@@ -4,6 +4,7 @@
     "sigla": "ACF",
     "year": 1994,
     "publisher": "SBTB",
+    "language": "pt",
     "copyright": "Almeida Corrigida Fiel | acf ©️ 1994, 1995, 2007, 2011 Sociedade Bíblica Trinitariana do Brasil (SBTB). Todos os direitos reservados. Texto bíblico utilizado com autorização. Saiba mais sobre a SBTB. A Missão da SBTB é: Uma cópia da Bíblia Fiel ®️ para cada pessoa. Ajude-nos a cumprir nossa Missão!"
   },
   {
@@ -11,6 +12,7 @@
     "sigla": "ARA",
     "year": 1993,
     "publisher": "SBB",
+    "language": "pt",
     "copyright": "Almeida Revista e Atualizada© Copyright © 1993 Sociedade Bíblica do Brasil. Todos os direitos reservados. Texto bíblico utilizado com autorização. Saiba mais sobre a Sociedade Bíblica do Brasil www.sbb.org.br. A Sociedade Bíblica do Brasil trabalha para que a Bíblia esteja, efetivamente, ao alcance de todos e seja lida por todos. A SBB é uma entidade sem fins lucrativos, dedicada a promover o desenvolvimento integral do ser humano. Você também pode ajudar a Causa da Bíblia!"
   },
   {
@@ -18,6 +20,7 @@
     "sigla": "NAA",
     "year": 2017,
     "publisher": "SBB",
+    "language": "pt",
     "copyright": "Nova Almeida Atualizada© Copyright © 2017 Sociedade Bíblica do Brasil. Todos os direitos reservados. Texto bíblico utilizado com autorização. Saiba mais sobre a Sociedade Bíblica do Brasil www.sbb.org.br. A Sociedade Bíblica do Brasil trabalha para que a Bíblia esteja, efetivamente, ao alcance de todos e seja lida por todos. A SBB é uma entidade sem fins lucrativos, dedicada a promover o desenvolvimento integral do ser humano. Você também pode ajudar a Causa da Bíblia!"
   },
   {
@@ -25,6 +28,7 @@
     "sigla": "NVI",
     "year": 2011,
     "publisher": "Biblica",
+    "language": "pt",
     "copyright": "Nova Versão Internacional®, NVI® Copyright © 1993, 2000, 2011 by Biblica, Inc.®. Todos os direitos reservados."
   },
   {
@@ -32,6 +36,15 @@
     "sigla": "NVT",
     "year": 2016,
     "publisher": "Mundo Cristão",
+    "language": "pt",
     "copyright": "Nova Versão Transformadora © 2016 por Editora Mundo Cristão. Copyright atribuído a Tyndale House Foundation, 2021. Todos os direitos reservados."
+  },
+  {
+    "name": "English Standard Version",
+    "sigla": "ESV",
+    "year": 2001,
+    "publisher": "Crossway",
+    "language": "en",
+    "copyright": "Scripture quotations are from the ESV® Bible (The Holy Bible, English Standard Version®), copyright © 2001 by Crossway, a publishing ministry of Good News Publishers. Used by permission. All rights reserved."
   }
 ]

@@ -28,7 +28,7 @@ Reusable scripts must be inside:
 Temporary or local-only scripts must be inside:
 
 ```txt
-/local-scripts
+/scripts
 ```
 
 ---
@@ -36,7 +36,7 @@ Temporary or local-only scripts must be inside:
 ## Git Ignore
 
 ```gitignore
-/local-scripts
+/scripts
 ```
 
 ---

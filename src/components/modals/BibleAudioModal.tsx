@@ -3,7 +3,6 @@ import {
   useAudioPlayer,
   useAudioPlayerStatus,
 } from "expo-audio";
-import * as FileSystem from "expo-file-system/legacy";
 import React, {
   forwardRef,
   useEffect,
@@ -21,6 +20,7 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useAudioSettings } from "../../hooks/useAudioSettings";
 import { useResponsive } from "../../hooks/useResponsive";
 import { useTheme } from "../../hooks/useTheme";
 import { ChapterAudioManifest } from "../../models";
@@ -73,6 +73,7 @@ export const BibleAudioModal = forwardRef<
   const { visible, version, abbrev, chapter, voice, onClose } = props;
   const { ms, DESIGN } = useResponsive();
   const { colors } = useTheme();
+  const { continuousPlayback } = useAudioSettings();
 
   const [isLoading, setIsLoading] = useState(false);
   const [audioUrls, setAudioUrls] = useState<string[]>([]);
@@ -146,38 +147,9 @@ export const BibleAudioModal = forwardRef<
     }
 
     setCurrentVerseIndex(index);
-    const url = urls[index];
+    const playUri = urls[index];
 
     try {
-      let playUri = url;
-
-      try {
-        const filename =
-          url.split("?")[0].split("/").pop() || `audio-${index}.mp3`;
-        const localUri = `${FileSystem.documentDirectory}${filename}`;
-        const fileInfo = await FileSystem.getInfoAsync(localUri);
-
-        const headResponse = await fetch(url, { method: "HEAD" });
-        const remoteSize = Number(
-          headResponse.headers.get("content-length") ?? NaN,
-        );
-
-        if (
-          fileInfo.exists &&
-          (!Number.isFinite(remoteSize) || fileInfo.size === remoteSize)
-        ) {
-          playUri = localUri;
-        } else {
-          if (fileInfo.exists) {
-            await FileSystem.deleteAsync(localUri, { idempotent: true });
-          }
-          await FileSystem.downloadAsync(url, localUri);
-          playUri = localUri;
-        }
-      } catch {
-        playUri = url;
-      }
-
       player.replace(playUri);
       player.shouldCorrectPitch = true;
       player.setPlaybackRate(speed, "high");
@@ -198,23 +170,34 @@ export const BibleAudioModal = forwardRef<
   const loadAudio = async () => {
     setIsLoading(true);
     try {
-      const [urls, manifest] = await Promise.all([
-        AudioService.getAudio({
+      let localUri = await AudioService.findLocalAudioUri(
+        version,
+        abbrev,
+        chapter,
+        voice,
+      );
+      if (!localUri) {
+        localUri = await AudioService.downloadChapterAudio(
           version,
           abbrev,
           chapter,
           voice,
-        }),
-        AudioService.getVerseTimings(version, abbrev, chapter, voice),
-      ]);
-      if (Array.isArray(urls) && urls.length > 0) {
-        if (manifest) setVerseTimings(manifest);
-        setAudioUrls(urls);
-        setIsPlaying(true);
-        playVerse(0, urls);
-      } else {
-        props.onShowToast?.("Áudio não disponível nessa voz ainda.", "info");
+        );
       }
+
+      if (!localUri) {
+        props.onShowToast?.("Áudio não disponível nessa voz ainda.", "info");
+        return;
+      }
+
+      AudioService.getVerseTimings(version, abbrev, chapter, voice).then(
+        (manifest) => {
+          if (manifest) setVerseTimings(manifest);
+        },
+      );
+      setAudioUrls([localUri]);
+      setIsPlaying(true);
+      playVerse(0, [localUri]);
     } catch {
       props.onShowToast?.("Erro ao buscar o áudio.", "warning");
     } finally {
@@ -247,13 +230,24 @@ export const BibleAudioModal = forwardRef<
     [verseTimings, isPlaying],
   );
 
+  const chapterKeyRef = useRef(`${version}-${abbrev}-${chapter}-${voice}`);
+
   useEffect(() => {
+    const key = `${version}-${abbrev}-${chapter}-${voice}`;
+    const hasChapterChanged = chapterKeyRef.current !== key;
+    chapterKeyRef.current = key;
+
     setAudioUrls([]);
     setVerseTimings(null);
     props.onVerseChange?.(null);
     setCurrentVerseIndex(0);
     setIsPlaying(false);
     player.pause();
+
+    if (hasChapterChanged && continuousPlayback && visible) {
+      loadAudio();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [version, abbrev, chapter, voice]);
 
   const handlePlayPause = () => {

@@ -18,6 +18,12 @@ import { BibleListCard } from "../BibleListCard";
 import { BibleText } from "../BibleText";
 import { BiblePageModal } from "./BiblePageModal";
 
+const LANGUAGE_LABELS: Record<string, string> = {
+  pt: "Português",
+  en: "Inglês",
+};
+const LANGUAGE_ORDER = ["pt", "en"];
+
 type BibleVersionModalProps = {
   visible: boolean;
   onClose: () => void;
@@ -100,6 +106,24 @@ export function BibleVersionModal({
           justifyContent: "flex-start",
           width: "100%",
         },
+        languageGroup: {
+          gap: ms(DESIGN.spacing.sm),
+          marginBottom: ms(DESIGN.spacing.sm),
+        },
+        groupLabelRow: {
+          flexDirection: "row",
+          alignItems: "center",
+          marginVertical: ms(DESIGN.spacing.xs),
+          gap: ms(DESIGN.spacing.xs),
+        },
+        groupLabel: {
+          fontWeight: "700",
+          letterSpacing: 0.5,
+        },
+        groupLabelLine: {
+          flex: 1,
+          height: 1,
+        },
       }),
     [ms, colors, DESIGN],
   );
@@ -143,6 +167,22 @@ export function BibleVersionModal({
         normalize(item.sigla).includes(query),
     );
   }, [searchQuery]);
+
+  const groupedVersions = useMemo(() => {
+    const groups = new Map<string, BibleVersionInfo[]>();
+    filteredVersions.forEach((item) => {
+      const language = item.language || "pt";
+      if (!groups.has(language)) groups.set(language, []);
+      groups.get(language)!.push(item);
+    });
+    return LANGUAGE_ORDER.filter((language) => groups.has(language)).map(
+      (language) => ({
+        language,
+        label: LANGUAGE_LABELS[language] || language.toUpperCase(),
+        versions: groups.get(language)!,
+      }),
+    );
+  }, [filteredVersions]);
 
   const handleSelect = (item: BibleVersionInfo) => {
     onSelect(item);
@@ -295,84 +335,114 @@ export function BibleVersionModal({
         keyboardShouldPersistTaps="handled"
         keyboardDismissMode="interactive"
       >
-        {viewMode === "list" ? (
-          filteredVersions.map((item) => {
-            const isSelected = item.sigla === currentVersionSigla;
-            return (
+        {groupedVersions.map((group) => (
+          <View key={group.language}>
+            <View style={styles.groupLabelRow}>
               <View
-                key={item.sigla}
-                onLayout={
-                  isSelected
-                    ? (e) => {
-                        if (
-                          !hasScrolledRef.current &&
-                          visible &&
-                          !searchQuery
-                        ) {
-                          hasScrolledRef.current = true;
-                          const y = Math.max(
-                            0,
-                            e.nativeEvent.layout.y - ms(DESIGN.spacing.lg),
-                          );
-                          scrollViewRef.current?.scrollTo({
-                            y,
-                            animated: false,
-                          });
-                        }
-                      }
-                    : undefined
-                }
+                style={[
+                  styles.groupLabelLine,
+                  { backgroundColor: colors.border },
+                ]}
+              />
+              <BibleText
+                style={[
+                  styles.groupLabel,
+                  { color: colors.textMuted, fontSize: ms(DESIGN.fontSize.xs) },
+                ]}
               >
-                <BibleListCard
-                  title={item.name}
-                  pillText={item.sigla}
-                  isSelected={isSelected}
-                  onPress={() => handleSelect(item)}
-                />
+                {group.label.toUpperCase()}
+              </BibleText>
+              <View
+                style={[
+                  styles.groupLabelLine,
+                  { backgroundColor: colors.border },
+                ]}
+              />
+            </View>
+            {viewMode === "list" ? (
+              <View style={styles.languageGroup}>
+                {group.versions.map((item) => {
+                  const isSelected = item.sigla === currentVersionSigla;
+                  return (
+                    <View
+                      key={item.sigla}
+                      onLayout={
+                        isSelected
+                          ? (e) => {
+                              if (
+                                !hasScrolledRef.current &&
+                                visible &&
+                                !searchQuery
+                              ) {
+                                hasScrolledRef.current = true;
+                                const y = Math.max(
+                                  0,
+                                  e.nativeEvent.layout.y -
+                                    ms(DESIGN.spacing.lg),
+                                );
+                                scrollViewRef.current?.scrollTo({
+                                  y,
+                                  animated: false,
+                                });
+                              }
+                            }
+                          : undefined
+                      }
+                    >
+                      <BibleListCard
+                        title={item.name}
+                        pillText={item.sigla}
+                        isSelected={isSelected}
+                        onPress={() => handleSelect(item)}
+                      />
+                    </View>
+                  );
+                })}
               </View>
-            );
-          })
-        ) : (
-          <View style={styles.gridContainer}>
-            {filteredVersions.map((item) => {
-              const isSelected = item.sigla === currentVersionSigla;
-              return (
-                <View
-                  key={item.sigla}
-                  style={{ width: itemWidth }}
-                  onLayout={
-                    isSelected
-                      ? (e) => {
-                          if (
-                            !hasScrolledRef.current &&
-                            visible &&
-                            !searchQuery
-                          ) {
-                            hasScrolledRef.current = true;
-                            const y = Math.max(
-                              0,
-                              e.nativeEvent.layout.y - ms(DESIGN.spacing.lg),
-                            );
-                            scrollViewRef.current?.scrollTo({
-                              y,
-                              animated: false,
-                            });
-                          }
-                        }
-                      : undefined
-                  }
-                >
-                  <BibleGridBlock
-                    title={item.sigla}
-                    exactWidth={itemWidth}
-                    isSelected={isSelected}
-                    onPress={() => handleSelect(item)}
-                  />
-                </View>
-              );
-            })}
+            ) : (
+              <View style={styles.gridContainer}>
+                {group.versions.map((item) => {
+                  const isSelected = item.sigla === currentVersionSigla;
+                  return (
+                    <View
+                      key={item.sigla}
+                      style={{ width: itemWidth }}
+                      onLayout={
+                        isSelected
+                          ? (e) => {
+                              if (
+                                !hasScrolledRef.current &&
+                                visible &&
+                                !searchQuery
+                              ) {
+                                hasScrolledRef.current = true;
+                                const y = Math.max(
+                                  0,
+                                  e.nativeEvent.layout.y -
+                                    ms(DESIGN.spacing.lg),
+                                );
+                                scrollViewRef.current?.scrollTo({
+                                  y,
+                                  animated: false,
+                                });
+                              }
+                            }
+                          : undefined
+                      }
+                    >
+                      <BibleGridBlock
+                        title={item.sigla}
+                        exactWidth={itemWidth}
+                        isSelected={isSelected}
+                        onPress={() => handleSelect(item)}
+                      />
+                    </View>
+                  );
+                })}
+              </View>
+            )}
           </View>
-        )}
+        ))}
       </ScrollView>
     </BiblePageModal>
   );

@@ -14,6 +14,7 @@ export type BibleVersionInfo = {
   sigla: string;
   year: number;
   publisher: string;
+  language: string;
 };
 
 export interface HighlightItem {
@@ -122,3 +123,10 @@ export interface ChapterAudioManifest {
   duration: number;
   verses: VerseAudioTiming[];
 }
+
+export type BookDownloadSummary = {
+  abbrev: string;
+  name: string;
+  totalChapters: number;
+  downloadedChapters: number;
+};

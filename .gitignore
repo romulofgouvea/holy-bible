@@ -55,7 +55,7 @@ local-builds/credentials.md
 local-builds/.env
 
 
-local-scripts/*
+scripts/bible-voice-output/*
 scratch/*
 
 .env

@@ -16,11 +16,11 @@
  *   --delay     (opcional, default 250) intervalo em ms entre navegações de página
  *
  * Sem --book/--chapter roda uma varredura completa da versão, com progresso resumível em
- * local-scripts/compare-progress-<version>.json (retoma automaticamente se for interrompido).
+ * scripts/compare-progress-<version>.json (retoma automaticamente se for interrompido).
  *
  * Diferenças de maiúscula/minúscula são ignoradas na comparação. Quando o texto realmente diverge,
  * o script sobrescreve o versículo no JSON local com o texto raspado do bible.com e grava um
- * relatório em local-scripts/compare-report-<version>-<timestamp>.json com before/after de cada
+ * relatório em scripts/compare-report-<version>-<timestamp>.json com before/after de cada
  * atualização feita.
  *
  * Exemplos:
@@ -138,7 +138,7 @@ async function fetchRenderedHtml(page: Page, url: string): Promise<string> {
   await page.goto(url, { waitUntil: "domcontentloaded", timeout: 30000 });
   await page
     .waitForSelector("span[data-usfm]", { timeout: 20000 })
-    .catch(() => {});
+    .catch(() => { });
   return page.content();
 }
 
@@ -246,7 +246,7 @@ async function main() {
   const localBooks: Book[] = JSON.parse(fs.readFileSync(localPath, "utf8"));
 
   const isFullScan = !bookFilter && !chapterFilter;
-  const localScriptsDir = path.join(process.cwd(), "local-scripts");
+  const localScriptsDir = path.join(process.cwd(), "scripts");
   if (!fs.existsSync(localScriptsDir))
     fs.mkdirSync(localScriptsDir, { recursive: true });
   const progressPath = path.join(

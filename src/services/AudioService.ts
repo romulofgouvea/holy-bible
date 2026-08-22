@@ -1,5 +1,9 @@
+import * as FileSystem from "expo-file-system/legacy";
+import { Platform } from "react-native";
 import { DEFAULT_VOICE_ID } from "../constants/audioVoices";
 import { ChapterAudioManifest } from "../models";
+
+const IS_WEB = Platform.OS === "web";
 
 interface AudioParams {
   version: string;
@@ -7,6 +11,13 @@ interface AudioParams {
   chapter: number;
   verse?: number;
   voice?: string;
+}
+
+export const AUDIO_EXTENSIONS = ["flac", "wav", "mp3"] as const;
+
+export interface LocalChapterAudio {
+  abbrev: string;
+  chapter: number;
 }
 
 export class AudioService {
@@ -57,23 +68,21 @@ export class AudioService {
     }
 
     const resolvedVoice = voice ?? DEFAULT_VOICE_ID;
-    const path = this.getVoiceAudioPath(
-      version,
-      abbrev,
-      chapter,
-      resolvedVoice,
-      "wav",
-      verse,
-    );
-    const r2WavUrl = `${r2Base}/${path}`;
-    const r2Url = r2WavUrl.replace(/\.wav$/, ".mp3");
 
     try {
-      if (await this.checkIfExistsInR2(r2WavUrl)) {
-        return [r2WavUrl];
-      }
-      if (await this.checkIfExistsInR2(r2Url)) {
-        return [r2Url];
+      for (const ext of AUDIO_EXTENSIONS) {
+        const path = this.getVoiceAudioPath(
+          version,
+          abbrev,
+          chapter,
+          resolvedVoice,
+          ext,
+          verse,
+        );
+        const r2Url = `${r2Base}/${path}`;
+        if (await this.checkIfExistsInR2(r2Url)) {
+          return [r2Url];
+        }
       }
       return [];
     } catch (error) {
@@ -124,6 +133,150 @@ export class AudioService {
       return response.status === 200 || response.status === 206;
     } catch {
       return false;
+    }
+  }
+
+  static getLocalAudioDir(version: string, voice: string): string {
+    return `${FileSystem.documentDirectory}audios/${version.toLowerCase()}/${voice}/`;
+  }
+
+  static async ensureLocalAudioDir(
+    version: string,
+    voice: string,
+  ): Promise<string> {
+    const dir = this.getLocalAudioDir(version, voice);
+    if (IS_WEB) return dir;
+    const info = await FileSystem.getInfoAsync(dir);
+    if (!info.exists) {
+      await FileSystem.makeDirectoryAsync(dir, { intermediates: true });
+    }
+    return dir;
+  }
+
+  static async findLocalAudioUri(
+    version: string,
+    abbrev: string,
+    chapter: number,
+    voice: string,
+  ): Promise<string | null> {
+    if (IS_WEB) return null;
+    const dir = this.getLocalAudioDir(version, voice);
+    for (const ext of AUDIO_EXTENSIONS) {
+      const uri = `${dir}${abbrev.toLowerCase()}-${chapter}.${ext}`;
+      try {
+        const info = await FileSystem.getInfoAsync(uri);
+        if (info.exists && info.size > 0) return uri;
+      } catch {}
+    }
+    return null;
+  }
+
+  static async downloadChapterAudio(
+    version: string,
+    abbrev: string,
+    chapter: number,
+    voice: string,
+    onProgress?: (bytesWritten: number, bytesTotal: number) => void,
+  ): Promise<string | null> {
+    const existing = await this.findLocalAudioUri(
+      version,
+      abbrev,
+      chapter,
+      voice,
+    );
+    if (existing) return existing;
+
+    const urls = await this.getAudio({ version, abbrev, chapter, voice });
+    if (urls.length === 0) return null;
+
+    const remoteUrl = urls[0];
+    if (IS_WEB) return remoteUrl;
+
+    const ext = remoteUrl.split("?")[0].split(".").pop() || "mp3";
+    const dir = await this.ensureLocalAudioDir(version, voice);
+    const localUri = `${dir}${abbrev.toLowerCase()}-${chapter}.${ext}`;
+
+    try {
+      const resumable = FileSystem.createDownloadResumable(
+        remoteUrl,
+        localUri,
+        {},
+        onProgress
+          ? (data) =>
+              onProgress(data.totalBytesWritten, data.totalBytesExpectedToWrite)
+          : undefined,
+      );
+      const result = await resumable.downloadAsync();
+      return result?.uri ?? null;
+    } catch {
+      return null;
+    }
+  }
+
+  static async deleteChapterAudio(
+    version: string,
+    abbrev: string,
+    chapter: number,
+    voice: string,
+  ): Promise<void> {
+    if (IS_WEB) return;
+    const uri = await this.findLocalAudioUri(version, abbrev, chapter, voice);
+    if (uri) await FileSystem.deleteAsync(uri, { idempotent: true });
+  }
+
+  static async deleteVersionAudio(
+    version: string,
+    voice: string,
+  ): Promise<void> {
+    if (IS_WEB) return;
+    const dir = this.getLocalAudioDir(version, voice);
+    await FileSystem.deleteAsync(dir, { idempotent: true });
+  }
+
+  static async listDownloadedChapters(
+    version: string,
+    voice: string,
+  ): Promise<LocalChapterAudio[]> {
+    if (IS_WEB) return [];
+    const dir = this.getLocalAudioDir(version, voice);
+    try {
+      const info = await FileSystem.getInfoAsync(dir);
+      if (!info.exists) return [];
+      const files = await FileSystem.readDirectoryAsync(dir);
+      const result: LocalChapterAudio[] = [];
+      for (const file of files) {
+        const base = file.replace(/\.(flac|wav|mp3)$/i, "");
+        const idx = base.lastIndexOf("-");
+        if (idx === -1) continue;
+        const abbrev = base.slice(0, idx);
+        const chapter = Number(base.slice(idx + 1));
+        if (!abbrev || !Number.isFinite(chapter)) continue;
+        result.push({ abbrev, chapter });
+      }
+      return result;
+    } catch {
+      return [];
+    }
+  }
+
+  static async getVersionDownloadedSize(
+    version: string,
+    voice: string,
+  ): Promise<number> {
+    if (IS_WEB) return 0;
+    const dir = this.getLocalAudioDir(version, voice);
+    try {
+      const info = await FileSystem.getInfoAsync(dir);
+      if (!info.exists) return 0;
+      const files = await FileSystem.readDirectoryAsync(dir);
+      let total = 0;
+      for (const file of files) {
+        const fileInfo = await FileSystem.getInfoAsync(`${dir}${file}`);
+        if (fileInfo.exists) total += fileInfo.size;
+      }
+      return total;
+    } catch {
+      return 0;
     }
   }
 }

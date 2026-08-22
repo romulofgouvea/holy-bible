@@ -654,6 +654,15 @@ export default function ConfigurationScreen() {
               )}
             </View>
           )}
+          <BibleDivider
+            style={{ marginLeft: ms(DESIGN.layout.settingsIconOffset) }}
+          />
+          <SettingsItem
+            label="Downloads de Áudio"
+            description="Baixe capítulos para ouvir offline"
+            icon="download"
+            onPress={() => router.push(ROUTES.DOWNLOADS as any)}
+          />
         </View>
 
         <BibleText

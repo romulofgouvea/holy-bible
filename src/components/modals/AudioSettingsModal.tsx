@@ -4,9 +4,11 @@ import { AUDIO_VOICES } from "../../constants/audioVoices";
 import { useAudioSettings } from "../../hooks/useAudioSettings";
 import { useResponsive } from "../../hooks/useResponsive";
 import { useTheme } from "../../hooks/useTheme";
-import { selectionHaptic } from "../../utils/haptics";
+import { impactLight, selectionHaptic } from "../../utils/haptics";
 import { BibleIcon } from "../BibleIcon";
+import { BibleSwitch } from "../BibleSwitch";
 import { BibleText } from "../BibleText";
+import { SettingsItem } from "../SettingsItem";
 import { BiblePageModal } from "./BiblePageModal";
 
 export function AudioSettingsModal({
@@ -18,7 +20,14 @@ export function AudioSettingsModal({
 }) {
   const { ms, DESIGN } = useResponsive();
   const { colors } = useTheme();
-  const { selectedVoice, setSelectedVoice } = useAudioSettings();
+  const {
+    selectedVoice,
+    setSelectedVoice,
+    continuousPlayback,
+    setContinuousPlayback,
+    autoScroll,
+    setAutoScroll,
+  } = useAudioSettings();
 
   const styles = useMemo(
     () =>
@@ -138,6 +147,64 @@ export function AudioSettingsModal({
                   </BibleText>
                 </TouchableOpacity>
               ))}
+            </View>
+          </View>
+
+          <View style={styles.section}>
+            <BibleText
+              style={[styles.sectionTitle, { color: colors.textMuted }]}
+            >
+              Reprodução
+            </BibleText>
+            <View
+              style={{
+                borderRadius: ms(DESIGN.borderRadius.md),
+                backgroundColor: colors.surfaceHighlight,
+              }}
+            >
+              <SettingsItem
+                label="Áudio Contínuo"
+                description="Toca o áudio do capítulo automaticamente."
+                icon="repeat"
+                onPress={() => {
+                  impactLight();
+                  setContinuousPlayback(!continuousPlayback);
+                }}
+                rightElement={
+                  <BibleSwitch
+                    value={continuousPlayback}
+                    onValueChange={(val) => {
+                      impactLight();
+                      setContinuousPlayback(val);
+                    }}
+                  />
+                }
+              />
+              <View
+                style={{
+                  height: 1,
+                  backgroundColor: colors.border,
+                  marginLeft: ms(DESIGN.layout.settingsIconOffset),
+                }}
+              />
+              <SettingsItem
+                label="Rolagem Automática"
+                description="Acompanha o áudio rolando a tela até o versículo atual"
+                icon="corner-right-down"
+                onPress={() => {
+                  impactLight();
+                  setAutoScroll(!autoScroll);
+                }}
+                rightElement={
+                  <BibleSwitch
+                    value={autoScroll}
+                    onValueChange={(val) => {
+                      impactLight();
+                      setAutoScroll(val);
+                    }}
+                  />
+                }
+              />
             </View>
           </View>
         </View>

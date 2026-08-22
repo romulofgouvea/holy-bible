@@ -7,10 +7,11 @@ import {
 } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
-import { Platform, View } from "react-native";
+import { LogBox, Platform, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import * as SplashScreen from "expo-splash-screen";
 import { AudioSettingsProvider } from "../hooks/useAudioSettings";
+import { DownloadsProvider } from "../hooks/useDownloads";
 import { ReaderSettingsProvider } from "../hooks/useReaderSettings";
 import { ThemeProvider, useTheme } from "../hooks/useTheme";
 import { BibleModalProvider } from "../hooks/useBibleModals";
@@ -18,6 +19,10 @@ import { BibleProvider, useBible } from "../hooks/useBible";
 import { GlobalBibleModals } from "../components/modals/GlobalBibleModals";
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
+
+LogBox.ignoreLogs([
+  "expo-notifications: Android Push notifications (remote notifications)",
+]);
 
 function useRoutePersistence() {
   const pathname = usePathname();
@@ -67,11 +72,13 @@ export default function RootLayout() {
       <ThemeProvider>
         <ReaderSettingsProvider>
           <AudioSettingsProvider>
-            <BibleProvider>
-              <BibleModalProvider>
-                <AppLayout />
-              </BibleModalProvider>
-            </BibleProvider>
+            <DownloadsProvider>
+              <BibleProvider>
+                <BibleModalProvider>
+                  <AppLayout />
+                </BibleModalProvider>
+              </BibleProvider>
+            </DownloadsProvider>
           </AudioSettingsProvider>
         </ReaderSettingsProvider>
       </ThemeProvider>

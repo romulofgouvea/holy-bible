@@ -109,7 +109,7 @@ All shared TypeScript types live here:
 - **Screens** — must end with `Screen` (`BibleScreen.tsx`)
 - **Booleans** — prefix with `is`, `has`, `can`, or `should`
 - **Global constants** — `UPPER_SNAKE_CASE`
-- **Scripts** — kebab-case in `/scripts/`; machine-only temporaries go in `/local-scripts/` (gitignored)
+- **Scripts** — kebab-case in `/scripts/`; machine-only temporaries go in `/scripts/` (gitignored)
 
 ## Styling rules
 

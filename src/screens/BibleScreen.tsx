@@ -45,6 +45,8 @@ import { useResponsive } from "../hooks/useResponsive";
 import { useTheme } from "../hooks/useTheme";
 import { useToast } from "../hooks/useToast";
 
+const AUDIO_VIEWABILITY_CONFIG = { itemVisiblePercentThreshold: 100 };
+
 export default function BibleScreen() {
   const {
     version,
@@ -406,7 +408,7 @@ export default function BibleScreen() {
   const [isAudioSettingsVisible, setIsAudioSettingsVisible] = useState(false);
   const [playingVerse, setPlayingVerse] = useState<number | null>(null);
   const audioModalRef = useRef<BibleAudioModalHandle>(null);
-  const { selectedVoice } = useAudioSettings();
+  const { selectedVoice, autoScroll } = useAudioSettings();
   const playingVerseKey =
     playingVerse !== null ? `${chapter}-${playingVerse}` : null;
 
@@ -426,10 +428,7 @@ export default function BibleScreen() {
     topVisibleVerseRef.current = verse;
   }, [verse]);
 
-  const viewabilityConfig = useMemo(
-    () => ({ itemVisiblePercentThreshold: 0 }),
-    [],
-  );
+  const viewabilityConfig = AUDIO_VIEWABILITY_CONFIG;
 
   const visibleVersesRef = useRef<Set<number>>(new Set());
 
@@ -500,11 +499,12 @@ export default function BibleScreen() {
   );
 
   useEffect(() => {
+    if (!autoScroll) return;
     if (playingVerse === null) return;
     if (visibleVersesRef.current.has(playingVerse)) return;
     scrollToVerse(playingVerse, chapter, true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [playingVerse]);
+  }, [playingVerse, autoScroll]);
 
   const handleToggleOrientation = useCallback(() => {
     setSplitOrientation((prev) =>
