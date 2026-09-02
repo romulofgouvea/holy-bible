@@ -5,15 +5,14 @@ import { ChapterAudioManifest } from "../models";
 
 const IS_WEB = Platform.OS === "web";
 
-interface AudioParams {
-  version: string;
-  abbrev: string;
-  chapter: number;
-  verse?: number;
-  voice?: string;
-}
+export const AUDIO_EXTENSIONS = ["mp3", "wav", "flac"] as const;
 
-export const AUDIO_EXTENSIONS = ["flac", "wav", "mp3"] as const;
+const CHAPTER_DOWNLOAD_MAX_ATTEMPTS = 3;
+const CHAPTER_DOWNLOAD_RETRY_BASE_DELAY_MS = 1200;
+
+function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 export interface LocalChapterAudio {
   abbrev: string;
@@ -44,51 +43,9 @@ export class AudioService {
     chapter: number,
     voice: string,
     ext: string,
-    verse?: number,
   ): string {
-    const file = verse
-      ? `${abbrev.toLowerCase()}-${chapter}-${verse}`
-      : `${abbrev.toLowerCase()}-${chapter}`;
+    const file = `${abbrev.toLowerCase()}-${chapter}`;
     return `${version.toLowerCase()}/audios/${voice}/${file}.${ext}`;
-  }
-
-  static async getAudio({
-    version,
-    abbrev,
-    chapter,
-    verse,
-    voice,
-  }: AudioParams): Promise<string[]> {
-    const r2Base = this.getR2BaseUrl();
-    if (!r2Base) {
-      console.error(
-        "AudioService: R2 não configurado (EXPO_PUBLIC_R2_PUBLIC_URL ou EXPO_PUBLIC_R2_ACCOUNT_ID/EXPO_PUBLIC_R2_BUCKET_NAME ausentes no .env).",
-      );
-      return [];
-    }
-
-    const resolvedVoice = voice ?? DEFAULT_VOICE_ID;
-
-    try {
-      for (const ext of AUDIO_EXTENSIONS) {
-        const path = this.getVoiceAudioPath(
-          version,
-          abbrev,
-          chapter,
-          resolvedVoice,
-          ext,
-          verse,
-        );
-        const r2Url = `${r2Base}/${path}`;
-        if (await this.checkIfExistsInR2(r2Url)) {
-          return [r2Url];
-        }
-      }
-      return [];
-    } catch (error) {
-      console.error("Erro ao buscar áudio:", error);
-      return [];
-    }
   }
 
   static async getVerseTimings(
@@ -118,21 +75,6 @@ export class AudioService {
       return (await response.json()) as ChapterAudioManifest;
     } catch {
       return null;
-    }
-  }
-
-  private static async checkIfExistsInR2(url: string): Promise<boolean> {
-    try {
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 5000);
-      const response = await fetch(url, {
-        method: "HEAD",
-        signal: controller.signal,
-      });
-      clearTimeout(timeout);
-      return response.status === 200 || response.status === 206;
-    } catch {
-      return false;
     }
   }
 
@@ -186,31 +128,114 @@ export class AudioService {
     );
     if (existing) return existing;
 
-    const urls = await this.getAudio({ version, abbrev, chapter, voice });
-    if (urls.length === 0) return null;
-
-    const remoteUrl = urls[0];
-    if (IS_WEB) return remoteUrl;
-
-    const ext = remoteUrl.split("?")[0].split(".").pop() || "mp3";
-    const dir = await this.ensureLocalAudioDir(version, voice);
-    const localUri = `${dir}${abbrev.toLowerCase()}-${chapter}.${ext}`;
-
-    try {
-      const resumable = FileSystem.createDownloadResumable(
-        remoteUrl,
-        localUri,
-        {},
-        onProgress
-          ? (data) =>
-              onProgress(data.totalBytesWritten, data.totalBytesExpectedToWrite)
-          : undefined,
+    for (let attempt = 1; attempt <= CHAPTER_DOWNLOAD_MAX_ATTEMPTS; attempt++) {
+      const outcome = await this.attemptChapterDownload(
+        version,
+        abbrev,
+        chapter,
+        voice,
+        onProgress,
       );
-      const result = await resumable.downloadAsync();
-      return result?.uri ?? null;
-    } catch {
-      return null;
+      if (outcome.status === "ok") return outcome.uri;
+      if (outcome.status === "unavailable") return null;
+      if (attempt < CHAPTER_DOWNLOAD_MAX_ATTEMPTS) {
+        await delay(CHAPTER_DOWNLOAD_RETRY_BASE_DELAY_MS * attempt);
+      }
     }
+    return null;
+  }
+
+  private static buildChapterAudioUrls(
+    version: string,
+    abbrev: string,
+    chapter: number,
+    voice: string,
+  ): string[] {
+    const r2Base = this.getR2BaseUrl();
+    if (!r2Base) return [];
+    const resolvedVoice = voice || DEFAULT_VOICE_ID;
+    return AUDIO_EXTENSIONS.map(
+      (ext) =>
+        `${r2Base}/${this.getVoiceAudioPath(
+          version,
+          abbrev,
+          chapter,
+          resolvedVoice,
+          ext,
+        )}`,
+    );
+  }
+
+  private static async attemptChapterDownload(
+    version: string,
+    abbrev: string,
+    chapter: number,
+    voice: string,
+    onProgress?: (bytesWritten: number, bytesTotal: number) => void,
+  ): Promise<
+    | { status: "ok"; uri: string }
+    | { status: "unavailable" }
+    | { status: "error" }
+  > {
+    const candidates = this.buildChapterAudioUrls(
+      version,
+      abbrev,
+      chapter,
+      voice,
+    );
+    if (candidates.length === 0) return { status: "unavailable" };
+
+    if (IS_WEB) return { status: "ok", uri: candidates[0] };
+
+    const dir = await this.ensureLocalAudioDir(version, voice);
+    let sawServerError = false;
+
+    for (const remoteUrl of candidates) {
+      const ext = remoteUrl.split("?")[0].split(".").pop() || "mp3";
+      const localUri = `${dir}${abbrev.toLowerCase()}-${chapter}.${ext}`;
+
+      try {
+        const resumable = FileSystem.createDownloadResumable(
+          remoteUrl,
+          localUri,
+          {},
+          onProgress
+            ? (data) =>
+                onProgress(
+                  data.totalBytesWritten,
+                  data.totalBytesExpectedToWrite,
+                )
+            : undefined,
+        );
+        const result = await resumable.downloadAsync();
+
+        if (!result?.uri) continue;
+
+        if (result.status === 404 || result.status === 403) {
+          await FileSystem.deleteAsync(result.uri, { idempotent: true });
+          continue;
+        }
+        if (result.status && result.status >= 400) {
+          await FileSystem.deleteAsync(result.uri, { idempotent: true });
+          sawServerError = true;
+          continue;
+        }
+
+        const info = await FileSystem.getInfoAsync(result.uri);
+        if (!info.exists || info.size === 0) {
+          await FileSystem.deleteAsync(result.uri, { idempotent: true });
+          sawServerError = true;
+          continue;
+        }
+
+        return { status: "ok", uri: result.uri };
+      } catch {
+        await FileSystem.deleteAsync(localUri, { idempotent: true });
+        sawServerError = true;
+      }
+    }
+
+    return sawServerError ? { status: "error" } : { status: "unavailable" };
   }
 
   static async deleteChapterAudio(

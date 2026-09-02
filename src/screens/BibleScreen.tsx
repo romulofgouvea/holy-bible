@@ -197,7 +197,7 @@ export default function BibleScreen() {
       return (
         notScrollable ||
         contentOffset.y + layoutMeasurement.height >=
-        contentSize.height - threshold
+          contentSize.height - threshold
       );
     },
     [ms, DESIGN],
@@ -1317,6 +1317,11 @@ export default function BibleScreen() {
         onClose={() => setIsAudioModalVisible(false)}
         onShowToast={(msg) => show(msg)}
         onOpenSettings={() => setIsAudioSettingsVisible(true)}
+        onRequestNextChapter={() => {
+          if (!hasNextChapter) return false;
+          handleNavigateChapter(1);
+          return true;
+        }}
       />
 
       <AudioSettingsModal

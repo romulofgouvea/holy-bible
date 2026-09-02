@@ -5,6 +5,25 @@ export type ChangelogItem = {
 
 export const CHANGELOG_DATA: ChangelogItem[] = [
   {
+    version: "1.4.2",
+    highlights: [
+      "Nova aba de marcações por cor na tela de Anotações, com filtro por cor",
+      "Pesquisa passa a diferenciar acentos quando você os digita",
+      "Correção na troca de versão ao inserir versículos em um estudo",
+      "Ajustes visuais nos menus de ações e nos cartões de anotações",
+    ],
+  },
+  {
+    version: "1.4.1",
+    highlights: [
+      "Reprodução em áudio dos capítulos, com seleção de voz",
+      "Nova tela de configuração de vozes para narração",
+      "Gerenciamento de downloads para leitura offline por versão e livro",
+      "Nova versão em inglês disponível: English Standard Version (ESV)",
+      "Organização das versões bíblicas por idioma",
+    ],
+  },
+  {
     version: "1.4.0",
     highlights: [
       "Lembretes diários para o plano de leitura, com horário configurável",

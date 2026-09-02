@@ -2,7 +2,7 @@
   "expo": {
     "name": "Bíblia Online",
     "slug": "holy-bible",
-    "version": "1.4.1",
+    "version": "1.4.2",
     "orientation": "default",
     "icon": "./assets/images/icon.png",
     "scheme": "holybible",
@@ -16,7 +16,7 @@
     },
     "android": {
       "package": "br.com.stevanini.holybible",
-      "versionCode": 33,
+      "versionCode": 34,
       "adaptiveIcon": {
         "backgroundColor": "#008080",
         "foregroundImage": "./assets/images/adaptive-icon.png"
@@ -46,7 +46,18 @@
       "expo-audio",
       "expo-asset",
       "expo-notifications",
-      "@react-native-community/datetimepicker"
+      "@react-native-community/datetimepicker",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "enableMinifyInReleaseBuilds": true,
+            "enableShrinkResourcesInReleaseBuilds": true,
+            "enablePngCrunchInReleaseBuilds": true,
+            "extraProguardRules": "-keep,allowobfuscation,allowshrinking class expo.modules.** { *; }\n-keep class com.facebook.hermes.unicode.** { *; }\n-keep class com.facebook.jni.** { *; }\n-keepclassmembers class * { @com.facebook.proguard.annotations.DoNotStrip *; @com.facebook.common.internal.DoNotStrip *; }\n-keep @com.facebook.proguard.annotations.DoNotStrip class *\n-dontwarn com.facebook.react.**\n-dontwarn okio.**"
+          }
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

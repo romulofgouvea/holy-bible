@@ -4,8 +4,8 @@ import React, { useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Platform,
+  Pressable,
   StyleSheet,
-  TouchableOpacity,
   View,
 } from "react-native";
 import { BibleDivider } from "../components/BibleDivider";
@@ -14,6 +14,7 @@ import { BibleIcon } from "../components/BibleIcon";
 import { BibleSkeleton } from "../components/BibleSkeleton";
 import { BibleText } from "../components/BibleText";
 import { BibleConfirmModal } from "../components/modals/BibleConfirmModal";
+import { SettingsItem } from "../components/SettingsItem";
 import { ALIASES } from "../data/bible-version";
 import { useDownloads } from "../hooks/useDownloads";
 import { useResponsive } from "../hooks/useResponsive";
@@ -46,12 +47,16 @@ export default function DownloadsBooksScreen() {
     totalSizeBytes,
     downloadingBook,
     bookProgress,
-    isBulkDownloading,
-    bulkBookProgress,
-    isOtherVersionDownloading,
-    downloadBook,
+    queuedAbbrevs,
+    queueCount,
+    isBusy,
+    failedAbbrevs,
+    failedBookCount,
+    failedChapterCount,
+    enqueueBook,
     downloadAllBooks,
-    cancelDownload,
+    retryFailedBooks,
+    cancelAll,
     deleteBook,
     deleteVersion,
   } = useDownloads(selectedVersion);
@@ -61,147 +66,309 @@ export default function DownloadsBooksScreen() {
     [selectedVersion],
   );
 
-  const isFullyDownloaded = useMemo(
-    () =>
-      summaries.length > 0 &&
-      summaries.every((s) => s.downloadedChapters === s.totalChapters),
-    [summaries],
+  const totals = useMemo(() => {
+    let downloadedChapters = 0;
+    let totalChapters = 0;
+    for (const s of summaries) {
+      downloadedChapters += s.downloadedChapters;
+      totalChapters += s.totalChapters;
+    }
+    return { downloadedChapters, totalChapters };
+  }, [summaries]);
+
+  const isFullyDownloaded =
+    summaries.length > 0 && totals.downloadedChapters === totals.totalChapters;
+
+  const downloadingBookName = useMemo(
+    () => summaries.find((s) => s.abbrev === downloadingBook)?.name ?? "",
+    [summaries, downloadingBook],
   );
 
   const styles = useMemo(
     () =>
       StyleSheet.create({
         container: { flex: 1 },
-        summaryBar: {
-          marginHorizontal: ms(DESIGN.spacing.lg),
-          marginTop: ms(DESIGN.spacing.md),
-          marginBottom: ms(DESIGN.spacing.md),
-          padding: ms(DESIGN.spacing.lg),
+        card: {
           borderRadius: ms(DESIGN.borderRadius.lg),
           borderWidth: 1,
-          gap: ms(DESIGN.spacing.sm),
+          overflow: "hidden",
+          elevation: 1,
+          shadowOffset: { width: 0, height: 1 },
+          shadowOpacity: 0.1,
+          shadowRadius: 2,
         },
-        summaryRow: {
+        statusRow: {
           flexDirection: "row",
           alignItems: "center",
-          justifyContent: "space-between",
-        },
-        actionsRow: {
-          flexDirection: "row",
           gap: ms(DESIGN.spacing.sm),
-        },
-        actionBtn: {
-          flex: 1,
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: ms(DESIGN.spacing.xs),
+          marginHorizontal: ms(DESIGN.spacing.lg),
+          marginBottom: ms(DESIGN.spacing.md),
+          marginTop: -ms(DESIGN.spacing.xs),
           paddingVertical: ms(DESIGN.spacing.sm),
+          paddingHorizontal: ms(DESIGN.spacing.md),
           borderRadius: ms(DESIGN.borderRadius.md),
-          borderWidth: 1,
+          borderLeftWidth: ms(3),
         },
-        listContent: {
+        sectionLabel: {
+          marginTop: ms(DESIGN.spacing.xl),
+          marginLeft: ms(DESIGN.spacing.sm),
+          marginBottom: ms(DESIGN.spacing.sm),
+          fontSize: ms(DESIGN.fontSize.md),
+          fontWeight: "700",
+        },
+        bookCard: {
+          flexDirection: "row",
+          alignItems: "center",
+          gap: ms(DESIGN.spacing.md),
           paddingHorizontal: ms(DESIGN.spacing.lg),
-          paddingBottom: ms(DESIGN.layout.listPaddingBottom),
-        },
-        card: {
+          paddingVertical: ms(DESIGN.spacing.md),
           marginBottom: ms(DESIGN.spacing.sm),
           borderRadius: ms(DESIGN.borderRadius.lg),
-          overflow: "hidden",
           borderWidth: 1,
         },
-        cardContent: {
-          flexDirection: "row",
-          alignItems: "center",
-          paddingHorizontal: ms(DESIGN.spacing.md),
-          paddingVertical: ms(DESIGN.spacing.md),
-          gap: ms(DESIGN.spacing.md),
-        },
-        cardText: { flex: 1, gap: ms(DESIGN.spacing.tiny) },
-        cardTitle: { fontWeight: "700" },
+        bookText: { flex: 1, gap: ms(DESIGN.spacing.tiny) },
+        bookTitle: { fontWeight: "700" },
       }),
     [ms, DESIGN],
+  );
+
+  const dividerStyle = {
+    marginLeft: ms(DESIGN.layout.settingsIconOffset),
+  };
+
+  const listHeader = (
+    <View>
+      <View
+        style={[
+          styles.card,
+          {
+            backgroundColor: colors.surface,
+            borderColor: colors.border,
+            shadowColor: colors.shadow,
+          },
+        ]}
+      >
+        <SettingsItem
+          icon="hard-drive"
+          label="Armazenamento"
+          description={
+            totals.totalChapters > 0
+              ? `${totals.downloadedChapters} de ${totals.totalChapters} capítulos baixados`
+              : "Nenhum áudio baixado"
+          }
+          rightElement={
+            <BibleText
+              style={{
+                fontSize: ms(DESIGN.fontSize.md),
+                fontWeight: "700",
+                color: colors.textMuted,
+              }}
+            >
+              {formatSize(totalSizeBytes)}
+            </BibleText>
+          }
+        />
+
+        {!isWeb && !isFullyDownloaded && (
+          <>
+            <BibleDivider style={dividerStyle} />
+            <SettingsItem
+              icon="download-cloud"
+              label="Baixar todos os livros"
+              description="Adiciona os livros restantes à fila de download"
+              onPress={() => downloadAllBooks()}
+            />
+          </>
+        )}
+
+        {!isWeb && isBusy && (
+          <>
+            <BibleDivider style={dividerStyle} />
+            <SettingsItem
+              icon="x"
+              label="Cancelar downloads"
+              description="Interrompe a fila de download atual"
+              isDanger
+              onPress={() => cancelAll()}
+            />
+          </>
+        )}
+
+        {!isWeb && totalSizeBytes > 0 && (
+          <>
+            <BibleDivider style={dividerStyle} />
+            <SettingsItem
+              icon="trash-2"
+              label="Excluir todos os áudios"
+              description="Remove os áudios baixados desta versão"
+              isDanger
+              onPress={() => setDeleteTarget({ type: "version" })}
+            />
+          </>
+        )}
+      </View>
+
+      {isWeb && (
+        <BibleText
+          style={{
+            marginTop: ms(DESIGN.spacing.md),
+            marginHorizontal: ms(DESIGN.spacing.sm),
+            fontSize: ms(DESIGN.fontSize.sm),
+            color: colors.textMuted,
+          }}
+        >
+          Downloads para uso offline não estão disponíveis na versão web. Use o
+          app instalado no celular.
+        </BibleText>
+      )}
+
+      {!isWeb && isBusy && (
+        <View
+          style={[
+            styles.statusRow,
+            {
+              marginTop: ms(DESIGN.spacing.md),
+              backgroundColor: colors.primary + "12",
+              borderLeftColor: colors.primary,
+            },
+          ]}
+        >
+          <ActivityIndicator color={colors.primary} size="small" />
+          <BibleText
+            style={{
+              flex: 1,
+              fontSize: ms(DESIGN.fontSize.md),
+              fontWeight: "600",
+              color: colors.onSurface,
+            }}
+            numberOfLines={2}
+          >
+            {downloadingBook
+              ? `Baixando ${downloadingBookName || downloadingBook} • ${bookProgress.completed}/${bookProgress.total} capítulos`
+              : "Preparando download..."}
+            {queueCount > 0
+              ? `\n${queueCount} ${queueCount === 1 ? "livro" : "livros"} na fila`
+              : ""}
+          </BibleText>
+        </View>
+      )}
+
+      {!isWeb && !isBusy && failedBookCount > 0 && (
+        <Pressable
+          onPress={() => retryFailedBooks()}
+          style={[
+            styles.statusRow,
+            {
+              marginTop: ms(DESIGN.spacing.md),
+              backgroundColor: colors.error + "12",
+              borderLeftColor: colors.error,
+            },
+          ]}
+        >
+          <BibleIcon
+            name="alert-triangle"
+            color={colors.error}
+            containerSize={ms(DESIGN.icon.md)}
+          />
+          <BibleText
+            style={{
+              flex: 1,
+              fontSize: ms(DESIGN.fontSize.md),
+              fontWeight: "600",
+              color: colors.onSurface,
+            }}
+            numberOfLines={2}
+          >
+            {`Falha ao baixar ${failedChapterCount} ${
+              failedChapterCount === 1 ? "capítulo" : "capítulos"
+            } em ${failedBookCount} ${
+              failedBookCount === 1 ? "livro" : "livros"
+            }.\nToque para tentar novamente`}
+          </BibleText>
+        </Pressable>
+      )}
+
+      <BibleText style={[styles.sectionLabel, { color: colors.textMuted }]}>
+        LIVROS
+      </BibleText>
+    </View>
   );
 
   const renderBook = ({ item }: { item: BookDownloadSummary }) => {
     const isComplete =
       item.totalChapters > 0 && item.downloadedChapters === item.totalChapters;
     const isDownloadingThis = downloadingBook === item.abbrev;
+    const isQueued = queuedAbbrevs.has(item.abbrev);
+    const isPending = isDownloadingThis || isQueued;
+    const isFailed =
+      !isComplete && !isPending && failedAbbrevs.has(item.abbrev);
 
     return (
       <View
         style={[
-          styles.card,
+          styles.bookCard,
           { backgroundColor: colors.surface, borderColor: colors.border },
         ]}
       >
-        <View style={styles.cardContent}>
-          <BibleIcon
-            name={isComplete ? "check-circle" : "book-open"}
-            color={isComplete ? colors.success : colors.primary}
-            backgroundColor={
-              (isComplete ? colors.success : colors.primary) + "15"
-            }
-            containerSize={ms(DESIGN.icon.xl)}
-            borderRadius={ms(DESIGN.borderRadius.md)}
-          />
-          <View style={styles.cardText}>
-            <BibleText
-              style={[
-                styles.cardTitle,
-                { fontSize: ms(DESIGN.fontSize.lg), color: colors.onSurface },
-              ]}
-              numberOfLines={1}
-            >
-              {item.name}
-            </BibleText>
-            <BibleText
-              style={{
-                fontSize: ms(DESIGN.fontSize.sm),
-                color: colors.textMuted,
-              }}
-            >
-              {isDownloadingThis
-                ? `Baixando ${bookProgress.completed}/${bookProgress.total}...`
-                : `${item.downloadedChapters}/${item.totalChapters} capítulos`}
-            </BibleText>
-          </View>
-
-          {isDownloadingThis ? (
-            <ActivityIndicator color={colors.primary} />
-          ) : isComplete ? (
-            <BibleIcon
-              name="trash-2"
-              color={colors.error}
-              backgroundColor={colors.error + "15"}
-              containerSize={ms(DESIGN.icon.lg)}
-              borderRadius={ms(DESIGN.borderRadius.md)}
-              onPress={() =>
-                setDeleteTarget({
-                  type: "book",
-                  abbrev: item.abbrev,
-                  name: item.name,
-                })
-              }
-            />
-          ) : (
-            <BibleIcon
-              name="download"
-              color={colors.primary}
-              backgroundColor={colors.primary + "15"}
-              containerSize={ms(DESIGN.icon.lg)}
-              borderRadius={ms(DESIGN.borderRadius.md)}
-              onPress={
-                isWeb ||
-                isBulkDownloading ||
-                !!downloadingBook ||
-                isOtherVersionDownloading
-                  ? undefined
-                  : () => downloadBook(item.abbrev)
-              }
-            />
-          )}
+        <View style={styles.bookText}>
+          <BibleText
+            style={[
+              styles.bookTitle,
+              { fontSize: ms(DESIGN.fontSize.lg), color: colors.onSurface },
+            ]}
+            numberOfLines={1}
+          >
+            {item.name}
+          </BibleText>
+          <BibleText
+            style={{
+              fontSize: ms(DESIGN.fontSize.sm),
+              color: isComplete
+                ? colors.success
+                : isFailed
+                  ? colors.error
+                  : colors.textMuted,
+            }}
+          >
+            {isDownloadingThis
+              ? `Baixando ${bookProgress.completed}/${bookProgress.total}...`
+              : isQueued
+                ? "Na fila..."
+                : isComplete
+                  ? "Baixado"
+                  : isFailed
+                    ? `Falha • ${item.downloadedChapters}/${item.totalChapters} capítulos`
+                    : `${item.downloadedChapters}/${item.totalChapters} capítulos`}
+          </BibleText>
         </View>
+
+        {isPending ? (
+          <ActivityIndicator color={colors.primary} />
+        ) : isComplete ? (
+          <BibleIcon
+            name="check-circle"
+            color={colors.success}
+            backgroundColor={colors.success + "15"}
+            containerSize={ms(DESIGN.icon.lg)}
+            borderRadius={ms(DESIGN.borderRadius.md)}
+            onPress={() =>
+              setDeleteTarget({
+                type: "book",
+                abbrev: item.abbrev,
+                name: item.name,
+              })
+            }
+          />
+        ) : (
+          <BibleIcon
+            name={isFailed ? "refresh-cw" : "download"}
+            color={isFailed ? colors.error : colors.primary}
+            backgroundColor={(isFailed ? colors.error : colors.primary) + "15"}
+            containerSize={ms(DESIGN.icon.lg)}
+            borderRadius={ms(DESIGN.borderRadius.md)}
+            onPress={isWeb ? undefined : () => enqueueBook(item.abbrev)}
+          />
+        )}
       </View>
     );
   };
@@ -215,154 +382,20 @@ export default function DownloadsBooksScreen() {
         onBack={() => handleSmartBack(pathname)}
       />
 
-      <View
-        style={[
-          styles.summaryBar,
-          { backgroundColor: colors.surface, borderColor: colors.border },
-        ]}
-      >
-        <View style={styles.summaryRow}>
-          <BibleText
-            style={{
-              fontSize: ms(DESIGN.fontSize.md),
-              color: colors.onSurface,
-            }}
-          >
-            {versionInfo?.name ?? selectedVersion}
-          </BibleText>
-          <BibleText
-            style={{
-              fontSize: ms(DESIGN.fontSize.md),
-              color: colors.textMuted,
-            }}
-          >
-            {formatSize(totalSizeBytes)}
-          </BibleText>
-        </View>
-
-        {isBulkDownloading && (
-          <BibleText
-            style={{
-              fontSize: ms(DESIGN.fontSize.sm),
-              color: colors.textMuted,
-            }}
-          >
-            {downloadingBook
-              ? `Livro ${bulkBookProgress.completed + 1}/${bulkBookProgress.total} — ${downloadingBook}: ${bookProgress.completed}/${bookProgress.total} capítulos`
-              : "Preparando download..."}
-          </BibleText>
-        )}
-
-        {isWeb && (
-          <BibleText
-            style={{
-              fontSize: ms(DESIGN.fontSize.sm),
-              color: colors.textMuted,
-            }}
-          >
-            Downloads para uso offline não estão disponíveis na versão web. Use
-            o app instalado no celular.
-          </BibleText>
-        )}
-
-        {!isWeb && isOtherVersionDownloading && (
-          <BibleText
-            style={{
-              fontSize: ms(DESIGN.fontSize.sm),
-              color: colors.textMuted,
-            }}
-          >
-            Aguarde a conclusão do download em andamento de outra versão.
-          </BibleText>
-        )}
-
-        {!isWeb && (
-          <View style={styles.actionsRow}>
-            <TouchableOpacity
-              style={[
-                styles.actionBtn,
-                {
-                  backgroundColor: isBulkDownloading
-                    ? colors.error + "15"
-                    : colors.primary + "15",
-                  borderColor: isBulkDownloading
-                    ? colors.error
-                    : colors.primary,
-                },
-              ]}
-              onPress={() =>
-                isBulkDownloading ? cancelDownload() : downloadAllBooks()
-              }
-              disabled={
-                !isBulkDownloading &&
-                (isFullyDownloaded || isOtherVersionDownloading)
-              }
-              activeOpacity={0.8}
-            >
-              <BibleIcon
-                name={isBulkDownloading ? "x" : "download-cloud"}
-                size={ms(DESIGN.fontSize.lg)}
-                color={isBulkDownloading ? colors.error : colors.primary}
-              />
-              <BibleText
-                style={{
-                  fontSize: ms(DESIGN.fontSize.md),
-                  fontWeight: "700",
-                  color: isBulkDownloading ? colors.error : colors.primary,
-                }}
-              >
-                {isBulkDownloading
-                  ? "Cancelar"
-                  : isFullyDownloaded
-                    ? "Bíblia completa"
-                    : "Baixar tudo"}
-              </BibleText>
-            </TouchableOpacity>
-
-            {totalSizeBytes > 0 && !isBulkDownloading && (
-              <TouchableOpacity
-                style={[
-                  styles.actionBtn,
-                  {
-                    backgroundColor: colors.error + "15",
-                    borderColor: colors.error,
-                  },
-                ]}
-                onPress={() => setDeleteTarget({ type: "version" })}
-                activeOpacity={0.8}
-              >
-                <BibleIcon
-                  name="trash-2"
-                  size={ms(DESIGN.fontSize.lg)}
-                  color={colors.error}
-                />
-                <BibleText
-                  style={{
-                    fontSize: ms(DESIGN.fontSize.md),
-                    fontWeight: "700",
-                    color: colors.error,
-                  }}
-                >
-                  Excluir tudo
-                </BibleText>
-              </TouchableOpacity>
-            )}
-          </View>
-        )}
-      </View>
-
-      <BibleDivider />
-
       {!isLoaded ? (
         <BibleSkeleton />
       ) : (
         <FlashList
           data={summaries}
           keyExtractor={(item) => item.abbrev}
+          ListHeaderComponent={listHeader}
           // @ts-ignore
-          estimatedItemSize={ms(DESIGN.layout.settingsIconOffset * 1.15)}
+          estimatedItemSize={ms(DESIGN.layout.settingsIconOffset)}
           renderItem={renderBook}
-          contentContainerStyle={styles.listContent}
+          contentContainerStyle={{
+            padding: ms(DESIGN.spacing.lg),
+            paddingBottom: ms(DESIGN.layout.listPaddingBottom),
+          }}
           showsVerticalScrollIndicator={false}
         />
       )}
@@ -373,7 +406,9 @@ export default function DownloadsBooksScreen() {
         message={
           deleteTarget?.type === "book"
             ? `Deseja excluir os áudios baixados de ${deleteTarget.name}?`
-            : `Deseja excluir todos os áudios baixados de ${versionInfo?.name ?? selectedVersion}?`
+            : isBusy
+              ? `Há downloads em andamento para ${versionInfo?.name ?? selectedVersion}. Deseja parar a fila e excluir todos os áudios baixados?`
+              : `Deseja excluir todos os áudios baixados de ${versionInfo?.name ?? selectedVersion}?`
         }
         confirmText="Excluir"
         isDanger
@@ -382,6 +417,7 @@ export default function DownloadsBooksScreen() {
           if (deleteTarget?.type === "book") {
             deleteBook(deleteTarget.abbrev);
           } else if (deleteTarget?.type === "version") {
+            cancelAll();
             deleteVersion();
           }
           setDeleteTarget(null);

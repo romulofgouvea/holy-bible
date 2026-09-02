@@ -153,7 +153,7 @@ export function BibleNoteModal({
             multiline
             value={text}
             onChangeText={setText}
-            autoFocus
+            autoFocus={false}
           />
         </View>
       </View>

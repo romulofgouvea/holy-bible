@@ -310,7 +310,7 @@ export function BibleVersionModal({
                 value={searchQuery}
                 onChangeText={setSearchQuery}
                 underlineColorAndroid="transparent"
-                autoFocus
+                autoFocus={false}
               />
             </View>
           )}

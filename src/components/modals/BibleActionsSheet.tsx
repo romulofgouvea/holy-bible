@@ -78,43 +78,32 @@ export function BibleActionsSheet({ visible, onClose, items, title }: Props) {
   );
 
   const [isModalVisible, setIsModalVisible] = useState(visible);
-  const translateY = useRef(new Animated.Value(300)).current;
-  const backdropOpacity = useRef(new Animated.Value(0)).current;
+  const anim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     if (visible) {
       setIsModalVisible(true);
-      Animated.parallel([
-        Animated.spring(translateY, {
-          toValue: 0,
-          useNativeDriver: true,
-          bounciness: 2,
-          speed: 15,
-        }),
-        Animated.timing(backdropOpacity, {
-          toValue: 1,
-          duration: 200,
-          useNativeDriver: true,
-        }),
-      ]).start();
+      Animated.timing(anim, {
+        toValue: 1,
+        duration: 180,
+        useNativeDriver: true,
+      }).start();
     } else {
-      Animated.parallel([
-        Animated.spring(translateY, {
-          toValue: 300,
-          useNativeDriver: true,
-          bounciness: 0,
-          speed: 20,
-        }),
-        Animated.timing(backdropOpacity, {
-          toValue: 0,
-          duration: 150,
-          useNativeDriver: true,
-        }),
-      ]).start(() => {
+      Animated.timing(anim, {
+        toValue: 0,
+        duration: 120,
+        useNativeDriver: true,
+      }).start(() => {
         setIsModalVisible(false);
       });
     }
-  }, [visible, translateY, backdropOpacity]);
+  }, [visible, anim]);
+
+  const backdropOpacity = anim;
+  const sheetScale = anim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0.96, 1],
+  });
 
   if (!isModalVisible) return null;
 
@@ -139,7 +128,8 @@ export function BibleActionsSheet({ visible, onClose, items, title }: Props) {
           style={[
             styles.sheet,
             {
-              transform: [{ translateY }],
+              opacity: anim,
+              transform: [{ scale: sheetScale }],
               backgroundColor: colors.background,
               shadowColor: colors.shadow,
               paddingBottom: ms(DESIGN.spacing.lg),

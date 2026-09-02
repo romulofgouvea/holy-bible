@@ -38,6 +38,7 @@ type BibleAudioModalProps = {
   onShowToast?: (msg: string, type?: "success" | "info" | "warning") => void;
   onVerseChange?: (verse: number | null) => void;
   onOpenSettings?: () => void;
+  onRequestNextChapter?: () => boolean;
 };
 
 export type BibleAudioModalHandle = {
@@ -81,6 +82,7 @@ export const BibleAudioModal = forwardRef<
     null,
   );
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isProgressReset, setIsProgressReset] = useState(true);
   const [currentVerseIndex, setCurrentVerseIndex] = useState(0);
   const [speed, setSpeed] = useState<SpeedOption>(1);
   const [trackWidth, setTrackWidth] = useState(0);
@@ -89,6 +91,13 @@ export const BibleAudioModal = forwardRef<
 
   const player = useAudioPlayer();
   const status = useAudioPlayerStatus(player);
+
+  const continuousPlaybackRef = useRef(continuousPlayback);
+  continuousPlaybackRef.current = continuousPlayback;
+  const visibleRef = useRef(visible);
+  visibleRef.current = visible;
+  const isPlayingRef = useRef(isPlaying);
+  isPlayingRef.current = isPlaying;
 
   const insets = useSafeAreaInsets();
   const hiddenY = ms(DESIGN.layout.settingsIconOffset * 3);
@@ -103,6 +112,19 @@ export const BibleAudioModal = forwardRef<
     }).start();
   }, [visible, hiddenY]);
 
+  const wasVisibleRef = useRef(visible);
+  useEffect(() => {
+    const justOpened = visible && !wasVisibleRef.current;
+    wasVisibleRef.current = visible;
+    if (justOpened && !isPlaying) {
+      setIsProgressReset(true);
+      progressAnim.setValue(0);
+      setCurrentVerseIndex(0);
+      if (status.isLoaded) player.seekTo(0);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [visible]);
+
   useEffect(() => {
     setAudioModeAsync({
       playsInSilentMode: true,
@@ -113,7 +135,10 @@ export const BibleAudioModal = forwardRef<
 
   const duration = status.duration ?? 0;
   const currentTime = status.currentTime ?? 0;
-  const progress = duration > 0 ? Math.min(currentTime / duration, 1) : 0;
+  const progress =
+    !isProgressReset && status.isLoaded && hasLoadedAudio && duration > 0
+      ? Math.min(currentTime / duration, 1)
+      : 0;
 
   useEffect(() => {
     Animated.timing(progressAnim, {
@@ -128,6 +153,7 @@ export const BibleAudioModal = forwardRef<
     const { locationX } = event.nativeEvent;
     const ratio = Math.max(0, Math.min(locationX / trackWidth, 1));
     const seekTime = ratio * duration;
+    setIsProgressReset(false);
     player.seekTo(seekTime);
   };
 
@@ -154,6 +180,7 @@ export const BibleAudioModal = forwardRef<
       player.shouldCorrectPitch = true;
       player.setPlaybackRate(speed, "high");
       player.play();
+      setIsProgressReset(false);
     } catch {
       props.onShowToast?.("Erro ao reproduzir o áudio.", "warning");
       setIsPlaying(false);
@@ -161,14 +188,27 @@ export const BibleAudioModal = forwardRef<
   };
 
   useEffect(() => {
-    if (status.didJustFinish && isPlaying) {
-      playVerse(currentVerseIndex + 1, audioUrls);
+    if (!status.didJustFinish || !isPlayingRef.current) return;
+
+    const nextIndex = currentVerseIndex + 1;
+    if (nextIndex < audioUrls.length) {
+      playVerse(nextIndex, audioUrls);
+      return;
     }
+
+    if (continuousPlaybackRef.current && props.onRequestNextChapter?.()) {
+      return;
+    }
+
+    setIsPlaying(false);
+    setCurrentVerseIndex(0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status.didJustFinish]);
 
   const loadAudio = async () => {
     setIsLoading(true);
+    setIsProgressReset(true);
+    progressAnim.setValue(0);
     try {
       let localUri = await AudioService.findLocalAudioUri(
         version,
@@ -220,6 +260,7 @@ export const BibleAudioModal = forwardRef<
         const timing = verseTimings.verses.find((v) => v.verse === verse);
         if (!timing) return;
         player.seekTo(timing.start);
+        setIsProgressReset(false);
         if (!isPlaying) {
           setIsPlaying(true);
           player.play();
@@ -242,9 +283,15 @@ export const BibleAudioModal = forwardRef<
     props.onVerseChange?.(null);
     setCurrentVerseIndex(0);
     setIsPlaying(false);
+    setIsProgressReset(true);
+    progressAnim.setValue(0);
     player.pause();
 
-    if (hasChapterChanged && continuousPlayback && visible) {
+    if (
+      hasChapterChanged &&
+      continuousPlaybackRef.current &&
+      (visibleRef.current || isPlayingRef.current)
+    ) {
       loadAudio();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -259,6 +306,7 @@ export const BibleAudioModal = forwardRef<
       setIsPlaying(false);
     } else {
       setIsPlaying(true);
+      setIsProgressReset(false);
       if (status.isLoaded) {
         player.shouldCorrectPitch = true;
         player.setPlaybackRate(speed, "high");
@@ -269,7 +317,8 @@ export const BibleAudioModal = forwardRef<
     }
   };
 
-  const hasProgress = hasLoadedAudio && duration > 0;
+  const hasProgress =
+    !isProgressReset && status.isLoaded && hasLoadedAudio && duration > 0;
 
   const ICON_SIZE = ms(DESIGN.icon.xl);
 

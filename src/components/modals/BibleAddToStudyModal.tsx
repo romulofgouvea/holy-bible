@@ -270,7 +270,7 @@ export function BibleAddToStudyModal({
               placeholderTextColor={colors.textMuted}
               value={newTitle}
               onChangeText={setNewTitle}
-              autoFocus
+              autoFocus={false}
               maxLength={LIMITS.STUDY_TITLE_MAX_LENGTH}
               underlineColorAndroid="transparent"
             />

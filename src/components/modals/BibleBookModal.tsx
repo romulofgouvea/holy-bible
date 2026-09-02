@@ -477,7 +477,7 @@ export function BibleBookModal({
                 value={searchQuery}
                 onChangeText={setSearchQuery}
                 underlineColorAndroid="transparent"
-                autoFocus
+                autoFocus={false}
               />
             </View>
           )}

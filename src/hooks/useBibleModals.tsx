@@ -64,11 +64,15 @@ export function BibleModalProvider({
 
   const openModal = useCallback((newOptions: BibleModalOptions) => {
     setOptions(newOptions);
+    setNavVersion(newOptions.initialVersion || "");
+    setNavBook(newOptions.initialBook || null);
+    setNavChapter(newOptions.initialChapter ?? null);
     setActiveModal(newOptions.initialStep || "book");
   }, []);
 
   const closeAll = useCallback(() => {
     setActiveModal(null);
+    setNavVersion("");
     setNavBook(null);
     setNavChapter(null);
   }, []);

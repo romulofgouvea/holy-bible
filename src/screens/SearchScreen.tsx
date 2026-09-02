@@ -58,6 +58,19 @@ function removeAccents(str: string): string {
   return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 }
 
+function hasAccents(str: string): boolean {
+  return removeAccents(str) !== str;
+}
+
+function buildMatcher(query: string) {
+  const trimmed = query.trim();
+  const accentSensitive = hasAccents(trimmed);
+  const normalize = accentSensitive
+    ? (s: string) => s.toLowerCase()
+    : (s: string) => removeAccents(s).toLowerCase();
+  return { term: normalize(trimmed), normalize };
+}
+
 export type SearchResult = {
   bookName: string;
   bookAbbrev: string;
@@ -102,7 +115,7 @@ const HighlightText = React.memo(
       lineHeight: currentLineHeight,
     };
 
-    const cleanQuery = removeAccents(query.trim()).toLowerCase();
+    const { term: cleanQuery, normalize } = buildMatcher(query);
     if (!cleanQuery) {
       return (
         <BibleText variant="reading" style={[styles.verseText, textStyle]}>
@@ -111,7 +124,7 @@ const HighlightText = React.memo(
       );
     }
 
-    const normalizedText = removeAccents(text).toLowerCase();
+    const normalizedText = normalize(text);
     const tokens: { text: string; highlighted: boolean }[] = [];
 
     let lastIdx = 0;
@@ -521,7 +534,7 @@ export default function SearchScreen() {
 
             if (restoredQuery.trim().length >= 2) {
               setIsSearching(true);
-              const term = removeAccents(restoredQuery.trim()).toLowerCase();
+              const { term, normalize } = buildMatcher(restoredQuery);
               const found: SearchResult[] = [];
               const searchVersionBooks = getBibleData(restoredVersion);
 
@@ -557,9 +570,7 @@ export default function SearchScreen() {
 
                   for (const { idx, verses } of chaptersToSearch) {
                     for (let vi = 0; vi < verses.length; vi++) {
-                      if (
-                        removeAccents(verses[vi]).toLowerCase().includes(term)
-                      ) {
+                      if (normalize(verses[vi]).includes(term)) {
                         found.push({
                           bookName: book.name,
                           bookAbbrev: book.abbrev,
@@ -669,7 +680,7 @@ export default function SearchScreen() {
       setIsSearching(true);
       const delay = immediate ? 0 : 350;
       searchTimeout.current = setTimeout(() => {
-        const term = removeAccents(q.trim()).toLowerCase();
+        const { term, normalize } = buildMatcher(q);
         const found: SearchResult[] = [];
 
         const booksToSearch =
@@ -701,7 +712,7 @@ export default function SearchScreen() {
 
           for (const { idx, verses } of chaptersToSearch) {
             for (let vi = 0; vi < verses.length; vi++) {
-              if (removeAccents(verses[vi]).toLowerCase().includes(term)) {
+              if (normalize(verses[vi]).includes(term)) {
                 found.push({
                   bookName: book.name,
                   bookAbbrev: book.abbrev,

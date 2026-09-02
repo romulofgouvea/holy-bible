@@ -5,7 +5,6 @@ import { BibleHeader } from "../components/BibleHeader";
 import { BibleListCard } from "../components/BibleListCard";
 import { BibleText } from "../components/BibleText";
 import { ALIASES, BibleVersionInfo } from "../data/bible-version";
-import { useBible } from "../hooks/useBible";
 import { useResponsive } from "../hooks/useResponsive";
 import { useTheme } from "../hooks/useTheme";
 import { ROUTES } from "../constants/routes";
@@ -22,7 +21,6 @@ export default function DownloadsScreen() {
   const pathname = usePathname();
   const router = useRouter();
   const { colors } = useTheme();
-  const { version: currentVersion } = useBible();
 
   const styles = useMemo(
     () =>
@@ -113,7 +111,6 @@ export default function DownloadsScreen() {
                   key={item.sigla}
                   title={item.name}
                   pillText={item.sigla}
-                  isSelected={item.sigla === currentVersion}
                   onPress={() =>
                     router.push(ROUTES.DOWNLOADS_BOOKS(item.sigla) as any)
                   }

@@ -38,20 +38,6 @@ export function GlobalBibleModals() {
 
   const { ms } = useResponsive();
 
-  // Initialize navVersion from options or global state whenever the modal opens or dependencies change
-  React.useEffect(() => {
-    if (activeModal) {
-      if (options.initialVersion) {
-        setNavVersion(options.initialVersion);
-      } else if (globalVersion) {
-        setNavVersion(globalVersion);
-      }
-    } else {
-      // Clear navVersion when no modal is active so it resets cleanly for the next session
-      setNavVersion("");
-    }
-  }, [activeModal, globalVersion, options.initialVersion, setNavVersion]);
-
   const versionBooks = useMemo(() => {
     if (navVersion && navVersion !== globalVersion) {
       return getBibleData(navVersion);
